@@ -1,2 +1,4 @@
+[comment]: # ( Copyright Red Hat )
 # provisioning-backend
-Microservice providing API to provisioning capabilities
+
+Service to provision RHEL on any infrastructure.
