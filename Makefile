@@ -1,27 +1,16 @@
-# Copyright Red Hat
+.PHONY: build
+build:
+	go build ./cmd/pbapi
 
-check: check-copyright
-
-check-copyright:
-	@build/check-copyright.sh
-
-build: 
-	go build -o provisioning-api main.go
-
+.PHONY: run
 run:
-	go run main.go
+	go run ./cmd/pbapi
 
-vet:
-	go vet ./...
+.PHONY: models
+models: sqlboiler.toml
+	sqlboiler sqlite3 --wipe -o internal/models
 
-staticcheck: 
-	staticcheck ./...
+.PHONY: migrate
+migrate:
+	sqlite3 devel.db < cmd/pbapi-migrate/schema.sql
 
-lint: vet staticcheck
-
-# bonfire-config-local:
-# 	@cp default_config.yaml.local.example config.yaml
-# 	@sed -i ${OS_SED} 's|REPO|$(PWD)|g' config.yaml
-
-# bonfire-config-github:
-# 	@cp default_config.yaml.github.example config.yaml
