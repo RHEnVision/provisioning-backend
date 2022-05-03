@@ -21,8 +21,8 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
 			bytesIn, _ := strconv.Atoi(r.Header.Get("Content-Length"))
-			rid := ctxval.GetValue[string](r.Context(), ctxval.RequestIdCtxKey)
-			rn := ctxval.GetValue[uint64](r.Context(), ctxval.RequestNumCtxKey)
+			rid := ctxval.GetStringValue(r.Context(), ctxval.RequestIdCtxKey)
+			rn := ctxval.GetUInt64Value(r.Context(), ctxval.RequestNumCtxKey)
 			logger := rootLogger.With().
 				Timestamp().
 				Str("rid", rid).

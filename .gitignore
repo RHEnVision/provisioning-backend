@@ -4,4 +4,5 @@ tags
 TAGS
 /*.db
 /pbapi
+/pbmigrate
 /vendor/

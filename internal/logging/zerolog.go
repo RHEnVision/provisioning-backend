@@ -54,5 +54,5 @@ func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error)
 		}
 	}
 
-	return logger, nil, nil
+	return logger, func() {}, nil
 }

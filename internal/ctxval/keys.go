@@ -11,6 +11,10 @@ const (
 	ResourceCtxKey   CommonKeyId = iota
 )
 
-func GetValue[T string | uint64](ctx context.Context, key CommonKeyId) T {
-	return ctx.Value(key).(T)
+func GetStringValue(ctx context.Context, key CommonKeyId) string {
+	return ctx.Value(key).(string)
+}
+
+func GetUInt64Value(ctx context.Context, key CommonKeyId) uint64 {
+	return ctx.Value(key).(uint64)
 }

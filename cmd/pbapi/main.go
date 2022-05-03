@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"github.com/RHEnVision/provisioning-backend/internal/clouds/aws"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
@@ -8,6 +10,8 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/routes"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
+	"os"
+	"os/signal"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -52,7 +56,41 @@ func main() {
 	mr.Get("/", statusOk)
 	mr.Handle("/metrics", promhttp.Handler())
 
-	log.Info().Msg("New instance started")
-	http.ListenAndServe(":3000", r)
-	http.ListenAndServe(":5000", mr)
+	log.Info().Msg("Starting new instance on 8000/8080")
+	srv := http.Server{
+		Addr:    fmt.Sprintf(":%d", 8000),
+		Handler: r,
+	}
+
+	msrv := http.Server{
+		Addr:    fmt.Sprintf(":%d", 8080),
+		Handler: mr,
+	}
+
+	idleConnsClosed := make(chan struct{})
+	go func() {
+		sigint := make(chan os.Signal, 1)
+		signal.Notify(sigint, os.Interrupt)
+		<-sigint
+		if err := srv.Shutdown(context.Background()); err != nil {
+			log.Fatal().Err(err).Msg("Main service shutdown error")
+		}
+		if err := msrv.Shutdown(context.Background()); err != nil {
+			log.Fatal().Err(err).Msg("Metrics service shutdown error")
+		}
+		close(idleConnsClosed)
+	}()
+
+	go func() {
+		if err := msrv.ListenAndServe(); err != http.ErrServerClosed {
+			log.Fatal().Err(err).Msg("Metrics service listen error")
+		}
+	}()
+
+	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		log.Fatal().Err(err).Msg("Main service listen error")
+	}
+
+	<-idleConnsClosed
+	log.Info().Msg("Shutdown finished, exiting")
 }
