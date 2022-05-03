@@ -6,5 +6,5 @@ import (
 )
 
 func SetupRoutes(r *chi.Mux) {
-	r.Get("/", s.StatusService)
+	r.Get("/todo", s.StatusService)
 }

@@ -14,6 +14,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+func statusOk(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+}
+
 func main() {
 	// initialize stdout logging and AWS clients first
 	log.Logger = logging.InitializeStdout()
@@ -30,15 +35,24 @@ func main() {
 	// initialize the rest
 	db.Initialize()
 
+	// Routes for the main service
 	r := chi.NewRouter()
 	r.Use(m.RequestID)
 	r.Use(m.RequestNum)
 	r.Use(m.MetricsMiddleware)
 	r.Use(m.LoggerMiddleware(&log.Logger))
 	r.Use(render.SetContentType(render.ContentTypeJSON))
-	r.Handle("/metrics", promhttp.Handler())
+	// Unauthenticated routes
+	r.Get("/", statusOk)
+	// Main routes
 	routes.SetupRoutes(r)
 
-	log.Info().Msg("New instance started ")
+	// Routes for metrics
+	mr := chi.NewRouter()
+	mr.Get("/", statusOk)
+	mr.Handle("/metrics", promhttp.Handler())
+
+	log.Info().Msg("New instance started")
 	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":5000", mr)
 }
