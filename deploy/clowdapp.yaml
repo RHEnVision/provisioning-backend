@@ -74,7 +74,7 @@ parameters:
     required: true
   - description: Image name
     name: IMAGE
-    value: quay.io/cloudservices/idp-configs-api
+    value: quay.io/repository/lzapletal/pbtest1
   - description: Determines Clowder deployment
     name: CLOWDER_ENABLED
     value: "true"
