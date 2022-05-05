@@ -23,6 +23,7 @@ func main() {
 	// initialize the rest
 	db.Initialize()
 
-	// do nothing
 	log.Info().Msg("Migrating database")
+	db.Migrate()
+	log.Info().Msg("Migration complete")
 }

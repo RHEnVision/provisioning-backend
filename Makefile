@@ -24,3 +24,8 @@ prep:
 .PHONY: run
 run:
 	go run ./cmd/pbapi
+
+.PHONY: generate-migration
+MIGRATION_NAME?=unnamed
+generate-migration:
+	migrate create -ext sql -dir api/migrations -seq -digits 5 $(MIGRATION_NAME)
