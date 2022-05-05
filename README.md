@@ -34,6 +34,27 @@ curl http://localhost:8000
 curl http://localhost:5000/metrics
 ```
 
+## Contributing
+
+Here are few points before you start contributing:
+
+* Binaries go into the `cmd/name` package.
+* All code go into the `internal/` package.
+* Binaries must not take any arguments.
+* All configuration is done via environment variables.
+* Gorm database models (structs) do belong into `internal/models`.
+* Do not put any code logic into Gorm structs (models).
+* All database operations (CRUD, eager loading) lives in `internal/dao` (Data Access Objects).
+* Gorm models must be not exposed directly into JSON API, use `internal/payloads` package to wrap them.
+* Business logic (the actual code) does belong into `internal/services` package, each API call should have a dedicated file.
+* HTTP routes go into `internal/routes` package.
+* HTTP middleware go into `internal/middleware` package.
+* Monitoring metrics are in `internal/metrics' package.`
+* Use the standard library context package for context operations. Context keys must be defined in `internal/ctxval`.
+* Database connection is at `internal/db`, cloud connections are in 'internal/clouds'.
+* Do not introduce `utils` or `tools` common packages, they tend to grow.
+* Keep the line of sight (happy code path).
+
 ## License
 
 GNU GPL 3.0, see LICENSE
