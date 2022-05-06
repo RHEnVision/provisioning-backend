@@ -25,9 +25,8 @@ func Migrate() {
 	}
 	err = m.Up()
 	if err != nil {
-		// ...
+		log.Fatal(err)
 	}
-	// ...
 }
 
 // Checks that migration files are in proper format and index has no gaps or reused numbers.
@@ -37,7 +36,7 @@ func init() {
 		log.Fatal("Unable to open migrations embedded directory")
 	}
 	if len(dir)%2 != 0 {
-		log.Fatal("Migration files must be even")
+		log.Fatal("Number of migration files must be even")
 	}
 	// count migration prefixes
 	checks := make([]int, len(dir)/2)

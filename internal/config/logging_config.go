@@ -9,15 +9,15 @@ import (
 type LoggingConfig struct {
 	// Global level (-1 trace, 0 debug, 1 info ... 5 panic)
 	Level       int
-	ExitOnPanic bool
-	Cloudwatch  bool
-	Stdout      bool
 	CWGroup     string
 	CWStream    string
 	AWSRegion   string
 	AWSKey      string
 	AWSSecret   string
 	AWSSession  string
+	ExitOnPanic bool
+	Cloudwatch  bool
+	Stdout      bool
 
 	initialized bool
 }

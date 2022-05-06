@@ -1,19 +1,21 @@
 package payloads
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/render"
 )
 
 type ErrResponse struct {
-	Err            error `json:"-"` // low-level runtime error
-	HTTPStatusCode int   `json:"-"` // http response status code
-
-	StatusText string `json:"status"`          // user-level status message
-	AppCode    int64  `json:"code,omitempty"`  // application-specific error code
-	ErrorText  string `json:"error,omitempty"` // application-level error message, for debugging
+	// root cause
+	Err error `json:"-"`
+	// HTTP status code
+	HTTPStatusCode int `json:"-"`
+	// error message
+	Message string `json:"msg"`
+	// application code
+	Code int64 `json:"code,omitempty"`
 }
 
 func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
@@ -22,15 +24,14 @@ func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (e *ErrResponse) Error() error {
-	return errors.New(e.StatusText)
+	return fmt.Errorf("%s (%d): %w", e.Message, e.Code, e.Err)
 }
 
 func ErrInvalidRequest(err error) render.Renderer {
 	return &ErrResponse{
 		Err:            err,
 		HTTPStatusCode: 400,
-		StatusText:     "Invalid request",
-		ErrorText:      err.Error(),
+		Message:        "Invalid request",
 	}
 }
 
@@ -38,8 +39,7 @@ func ErrAWSGeneric(err error) render.Renderer {
 	return &ErrResponse{
 		Err:            err,
 		HTTPStatusCode: 400,
-		StatusText:     "Error returned from AWS",
-		ErrorText:      err.Error(),
+		Message:        "Error returned from AWS",
 	}
 }
 
@@ -47,11 +47,10 @@ func ErrRender(err error) render.Renderer {
 	return &ErrResponse{
 		Err:            err,
 		HTTPStatusCode: 422,
-		StatusText:     "Error rendering response.",
-		ErrorText:      err.Error(),
+		Message:        "Error rendering response.",
 	}
 }
 
-var ErrNotFound = &ErrResponse{HTTPStatusCode: 404, StatusText: "Resource not found"}
-var ErrParamParsingError = &ErrResponse{HTTPStatusCode: 500, StatusText: "Cannot parse parameters"}
-var ErrDeleteError = &ErrResponse{HTTPStatusCode: 500, StatusText: "Cannot delete resource"}
+var ErrNotFound = &ErrResponse{HTTPStatusCode: 404, Message: "Resource not found"}
+var ErrParamParsingError = &ErrResponse{HTTPStatusCode: 500, Message: "Cannot parse parameters"}
+var ErrDeleteError = &ErrResponse{HTTPStatusCode: 500, Message: "Cannot delete resource"}

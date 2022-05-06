@@ -1,0 +1,18 @@
+---
+# https://golangci-lint.run/usage/configuration/
+run:
+  go: '1.16'
+  timeout: 5m
+linters:
+  presets:
+    - bugs
+    - error
+    - performance
+    - sql
+    - module
+    - unused
+issues:
+  exclude-rules:
+    - path: '(.+)_test\.go'
+      linters:
+        - forcetypeassert

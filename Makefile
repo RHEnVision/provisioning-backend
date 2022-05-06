@@ -25,6 +25,17 @@ prep:
 run:
 	go run ./cmd/pbapi
 
+.PHONY: install-tools
+install-tools:
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+.PHONY: lint
+lint:
+	go fmt ./...
+	go vet ./...
+	golangci-lint run
+
 .PHONY: generate-migration
 MIGRATION_NAME?=unnamed
 generate-migration:

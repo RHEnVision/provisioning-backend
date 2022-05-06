@@ -15,6 +15,15 @@ Requirements: Go 1.16+
 make build
 ```
 
+## Code lint
+
+We run `go fmt`, `go vet` and `golangci-lint` lint suite via GitHub Actions. To run them locally do:
+
+```
+make install-tools
+make lint
+```
+
 ## Migrations
 
 Migrations can be found in `internal/db/migrations` in SQL format, the only supported database platform is PostgreSQL. To create a new migration:

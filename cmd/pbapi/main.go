@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/RHEnVision/provisioning-backend/internal/clouds/aws"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -82,13 +83,17 @@ func main() {
 	}()
 
 	go func() {
-		if err := msrv.ListenAndServe(); err != http.ErrServerClosed {
-			log.Fatal().Err(err).Msg("Metrics service listen error")
+		if err := msrv.ListenAndServe(); err != nil {
+			if !errors.Is(err, http.ErrServerClosed) {
+				log.Fatal().Err(err).Msg("Metrics service listen error")
+			}
 		}
 	}()
 
-	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-		log.Fatal().Err(err).Msg("Main service listen error")
+	if err := srv.ListenAndServe(); err != nil {
+		if !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal().Err(err).Msg("Main service listen error")
+		}
 	}
 
 	<-idleConnsClosed
