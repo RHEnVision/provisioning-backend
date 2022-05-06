@@ -6,3 +6,4 @@ TAGS
 /pbapi
 /pbmigrate
 /vendor/
+/.env

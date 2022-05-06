@@ -15,6 +15,10 @@ Requirements: Go 1.16+
 make build
 ```
 
+## Configuration
+
+Configuration is done via environmental variables, see [.env.default](/.env.default) file for list of options with documentation. Environmental variables override the `.env.default` file. When `.env` file is found, it overrides both `.env.default` as well as environment variables - this can be used for development purposes.
+
 ## Code lint
 
 We run `go fmt`, `go vet` and `golangci-lint` lint suite via GitHub Actions. To run them locally do:
