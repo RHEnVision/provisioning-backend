@@ -1,27 +1,42 @@
-# Copyright Red Hat
+.PHONY: build
+build: build-pbapi build-pbmigrate
 
-check: check-copyright
+.PHONY: build-pbapi
+build-pbapi:
+	CGO_ENABLED=0 go build -o pbapi ./cmd/pbapi
 
-check-copyright:
-	@build/check-copyright.sh
+.PHONY: build-pbmigrate
+build-pbmigrate:
+	CGO_ENABLED=0 go build -o pbmigrate ./cmd/pbmigrate
 
-build: 
-	go build -o provisioning-api main.go
+.PHONY: strip
+strip: build
+	strip pbapi pbmigrate
 
+.PHONY: build-podman
+build-podman:
+	podman build .
+
+.PHONY: prep
+prep:
+	go mod download
+
+.PHONY: run
 run:
-	go run main.go
+	go run ./cmd/pbapi
 
-vet:
+.PHONY: install-tools
+install-tools:
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+.PHONY: lint
+lint:
+	go fmt ./...
 	go vet ./...
+	golangci-lint run
 
-staticcheck: 
-	staticcheck ./...
-
-lint: vet staticcheck
-
-# bonfire-config-local:
-# 	@cp default_config.yaml.local.example config.yaml
-# 	@sed -i ${OS_SED} 's|REPO|$(PWD)|g' config.yaml
-
-# bonfire-config-github:
-# 	@cp default_config.yaml.github.example config.yaml
+.PHONY: generate-migration
+MIGRATION_NAME?=unnamed
+generate-migration:
+	migrate create -ext sql -dir api/migrations -seq -digits 5 $(MIGRATION_NAME)

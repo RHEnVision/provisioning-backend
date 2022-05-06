@@ -1,0 +1,4 @@
+package db
+
+func Initialize() {
+}
