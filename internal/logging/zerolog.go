@@ -28,21 +28,21 @@ func decorate(l zerolog.Logger) zerolog.Logger {
 
 func InitializeStdout() zerolog.Logger {
 	conf := config.GetLoggingConfig()
-	zerolog.SetGlobalLevel(zerolog.Level(conf.Level))
+	zerolog.SetGlobalLevel(zerolog.Level(conf.Logging.Level))
 	return decorate(log.Output(zerolog.ConsoleWriter{Out: os.Stdout}))
 }
 
 func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error) {
 	conf := config.GetLoggingConfig()
 
-	if conf.Cloudwatch {
+	if conf.Cloudwatch.Enabled {
 		log.Debug().Msg("Initializing cloudwatch logger")
-		cloudWatchWriter, err := cww.NewWithClient(aws.CWL, 500*time.Millisecond, conf.CWGroup, conf.CWStream)
+		cloudWatchWriter, err := cww.NewWithClient(aws.CWL, 500*time.Millisecond, conf.Cloudwatch.Group, conf.Cloudwatch.Stream)
 		if err != nil {
 			return logger, nil, fmt.Errorf("cannot initialize cloudwatch: %w", err)
 		}
 
-		if conf.Stdout {
+		if conf.Logging.Stdout {
 			// stdout and cloudwatch
 			consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
 			newLogger := decorate(zerolog.New(zerolog.MultiLevelWriter(consoleWriter, cloudWatchWriter)))
