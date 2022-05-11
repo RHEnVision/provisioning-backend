@@ -19,9 +19,13 @@ func main() {
 	}
 	defer clsFunc()
 	log.Logger = logger
+	logging.DumpConfigForDevelopment()
 
 	// initialize the rest
-	db.Initialize()
+	err = db.Initialize()
+	if err != nil {
+		log.Fatal().Err(err)
+	}
 
 	log.Info().Msg("Migrating database")
 	db.Migrate()

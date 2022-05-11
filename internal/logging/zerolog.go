@@ -56,3 +56,9 @@ func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error)
 
 	return logger, func() {}, nil
 }
+
+func DumpConfigForDevelopment() {
+	if config.IsDevelopment() {
+		config.DumpConfig(log.Logger)
+	}
+}
