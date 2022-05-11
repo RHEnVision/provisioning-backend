@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/RHEnVision/provisioning-backend/internal/clouds/aws"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
@@ -37,11 +36,6 @@ func main() {
 	}
 	defer clsFunc()
 	log.Logger = logger
-
-	// dump configuration
-	if config.GetLoggingConfig().PrintConfig {
-		config.DumpConfig(logger)
-	}
 
 	// initialize the rest
 	db.Initialize()

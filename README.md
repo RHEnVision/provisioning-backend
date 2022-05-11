@@ -55,10 +55,10 @@ Here are few points before you start contributing:
 * All code go into the `internal/` package.
 * Binaries must not take any arguments.
 * All configuration is done via environment variables.
-* Gorm database models (structs) do belong into `internal/models`.
-* Do not put any code logic into Gorm structs (models).
+* Database database models (structs) do belong into `internal/models`.
+* Do not put any code logic into database models.
 * All database operations (CRUD, eager loading) lives in `internal/dao` (Data Access Objects).
-* Gorm models must be not exposed directly into JSON API, use `internal/payloads` package to wrap them.
+* Database models must be not exposed directly into JSON API, use `internal/payloads` package to wrap them.
 * Business logic (the actual code) does belong into `internal/services` package, each API call should have a dedicated file.
 * HTTP routes go into `internal/routes` package.
 * HTTP middleware go into `internal/middleware` package.

@@ -12,14 +12,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx"
+	"github.com/rs/zerolog/log"
 	"sync"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
 	"github.com/jackc/pgx/v4/pgxpool"
-
-	logrus "github.com/sirupsen/logrus"
 
 	"github.com/RHEnVision/provisioning-backend/internal/jobqueue"
 )
@@ -172,13 +171,8 @@ func (d *dequeuers) notifyAll() {
 	}
 }
 
-// Create a new DBJobQueue object for `url`.
-func New(url string) (*DBJobQueue, error) {
-	pool, err := pgxpool.Connect(context.Background(), url)
-	if err != nil {
-		return nil, fmt.Errorf("error establishing connection: %v", err)
-	}
-
+// NewFromPool creates new queue from existing connection pool
+func NewFromPool(pool *pgxpool.Pool) (*DBJobQueue, error) {
 	listenContext, cancel := context.WithCancel(context.Background())
 	q := &DBJobQueue{
 		pool:         pool,
@@ -195,6 +189,15 @@ func New(url string) (*DBJobQueue, error) {
 	return q, nil
 }
 
+// New creates new queue from connection string
+func New(url string) (*DBJobQueue, error) {
+	pool, err := pgxpool.Connect(context.Background(), url)
+	if err != nil {
+		return nil, fmt.Errorf("error establishing connection: %v", err)
+	}
+	return NewFromPool(pool)
+}
+
 func (q *DBJobQueue) listen(ctx context.Context, ready chan<- struct{}) {
 	conn, err := q.pool.Acquire(ctx)
 	if err != nil {
@@ -203,7 +206,7 @@ func (q *DBJobQueue) listen(ctx context.Context, ready chan<- struct{}) {
 	defer func() {
 		_, err := conn.Exec(ctx, sqlUnlisten)
 		if err != nil && !errors.Is(err, context.DeadlineExceeded) {
-			logrus.Error("Error unlistening for jobs in dequeue: ", err)
+			log.Logger.Fatal().Err(err).Msg("Error unlistening for jobs in dequeue")
 		}
 		conn.Release()
 	}()
@@ -220,13 +223,13 @@ func (q *DBJobQueue) listen(ctx context.Context, ready chan<- struct{}) {
 		if err != nil {
 			// shutdown the listener if the context is canceled
 			if errors.Is(err, context.Canceled) {
-				logrus.Info("Shutting down the listener")
+				log.Logger.Debug().Msg("Shutting down the listener")
 				return
 			}
 
 			// otherwise, just log the error and continue, there might just
 			// be a temporary networking issue
-			logrus.Debugf("error waiting for notification on jobs channel: %v", err)
+			log.Logger.Fatal().Err(err).Msg("error waiting for notification on jobs channel")
 			continue
 		}
 
@@ -254,7 +257,7 @@ func (q *DBJobQueue) Enqueue(jobType string, args interface{}, dependencies []uu
 	defer func() {
 		err := tx.Rollback(context.Background())
 		if err != nil && !errors.As(err, &pgx.ErrTxClosed) {
-			logrus.Error("error rolling back enqueue transaction: ", err)
+			log.Logger.Fatal().Err(err).Msg("error rolling back enqueue transaction")
 		}
 	}()
 
@@ -281,7 +284,7 @@ func (q *DBJobQueue) Enqueue(jobType string, args interface{}, dependencies []uu
 		return uuid.Nil, fmt.Errorf("unable to commit database transaction: %v", err)
 	}
 
-	logrus.Infof("Enqueued job of type %s with ID %s(dependencies %v)", jobType, id, dependencies)
+	log.Logger.Info().Str("jobid", id.String()).Msgf("enqueued job %s id %s", jobType, id.String())
 
 	return id, nil
 }
@@ -336,7 +339,7 @@ func (q *DBJobQueue) Dequeue(ctx context.Context, jobTypes []string, channels []
 		return uuid.Nil, uuid.Nil, nil, "", nil, fmt.Errorf("error querying the job's dependencies: %v", err)
 	}
 
-	logrus.Infof("Dequeued job of type %v with ID %s", jobType, id)
+	log.Logger.Info().Str("jobid", id.String()).Msgf("dequeued job %s id %s", jobType, id.String())
 
 	return id, token, dependencies, jobType, args, nil
 }
@@ -390,7 +393,7 @@ func (q *DBJobQueue) DequeueByID(ctx context.Context, id uuid.UUID) (uuid.UUID, 
 		return uuid.Nil, nil, "", nil, fmt.Errorf("error querying the job's dependencies: %v", err)
 	}
 
-	logrus.Infof("Dequeued job of type %v with ID %s", jobType, id)
+	log.Logger.Info().Str("jobid", id.String()).Msgf("dequeued job %s id %s", jobType, id.String())
 
 	return token, dependencies, jobType, args, nil
 }
@@ -409,7 +412,7 @@ func (q *DBJobQueue) FinishJob(id uuid.UUID, result interface{}) error {
 	defer func() {
 		err = tx.Rollback(context.Background())
 		if err != nil && !errors.As(err, &pgx.ErrTxClosed) {
-			logrus.Errorf("error rolling back finish job transaction for job %s: %v", id, err)
+			log.Logger.Fatal().Err(err).Msgf("error rolling back finish job transaction for job %s", id.String())
 		}
 
 	}()
@@ -458,7 +461,7 @@ func (q *DBJobQueue) FinishJob(id uuid.UUID, result interface{}) error {
 		return fmt.Errorf("unable to commit database transaction: %v", err)
 	}
 
-	logrus.Infof("Finished job with ID %s", id)
+	log.Logger.Info().Str("jobid", id.String()).Msgf("finished job %s id %s", jobType, id.String())
 
 	return nil
 }
@@ -480,7 +483,7 @@ func (q *DBJobQueue) CancelJob(id uuid.UUID) error {
 		return fmt.Errorf("error canceling job %s: %v", id, err)
 	}
 
-	logrus.Infof("Cancelled job with ID %s", id)
+	log.Logger.Info().Str("jobid", id.String()).Msgf("cancelled job %s id %s", jobType, id.String())
 
 	return nil
 }
@@ -573,13 +576,13 @@ func (q *DBJobQueue) Heartbeats(olderThan time.Duration) (tokens []uuid.UUID) {
 		err = rows.Scan(&t)
 		if err != nil {
 			// Log the error and try to continue with the next row
-			logrus.Error("Unable to read token from heartbeats: ", err)
+			log.Logger.Fatal().Err(err).Msg("Unable to read token from heartbeats")
 			continue
 		}
 		tokens = append(tokens, t)
 	}
 	if rows.Err() != nil {
-		logrus.Error("Error reading tokens from heartbeats: ", rows.Err())
+		log.Logger.Fatal().Err(err).Msg("Error reading tokens from heartbeats")
 	}
 
 	return
@@ -595,10 +598,10 @@ func (q *DBJobQueue) RefreshHeartbeat(token uuid.UUID) {
 
 	tag, err := conn.Exec(context.Background(), sqlRefreshHeartbeat, token)
 	if err != nil {
-		logrus.Error("Error refreshing heartbeat: ", err)
+		log.Logger.Fatal().Err(err).Msg("Error refreshing heartbeat")
 	}
 	if tag.RowsAffected() != 1 {
-		logrus.Error("No rows affected when refreshing heartbeat for ", token)
+		log.Logger.Fatal().Str("jobtoken", token.String()).Err(err).Msgf("No rows affected when refreshing heartbeat for %s", token)
 	}
 }
 
@@ -673,7 +676,7 @@ func (q *DBJobQueue) DeleteJobIncludingDependencies(jobId uuid.UUID) error {
 	defer func() {
 		err := tx.Rollback(context.Background())
 		if err != nil && !errors.As(err, &pgx.ErrTxClosed) {
-			logrus.Error("error rolling back enqueue transaction: ", err)
+			log.Logger.Fatal().Err(err).Msg("error rolling back enqueue transaction")
 		}
 	}()
 
@@ -709,7 +712,7 @@ func (q *DBJobQueue) DeleteJobIncludingDependencies(jobId uuid.UUID) error {
 		return fmt.Errorf("unable to commit database transaction: %v", err)
 	}
 
-	logrus.Infof("Removed %d rows from dependencies for job %v", depTag.RowsAffected(), jobId)
-	logrus.Infof("Removed %d rows from jobs for job %v, this includes dependencies", jobsTag.RowsAffected(), jobId)
+	log.Logger.Info().Str("jobid", jobId.String()).Err(err).Msgf("Removed %d rows from dependencies for job %s", depTag.RowsAffected(), jobId.String())
+	log.Logger.Info().Str("jobid", jobId.String()).Err(err).Msgf("Removed %d rows from jobs for job %s, this includes dependencies", jobsTag.RowsAffected(), jobId.String())
 	return nil
 }

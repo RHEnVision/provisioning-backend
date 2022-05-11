@@ -41,7 +41,7 @@ func init() {
 	// count migration prefixes
 	checks := make([]int, len(dir)/2)
 	for _, de := range dir {
-		ix, err := strconv.Atoi(de.Name()[:5])
+		ix, err := strconv.Atoi(de.Name()[:3])
 		if err != nil {
 			log.Fatalf("Migration %s does not start with an integer?", de.Name())
 		}

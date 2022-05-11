@@ -11,6 +11,18 @@ import (
 )
 
 type GlobalConfig struct {
+	Database struct {
+		Host        string `emp:"HOST"`
+		Port        uint16 `emp:"PORT"`
+		Name        string `emp:"NAME"`
+		User        string `emp:"USER"`
+		Password    string `emp:"PASSWORD"`
+		MaxOpenConn int    `emp:"MAX_OPEN_CONN"`
+		MaxIdleConn int    `emp:"MAX_IDLE_CONN"`
+		MaxIdleTime int    `emp:"MAX_IDLETIME_SEC"`
+		MaxLifetime int    `emp:"MAX_LIFETIME_SEC"`
+		LogLevel    int    `emp:"LOG_LEVEL"`
+	} `emp:"prefix:DB_"`
 	Logging struct {
 		Level  int  `emp:"LEVEL"`
 		Stdout bool `emp:"STDOUT"`
@@ -43,6 +55,7 @@ func initializeConfig() {
 	loggingConfig = new(GlobalConfig)
 	parser, err := emp.NewParser(&emp.Config{
 		AllowEmpty: true,
+		ZeroFields: true,
 	})
 	if err != nil {
 		panic(err)
