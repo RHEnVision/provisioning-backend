@@ -19,6 +19,19 @@ make build
 
 Configuration is done via environmental variables, see [.env.default](/.env.default) file for list of options with documentation. Environmental variables override the `.env.default` file. When `.env` file is found, it overrides both `.env.default` as well as environment variables - this can be used for development purposes.
 
+## Development setup
+
+To run all the components from this repository, you will need:
+
+* Go compiler
+* PostgreSQL server with UUID module
+* GNU Makefile
+
+```
+dnf install postgresql-server postgresql-contrib
+make run
+```
+
 ## Code lint
 
 We run `go fmt`, `go vet` and `golangci-lint` lint suite via GitHub Actions. To run them locally do:
@@ -55,10 +68,10 @@ Here are few points before you start contributing:
 * All code go into the `internal/` package.
 * Binaries must not take any arguments.
 * All configuration is done via environment variables.
-* Gorm database models (structs) do belong into `internal/models`.
-* Do not put any code logic into Gorm structs (models).
+* Database database models (structs) do belong into `internal/models`.
+* Do not put any code logic into database models.
 * All database operations (CRUD, eager loading) lives in `internal/dao` (Data Access Objects).
-* Gorm models must be not exposed directly into JSON API, use `internal/payloads` package to wrap them.
+* Database models must be not exposed directly into JSON API, use `internal/payloads` package to wrap them.
 * Business logic (the actual code) does belong into `internal/services` package, each API call should have a dedicated file.
 * HTTP routes go into `internal/routes` package.
 * HTTP middleware go into `internal/middleware` package.

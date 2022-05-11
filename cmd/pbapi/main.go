@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/RHEnVision/provisioning-backend/internal/clouds/aws"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
@@ -20,7 +19,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func statusOk(w http.ResponseWriter, r *http.Request) {
+func statusOk(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 }
@@ -37,14 +36,13 @@ func main() {
 	}
 	defer clsFunc()
 	log.Logger = logger
-
-	// dump configuration
-	if config.GetLoggingConfig().PrintConfig {
-		config.DumpConfig(logger)
-	}
+	logging.DumpConfigForDevelopment()
 
 	// initialize the rest
-	db.Initialize()
+	err = db.Initialize()
+	if err != nil {
+		log.Fatal().Err(err)
+	}
 
 	// Routes for the main service
 	r := chi.NewRouter()
