@@ -36,6 +36,10 @@ lint:
 	go vet ./...
 	golangci-lint run
 
+.PHONY: migrate
+migrate: build-pbmigrate
+	pbmigrate
+
 .PHONY: generate-migration
 MIGRATION_NAME?=unnamed
 generate-migration:
