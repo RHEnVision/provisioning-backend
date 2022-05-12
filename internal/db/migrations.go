@@ -2,14 +2,17 @@ package db
 
 import (
 	"embed"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	stdlog "log"
 	"strconv"
+	"time"
 
 	migrate "github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/database/pgx"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 //go:embed migrations
@@ -26,7 +29,7 @@ func NewMigrationLogger(logger zerolog.Logger) *MigrationLogger {
 }
 
 func (log *MigrationLogger) Printf(format string, v ...interface{}) {
-	log.logger.Info().Msgf(format, v)
+	log.logger.Info().Msgf(format, v...)
 }
 
 // Verbose should return true when verbose logging output is wanted
@@ -38,17 +41,38 @@ func Migrate() {
 	mlog := log.Logger.With().Bool("migration", true).Logger()
 	d, err := iofs.New(fs, "migrations")
 	if err != nil {
-		mlog.Fatal().Err(err)
+		mlog.Fatal().Err(err).Msg("Error reading migrations")
 	}
-	// TODO: extract configuration
-	m, err := migrate.NewWithSourceInstance("iofs", d, "postgres://lzap@nuc/pb_dev?sslmode=disable")
+
+	m, err := migrate.NewWithSourceInstance("iofs", d, GetConnectionString("pgx"))
+	if err != nil {
+		mlog.Fatal().Err(err).Msg("Error connecting to database")
+	}
 	m.Log = NewMigrationLogger(mlog)
-	if err != nil {
-		mlog.Fatal().Err(err)
+
+	// Perform migration
+	if err := m.Up(); errors.Is(err, migrate.ErrNoChange) {
+		mlog.Info().Msg("No changes")
+	} else {
+		mlog.Fatal().Err(err).Msg("Error performing migrations")
 	}
-	err = m.Up()
+
+	// Print some additional info
+	rows, err := DB.Query("SELECT version, applied_at FROM schema_migrations_history")
 	if err != nil {
-		mlog.Fatal().Err(err)
+		mlog.Fatal().Err(err).Msg("Error querying schema history")
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var version int
+		var appliedAt time.Time
+		if err := rows.Scan(&version, &appliedAt); err != nil {
+			mlog.Fatal().Err(err).Msg("Error scanning schema history")
+		}
+		mlog.Info().Msgf("Version %d was applied %v", version, appliedAt)
+	}
+	if err := rows.Err(); err != nil {
+		mlog.Fatal().Err(err).Msg("Error iterating rows")
 	}
 }
 

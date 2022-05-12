@@ -3,11 +3,13 @@ package db
 import (
 	"fmt"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	pgx "github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/log/zerologadapter"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"net/url"
 )
 
 var (
@@ -15,17 +17,29 @@ var (
 	DB *sqlx.DB
 )
 
+func GetConnectionString(prefix string) string {
+	if len(config.GetLoggingConfig().Database.Password) > 0 {
+		return fmt.Sprintf("%s://%s:%s@%s:%d/%s",
+			prefix,
+			url.QueryEscape(config.GetLoggingConfig().Database.User),
+			url.QueryEscape(config.GetLoggingConfig().Database.Password),
+			config.GetLoggingConfig().Database.Host,
+			config.GetLoggingConfig().Database.Port,
+			config.GetLoggingConfig().Database.Name)
+	} else {
+		return fmt.Sprintf("%s://%s@%s:%d/%s",
+			prefix,
+			url.QueryEscape(config.GetLoggingConfig().Database.User),
+			config.GetLoggingConfig().Database.Host,
+			config.GetLoggingConfig().Database.Port,
+			config.GetLoggingConfig().Database.Name)
+	}
+
+}
 func Initialize() error {
 	var err error
 
-	connStr := fmt.Sprintf(
-		"postgres://%s:%s@%s:%d/%s",
-		config.GetLoggingConfig().Database.User,
-		config.GetLoggingConfig().Database.Password,
-		config.GetLoggingConfig().Database.Host,
-		config.GetLoggingConfig().Database.Port,
-		config.GetLoggingConfig().Database.Name)
-
+	connStr := GetConnectionString("postgres")
 	connConfig, err := pgx.ParseConfig(connStr)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse database configuration")
