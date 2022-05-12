@@ -32,7 +32,7 @@ func main() {
 	// initialize cloudwatch using the AWS clients
 	logger, clsFunc, err := logging.InitializeCloudwatch(log.Logger)
 	if err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Msg("Error initializing cloudwatch")
 	}
 	defer clsFunc()
 	log.Logger = logger
@@ -41,7 +41,7 @@ func main() {
 	// initialize the rest
 	err = db.Initialize()
 	if err != nil {
-		log.Fatal().Err(err)
+		log.Fatal().Err(err).Msg("Error initializing database")
 	}
 
 	// Routes for the main service
