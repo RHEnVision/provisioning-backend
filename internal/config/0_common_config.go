@@ -18,6 +18,10 @@ func init() {
 	viper.SetDefault("cloudwatch.enabled", false)
 	viper.SetDefault("prometheus.port", 9000)
 	viper.SetDefault("prometheus.path", "/metrics")
+	viper.SetDefault("worker.queue", "memory")
+	viper.SetDefault("worker.concurrency", 8)
+	viper.SetDefault("worker.heartbeatSec", 30)
+	viper.SetDefault("worker.maxBeats", 10)
 
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()

@@ -2,6 +2,8 @@ package sqlx
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -10,18 +12,20 @@ import (
 )
 
 const (
-	createPubkeyResource     = `INSERT INTO pubkey_resources (pubkey_id, provider, handle, tag) VALUES ($1, $2, $3, $4) RETURNING id, tag`
-	updatePubkeyResource     = `UPDATE pubkey_resources SET pubkey_id = $2, provider = $3, handle = $4 WHERE id = $1`
-	deletePubkeyResourceById = `DELETE FROM pubkey_resources WHERE id = $1`
-	listByPubkeyId           = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1`
+	createPubkeyResource            = `INSERT INTO pubkey_resources (pubkey_id, provider, handle, tag) VALUES ($1, $2, $3, $4) RETURNING id, tag`
+	updatePubkeyResource            = `UPDATE pubkey_resources SET pubkey_id = $2, provider = $3, handle = $4 WHERE id = $1`
+	deletePubkeyResourceById        = `DELETE FROM pubkey_resources WHERE id = $1`
+	listByPubkeyId                  = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1`
+	getPubkeyResourceByProviderType = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1 AND provider = $2`
 )
 
 type pubkeyResourceDaoSqlx struct {
-	name           string
-	create         *sqlx.Stmt
-	update         *sqlx.Stmt
-	deleteById     *sqlx.Stmt
-	listByPubkeyId *sqlx.Stmt
+	name              string
+	create            *sqlx.Stmt
+	update            *sqlx.Stmt
+	deleteById        *sqlx.Stmt
+	getByProviderType *sqlx.Stmt
+	listByPubkeyId    *sqlx.Stmt
 }
 
 func getPubkeyResourceDao(ctx context.Context) (dao.PubkeyResourceDao, error) {
@@ -29,6 +33,10 @@ func getPubkeyResourceDao(ctx context.Context) (dao.PubkeyResourceDao, error) {
 	daoImpl := pubkeyResourceDaoSqlx{}
 	daoImpl.name = "pubkeyResource"
 
+	daoImpl.getByProviderType, err = db.DB.PreparexContext(ctx, getPubkeyResourceByProviderType)
+	if err != nil {
+		return nil, NewPrepareStatementError(ctx, &daoImpl, getAccountById, err)
+	}
 	daoImpl.create, err = db.DB.PreparexContext(ctx, createPubkeyResource)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, createPubkeyResource, err)
@@ -55,6 +63,22 @@ func (di *pubkeyResourceDaoSqlx) NameForError() string {
 
 func init() {
 	dao.GetPubkeyResourceDao = getPubkeyResourceDao
+}
+
+func (di *pubkeyResourceDaoSqlx) GetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error) {
+	query := getPubkeyResourceByProviderType
+	stmt := di.getByProviderType
+	result := &models.PubkeyResource{}
+
+	err := stmt.GetContext(ctx, result, pubkeyId, provider)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, NewNoRowsError(ctx, di, query)
+		} else {
+			return nil, NewGetError(ctx, di, query, err)
+		}
+	}
+	return result, nil
 }
 
 func (di *pubkeyResourceDaoSqlx) Create(ctx context.Context, pkr *models.PubkeyResource) error {

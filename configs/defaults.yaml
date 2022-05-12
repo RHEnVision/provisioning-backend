@@ -50,3 +50,9 @@
 #   environment: development
 #   # When panic error is not rescued, exit the application instead of returning 500.
 #   exitOnPanic: false
+
+# worker:
+#   # how many goroutines to spawn per a worker process (typically hundreds)
+#   concurrency: 8
+#   # run workers as part of API backend (not for production)
+#   inprocess: false

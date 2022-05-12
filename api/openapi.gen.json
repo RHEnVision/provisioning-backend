@@ -50,10 +50,6 @@
       },
       "v1.Pubkey": {
         "properties": {
-          "account_id": {
-            "format": "int64",
-            "type": "integer"
-          },
           "body": {
             "type": "string"
           },

@@ -111,6 +111,20 @@ func NewInitializeDAOError(ctx context.Context, message string, err error) *Resp
 	}
 }
 
+func NewEnqueueTaskError(ctx context.Context, message string, err error) *ResponseError {
+	msg := fmt.Sprintf("error when enqueing task: %s: %v", message, err)
+	if logger := ctxval.GetLogger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
+		RequestId:      ctxval.GetRequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
 func NewDAOError(ctx context.Context, message string, err error) *ResponseError {
 	msg := fmt.Sprintf("DAO error: %s: %v", message, err)
 	if logger := ctxval.GetLogger(ctx); logger != nil {

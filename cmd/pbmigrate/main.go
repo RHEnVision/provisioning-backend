@@ -31,14 +31,14 @@ func main() {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
 
-	if len(os.Args[1:]) > 0 && os.Args[1] == "dbpurge" {
+	if len(os.Args[1:]) > 0 && os.Args[1] == "purgedb" {
+		logger.Warn().Msg("Database purge: all data is being dropped")
 		err = db.Seed("drop_all")
 		if err != nil {
 			logger.Fatal().Err(err).Msg("Error purging the database")
 			return
 		}
 		logger.Info().Msgf("Database %s has been purged to blank state", config.Database.Name)
-		return
 	}
 
 	err = db.Migrate()

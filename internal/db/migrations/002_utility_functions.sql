@@ -27,7 +27,7 @@ BEGIN
             FROM information_schema.tables
             WHERE table_schema = 'public'
               AND table_type = 'BASE TABLE'
-              AND table_name != 'schema_version'
+              AND table_name !~* '^(schema_version|jobs|job_dependencies|heartbeats)$'
     LOOP
       EXECUTE format(
         'SELECT setval(pg_get_serial_sequence(''"%s"'', ''id''), (SELECT COALESCE(MAX("id"), 1) from "%s"))', tn, tn);
