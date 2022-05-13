@@ -2,21 +2,28 @@ package db
 
 import (
 	"embed"
+	"fmt"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"io/ioutil"
 	stdlog "log"
 	"strconv"
+	"strings"
 	"time"
 
-	migrate "github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/pgx"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 //go:embed migrations
-var fs embed.FS
+var embeddedMigrations embed.FS
+
+//go:embed seeds
+var embeddedSeeds embed.FS
 
 // MigrationLogger implements
 // https://github.com/golang-migrate/migrate/blob/master/log.go
@@ -39,7 +46,7 @@ func (log *MigrationLogger) Verbose() bool {
 
 func Migrate() {
 	mlog := log.Logger.With().Bool("migration", true).Logger()
-	d, err := iofs.New(fs, "migrations")
+	d, err := iofs.New(embeddedMigrations, "migrations")
 	if err != nil {
 		mlog.Fatal().Err(err).Msg("Error reading migrations")
 	}
@@ -53,7 +60,7 @@ func Migrate() {
 	// Perform migration
 	if err := m.Up(); errors.Is(err, migrate.ErrNoChange) {
 		mlog.Info().Msg("No changes")
-	} else {
+	} else if err != nil {
 		mlog.Fatal().Err(err).Msg("Error performing migrations")
 	}
 
@@ -62,14 +69,36 @@ func Migrate() {
 	if err != nil {
 		mlog.Fatal().Err(err).Msg("Error querying schema history")
 	}
+	defer rows.Close()
 	for rows.Next() {
 		var version int
 		var appliedAt time.Time
-		err := rows.Scan(&version, &appliedAt)
-		if err != nil {
+
+		if err := rows.Scan(&version, &appliedAt); err != nil {
 			mlog.Fatal().Err(err).Msg("Error scanning schema history")
 		}
 		mlog.Info().Msgf("Version %d was applied %v", version, appliedAt)
+	}
+	if err := rows.Err(); err != nil {
+		mlog.Fatal().Err(err).Msg("Error scanning schema history")
+	}
+
+	// Execute seed script
+	if config.Database.SeedScript != "" {
+		file, err := embeddedSeeds.Open(fmt.Sprintf("seeds/%s.sql", config.Database.SeedScript))
+		if err != nil {
+			mlog.Fatal().Err(err).Msgf("Unable to open seed script %s", config.Database.SeedScript)
+		}
+		defer file.Close()
+		buffer, err := ioutil.ReadAll(file)
+		if err != nil {
+			mlog.Fatal().Err(err).Msgf("Unable to read seed script %s", config.Database.SeedScript)
+		}
+		_, err = DB.Exec(string(buffer))
+		if err != nil {
+			mlog.Fatal().Err(err).Msgf("Unable to execute script %s", config.Database.SeedScript)
+		}
+		mlog.Info().Msgf("Executed seed script %s", config.Database.SeedScript)
 	}
 }
 
@@ -78,16 +107,14 @@ func Migrate() {
 // is not yet available. Typically, this fails before it gets into production
 // (e.g. during local testing or on CI).
 func init() {
-	dir, err := fs.ReadDir("migrations")
+	dir, err := embeddedMigrations.ReadDir("migrations")
 	if err != nil {
 		stdlog.Fatal("Unable to open migrations embedded directory")
 	}
-	if len(dir)%2 != 0 {
-		stdlog.Fatal("Number of migration files must be even")
-	}
 	// count migration prefixes
-	checks := make([]int, len(dir)/2)
+	checks := make([]int, len(dir))
 	for _, de := range dir {
+		// check prefix number
 		ix, err := strconv.Atoi(de.Name()[:3])
 		if err != nil {
 			stdlog.Fatalf("Migration %s does not start with an integer?", de.Name())
@@ -96,11 +123,16 @@ func init() {
 			stdlog.Fatalf("Is there a gap in migration numbers? Number %d is way too high", ix)
 		}
 		checks[ix-1]++
+
+		// check suffix
+		if !strings.HasSuffix(de.Name(), "up.sql") {
+			stdlog.Fatalf("Migration %s does not end with up.sql, down migrations are not accepted", de.Name())
+		}
 	}
 	// check expected result
 	for i, x := range checks {
-		if x != 2 {
-			stdlog.Fatalf("There are not exactly two migration files with index %05d, found: %d", i+1, x)
+		if x != 1 {
+			stdlog.Fatalf("Migration with index %03d was not found exactly once, but %d times", i+1, x)
 		}
 	}
 }

@@ -11,8 +11,18 @@ linters:
     - sql
     - module
     - unused
+  disable:
+    - maligned # deprecated by fieldalignment
+    - scopelint # deprecated by exportloopref
 issues:
   exclude-rules:
+    # If a Stmt is prepared on a DB, it will remain usable for the lifetime of the DB. When the Stmt needs to execute
+    # on a new underlying connection, it will prepare itself on the new connection automatically.
+    - path: 'internal/dao/sqlx/(.+)\.go'
+      linters:
+        - sqlclosecheck
+
+    # easier to write test code
     - path: '(.+)_test\.go'
       linters:
         - forcetypeassert

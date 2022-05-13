@@ -17,6 +17,7 @@ var config struct {
 		Name        string
 		User        string
 		Password    string
+		SeedScript  string
 		MaxIdleTime time.Duration
 		MaxLifetime time.Duration
 		MaxOpenConn int
