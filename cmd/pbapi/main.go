@@ -1,6 +1,9 @@
 package main
 
 import (
+	// Performs initialization of DAO implementation, must be initialized before any database packages.
+	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
+
 	"context"
 	"errors"
 	"fmt"
