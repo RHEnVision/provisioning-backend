@@ -9,8 +9,8 @@ jobs:
     name: go fmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
           go-version: "1.16"
       - uses: Jerome1337/gofmt-action@v1.0.4
@@ -19,8 +19,8 @@ jobs:
     name: go vet
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
           go-version: "1.16"
       - run: |
@@ -30,14 +30,14 @@ jobs:
     name: golangci-lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
         with:
           go-version: "1.16"
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
-          version: latest
+          version: v1.45.2
           only-new-issues: true
           skip-go-installation: true
 
