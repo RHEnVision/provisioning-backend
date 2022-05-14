@@ -41,7 +41,7 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 					Int("bytes_out", ww.BytesWritten()).
 					Logger()
 
-				if !config.GetLoggingConfig().ExitOnPanic {
+				if !config.Features.ExitOnPanic {
 					if rec := recover(); rec != nil {
 						log.Error().
 							Bool("panic", true).
