@@ -18,21 +18,21 @@ var (
 )
 
 func GetConnectionString(prefix string) string {
-	if len(config.GetLoggingConfig().Database.Password) > 0 {
+	if len(config.Database.Password) > 0 {
 		return fmt.Sprintf("%s://%s:%s@%s:%d/%s",
 			prefix,
-			url.QueryEscape(config.GetLoggingConfig().Database.User),
-			url.QueryEscape(config.GetLoggingConfig().Database.Password),
-			config.GetLoggingConfig().Database.Host,
-			config.GetLoggingConfig().Database.Port,
-			config.GetLoggingConfig().Database.Name)
+			url.QueryEscape(config.Database.User),
+			url.QueryEscape(config.Database.Password),
+			config.Database.Host,
+			config.Database.Port,
+			config.Database.Name)
 	} else {
 		return fmt.Sprintf("%s://%s@%s:%d/%s",
 			prefix,
-			url.QueryEscape(config.GetLoggingConfig().Database.User),
-			config.GetLoggingConfig().Database.Host,
-			config.GetLoggingConfig().Database.Port,
-			config.GetLoggingConfig().Database.Name)
+			url.QueryEscape(config.Database.User),
+			config.Database.Host,
+			config.Database.Port,
+			config.Database.Name)
 	}
 
 }
@@ -45,17 +45,17 @@ func Initialize() error {
 		return errors.Wrap(err, "unable to parse database configuration")
 	}
 	connConfig.Logger = zerologadapter.NewLogger(log.Logger)
-	connConfig.LogLevel = pgx.LogLevel(config.GetLoggingConfig().Database.LogLevel)
+	connConfig.LogLevel = pgx.LogLevel(config.Database.LogLevel)
 
 	DB, err = sqlx.Open("pgx", connStr)
 	if err != nil {
 		return errors.Wrap(err, "unable to connect to database")
 	}
 
-	DB.SetMaxIdleConns(config.GetLoggingConfig().Database.MaxIdleConn)
-	DB.SetMaxOpenConns(config.GetLoggingConfig().Database.MaxOpenConn)
-	DB.SetConnMaxLifetime(config.GetLoggingConfig().Database.MaxLifetime)
-	DB.SetConnMaxIdleTime(config.GetLoggingConfig().Database.MaxIdleTime)
+	DB.SetMaxIdleConns(config.Database.MaxIdleConn)
+	DB.SetMaxOpenConns(config.Database.MaxOpenConn)
+	DB.SetConnMaxLifetime(config.Database.MaxLifetime)
+	DB.SetConnMaxIdleTime(config.Database.MaxIdleTime)
 	err = DB.Ping()
 	if err != nil {
 		return errors.Wrap(err, "unable to ping the database")

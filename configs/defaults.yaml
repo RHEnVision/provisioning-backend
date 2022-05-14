@@ -1,0 +1,33 @@
+# Example configuration, copy file as "local.yaml" and edit as needed.
+
+# PostgreSQL
+# database:
+#   host: localhost
+#   port: 5432
+#   name:
+#   user:
+#   password:
+#   max_open_conn: 25
+#   max_idle_conn: 20
+#   max_lifetime: 5m
+#   max_idletime: 10m
+#   # 1-none, 2-error, 3-warn, 4-info, 5-debug, 6-trace
+#   loglevel: 1
+
+# logging:
+#   # Overall log level (-1 trace, 0 debug, 1 info ... 5 panic)
+#   level: 1
+#   # Write logs to standard output in human-readable form
+#   stdout: false
+
+# AWS CloudWatch logger
+# cloudwatch:
+#   enabled: false
+#   group: group
+#   stream: stream
+
+# feature_flags:
+#   # development or production
+#   environment: development
+#   # When panic error is not rescued, exit the application instead of returning 500.
+#   exit_on_panic: false
