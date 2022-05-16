@@ -43,4 +43,4 @@ migrate: build-pbmigrate
 .PHONY: generate-migration
 MIGRATION_NAME?=unnamed
 generate-migration:
-	migrate create -ext sql -dir api/migrations -seq -digits 3 $(MIGRATION_NAME)
+	migrate create -ext sql -dir internal/db/migrations -seq -digits 3 $(MIGRATION_NAME)
