@@ -29,7 +29,7 @@ func NewMigrationLogger(logger zerolog.Logger) *MigrationLogger {
 }
 
 func (log *MigrationLogger) Printf(format string, v ...interface{}) {
-	log.logger.Info().Msgf(format, v)
+	log.logger.Info().Msgf(format, v...)
 }
 
 // Verbose should return true when verbose logging output is wanted
