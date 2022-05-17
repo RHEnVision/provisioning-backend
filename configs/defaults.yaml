@@ -7,10 +7,10 @@
 #   name:
 #   user:
 #   password:
-#   max_open_conn: 25
-#   max_idle_conn: 20
-#   max_lifetime: 5m
-#   max_idletime: 10m
+#   maxOpenConn: 25
+#   maxIdleConn: 20
+#   maxLifetime: 5m
+#   maxIdletime: 10m
 #   # 1-none, 2-error, 3-warn, 4-info, 5-debug, 6-trace
 #   loglevel: 1
 
@@ -26,8 +26,8 @@
 #   group: group
 #   stream: stream
 
-# feature_flags:
+# featureFlags:
 #   # development or production
 #   environment: development
 #   # When panic error is not rescued, exit the application instead of returning 500.
-#   exit_on_panic: false
+#   exitOnPanic: false

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/RHEnVision/provisioning-backend/internal/clouds/aws"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/rs/zerolog/log"
@@ -28,5 +29,10 @@ func main() {
 
 	log.Info().Msg("Migrating database")
 	db.Migrate()
-	log.Info().Msg("Migration complete")
+	log.Info().Msgf("Migration complete")
+	if config.Database.SeedScript != "" {
+		log.Info().Msgf("Seeding '%s'", config.Database.SeedScript)
+		db.Seed(config.Database.SeedScript)
+		log.Info().Msg("Seed complete")
+	}
 }

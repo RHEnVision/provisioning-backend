@@ -44,6 +44,9 @@ func (log *MigrationLogger) Verbose() bool {
 	return true
 }
 
+// Migrate executes embedded SQL scripts from internal/db/migrations. For the time being
+// only "up" migrations are supported. When this package is initialized, the directory
+// is verified that it only contains XXX_*.up.sql files (XXX = numbers).
 func Migrate() {
 	mlog := log.Logger.With().Bool("migration", true).Logger()
 	d, err := iofs.New(embeddedMigrations, "migrations")
@@ -82,24 +85,31 @@ func Migrate() {
 	if err := rows.Err(); err != nil {
 		mlog.Fatal().Err(err).Msg("Error scanning schema history")
 	}
+}
 
-	// Execute seed script
-	if config.Database.SeedScript != "" {
-		file, err := embeddedSeeds.Open(fmt.Sprintf("seeds/%s.sql", config.Database.SeedScript))
-		if err != nil {
-			mlog.Fatal().Err(err).Msgf("Unable to open seed script %s", config.Database.SeedScript)
-		}
-		defer file.Close()
-		buffer, err := ioutil.ReadAll(file)
-		if err != nil {
-			mlog.Fatal().Err(err).Msgf("Unable to read seed script %s", config.Database.SeedScript)
-		}
-		_, err = DB.Exec(string(buffer))
-		if err != nil {
-			mlog.Fatal().Err(err).Msgf("Unable to execute script %s", config.Database.SeedScript)
-		}
-		mlog.Info().Msgf("Executed seed script %s", config.Database.SeedScript)
+// Seed executes embedded SQL scripts from internal/db/seeds
+func Seed(seedScript string) {
+	mlog := log.Logger.With().Bool("migration", true).Logger()
+
+	// Prevent from accidental execution of drop_all seed in production
+	if seedScript == "drop_all" && config.Features.Environment != "development" {
+		mlog.Fatal().Msgf("An attempt to run drop_all seed script in non %s environment", config.Features.Environment)
+		return
 	}
+	file, err := embeddedSeeds.Open(fmt.Sprintf("seeds/%s.sql", seedScript))
+	if err != nil {
+		mlog.Fatal().Err(err).Msgf("Unable to open seed script %s", seedScript)
+	}
+	defer file.Close()
+	buffer, err := ioutil.ReadAll(file)
+	if err != nil {
+		mlog.Fatal().Err(err).Msgf("Unable to read seed script %s", seedScript)
+	}
+	_, err = DB.Exec(string(buffer))
+	if err != nil {
+		mlog.Fatal().Err(err).Msgf("Unable to execute script %s", seedScript)
+	}
+	mlog.Info().Msgf("Executed seed script %s", seedScript)
 }
 
 // Checks that migration files are in proper format and index has no gaps or

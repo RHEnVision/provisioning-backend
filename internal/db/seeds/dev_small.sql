@@ -12,4 +12,9 @@ VALUES
     (NULL, '000077')
 ON CONFLICT DO NOTHING;
 
+INSERT INTO pubkeys(account_id, name, body)
+VALUES
+  ((SELECT id FROM accounts WHERE account_number = '13'), 'lzap-ed25519-2021', 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap')
+ON CONFLICT DO NOTHING;
+
 COMMIT;
