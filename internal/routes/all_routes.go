@@ -12,4 +12,13 @@ func SetupRoutes(r *chi.Mux) {
 			r.Get("/", s.GetAccount)
 		})
 	})
+
+	r.Route("/pubkeys", func(r chi.Router) {
+		r.Post("/", s.CreatePubkey)
+		r.Get("/", s.ListPubkeys)
+		r.Route("/{ID}", func(r chi.Router) {
+			r.Get("/", s.GetPubkey)
+			r.Delete("/", s.DeletePubkey)
+		})
+	})
 }

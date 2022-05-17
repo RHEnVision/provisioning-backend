@@ -94,17 +94,21 @@ func init() {
 	}
 }
 
+var validateMissingSecretError = errors.New("config error: Cloudwatch enabled but Region and Key and Secret are not provided")
+var validateGroupStreamError = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
+var validateInvalidEnvironmentError = errors.New("config error: Environment must be production or development")
+
 func Validate() error {
 	if envMatch, _ := regexp.MatchString(`^(production|development)$`, Features.Environment); !envMatch {
-		return errors.New(fmt.Sprintf("config error: Environment '%s' must be production or development", Features.Environment))
+		return fmt.Errorf("%w: %s", validateInvalidEnvironmentError, Features.Environment)
 	}
 
 	if Cloudwatch.Enabled {
 		if Cloudwatch.Region == "" || Cloudwatch.Key == "" || Cloudwatch.Secret == "" {
-			return errors.New("config error: Cloudwatch enabled but Region and Key and Secret are not provided")
+			return validateMissingSecretError
 		}
 		if Cloudwatch.Group == "" || Cloudwatch.Stream == "" {
-			return errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
+			return validateGroupStreamError
 		}
 	}
 
