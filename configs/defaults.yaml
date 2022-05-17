@@ -23,6 +23,10 @@
 # AWS CloudWatch logger
 # cloudwatch:
 #   enabled: false
+#   region: us-east-1
+#   key:
+#   secret:
+#   session:
 #   group: group
 #   stream: stream
 
