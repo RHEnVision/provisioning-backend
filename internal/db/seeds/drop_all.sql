@@ -6,9 +6,8 @@ BEGIN;
 
 DROP TABLE IF EXISTS
   accounts,
+  pubkeys,
   schema_migrations_history,
   schema_migrations CASCADE;
-
-DROP FUNCTION IF EXISTS empty(t text);
 
 COMMIT;

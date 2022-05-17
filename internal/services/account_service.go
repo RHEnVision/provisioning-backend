@@ -21,7 +21,7 @@ func ListAccounts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.RenderList(w, r, payloads.NewAccountListResponse(accounts)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "render list accounts", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "list accounts", err))
 		return
 	}
 }
@@ -46,6 +46,6 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.Render(w, r, payloads.NewAccountResponse(account)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "render account", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "account", err))
 	}
 }

@@ -40,42 +40,70 @@ func (e *ResponseError) Unwrap() error {
 	return e.Err
 }
 
-func NewInitializeDAOError(ctx context.Context, msg string, err error) *ResponseError {
-	format := "DAO initialization error: %s: %v"
+func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
+	msg := fmt.Sprintf("invalid request: %v", err)
 	if logger := ctxval.GetLogger(ctx); logger != nil {
-		logger.Error().Msgf(format, msg, err)
+		logger.Error().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
-		Message:        fmt.Sprintf(format, msg, err),
+		Message:        msg,
 		RequestId:      ctxval.GetRequestId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
 }
 
-func NewDAOError(ctx context.Context, msg string, err error) *ResponseError {
-	format := "DAO error: %s: %v"
+func NewNotFoundError(ctx context.Context, err error) *ResponseError {
+	msg := fmt.Sprintf("not found: %v", err)
 	if logger := ctxval.GetLogger(ctx); logger != nil {
-		logger.Error().Msgf(format, msg, err)
+		logger.Warn().Msg(msg)
 	}
 	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        fmt.Sprintf(format, msg, err),
+		HTTPStatusCode: 404,
+		Message:        msg,
 		RequestId:      ctxval.GetRequestId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
 }
 
-func NewRenderError(ctx context.Context, msg string, err error) *ResponseError {
-	format := "render error: %s: %v"
+func NewInitializeDAOError(ctx context.Context, message string, err error) *ResponseError {
+	msg := fmt.Sprintf("DAO initialization error: %s: %v", message, err)
 	if logger := ctxval.GetLogger(ctx); logger != nil {
-		logger.Error().Msgf(format, msg, err)
+		logger.Error().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
-		Message:        fmt.Sprintf(format, msg, err),
+		Message:        msg,
+		RequestId:      ctxval.GetRequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
+func NewDAOError(ctx context.Context, message string, err error) *ResponseError {
+	msg := fmt.Sprintf("DAO error: %s: %v", message, err)
+	if logger := ctxval.GetLogger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
+		RequestId:      ctxval.GetRequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
+func NewRenderError(ctx context.Context, message string, err error) *ResponseError {
+	msg := fmt.Sprintf("render error: %s: %v", message, err)
+	if logger := ctxval.GetLogger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
 		RequestId:      ctxval.GetRequestId(ctx),
 		Err:            err,
 		Context:        ctx,
@@ -83,13 +111,13 @@ func NewRenderError(ctx context.Context, msg string, err error) *ResponseError {
 }
 
 func NewURLParsingError(ctx context.Context, paramName string, err error) *ResponseError {
-	format := "URL parsing error for param '%s': %v"
+	msg := fmt.Sprintf("URL parsing error for param '%s': %v", paramName, err)
 	if logger := ctxval.GetLogger(ctx); logger != nil {
-		logger.Error().Msgf(format, paramName, err)
+		logger.Error().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 400,
-		Message:        fmt.Sprintf(format, paramName, err),
+		Message:        msg,
 		RequestId:      ctxval.GetRequestId(ctx),
 		Err:            err,
 		Context:        ctx,
