@@ -1,12 +1,19 @@
 package routes
 
 import (
+	"net/http"
+
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
 )
 
 func SetupRoutes(r *chi.Mux) {
 	r.Get("/ping", s.StatusService)
+	r.Mount("/api/provisioning", apiRouter())
+}
+
+func apiRouter() http.Handler {
+	r := chi.NewRouter()
 	r.Route("/accounts", func(r chi.Router) {
 		r.Get("/", s.ListAccounts)
 		r.Route("/{ID}", func(r chi.Router) {
@@ -22,4 +29,6 @@ func SetupRoutes(r *chi.Mux) {
 			r.Delete("/", s.DeletePubkey)
 		})
 	})
+
+	return r
 }
