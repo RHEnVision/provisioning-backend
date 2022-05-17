@@ -13,3 +13,12 @@ type AccountDao interface {
 	GetByOrgId(ctx context.Context, orgId string) (*models.Account, error)
 	List(ctx context.Context, limit, offset uint64) ([]*models.Account, error)
 }
+
+var GetPubkeyDao func(ctx context.Context) (PubkeyDao, error)
+
+type PubkeyDao interface {
+	Create(ctx context.Context, account *models.Pubkey) (*models.Pubkey, error)
+	GetById(ctx context.Context, id uint64) (*models.Pubkey, error)
+	List(ctx context.Context, limit, offset uint64) ([]*models.Pubkey, error)
+	Delete(ctx context.Context, id uint64) error
+}

@@ -80,7 +80,7 @@ func Migrate() {
 		if err := rows.Scan(&version, &appliedAt); err != nil {
 			mlog.Fatal().Err(err).Msg("Error scanning schema history")
 		}
-		mlog.Info().Msgf("Version %d was applied %v", version, appliedAt)
+		mlog.Info().Msgf("Version %d was applied %v", version, appliedAt.UTC())
 	}
 	if err := rows.Err(); err != nil {
 		mlog.Fatal().Err(err).Msg("Error scanning schema history")
