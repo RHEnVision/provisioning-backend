@@ -96,12 +96,12 @@ func IsProduction() bool {
 // recommended to call this function in production environments.
 func DumpConfig(logger zerolog.Logger) {
 	if IsProduction() {
-		logger.Warn().Msg("dumping configuration in production mode")
+		logger.Warn().Msg("Dumping configuration in production mode!")
 	}
 	configCopy := config
 	configCopy.Database.Password = "*****"
 	// configCopy.AWS.Key = "*****"
 	// configCopy.AWS.Secret = "*****"
 	// configCopy.AWS.Session = "*****"
-	logger.Info().Msgf("%+v", configCopy)
+	logger.Info().Msgf("Configuration: %+v", configCopy)
 }
