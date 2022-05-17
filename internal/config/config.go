@@ -1,8 +1,10 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"github.com/rs/zerolog"
+	"regexp"
 	"strings"
 	"time"
 
@@ -30,6 +32,10 @@ var config struct {
 	}
 	Cloudwatch struct {
 		Enabled bool
+		Region  string
+		Key     string
+		Secret  string
+		Session string
 		Group   string
 		Stream  string
 	}
@@ -82,6 +88,27 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	if err = Validate(); err != nil {
+		panic(err)
+	}
+}
+
+func Validate() error {
+	if envMatch, _ := regexp.MatchString(`^(production|development)$`, Features.Environment); !envMatch {
+		return errors.New(fmt.Sprintf("config error: Environment '%s' must be production or development", Features.Environment))
+	}
+
+	if Cloudwatch.Enabled {
+		if Cloudwatch.Region == "" || Cloudwatch.Key == "" || Cloudwatch.Secret == "" {
+			return errors.New("config error: Cloudwatch enabled but Region and Key and Secret are not provided")
+		}
+		if Cloudwatch.Group == "" || Cloudwatch.Stream == "" {
+			return errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
+		}
+	}
+
+	return nil
 }
 
 func IsDevelopment() bool {
@@ -100,8 +127,8 @@ func DumpConfig(logger zerolog.Logger) {
 	}
 	configCopy := config
 	configCopy.Database.Password = "*****"
-	// configCopy.AWS.Key = "*****"
-	// configCopy.AWS.Secret = "*****"
-	// configCopy.AWS.Session = "*****"
+	configCopy.Cloudwatch.Key = "*****"
+	configCopy.Cloudwatch.Secret = "*****"
+	configCopy.Cloudwatch.Session = "*****"
 	logger.Info().Msgf("Configuration: %+v", configCopy)
 }
