@@ -1,32 +1,42 @@
 ---
 apiVersion: v1
 kind: Template
+labels:
+  app: provisioning
+  template: provisioning
 metadata:
-  name: provisioning-backend
+  name: provisioning
+  annotations:
+    description: API backend for provisioning in console.redhat.com
+
 objects:
   - apiVersion: cloud.redhat.com/v1alpha1
     kind: ClowdApp
     metadata:
-      name: provisioning-backend
+      name: provisioning
+      labels:
+        service: provisioning
     spec:
       envName: ${ENV_NAME}
       deployments:
         - name: service
           minReplicas: ${{MIN_REPLICAS}}
-          web: true
+          webServices:
+            public:
+              enabled: true
+              apiPath: provisioning
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             initContainers:
               - name: run-migrations
+                image: "${IMAGE}:${IMAGE_TAG}"
                 command:
-                  - bash
-                  - -c
-                  - pbmigrate
+                  - /pbmigrate
                 inheritEnv: true
             livenessProbe:
               failureThreshold: 3
               httpGet:
-                path: /
+                path: /ping
                 port: 8000
                 scheme: HTTP
               initialDelaySeconds: 35
@@ -36,7 +46,7 @@ objects:
             readinessProbe:
               failureThreshold: 3
               httpGet:
-                path: /
+                path: /ping
                 port: 8000
                 scheme: HTTP
               initialDelaySeconds: 35
@@ -55,12 +65,16 @@ objects:
                 cpu: ${{CPU_LIMIT}}
                 memory: ${MEMORY_LIMIT}
               requests:
-                cpu: 500m
-                memory: 512Mi
+                cpu: ${CPU_REQUESTS}
+                memory: ${MEMORY_REQUESTS}
       database:
         name: provisioning-backend
+        version: 13
 
 parameters:
+  - description: ClowdEnv Name
+    name: ENV_NAME
+    required: true
   - description: Cpu limit of service
     name: CPU_LIMIT
     value: "1"
@@ -74,13 +88,10 @@ parameters:
     required: true
   - description: Image name
     name: IMAGE
-    value: quay.io/repository/lzapletal/pbtest1
+    value: quay.io/envision/provisioning-backend
   - description: Determines Clowder deployment
     name: CLOWDER_ENABLED
     value: "true"
-  - description: ClowdEnv Name
-    name: ENV_NAME
-    requred: false
   - description: Determines if Cloud Watch logging is enabled
     name: ENABLE_CLOUDWATCH_LOGGING
     value: "false"

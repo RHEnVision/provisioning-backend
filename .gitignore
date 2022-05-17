@@ -7,3 +7,5 @@ TAGS
 /pbmigrate
 /vendor/
 /configs/local.yaml
+/deploy/bonfire.yaml
+/Containerfile
