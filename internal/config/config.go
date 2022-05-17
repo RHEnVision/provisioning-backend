@@ -3,10 +3,11 @@ package config
 import (
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog"
 
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/spf13/viper"
@@ -39,6 +40,9 @@ var config struct {
 		Group   string
 		Stream  string
 	}
+	Prometheus struct {
+		Port int
+	}
 	FeatureFlags struct {
 		Environment string
 		ExitOnPanic bool
@@ -46,6 +50,7 @@ var config struct {
 }
 
 var Database = &config.Database
+var Prometheus = &config.Prometheus
 var Logging = &config.Logging
 var Cloudwatch = &config.Cloudwatch
 var Features = &config.FeatureFlags
@@ -58,6 +63,7 @@ func init() {
 	viper.SetDefault("database.port", 5432)
 	viper.SetDefault("database.loglevel", 1)
 	viper.SetDefault("cloudwatch.enabled", false)
+	viper.SetDefault("prometheus.port", 9000)
 
 	if clowder.IsClowderEnabled() {
 		cfg := clowder.LoadedConfig
@@ -67,6 +73,7 @@ func init() {
 		viper.Set("database.user", cfg.Database.Username)
 		viper.Set("database.password", cfg.Database.Password)
 		viper.Set("database.name", cfg.Database.Name)
+		viper.Set("prometheus.port", cfg.MetricsPort)
 	} else {
 		viper.AddConfigPath("./configs")
 		viper.SetConfigName("defaults")

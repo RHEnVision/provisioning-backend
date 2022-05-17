@@ -15,7 +15,9 @@ strip: build
 
 .PHONY: build-podman
 build-podman:
-	podman build .
+	# remote podman build has problem with -f option, so we link the file as workaround
+	ln -f build/Dockerfile Containerfile
+	podman build -t provisioning-backend .
 
 .PHONY: prep
 prep:
