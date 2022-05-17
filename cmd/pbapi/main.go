@@ -7,15 +7,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clouds/aws"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
 	"github.com/RHEnVision/provisioning-backend/internal/routes"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"net/http"
-	"os"
-	"os/signal"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -64,14 +66,14 @@ func main() {
 	mr.Get("/", statusOk)
 	mr.Handle("/metrics", promhttp.Handler())
 
-	log.Info().Msg("Starting new instance on 8000/8080")
+	log.Info().Int("webPort", 8000).Int("metricsPort", config.Prometheus.Port).Msg("Starting new instance")
 	srv := http.Server{
 		Addr:    fmt.Sprintf(":%d", 8000),
 		Handler: r,
 	}
 
 	msrv := http.Server{
-		Addr:    fmt.Sprintf(":%d", 8080),
+		Addr:    fmt.Sprintf(":%d", config.Prometheus.Port),
 		Handler: mr,
 	}
 
