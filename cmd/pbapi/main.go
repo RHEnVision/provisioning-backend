@@ -11,13 +11,16 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clouds/aws"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/aws"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
 	"github.com/RHEnVision/provisioning-backend/internal/routes"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"net/http"
+	"os"
+	"os/signal"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
