@@ -1,15 +1,21 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
 )
 
 func SetupRoutes(r *chi.Mux) {
 	r.Get("/ping", s.StatusService)
-	r.Mount("/api/provisioning", apiRouter())
+	r.Mount(pathPrefix(), apiRouter())
+}
+
+func pathPrefix() string {
+	return fmt.Sprintf("/api/%s", config.Application.Name)
 }
 
 func apiRouter() http.Handler {

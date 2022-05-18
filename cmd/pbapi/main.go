@@ -63,11 +63,11 @@ func main() {
 	// Routes for metrics
 	mr := chi.NewRouter()
 	mr.Get("/", statusOk)
-	mr.Handle("/metrics", promhttp.Handler())
+	mr.Handle(config.Prometheus.Path, promhttp.Handler())
 
-	log.Info().Msgf("Starting new instance on port 8000 with prometheus on %d", config.Prometheus.Port)
+	log.Info().Msgf("Starting new instance on port %d with prometheus on %d", config.Application.Port, config.Prometheus.Port)
 	srv := http.Server{
-		Addr:    fmt.Sprintf(":%d", 8000),
+		Addr:    fmt.Sprintf(":%d", config.Application.Port),
 		Handler: r,
 	}
 

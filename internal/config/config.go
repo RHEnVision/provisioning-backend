@@ -14,6 +14,10 @@ import (
 )
 
 var config struct {
+	App struct {
+		Name string
+		Port int
+	}
 	Database struct {
 		Host        string
 		Port        uint16
@@ -48,6 +52,7 @@ var config struct {
 	}
 	Prometheus struct {
 		Port int
+		Path string
 	}
 	FeatureFlags struct {
 		Environment string
@@ -55,6 +60,7 @@ var config struct {
 	}
 }
 
+var Application = &config.App
 var Database = &config.Database
 var Prometheus = &config.Prometheus
 var Logging = &config.Logging
@@ -65,12 +71,15 @@ var Features = &config.FeatureFlags
 func init() {
 	var err error
 
+	viper.SetDefault("app.name", "provisioning")
+	viper.SetDefault("app.port", 8000)
 	viper.SetDefault("logging.level", 1)
 	viper.SetDefault("database.host", "localhost")
 	viper.SetDefault("database.port", 5432)
 	viper.SetDefault("database.loglevel", 1)
 	viper.SetDefault("cloudwatch.enabled", false)
 	viper.SetDefault("prometheus.port", 9000)
+	viper.SetDefault("prometheus.path", "/metrics")
 
 	if clowder.IsClowderEnabled() {
 		cfg := clowder.LoadedConfig
@@ -82,6 +91,7 @@ func init() {
 		viper.Set("database.password", cfg.Database.Password)
 		viper.Set("database.name", cfg.Database.Name)
 		viper.Set("prometheus.port", cfg.MetricsPort)
+		viper.Set("prometheus.path", cfg.MetricsPath)
 	} else {
 		viper.AddConfigPath("./configs")
 		viper.SetConfigName("defaults")
