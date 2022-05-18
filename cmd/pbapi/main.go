@@ -7,7 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/RHEnVision/provisioning-backend/internal/clouds/aws"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/aws"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
