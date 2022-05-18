@@ -1,6 +1,6 @@
 package models
 
-// Pubkey represents a SSH public key that can be deployed to clouds.
+// Pubkey represents a SSH public key that can be deployed to clients.
 type Pubkey struct {
 	// Required auto-generated PK.
 	ID uint64 `db:"id" json:"id"`

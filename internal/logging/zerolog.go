@@ -2,7 +2,7 @@ package logging
 
 import (
 	"fmt"
-	"github.com/RHEnVision/provisioning-backend/internal/clouds/aws"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/aws"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"os"
 	"time"
