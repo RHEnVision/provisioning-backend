@@ -29,12 +29,23 @@ prep:
 run:
 	go run ./cmd/pbapi
 
+.PHONY: generate-clients
+generate-clients:
+	generate-ib-client
+
+.PHONY: generate-ib-client
+generate-ib-client:
+	cd internal/clients/image_builder
+	wget https://raw.githubusercontent.com/osbuild/image-builder/main/internal/v1/api.yaml
+	oapi-codegen -config ./configs/ib_config.yaml ./configs/ib_api.yaml
+	
 .PHONY: install-tools
 install-tools:
 	go install golang.org/x/tools/cmd/goimports@latest
 	# pin for a bug: https://github.com/golangci/golangci-lint/issues/2851
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2
 	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 
 .PHONY: fmt
 fmt:

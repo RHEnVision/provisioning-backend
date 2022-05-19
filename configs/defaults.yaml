@@ -27,6 +27,10 @@
 #   secret:
 #   session:
 
+# Image Builder configuration
+# imageBuilder:
+#   url: 
+
 # AWS CloudWatch logger
 # cloudwatch:
 #   enabled: false

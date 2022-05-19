@@ -1,0 +1,8 @@
+--- 
+generate:
+  - client
+  - types
+package: image_builder
+output: ./internal/clients/image_builder/client.gen.go
+output-options:
+  skip-prune: true
