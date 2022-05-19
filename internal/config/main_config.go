@@ -55,6 +55,9 @@ var config struct {
 		Environment string
 		ExitOnPanic bool
 	}
+	ImageBuilder struct {
+		URL string
+	}
 }
 
 var Application = &config.App
@@ -64,6 +67,7 @@ var Logging = &config.Logging
 var Cloudwatch = &config.Cloudwatch
 var AWS = &config.AWS
 var Features = &config.FeatureFlags
+var ImageBuilderURL = &config.ImageBuilder.URL
 
 func Initialize() {
 	err := viper.Unmarshal(&config)
