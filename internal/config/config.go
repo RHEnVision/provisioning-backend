@@ -3,11 +3,10 @@ package config
 import (
 	"errors"
 	"fmt"
+	"github.com/rs/zerolog"
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/rs/zerolog"
 
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/spf13/viper"
@@ -40,6 +39,12 @@ var config struct {
 		Group   string
 		Stream  string
 	}
+	AWS struct {
+		Region  string
+		Key     string
+		Secret  string
+		Session string
+	}
 	Prometheus struct {
 		Port int
 	}
@@ -53,6 +58,7 @@ var Database = &config.Database
 var Prometheus = &config.Prometheus
 var Logging = &config.Logging
 var Cloudwatch = &config.Cloudwatch
+var AWS = &config.AWS
 var Features = &config.FeatureFlags
 
 func init() {

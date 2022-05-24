@@ -2,7 +2,7 @@ package logging
 
 import (
 	"fmt"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/aws"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"os"
 	"time"
@@ -34,7 +34,7 @@ func InitializeStdout() zerolog.Logger {
 func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error) {
 	if config.Cloudwatch.Enabled {
 		log.Debug().Msg("Initializing cloudwatch logger")
-		cloudWatchWriter, err := cww.NewWithClient(aws.CWL, 500*time.Millisecond, config.Cloudwatch.Group, config.Cloudwatch.Stream)
+		cloudWatchWriter, err := cww.NewWithClient(cloudwatchlogs.CWL, 500*time.Millisecond, config.Cloudwatch.Group, config.Cloudwatch.Stream)
 		if err != nil {
 			return logger, nil, fmt.Errorf("cannot initialize cloudwatch: %w", err)
 		}

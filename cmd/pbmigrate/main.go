@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/RHEnVision/provisioning-backend/internal/clients/aws"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
@@ -11,7 +11,7 @@ import (
 func main() {
 	// initialize stdout logging and AWS clients first
 	log.Logger = logging.InitializeStdout()
-	aws.Initialize()
+	cloudwatchlogs.Initialize()
 
 	// initialize cloudwatch using the AWS clients
 	logger, clsFunc, err := logging.InitializeCloudwatch(log.Logger)

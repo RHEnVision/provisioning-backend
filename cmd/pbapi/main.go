@@ -11,19 +11,15 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/aws"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
 	"github.com/RHEnVision/provisioning-backend/internal/routes"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"net/http"
-	"os"
-	"os/signal"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
 )
 
@@ -35,7 +31,7 @@ func statusOk(w http.ResponseWriter, _ *http.Request) {
 func main() {
 	// initialize stdout logging and AWS clients first
 	log.Logger = logging.InitializeStdout()
-	aws.Initialize()
+	cloudwatchlogs.Initialize()
 
 	// initialize cloudwatch using the AWS clients
 	logger, clsFunc, err := logging.InitializeCloudwatch(log.Logger)
@@ -69,7 +65,7 @@ func main() {
 	mr.Get("/", statusOk)
 	mr.Handle("/metrics", promhttp.Handler())
 
-	log.Info().Int("webPort", 8000).Int("metricsPort", config.Prometheus.Port).Msg("Starting new instance")
+	log.Info().Msgf("Starting new instance on port 8000 with prometheus on %d", config.Prometheus.Port)
 	srv := http.Server{
 		Addr:    fmt.Sprintf(":%d", 8000),
 		Handler: r,

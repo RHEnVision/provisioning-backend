@@ -3,7 +3,6 @@ package sqlx
 import (
 	"context"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
-	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/jmoiron/sqlx"
 )
@@ -23,24 +22,24 @@ type accountDaoSqlx struct {
 	list               *sqlx.Stmt
 }
 
-func getAccountDao(ctx context.Context) (dao.AccountDao, error) {
+func getAccountDao(ctx context.Context, tx dao.Transaction) (dao.AccountDao, error) {
 	var err error
 	daoImpl := accountDaoSqlx{}
 	daoImpl.name = "account"
 
-	daoImpl.getById, err = db.DB.PreparexContext(ctx, getAccountById)
+	daoImpl.getById, err = tx.PreparexContext(ctx, getAccountById)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, getAccountById, err)
 	}
-	daoImpl.getByAccountNumber, err = db.DB.PreparexContext(ctx, getAccountByAccountNumber)
+	daoImpl.getByAccountNumber, err = tx.PreparexContext(ctx, getAccountByAccountNumber)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, listAccounts, err)
 	}
-	daoImpl.getByOrgId, err = db.DB.PreparexContext(ctx, getAccountByOrgId)
+	daoImpl.getByOrgId, err = tx.PreparexContext(ctx, getAccountByOrgId)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, listAccounts, err)
 	}
-	daoImpl.list, err = db.DB.PreparexContext(ctx, listAccounts)
+	daoImpl.list, err = tx.PreparexContext(ctx, listAccounts)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, listAccounts, err)
 	}

@@ -1,10 +1,14 @@
 package services
 
 import (
+	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/db"
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"net/http"
 )
 
@@ -15,25 +19,67 @@ func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pubkeyDao, err := dao.GetPubkeyDao(r.Context())
+	// TODO: extract this into job queue
+	err := dao.WithTransaction(r.Context(), db.DB, func(tx dao.Transaction) error {
+		pkDao, err := dao.GetPubkeyDao(r.Context(), tx)
+		if err != nil {
+			return payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err)
+		}
+
+		err = pkDao.Create(r.Context(), payload.Pubkey)
+		if err != nil {
+			return payloads.NewDAOError(r.Context(), "create pubkey", err)
+		}
+
+		pkrDao, err := dao.GetPubkeyResourceDao(r.Context(), tx)
+		if err != nil {
+			return payloads.NewInitializeDAOError(r.Context(), "pubkey resource DAO", err)
+		}
+		pkr := models.PubkeyResource{
+			PubkeyID: payload.Pubkey.ID,
+			Provider: models.ProviderTypeAWS,
+		}
+		err = pkrDao.Create(r.Context(), &pkr)
+		if err != nil {
+			return payloads.NewDAOError(r.Context(), "create pubkey resource", err)
+		}
+
+		client := ec2.NewEC2Client(r.Context())
+		pkr.Handle, err = client.ImportPubkey(payload.Pubkey, pkr.FormattedTag())
+		if err != nil {
+			return payloads.NewAWSError(r.Context(), "import pubkey", err)
+		}
+		log.Trace().Msgf("Pubkey imported as '%s' with tag '%s'", pkr.Handle, pkr.FormattedTag())
+
+		err = pkrDao.Update(r.Context(), &pkr)
+		if err != nil {
+			var e *dao.MismatchAffectedError
+			if errors.As(err, &e) {
+				return payloads.NewNotFoundError(r.Context(), err)
+			} else {
+				return payloads.NewDAOError(r.Context(), "update pubkey resource", err)
+			}
+		}
+
+		return nil
+	})
 	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
+		var e *payloads.ResponseError
+		if errors.As(err, &e) {
+			renderError(w, r, e)
+		} else {
+			renderError(w, r, payloads.NewUnknownError(r.Context(), err))
+		}
 		return
 	}
 
-	pubkey, err := pubkeyDao.Create(r.Context(), payload.Pubkey)
-	if err != nil {
-		renderError(w, r, payloads.NewDAOError(r.Context(), "create pubkey", err))
-		return
-	}
-
-	if err := render.Render(w, r, payloads.NewPubkeyResponse(pubkey)); err != nil {
+	if err := render.Render(w, r, payloads.NewPubkeyResponse(payload.Pubkey)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "pubkey", err))
 	}
 }
 
 func ListPubkeys(w http.ResponseWriter, r *http.Request) {
-	pubkeyDao, err := dao.GetPubkeyDao(r.Context())
+	pubkeyDao, err := dao.GetPubkeyDao(r.Context(), db.DB)
 	if err != nil {
 		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
 		return
@@ -58,7 +104,7 @@ func GetPubkey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pubkeyDao, err := dao.GetPubkeyDao(r.Context())
+	pubkeyDao, err := dao.GetPubkeyDao(r.Context(), db.DB)
 	if err != nil {
 		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
 		return
@@ -87,7 +133,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pubkeyDao, err := dao.GetPubkeyDao(r.Context())
+	pubkeyDao, err := dao.GetPubkeyDao(r.Context(), db.DB)
 	if err != nil {
 		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
 		return
