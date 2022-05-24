@@ -18,6 +18,8 @@ objects:
         service: provisioning
     spec:
       envName: ${ENV_NAME}
+      testing: 
+        iqePlugin: hms-provisioning
       deployments:
         - name: service
           minReplicas: ${{MIN_REPLICAS}}
