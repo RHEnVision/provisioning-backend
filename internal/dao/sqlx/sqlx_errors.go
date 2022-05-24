@@ -58,6 +58,11 @@ func NewSelectError(context context.Context, daoName NamedForError, sql string, 
 	return newError(context, msg, err)
 }
 
+func NewExecUpdateError(context context.Context, daoName NamedForError, sql string, err error) *dao.Error {
+	msg := fmt.Sprintf("sqlx %s exec update error: %s: %v", daoName.NameForError(), sql, err)
+	return newError(context, msg, err)
+}
+
 func NewExecDeleteError(context context.Context, daoName NamedForError, sql string, err error) *dao.Error {
 	msg := fmt.Sprintf("sqlx %s exec delete error: %s: %v", daoName.NameForError(), sql, err)
 	return newError(context, msg, err)
@@ -65,6 +70,11 @@ func NewExecDeleteError(context context.Context, daoName NamedForError, sql stri
 
 func NewDeleteMismatchAffectedError(context context.Context, daoName NamedForError, expected, was int64) *dao.MismatchAffectedError {
 	msg := fmt.Sprintf("sqlx %s delete expected: %d rows, was: %d rows", daoName.NameForError(), expected, was)
+	return newMismatchAffectedError(context, msg)
+}
+
+func NewUpdateMismatchAffectedError(context context.Context, daoName NamedForError, expected, was int64) *dao.MismatchAffectedError {
+	msg := fmt.Sprintf("sqlx %s update expected: %d rows, was: %d rows", daoName.NameForError(), expected, was)
 	return newMismatchAffectedError(context, msg)
 }
 

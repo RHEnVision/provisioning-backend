@@ -123,3 +123,31 @@ func NewURLParsingError(ctx context.Context, paramName string, err error) *Respo
 		Context:        ctx,
 	}
 }
+
+func NewAWSError(ctx context.Context, message string, err error) *ResponseError {
+	msg := fmt.Sprintf("AWS error: %s: %v", message, err)
+	if logger := ctxval.GetLogger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
+		RequestId:      ctxval.GetRequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
+func NewUnknownError(ctx context.Context, err error) *ResponseError {
+	msg := fmt.Sprintf("unknown error: %v", err)
+	if logger := ctxval.GetLogger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
+		RequestId:      ctxval.GetRequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
