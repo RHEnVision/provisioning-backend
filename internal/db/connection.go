@@ -5,6 +5,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/log/zerologadapter"
+	"github.com/jackc/pgx/v4/stdlib"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
@@ -39,15 +40,19 @@ func GetConnectionString(prefix string) string {
 func Initialize() error {
 	var err error
 
+	// register and setup logging configuration
 	connStr := GetConnectionString("postgres")
 	connConfig, err := pgx.ParseConfig(connStr)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse database configuration")
 	}
-	connConfig.Logger = zerologadapter.NewLogger(log.Logger)
-	connConfig.LogLevel = pgx.LogLevel(config.Database.LogLevel)
+	if config.Database.LogLevel > 0 {
+		connConfig.Logger = zerologadapter.NewLogger(log.Logger)
+		connConfig.LogLevel = pgx.LogLevel(config.Database.LogLevel)
+	}
+	connStrRegistered := stdlib.RegisterConnConfig(connConfig)
 
-	DB, err = sqlx.Open("pgx", connStr)
+	DB, err = sqlx.Open("pgx", connStrRegistered)
 	if err != nil {
 		return errors.Wrap(err, "unable to connect to database")
 	}
