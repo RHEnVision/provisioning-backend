@@ -21,4 +21,5 @@ require (
 	github.com/rs/xid v1.4.0
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/viper v1.7.0
+	github.com/stretchr/testify v1.7.1
 )

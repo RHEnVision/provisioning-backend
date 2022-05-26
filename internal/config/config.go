@@ -113,7 +113,7 @@ var validateGroupStreamError = errors.New("config error: Cloudwatch enabled but 
 var validateInvalidEnvironmentError = errors.New("config error: Environment must be production or development")
 
 func Validate() error {
-	if envMatch, _ := regexp.MatchString(`^(production|development)$`, Features.Environment); !envMatch {
+	if envMatch, _ := regexp.MatchString(`^(production|development|test)$`, Features.Environment); !envMatch {
 		return fmt.Errorf("%w: %s", validateInvalidEnvironmentError, Features.Environment)
 	}
 
