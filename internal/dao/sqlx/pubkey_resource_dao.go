@@ -4,12 +4,13 @@ import (
 	"context"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/jmoiron/sqlx"
 )
 
 const (
-	createPubkeyResource     = `INSERT INTO pubkey_resources (pubkey_id, provider, handle) VALUES ($1, $2, $3) RETURNING id, tag`
+	createPubkeyResource     = `INSERT INTO pubkey_resources (pubkey_id, provider, handle, tag) VALUES ($1, $2, $3, $4) RETURNING id, tag`
 	updatePubkeyResource     = `UPDATE pubkey_resources SET pubkey_id = $2, provider = $3, handle = $4 WHERE id = $1`
 	deletePubkeyResourceById = `DELETE FROM pubkey_resources WHERE id = $1`
 )
@@ -21,20 +22,20 @@ type pubkeyResourceDaoSqlx struct {
 	deleteById *sqlx.Stmt
 }
 
-func getPubkeyResourceDao(ctx context.Context, tx dao.Transaction) (dao.PubkeyResourceDao, error) {
+func getPubkeyResourceDao(ctx context.Context) (dao.PubkeyResourceDao, error) {
 	var err error
 	daoImpl := pubkeyResourceDaoSqlx{}
 	daoImpl.name = "pubkeyResource"
 
-	daoImpl.create, err = tx.PreparexContext(ctx, createPubkeyResource)
+	daoImpl.create, err = db.DB.PreparexContext(ctx, createPubkeyResource)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, createPubkeyResource, err)
 	}
-	daoImpl.update, err = tx.PreparexContext(ctx, updatePubkeyResource)
+	daoImpl.update, err = db.DB.PreparexContext(ctx, updatePubkeyResource)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, updatePubkeyResource, err)
 	}
-	daoImpl.deleteById, err = tx.PreparexContext(ctx, deletePubkeyResourceById)
+	daoImpl.deleteById, err = db.DB.PreparexContext(ctx, deletePubkeyResourceById)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, deletePubkeyResourceById, err)
 	}
@@ -42,49 +43,49 @@ func getPubkeyResourceDao(ctx context.Context, tx dao.Transaction) (dao.PubkeyRe
 	return &daoImpl, nil
 }
 
-func (dao *pubkeyResourceDaoSqlx) NameForError() string {
-	return dao.name
+func (di *pubkeyResourceDaoSqlx) NameForError() string {
+	return di.name
 }
 
 func init() {
 	dao.GetPubkeyResourceDao = getPubkeyResourceDao
 }
 
-func (dao *pubkeyResourceDaoSqlx) Create(ctx context.Context, pkr *models.PubkeyResource) error {
+func (di *pubkeyResourceDaoSqlx) Create(ctx context.Context, pkr *models.PubkeyResource) error {
 	query := createPubkeyResource
-	stmt := dao.create
+	stmt := di.create
 
-	err := stmt.GetContext(ctx, pkr, pkr.PubkeyID, pkr.Provider, pkr.Handle)
+	err := stmt.GetContext(ctx, pkr, pkr.PubkeyID, pkr.Provider, pkr.Handle, pkr.Tag)
 	if err != nil {
-		return NewGetError(ctx, dao, query, err)
+		return NewGetError(ctx, di, query, err)
 	}
 	return nil
 }
 
-func (dao *pubkeyResourceDaoSqlx) Update(ctx context.Context, pkr *models.PubkeyResource) error {
+func (di *pubkeyResourceDaoSqlx) Update(ctx context.Context, pkr *models.PubkeyResource) error {
 	query := updatePubkeyResource
-	stmt := dao.update
+	stmt := di.update
 
 	res, err := stmt.ExecContext(ctx, pkr.ID, pkr.PubkeyID, pkr.Provider, pkr.Handle)
 	if err != nil {
-		return NewExecUpdateError(ctx, dao, query, err)
+		return NewExecUpdateError(ctx, di, query, err)
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
-		return NewUpdateMismatchAffectedError(ctx, dao, 1, rows)
+		return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
 	}
 	return nil
 }
 
-func (dao *pubkeyResourceDaoSqlx) Delete(ctx context.Context, id uint64) error {
+func (di *pubkeyResourceDaoSqlx) Delete(ctx context.Context, id uint64) error {
 	query := deletePubkeyResourceById
-	stmt := dao.deleteById
+	stmt := di.deleteById
 
 	res, err := stmt.ExecContext(ctx, id)
 	if err != nil {
-		return NewExecDeleteError(ctx, dao, query, err)
+		return NewExecDeleteError(ctx, di, query, err)
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
-		return NewDeleteMismatchAffectedError(ctx, dao, 1, rows)
+		return NewDeleteMismatchAffectedError(ctx, di, 1, rows)
 
 	}
 	return nil

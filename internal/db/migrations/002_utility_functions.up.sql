@@ -18,15 +18,6 @@ BEGIN
 END;
 $valid_provider$ LANGUAGE 'plpgsql';
 
--- Random alpha-num tag string, not guaranteed to be unique
-CREATE OR REPLACE FUNCTION random_string(i INTEGER)
-  RETURNS TEXT AS
-$random_string$
-BEGIN
-  RETURN translate(encode(gen_random_bytes(i), 'base64'), '+/', 'xX');
-END;
-$random_string$ LANGUAGE 'plpgsql';
-
 -- Reset all sequences to the maximum value, works on empty tables too
 CREATE OR REPLACE FUNCTION reset_sequences()
   RETURNS void AS
@@ -51,7 +42,9 @@ CREATE OR REPLACE FUNCTION prevent_tag_update()
   RETURNS trigger AS
 $prevent_tag_update$
 BEGIN
-  NEW.tag := OLD.tag;
+  IF OLD.tag != '' AND OLD.tag != NEW.TAG THEN
+    RAISE EXCEPTION 'tag is read-only';
+  END IF;
   RETURN NEW;
 END;
 $prevent_tag_update$ LANGUAGE 'plpgsql';

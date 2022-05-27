@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/jmoiron/sqlx"
 )
@@ -23,24 +24,24 @@ type accountDaoSqlx struct {
 	list               *sqlx.Stmt
 }
 
-func getAccountDao(ctx context.Context, tx dao.Transaction) (dao.AccountDao, error) {
+func getAccountDao(ctx context.Context) (dao.AccountDao, error) {
 	var err error
 	daoImpl := accountDaoSqlx{}
 	daoImpl.name = "account"
 
-	daoImpl.getById, err = tx.PreparexContext(ctx, getAccountById)
+	daoImpl.getById, err = db.DB.PreparexContext(ctx, getAccountById)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, getAccountById, err)
 	}
-	daoImpl.getByAccountNumber, err = tx.PreparexContext(ctx, getAccountByAccountNumber)
+	daoImpl.getByAccountNumber, err = db.DB.PreparexContext(ctx, getAccountByAccountNumber)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, listAccounts, err)
 	}
-	daoImpl.getByOrgId, err = tx.PreparexContext(ctx, getAccountByOrgId)
+	daoImpl.getByOrgId, err = db.DB.PreparexContext(ctx, getAccountByOrgId)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, listAccounts, err)
 	}
-	daoImpl.list, err = tx.PreparexContext(ctx, listAccounts)
+	daoImpl.list, err = db.DB.PreparexContext(ctx, listAccounts)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, listAccounts, err)
 	}
@@ -48,58 +49,58 @@ func getAccountDao(ctx context.Context, tx dao.Transaction) (dao.AccountDao, err
 	return &daoImpl, nil
 }
 
-func (dao *accountDaoSqlx) NameForError() string {
-	return dao.name
+func (di *accountDaoSqlx) NameForError() string {
+	return di.name
 }
 
 func init() {
 	dao.GetAccountDao = getAccountDao
 }
 
-func (dao *accountDaoSqlx) GetById(ctx context.Context, id uint64) (*models.Account, error) {
+func (di *accountDaoSqlx) GetById(ctx context.Context, id uint64) (*models.Account, error) {
 	query := getAccountById
-	stmt := dao.getById
+	stmt := di.getById
 	result := &models.Account{}
 
 	err := stmt.GetContext(ctx, result, id)
 	if err != nil {
-		return nil, NewGetError(ctx, dao, query, err)
+		return nil, NewGetError(ctx, di, query, err)
 	}
 	return result, nil
 }
 
-func (dao *accountDaoSqlx) GetByAccountNumber(ctx context.Context, number string) (*models.Account, error) {
+func (di *accountDaoSqlx) GetByAccountNumber(ctx context.Context, number string) (*models.Account, error) {
 	query := getAccountByAccountNumber
-	stmt := dao.getByAccountNumber
+	stmt := di.getByAccountNumber
 	result := &models.Account{}
 
 	err := stmt.GetContext(ctx, result, number)
 	if err != nil {
-		return nil, NewGetError(ctx, dao, query, err)
+		return nil, NewGetError(ctx, di, query, err)
 	}
 	return result, nil
 }
 
-func (dao *accountDaoSqlx) GetByOrgId(ctx context.Context, orgId string) (*models.Account, error) {
+func (di *accountDaoSqlx) GetByOrgId(ctx context.Context, orgId string) (*models.Account, error) {
 	query := getAccountByOrgId
-	stmt := dao.getByOrgId
+	stmt := di.getByOrgId
 	result := &models.Account{}
 
 	err := stmt.GetContext(ctx, result, orgId)
 	if err != nil {
-		return nil, NewGetError(ctx, dao, query, err)
+		return nil, NewGetError(ctx, di, query, err)
 	}
 	return result, nil
 }
 
-func (dao *accountDaoSqlx) List(ctx context.Context, limit, offset uint64) ([]*models.Account, error) {
+func (di *accountDaoSqlx) List(ctx context.Context, limit, offset uint64) ([]*models.Account, error) {
 	query := listAccounts
-	stmt := dao.list
+	stmt := di.list
 	var result []*models.Account
 
 	err := stmt.SelectContext(ctx, &result, limit, offset)
 	if err != nil {
-		return nil, NewSelectError(ctx, dao, query, err)
+		return nil, NewSelectError(ctx, di, query, err)
 	}
 	return result, nil
 }

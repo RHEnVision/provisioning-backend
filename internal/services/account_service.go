@@ -4,13 +4,12 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
-	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
 )
 
 func ListAccounts(w http.ResponseWriter, r *http.Request) {
-	accountDao, err := dao.GetAccountDao(r.Context(), db.DB)
+	accountDao, err := dao.GetAccountDao(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "account DAO", err))
 		return
@@ -35,7 +34,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accountDao, err := dao.GetAccountDao(r.Context(), db.DB)
+	accountDao, err := dao.GetAccountDao(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "account DAO", err))
 		return
