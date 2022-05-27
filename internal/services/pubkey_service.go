@@ -1,6 +1,8 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -9,7 +11,6 @@ import (
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"net/http"
 )
 
 func CreatePubkey(w http.ResponseWriter, r *http.Request) {

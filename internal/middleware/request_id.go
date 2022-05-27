@@ -2,8 +2,9 @@ package middleware
 
 import (
 	"context"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"net/http"
+
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 
 	"github.com/rs/xid"
 )

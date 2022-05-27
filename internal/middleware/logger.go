@@ -3,12 +3,13 @@ package middleware
 import (
 	"context"
 	"fmt"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"net/http"
 	"runtime/debug"
 	"strconv"
 	"time"
+
+	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/rs/zerolog"

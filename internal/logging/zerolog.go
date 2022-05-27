@@ -2,10 +2,11 @@ package logging
 
 import (
 	"fmt"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"os"
 	"time"
+
+	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 
 	cww "github.com/lzap/cloudwatchwriter2"
 	"github.com/rs/zerolog"

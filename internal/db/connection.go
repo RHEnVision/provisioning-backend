@@ -2,6 +2,8 @@ package db
 
 import (
 	"fmt"
+	"net/url"
+
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/log/zerologadapter"
@@ -9,7 +11,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"net/url"
 )
 
 var (

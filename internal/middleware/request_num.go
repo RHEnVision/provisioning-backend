@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"context"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"net/http"
 	"sync/atomic"
+
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 )
 
 var reqNum uint64

@@ -3,6 +3,7 @@ package ec2
 import (
 	"context"
 	"fmt"
+
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
