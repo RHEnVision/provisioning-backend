@@ -75,6 +75,7 @@ func init() {
 	if clowder.IsClowderEnabled() {
 		cfg := clowder.LoadedConfig
 
+		viper.Set("featureFlags.environment", "production")
 		viper.Set("database.host", cfg.Database.Hostname)
 		viper.Set("database.port", cfg.Database.Port)
 		viper.Set("database.user", cfg.Database.Username)
