@@ -49,6 +49,11 @@ func NewPrepareStatementError(context context.Context, daoName NamedForError, sq
 	return newError(context, msg, err)
 }
 
+func NewTransactionError(context context.Context, err error) *dao.Error {
+	msg := fmt.Sprintf("transaction: %v", err)
+	return newError(context, msg, err)
+}
+
 func NewGetError(context context.Context, daoName NamedForError, sql string, err error) *dao.Error {
 	msg := fmt.Sprintf("sqlx %s get error: %s: %v", daoName.NameForError(), sql, err)
 	return newError(context, msg, err)

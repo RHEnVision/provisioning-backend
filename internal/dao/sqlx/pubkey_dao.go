@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/jmoiron/sqlx"
 )
@@ -27,28 +28,28 @@ type pubkeyDaoSqlx struct {
 	list       *sqlx.Stmt
 }
 
-func getPubkeyDao(ctx context.Context, tx dao.Transaction) (dao.PubkeyDao, error) {
+func getPubkeyDao(ctx context.Context) (dao.PubkeyDao, error) {
 	var err error
 	daoImpl := pubkeyDaoSqlx{}
 	daoImpl.name = "pubkey"
 
-	daoImpl.create, err = tx.PreparexContext(ctx, createPubkey)
+	daoImpl.create, err = db.DB.PreparexContext(ctx, createPubkey)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, createPubkey, err)
 	}
-	daoImpl.update, err = tx.PreparexContext(ctx, updatePubkey)
+	daoImpl.update, err = db.DB.PreparexContext(ctx, updatePubkey)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, updatePubkey, err)
 	}
-	daoImpl.getById, err = tx.PreparexContext(ctx, getPubkeyById)
+	daoImpl.getById, err = db.DB.PreparexContext(ctx, getPubkeyById)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, getAccountById, err)
 	}
-	daoImpl.list, err = tx.PreparexContext(ctx, listPubkeys)
+	daoImpl.list, err = db.DB.PreparexContext(ctx, listPubkeys)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, listPubkeys, err)
 	}
-	daoImpl.deleteById, err = tx.PreparexContext(ctx, deletePubkeyById)
+	daoImpl.deleteById, err = db.DB.PreparexContext(ctx, deletePubkeyById)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, deletePubkeyById, err)
 	}
@@ -56,77 +57,97 @@ func getPubkeyDao(ctx context.Context, tx dao.Transaction) (dao.PubkeyDao, error
 	return &daoImpl, nil
 }
 
-func (dao *pubkeyDaoSqlx) NameForError() string {
-	return dao.name
+func (di *pubkeyDaoSqlx) NameForError() string {
+	return di.name
 }
 
 func init() {
 	dao.GetPubkeyDao = getPubkeyDao
 }
 
-func (dao *pubkeyDaoSqlx) Create(ctx context.Context, pubkey *models.Pubkey) error {
+func (di *pubkeyDaoSqlx) Create(ctx context.Context, pubkey *models.Pubkey) error {
 	query := createPubkey
-	stmt := dao.create
+	stmt := di.create
 
 	err := stmt.GetContext(ctx, pubkey, pubkey.AccountID, pubkey.Name, pubkey.Body)
 	if err != nil {
-		return NewGetError(ctx, dao, query, err)
+		return NewGetError(ctx, di, query, err)
 	}
 	return nil
 }
 
-func (dao *pubkeyDaoSqlx) GetById(ctx context.Context, id uint64) (*models.Pubkey, error) {
+// TODO: This is just an example of transactions, will be deleted later
+func (di *pubkeyDaoSqlx) CreateWithResource(ctx context.Context, pk *models.Pubkey, pkr *models.PubkeyResource) error {
+	err := dao.WithTransaction(ctx, func(tx *sqlx.Tx) error {
+		err := tx.GetContext(ctx, pk, createPubkey, pk.AccountID, pk.Name, pk.Body)
+		if err != nil {
+			return NewGetError(ctx, di, createPubkey, err)
+		}
+		pkr.PubkeyID = pk.ID
+		err = tx.GetContext(ctx, pkr, createPubkeyResource, pkr.PubkeyID, pkr.Provider, pkr.Handle, pkr.Tag)
+		if err != nil {
+			return NewGetError(ctx, di, createPubkeyResource, err)
+		}
+		return nil
+	})
+	if err != nil {
+		return NewTransactionError(ctx, err)
+	}
+	return nil
+}
+
+func (di *pubkeyDaoSqlx) GetById(ctx context.Context, id uint64) (*models.Pubkey, error) {
 	query := getPubkeyById
-	stmt := dao.getById
+	stmt := di.getById
 	result := &models.Pubkey{}
 
 	err := stmt.GetContext(ctx, result, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, NewNoRowsError(ctx, dao, query)
+			return nil, NewNoRowsError(ctx, di, query)
 		} else {
-			return nil, NewGetError(ctx, dao, query, err)
+			return nil, NewGetError(ctx, di, query, err)
 		}
 	}
 	return result, nil
 }
 
-func (dao *pubkeyDaoSqlx) Update(ctx context.Context, pubkey *models.Pubkey) error {
+func (di *pubkeyDaoSqlx) Update(ctx context.Context, pubkey *models.Pubkey) error {
 	query := createPubkey
-	stmt := dao.create
+	stmt := di.create
 
 	res, err := stmt.ExecContext(ctx, pubkey.ID, pubkey.AccountID, pubkey.Name, pubkey.Body)
 	if err != nil {
-		return NewExecUpdateError(ctx, dao, query, err)
+		return NewExecUpdateError(ctx, di, query, err)
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
-		return NewUpdateMismatchAffectedError(ctx, dao, 1, rows)
+		return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
 	}
 	return nil
 }
 
-func (dao *pubkeyDaoSqlx) List(ctx context.Context, limit, offset uint64) ([]*models.Pubkey, error) {
+func (di *pubkeyDaoSqlx) List(ctx context.Context, limit, offset uint64) ([]*models.Pubkey, error) {
 	query := listPubkeys
-	stmt := dao.list
+	stmt := di.list
 	var result []*models.Pubkey
 
 	err := stmt.SelectContext(ctx, &result, limit, offset)
 	if err != nil {
-		return nil, NewSelectError(ctx, dao, query, err)
+		return nil, NewSelectError(ctx, di, query, err)
 	}
 	return result, nil
 }
 
-func (dao *pubkeyDaoSqlx) Delete(ctx context.Context, id uint64) error {
+func (di *pubkeyDaoSqlx) Delete(ctx context.Context, id uint64) error {
 	query := deletePubkeyById
-	stmt := dao.deleteById
+	stmt := di.deleteById
 
 	res, err := stmt.ExecContext(ctx, id)
 	if err != nil {
-		return NewExecDeleteError(ctx, dao, query, err)
+		return NewExecDeleteError(ctx, di, query, err)
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
-		return NewDeleteMismatchAffectedError(ctx, dao, 1, rows)
+		return NewDeleteMismatchAffectedError(ctx, di, 1, rows)
 
 	}
 	return nil

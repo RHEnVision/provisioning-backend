@@ -1,6 +1,8 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // PubkeyResource represents uploaded SSH key-pair resource.
 type PubkeyResource struct {
@@ -24,4 +26,12 @@ type PubkeyResource struct {
 // it does not start with a number, only includes alpha-num characters and dash.
 func (p *PubkeyResource) FormattedTag() string {
 	return fmt.Sprintf("pk-%d-%s", p.ID, p.Tag)
+}
+
+// RandomizeTag sets Tag field via GenerateTag function if and only if the Tag is
+// currently blank.
+func (p *PubkeyResource) RandomizeTag() {
+	if p.Tag == "" {
+		p.Tag = GenerateTag()
+	}
 }

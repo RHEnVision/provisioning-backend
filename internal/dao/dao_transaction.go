@@ -6,14 +6,19 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/jmoiron/sqlx"
 )
 
+// A TxFn is a function that will be called with an initialized `Transaction` object
+// that can be used for executing statements and queries against a database.
+type TxFn func(tx *sqlx.Tx) error
+
 // WithTransaction creates a new transaction and handles rollback/commit based on the
 // error object returned by the `TxFn` or when it panics.
-func WithTransaction(ctx context.Context, db *sqlx.DB, fn TxFn) error {
+func WithTransaction(ctx context.Context, fn TxFn) error {
 	logger := ctxval.GetLogger(ctx)
-	tx, err := db.BeginTxx(ctx, &sql.TxOptions{
+	tx, err := db.DB.BeginTxx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelDefault,
 		ReadOnly:  false,
 	})
