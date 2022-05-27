@@ -1,0 +1,39 @@
+name: build-push
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+concurrency: latest_push
+jobs:
+  push:
+    name: Container Build & Push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set outputs
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - name: Buildah Action
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: provisioning
+          tags: latest ${{ steps.vars.outputs.sha_short }}
+          containerfiles: |
+            ./build/Dockerfile
+      - name: Log in to the Container registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: quay.io
+          username:  ${{ secrets.QUAY_PUSH_USER }}
+          password: ${{ secrets.QUAY_PUSH_SECRET }}
+
+      - name: Push to GitHub Container Repository
+        id: push-to-ghcr
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: quay.io/envision/
