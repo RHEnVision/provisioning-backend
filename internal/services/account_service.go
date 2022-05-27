@@ -1,11 +1,12 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
-	"net/http"
 )
 
 func ListAccounts(w http.ResponseWriter, r *http.Request) {

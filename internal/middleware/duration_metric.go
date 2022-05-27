@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"github.com/RHEnVision/provisioning-backend/internal/metrics"
-	"github.com/prometheus/client_golang/prometheus"
 	"net/http"
 	"strconv"
+
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 type responseWriter struct {

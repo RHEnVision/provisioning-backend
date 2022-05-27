@@ -2,9 +2,10 @@ package services
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/go-chi/render"
-	"net/http"
 )
 
 // writeBasicError is used when rendering of the error fails so at least something is written

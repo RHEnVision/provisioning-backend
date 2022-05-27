@@ -3,15 +3,16 @@ package db
 import (
 	"embed"
 	"fmt"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/pkg/errors"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"io/ioutil"
 	stdlog "log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/pgx"

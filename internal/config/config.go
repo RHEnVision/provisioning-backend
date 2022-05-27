@@ -3,10 +3,11 @@ package config
 import (
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog"
 
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/spf13/viper"

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/jmoiron/sqlx"
 )

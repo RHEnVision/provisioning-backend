@@ -1,8 +1,9 @@
 package services
 
 import (
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"net/http"
+
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 
 	"github.com/rs/zerolog"
 )

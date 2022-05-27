@@ -3,6 +3,7 @@ package sqlx
 import (
 	"context"
 	"fmt"
+
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 )
