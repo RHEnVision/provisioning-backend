@@ -35,14 +35,16 @@ dnf install postgresql-server postgresql-contrib
 make run
 ```
 
-## Code lint
+## Code style
 
-We run `go fmt`, `go vet` and `golangci-lint` lint suite via GitHub Actions. To run them locally do:
+We run `go fmt`, `goimports`, `go vet` and `golangci-lint` lint suite via GitHub Actions. To run them locally do:
 
 ```
 make install-tools
-make lint
+make fmt lint
 ```
+
+Make sure to set your editor to use [goimports](https://pkg.go.dev/golang.org/x/tools/cmd/goimports) formatting style of code.
 
 ## Migrations
 

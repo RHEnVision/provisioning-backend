@@ -1,8 +1,9 @@
 package payloads
 
 import (
-	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"net/http"
+
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 
 	"github.com/go-chi/render"
 )

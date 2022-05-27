@@ -2,9 +2,10 @@ package services
 
 import (
 	"fmt"
-	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func ParseUint64(r *http.Request, param string) (uint64, error) {

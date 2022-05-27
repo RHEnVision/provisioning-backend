@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"database/sql"
+
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/jmoiron/sqlx"
 )

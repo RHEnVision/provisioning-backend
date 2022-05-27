@@ -3,8 +3,9 @@ package payloads
 import (
 	"context"
 	"fmt"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"net/http"
+
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 
 	"github.com/go-chi/render"
 )
