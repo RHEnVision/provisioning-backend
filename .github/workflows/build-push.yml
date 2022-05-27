@@ -19,7 +19,7 @@ jobs:
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
-          image: provisioning
+          image: provisioning-backend
           tags: latest ${{ steps.vars.outputs.sha_short }}
           containerfiles: |
             ./build/Dockerfile
