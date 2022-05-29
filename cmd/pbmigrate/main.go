@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	config.Initialize()
+
 	// initialize stdout logging and AWS clients first
 	log.Logger = logging.InitializeStdout()
 	cloudwatchlogs.Initialize()

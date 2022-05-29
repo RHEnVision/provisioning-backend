@@ -69,8 +69,6 @@ var AWS = &config.AWS
 var Features = &config.FeatureFlags
 
 func init() {
-	var err error
-
 	viper.SetDefault("app.name", "provisioning")
 	viper.SetDefault("app.port", 8000)
 	viper.SetDefault("logging.level", 1)
@@ -81,6 +79,11 @@ func init() {
 	viper.SetDefault("prometheus.port", 9000)
 	viper.SetDefault("prometheus.path", "/metrics")
 
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+}
+
+func Initialize() {
 	if clowder.IsClowderEnabled() {
 		cfg := clowder.LoadedConfig
 
@@ -92,29 +95,14 @@ func init() {
 		viper.Set("database.name", cfg.Database.Name)
 		viper.Set("prometheus.port", cfg.MetricsPort)
 		viper.Set("prometheus.path", cfg.MetricsPath)
-	} else {
-		viper.AddConfigPath("./configs")
-		viper.SetConfigName("defaults")
-		err = viper.ReadInConfig()
-		if err != nil {
-			panic(err)
-		}
-		viper.SetConfigName("local")
-		err = viper.MergeInConfig()
-		if err != nil {
-			fmt.Println("Could not read local.yaml", err)
-		}
 	}
 
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	viper.AutomaticEnv()
-
-	err = viper.Unmarshal(&config)
+	err := viper.Unmarshal(&config)
 	if err != nil {
 		panic(err)
 	}
 
-	if err = Validate(); err != nil {
+	if err = validate(); err != nil {
 		panic(err)
 	}
 }
@@ -123,7 +111,7 @@ var validateMissingSecretError = errors.New("config error: Cloudwatch enabled bu
 var validateGroupStreamError = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
 var validateInvalidEnvironmentError = errors.New("config error: Environment must be production or development")
 
-func Validate() error {
+func validate() error {
 	if envMatch, _ := regexp.MatchString(`^(production|development|test)$`, Features.Environment); !envMatch {
 		return fmt.Errorf("%w: %s", validateInvalidEnvironmentError, Features.Environment)
 	}

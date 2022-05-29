@@ -44,8 +44,12 @@ lint:
 	golangci-lint run
 
 .PHONY: migrate
-migrate: build-pbmigrate
-	pbmigrate
+migrate:
+	go run ./cmd/pbmigrate
+
+.PHONY: test
+test:
+	go test --tags=test ./...
 
 .PHONY: generate-migration
 MIGRATION_NAME?=unnamed
