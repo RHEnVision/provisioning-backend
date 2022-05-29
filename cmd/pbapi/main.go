@@ -29,6 +29,8 @@ func statusOk(w http.ResponseWriter, _ *http.Request) {
 }
 
 func main() {
+	config.Initialize()
+
 	// initialize stdout logging and AWS clients first
 	log.Logger = logging.InitializeStdout()
 	cloudwatchlogs.Initialize()
