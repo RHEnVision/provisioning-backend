@@ -42,7 +42,6 @@ fmt:
 
 .PHONY: lint
 lint:
-	go vet ./...
 	golangci-lint run
 
 .PHONY: migrate
