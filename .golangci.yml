@@ -11,9 +11,14 @@ linters:
     - sql
     - module
     - unused
+  enable:
+    - predeclared
   disable:
     - maligned # deprecated by fieldalignment
     - scopelint # deprecated by exportloopref
+linters-settings:
+  govet:
+    check-shadowing: true
 issues:
   exclude-rules:
     # If a Stmt is prepared on a DB, it will remain usable for the lifetime of the DB. When the Stmt needs to execute

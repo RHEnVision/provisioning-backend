@@ -30,7 +30,7 @@ func WithTransaction(ctx context.Context, fn TxFn) error {
 	defer func() {
 		if p := recover(); p != nil {
 			logger.Trace().Msg("Rolling database transaction back")
-			err := tx.Rollback()
+			err = tx.Rollback()
 			if err != nil {
 				logger.Error().Err(err).Msg("Cannot rollback database transaction")
 				return
@@ -38,7 +38,7 @@ func WithTransaction(ctx context.Context, fn TxFn) error {
 			panic(p)
 		} else if err != nil {
 			logger.Trace().Msg("Rolling database transaction back")
-			err := tx.Rollback()
+			err = tx.Rollback()
 			if err != nil {
 				logger.Error().Err(err).Msg("Cannot rollback database transaction")
 				return
