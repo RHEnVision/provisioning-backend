@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
-
-	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/spf13/viper"
 )
 
@@ -68,19 +66,6 @@ var AWS = &config.AWS
 var Features = &config.FeatureFlags
 
 func Initialize() {
-	if clowder.IsClowderEnabled() {
-		cfg := clowder.LoadedConfig
-
-		viper.Set("featureFlags.environment", "production")
-		viper.Set("database.host", cfg.Database.Hostname)
-		viper.Set("database.port", cfg.Database.Port)
-		viper.Set("database.user", cfg.Database.Username)
-		viper.Set("database.password", cfg.Database.Password)
-		viper.Set("database.name", cfg.Database.Name)
-		viper.Set("prometheus.port", cfg.MetricsPort)
-		viper.Set("prometheus.path", cfg.MetricsPath)
-	}
-
 	err := viper.Unmarshal(&config)
 	if err != nil {
 		panic(err)
