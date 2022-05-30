@@ -17,16 +17,13 @@ jobs:
       - uses: Jerome1337/goimports-action@v1.0.2
 
   linting:
-    name: go vet and golangci-lint
+    name: golangci-lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version: "1.16"
-      - name: vet
-        run: |
-          go vet ./...
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:

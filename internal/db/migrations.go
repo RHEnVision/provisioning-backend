@@ -62,7 +62,7 @@ func Migrate() {
 	m.Log = NewMigrationLogger(mlog)
 
 	// Perform migration
-	if err := m.Up(); errors.Is(err, migrate.ErrNoChange) {
+	if err = m.Up(); errors.Is(err, migrate.ErrNoChange) {
 		mlog.Info().Msg("No changes")
 	} else if err != nil {
 		mlog.Fatal().Err(err).Msg("Error performing migrations")
