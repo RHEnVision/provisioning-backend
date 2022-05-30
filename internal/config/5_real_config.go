@@ -1,5 +1,5 @@
-//go:build !test && !production
-// +build !test,!production
+//go:build !test
+// +build !test
 
 package config
 
