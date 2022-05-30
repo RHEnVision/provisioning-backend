@@ -1,3 +1,5 @@
+TEST_TAGS?=test
+
 .PHONY: build
 build: build-pbapi build-pbmigrate
 
@@ -49,7 +51,7 @@ migrate:
 
 .PHONY: test
 test:
-	go test --tags=test ./...
+	go test -tags=$(TEST_TAGS) ./...
 
 .PHONY: generate-migration
 MIGRATION_NAME?=unnamed
