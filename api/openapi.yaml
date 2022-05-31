@@ -1,0 +1,94 @@
+components:
+  schemas:
+    v1.Account:
+      properties:
+        account_number:
+          type: string
+        id:
+          maximum: 1.8446744073709552e+19
+          minimum: 0
+          type: integer
+        org_id:
+          type: string
+      type: object
+    v1.Pubkey:
+      properties:
+        account_id:
+          maximum: 1.8446744073709552e+19
+          minimum: 0
+          type: integer
+        body:
+          type: string
+        id:
+          maximum: 1.8446744073709552e+19
+          minimum: 0
+          type: integer
+        name:
+          type: string
+      type: object
+    v1.ResponseError:
+      properties:
+        msg:
+          type: string
+        request_id:
+          type: string
+      type: object
+servers:
+- description: Local development
+  url: http://0.0.0.0:{port}/api/{applicationName}
+  variables:
+    applicationName:
+      default: provisioning
+    port:
+      default: "8000"
+openapi: 3.0.0
+info:
+  license:
+    name: GPL-3.0
+  title: provisioning-api
+  version: 0.0.1
+
+paths:
+  /pubkeys/{ID}:
+    get:
+      operationId: getPubkeyByID
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          description: unique pubkey id
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.Pubkey'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1.ResponseError"
+          description: pubkey was not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.ResponseError'
+          description: There was an internal server error.
+  /pubkeys:
+    get:
+      operationId: getPubkeyList
+      description: 'Get Pubkeys list'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/v1.Pubkey'
+

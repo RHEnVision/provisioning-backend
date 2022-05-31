@@ -8,12 +8,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.15.5
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.37.0
-	github.com/aws/aws-sdk-go-v2/service/sts v1.16.6
+	github.com/aws/aws-sdk-go-v2/service/sts v1.16.4
 	github.com/deepmap/oapi-codegen v1.11.0
+	github.com/getkin/kin-openapi v0.94.0
+	github.com/ghodss/yaml v1.0.0
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/render v1.0.1
-	github.com/jackc/pgconn v1.12.1
+	github.com/jackc/pgconn v1.8.0
 	github.com/jackc/pgx/v4 v4.10.1
 	github.com/jackc/tern v1.13.0
 	github.com/jmoiron/sqlx v1.3.1
