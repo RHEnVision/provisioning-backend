@@ -5,15 +5,18 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+	cfg "github.com/aws/aws-sdk-go-v2/config"
+
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	stsTypes "github.com/aws/aws-sdk-go-v2/service/sts/types"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 type Client struct {
@@ -77,4 +80,22 @@ func (c *Client) DeleteSSHKey(handle string) error {
 	}
 
 	return nil
+}
+
+func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, error) {
+	newCfg, err := cfg.LoadDefaultConfig(c.context, cfg.WithCredentialsProvider(
+		credentials.NewStaticCredentialsProvider(*crd.AccessKeyId, *crd.SecretAccessKey, *crd.SessionToken),
+	))
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot create a new ec2 config: %w", err)
+	}
+
+	newClient := &Client{
+		ec2:     ec2.NewFromConfig(newCfg),
+		context: c.context,
+		log:     ctxval.GetLogger(c.context).With().Str("client", "ec2").Logger(),
+	}
+
+	return newClient, nil
 }
