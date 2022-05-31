@@ -1,0 +1,147 @@
+{
+  "components": {
+    "schemas": {
+      "v1.Account": {
+        "properties": {
+          "account_number": {
+            "type": "string"
+          },
+          "id": {
+            "maximum": 18446744073709552000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "org_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1.Pubkey": {
+        "properties": {
+          "account_id": {
+            "maximum": 18446744073709552000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "body": {
+            "type": "string"
+          },
+          "id": {
+            "maximum": 18446744073709552000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1.ResponseError": {
+        "properties": {
+          "msg": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "license": {
+      "name": "GPL-3.0"
+    },
+    "title": "provisioning-api",
+    "version": "0.0.1"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/pubkeys": {
+      "get": {
+        "description": "Get Pubkeys list",
+        "operationId": "getPubkeyList",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/v1.Pubkey"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/pubkeys/{ID}": {
+      "get": {
+        "operationId": "getPubkeyByID",
+        "parameters": [
+          {
+            "description": "unique pubkey id",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.Pubkey"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.ResponseError"
+                }
+              }
+            },
+            "description": "pubkey was not found."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.ResponseError"
+                }
+              }
+            },
+            "description": "There was an internal server error."
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Local development",
+      "url": "http://0.0.0.0:{port}/api/{applicationName}",
+      "variables": {
+        "applicationName": {
+          "default": "provisioning"
+        },
+        "port": {
+          "default": "8000"
+        }
+      }
+    }
+  ]
+}

@@ -75,3 +75,7 @@ test:
 MIGRATION_NAME?=unnamed
 generate-migration:
 	migrate create -ext sql -dir internal/db/migrations -seq -digits 3 $(MIGRATION_NAME)
+
+.PHONY: generate-spec
+generate-spec:
+	go run ./cmd/spec
