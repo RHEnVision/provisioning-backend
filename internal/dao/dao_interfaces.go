@@ -33,3 +33,13 @@ type PubkeyResourceDao interface {
 	Update(ctx context.Context, pkr *models.PubkeyResource) error
 	Delete(ctx context.Context, id uint64) error
 }
+
+var GetSourceDao func(ctx context.Context) (SourceDao, error)
+
+type SourceDao interface {
+	GetById(ctx context.Context, id uint64) (*models.Source, error)
+	List(ctx context.Context, limit uint64, offset uint64) ([]*models.Source, error)
+	Create(ctx context.Context, s *models.Source) (*models.Source, error)
+	GetByAccountId(ctx context.Context, accountId uint64, limit uint64, offset uint64) ([]*models.Source, error)
+	Delete(ctx context.Context, id uint64) (*models.Source, error)
+}
