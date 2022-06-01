@@ -22,14 +22,14 @@ func (p *PubkeyResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
-func NewPubkeyResponse(account *models.Pubkey) render.Renderer {
-	return &PubkeyResponse{Pubkey: account}
+func NewPubkeyResponse(pubkey *models.Pubkey) render.Renderer {
+	return &PubkeyResponse{Pubkey: pubkey}
 }
 
-func NewPubkeyListResponse(accounts []*models.Pubkey) []render.Renderer {
-	list := make([]render.Renderer, 0, len(accounts))
-	for _, a := range accounts {
-		list = append(list, &PubkeyResponse{Pubkey: a})
+func NewPubkeyListResponse(pubkeys []*models.Pubkey) []render.Renderer {
+	list := make([]render.Renderer, 0, len(pubkeys))
+	for _, pubkey := range pubkeys {
+		list = append(list, &PubkeyResponse{Pubkey: pubkey})
 	}
 	return list
 }
