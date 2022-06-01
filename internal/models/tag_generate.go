@@ -17,9 +17,9 @@ func randomBase62(bytes int) string {
 }
 
 // GenerateTag sets Tag field to a random base62 (base64 without / or +) with a length
-// of 20 characters. Values are cryptographically pseudo-random and pseudo-unique with
+// of 22 characters. Values are cryptographically pseudo-random and pseudo-unique with
 // probability of getting same values the same as for random UUID.
 func GenerateTag() string {
 	// generate from more bytes because fixed-size base62 cannot be guaranteed at this size
-	return randomBase62(20)[0:20]
+	return randomBase62(20)[0:22]
 }

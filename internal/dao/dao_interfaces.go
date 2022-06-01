@@ -29,6 +29,7 @@ type PubkeyDao interface {
 var GetPubkeyResourceDao func(ctx context.Context) (PubkeyResourceDao, error)
 
 type PubkeyResourceDao interface {
+	ListByPubkeyId(ctx context.Context, pkId uint64) ([]*models.PubkeyResource, error)
 	Create(ctx context.Context, pkr *models.PubkeyResource) error
 	Update(ctx context.Context, pkr *models.PubkeyResource) error
 	Delete(ctx context.Context, id uint64) error
