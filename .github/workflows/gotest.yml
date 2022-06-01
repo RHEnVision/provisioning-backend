@@ -27,6 +27,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
+        # pin for a bug: https://github.com/golangci/golangci-lint/issues/2851
           version: v1.45.2
           only-new-issues: true
           skip-go-installation: true

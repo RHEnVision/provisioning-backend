@@ -32,7 +32,8 @@ run:
 .PHONY: install-tools
 install-tools:
 	go install golang.org/x/tools/cmd/goimports@latest
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	# pin for a bug: https://github.com/golangci/golangci-lint/issues/2851
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2
 	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 .PHONY: fmt
