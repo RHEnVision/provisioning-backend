@@ -1,0 +1,8 @@
+--- 
+generate:
+  - client
+  - types
+package: sources
+output: ./internal/clients/sources/sources_client.gen.go
+output-options:
+  skip-prune: true
