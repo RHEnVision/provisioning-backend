@@ -42,7 +42,7 @@ func NewEC2Client(ctx context.Context) *Client {
 
 // ImportPubkey imports a key and returns AWS ID
 func (c *Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
-	log.Trace().Msgf("Importing pubkey '%s'", key.Name)
+	log.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
 	input := &ec2.ImportKeyPairInput{}
 	input.KeyName = aws.String(key.Name)
 	input.PublicKeyMaterial = []byte(key.Body)
@@ -66,10 +66,10 @@ func (c *Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
 	return aws.ToString(output.KeyPairId), nil
 }
 
-func (c *Client) DeleteSSHKey(cid string) error {
-	log.Trace().Msgf("Deleting pubkey with cid %s", cid)
+func (c *Client) DeleteSSHKey(handle string) error {
+	log.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
 	input := &ec2.DeleteKeyPairInput{}
-	input.KeyPairId = aws.String(cid)
+	input.KeyPairId = aws.String(handle)
 	_, err := c.ec2.DeleteKeyPair(c.context, input)
 
 	if err != nil {

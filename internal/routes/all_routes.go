@@ -33,6 +33,9 @@ func apiRouter() http.Handler {
 		r.Route("/{ID}", func(r chi.Router) {
 			r.Get("/", s.GetPubkey)
 			r.Delete("/", s.DeletePubkey)
+			// this is temporary until we implement tasks
+			r.Get("/upload_aws", s.UploadPubkeyResourceAWS)
+			r.Get("/delete_all", s.DeleteAllPubkeyResources)
 		})
 	})
 

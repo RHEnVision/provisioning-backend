@@ -13,13 +13,15 @@ const (
 	createPubkeyResource     = `INSERT INTO pubkey_resources (pubkey_id, provider, handle, tag) VALUES ($1, $2, $3, $4) RETURNING id, tag`
 	updatePubkeyResource     = `UPDATE pubkey_resources SET pubkey_id = $2, provider = $3, handle = $4 WHERE id = $1`
 	deletePubkeyResourceById = `DELETE FROM pubkey_resources WHERE id = $1`
+	listByPubkeyId           = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1`
 )
 
 type pubkeyResourceDaoSqlx struct {
-	name       string
-	create     *sqlx.Stmt
-	update     *sqlx.Stmt
-	deleteById *sqlx.Stmt
+	name           string
+	create         *sqlx.Stmt
+	update         *sqlx.Stmt
+	deleteById     *sqlx.Stmt
+	listByPubkeyId *sqlx.Stmt
 }
 
 func getPubkeyResourceDao(ctx context.Context) (dao.PubkeyResourceDao, error) {
@@ -38,6 +40,10 @@ func getPubkeyResourceDao(ctx context.Context) (dao.PubkeyResourceDao, error) {
 	daoImpl.deleteById, err = db.DB.PreparexContext(ctx, deletePubkeyResourceById)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, deletePubkeyResourceById, err)
+	}
+	daoImpl.listByPubkeyId, err = db.DB.PreparexContext(ctx, listByPubkeyId)
+	if err != nil {
+		return nil, NewPrepareStatementError(ctx, &daoImpl, listByPubkeyId, err)
 	}
 
 	return &daoImpl, nil
@@ -89,4 +95,16 @@ func (di *pubkeyResourceDaoSqlx) Delete(ctx context.Context, id uint64) error {
 
 	}
 	return nil
+}
+
+func (di *pubkeyResourceDaoSqlx) ListByPubkeyId(ctx context.Context, pkId uint64) ([]*models.PubkeyResource, error) {
+	query := listByPubkeyId
+	stmt := di.listByPubkeyId
+	var result []*models.PubkeyResource
+
+	err := stmt.SelectContext(ctx, &result, pkId)
+	if err != nil {
+		return nil, NewSelectError(ctx, di, query, err)
+	}
+	return result, nil
 }
