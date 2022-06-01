@@ -1,0 +1,3919 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "Sources",
+    "version": "3.1.0",
+    "title": "Sources",
+    "contact": {
+      "email": "support@redhat.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "security": [
+    {
+      "basic-auth": []
+    },
+    {
+      "x-rh-identity": []
+    },
+    {
+      "x-rh-sources-org-id": []
+    },
+    {
+      "x-rh-sources-account-number": []
+    }
+  ],
+  "tags": [
+    {
+      "description": "Endpoints related to application metadata",
+      "name": "app metadata"
+    },
+    {
+      "description": "Endpoints related to applications",
+      "name": "applications"
+    },
+    {
+      "description": "Endpoints related to application authentications",
+      "name": "application authentications"
+    },
+    {
+      "description": "Endpoints related to application types",
+      "name": "application types"
+    },
+    {
+      "description": "Endpoints related to authentication",
+      "name": "authentications"
+    },
+    {
+      "description": "Endpoints related to endpoints",
+      "name": "endpoints"
+    },
+    {
+      "description": "Endpoints related to Red Hat Connector Connecctions",
+      "name": "rhc-connections"
+    },
+    {
+      "description": "Endpoints related to sources",
+      "name": "sources"
+    },
+    {
+      "description": "Endpoints related to source types",
+      "name": "source types"
+    }
+  ],
+  "paths": {
+    "/application_authentications": {
+      "get": {
+        "summary": "List ApplicationAuthentications",
+        "operationId": "listAllApplicationAuthentications",
+        "description": "Returns an array of ApplicationAuthentication objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ApplicationAuthentications collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationAuthenticationsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "application authentications"
+        ]
+      },
+      "post": {
+        "summary": "Create a new ApplicationAuthentication",
+        "operationId": "createApplicationAuthentication",
+        "description": "Creates a ApplicationAuthentication object",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationAuthenticationCreate"
+              }
+            }
+          },
+          "description": "ApplicationAuthentication attributes to create",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "ApplicationAuthentication creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationAuthentication"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "application authentications"
+        ]
+      }
+    },
+    "/application_authentications/{id}": {
+      "get": {
+        "summary": "Show an existing ApplicationAuthentication",
+        "operationId": "showApplicationAuthentication",
+        "description": "Returns a ApplicationAuthentication object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ApplicationAuthentication info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationAuthenticationRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "application authentications"
+        ]
+      },
+      "delete": {
+        "summary": "Delete an existing ApplicationAuthentication",
+        "operationId": "deleteApplicationAuthentication",
+        "description": "Deletes a ApplicationAuthentication object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "ApplicationAuthentication deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "application authentications"
+        ]
+      }
+    },
+    "/applications_authentications/{id}/authentications": {
+      "get": {
+        "summary": "List authentications for the given application authentication",
+        "operationId": "listApplicationAuthenticationsAuthentications",
+        "description": "Returns an array of authentications",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authentications for the given application authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "application authentications"
+        ]
+      }
+    },
+    "/application_types": {
+      "get": {
+        "summary": "List ApplicationTypes",
+        "operationId": "listApplicationTypes",
+        "description": "Returns an array of ApplicationType objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ApplicationTypes collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationTypesCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "application types"
+        ]
+      }
+    },
+    "/application_types/{id}": {
+      "get": {
+        "summary": "Show an existing ApplicationType",
+        "operationId": "showApplicationType",
+        "description": "Returns an ApplicationType object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ApplicationType info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationType"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "application types"
+        ]
+      }
+    },
+    "/application_types/{id}/sources": {
+      "get": {
+        "summary": "List the Sources for a given ApplicationType",
+        "operationId": "listApplicationTypeSources",
+        "description": "Returns an array of Source objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sources collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcesCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "application types"
+        ]
+      }
+    },
+    "/application_types/{id}/app_meta_data": {
+      "get": {
+        "summary": "List AppMetaData for ApplicationType",
+        "operationId": "listApplicationTypeAppMetaData",
+        "description": "Returns an array of AppMetaData objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AppMetaData collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppMetaDataCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "application types"
+        ]
+      }
+    },
+    "/applications": {
+      "get": {
+        "summary": "List Applications",
+        "operationId": "listApplications",
+        "description": "Returns an array of Application objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Applications collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "applications"
+        ]
+      },
+      "post": {
+        "summary": "Create a new Application",
+        "operationId": "createApplication",
+        "description": "Creates a Application object",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCreate"
+              }
+            }
+          },
+          "description": "Application attributes to create",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Application creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Application"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/applications/{id}": {
+      "get": {
+        "summary": "Show an existing Application",
+        "operationId": "showApplication",
+        "description": "Returns a Application object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Application"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "applications"
+        ]
+      },
+      "patch": {
+        "summary": "Update an existing Application",
+        "operationId": "updateApplication",
+        "description": "Updates a Application object.\n\nIn the case which the appplication is paused then the allowed attributes for updating are:\n\n `availability_status`, `availability_status_error`, `last_available_at` and `last_checked_at`",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationUpdate"
+              }
+            }
+          },
+          "description": "Application attributes to update",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The updated application",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Application"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "applications"
+        ]
+      },
+      "delete": {
+        "summary": "Delete an existing Application",
+        "operationId": "deleteApplication",
+        "description": "Deletes a Application object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Application deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/applications/{id}/authentications": {
+      "get": {
+        "summary": "List Authentications for Application",
+        "operationId": "listApplicationAuthentications",
+        "description": "Returns an array of Authentication objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authentications collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/applications/{id}/pause": {
+      "post": {
+        "summary": "Pauses an Application",
+        "operationId": "pauseApplication",
+        "description": "Pauses an Application",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Application Paused"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/applications/{id}/unpause": {
+      "post": {
+        "summary": "Unpauses an Application",
+        "operationId": "unpauseApplication",
+        "description": "Unpauses an Application",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Application Un-Paused"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/authentications": {
+      "get": {
+        "summary": "List Authentications",
+        "operationId": "listAuthentications",
+        "description": "Returns an array of Authentication objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authentications collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "authentications"
+        ]
+      },
+      "post": {
+        "summary": "Create a new Authentication",
+        "operationId": "createAuthentication",
+        "description": "Creates an Authentication object",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticationCreate"
+              }
+            }
+          },
+          "description": "Authentication attributes to create",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Authentication creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "authentications"
+        ]
+      }
+    },
+    "/authentications/{id}": {
+      "get": {
+        "summary": "Show an existing Authentication",
+        "operationId": "showAuthentication",
+        "description": "Returns an Authentication object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authentication object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "authentications"
+        ]
+      },
+      "patch": {
+        "summary": "Update an existing Authentication",
+        "operationId": "updateAuthentication",
+        "description": "Updates an Authentication object.\n\nIn the case of the authentication being paused, the allowed attributes to be updated are:\n\n `availability_status`, `availability_status_error`, `last_checked_at` and `last_available_at`",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticationEdit"
+              }
+            }
+          },
+          "description": "Authentication attributes to update",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The updated authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "authentications"
+        ]
+      },
+      "delete": {
+        "summary": "Delete an existing Authentication",
+        "operationId": "deleteAuthentication",
+        "description": "Deletes an Authentication object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Authentication deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "authentications"
+        ]
+      }
+    },
+    "/endpoints": {
+      "get": {
+        "summary": "List Endpoints",
+        "operationId": "listEndpoints",
+        "description": "Returns an array of Endpoint objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoints collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "endpoints"
+        ]
+      },
+      "post": {
+        "summary": "Create a new Endpoint",
+        "operationId": "createEndpoint",
+        "description": "Creates a Endpoint object",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointCreate"
+              }
+            }
+          },
+          "description": "Endpoint attributes to create",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Endpoint creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Endpoint"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "endpoints"
+        ]
+      }
+    },
+    "/endpoints/{id}": {
+      "get": {
+        "summary": "Show an existing Endpoint",
+        "operationId": "showEndpoint",
+        "description": "Returns an Endpoint object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "endpoints"
+        ]
+      },
+      "patch": {
+        "summary": "Update an existing Endpoint",
+        "operationId": "updateEndpoint",
+        "description": "Updates a Endpoint object.\n\nIn the case of the endpoint being paused, the allowed attributes to be updated are:\n\n `availability_status`, `availability_status_error`, `last_checked_at` and `last_available_at`",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointEdit"
+              }
+            }
+          },
+          "description": "Endpoint attributes to update",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The updated endpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "endpoints"
+        ]
+      },
+      "delete": {
+        "summary": "Delete an existing Endpoint",
+        "operationId": "deleteEndpoint",
+        "description": "Deletes an Endpoint",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Endpoint deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "endpoints"
+        ]
+      }
+    },
+    "/endpoints/{id}/authentications": {
+      "get": {
+        "summary": "List Authentications for a given Endpoint",
+        "operationId": "listEndpointAuthentications",
+        "description": "Returns an array of Authentication objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authentications collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "endpoints"
+        ]
+      }
+    },
+    "/graphql": {
+      "post": {
+        "summary": "Perform a GraphQL Query",
+        "operationId": "postGraphQL",
+        "description": "Performs a GraphQL Query",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLRequest"
+              }
+            }
+          },
+          "description": "GraphQL Query Request",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "GraphQL Query Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphQLResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "summary": "Return this API document in JSON format",
+        "operationId": "getDocumentation",
+        "responses": {
+          "200": {
+            "description": "The API document for this version of the API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rhc_connections": {
+      "get": {
+        "description": "Returns an array of Red Hat Connector Connections",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "RHC Connections collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RhcConnectionRead"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "operationId": "getRhcConnections",
+        "summary": "List RHC Connections",
+        "tags": [
+          "rhc-connections"
+        ]
+      },
+      "post": {
+        "description": "Create a new Red Hat Connector Connection",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RhcConnectionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Connection created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RhcConnectionRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "operationId": "postRhcConnection",
+        "summary": "Create a new RHC Connection",
+        "tags": [
+          "rhc-connections"
+        ]
+      }
+    },
+    "/rhc_connections/{id}": {
+      "get": {
+        "description": "Returns a single Red Hat Connector Connection",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Red Hat Connector connection object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RhcConnectionRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "operationId": "getRhcConnection",
+        "summary": "Get an existing RHC Connection",
+        "tags": [
+          "rhc-connections"
+        ]
+      },
+      "patch": {
+        "description": "Updates a Red Hat Connector Connection",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RhcConnectionUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Red Hat Connector connection object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RhcConnectionRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "operationId": "updateRhcConnection",
+        "summary": "Update an RHC Connection",
+        "tags": [
+          "rhc-connections"
+        ]
+      },
+      "delete": {
+        "description": "Deletes a Red Hat Connector Connection",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The connection has been deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "operationId": "deleteRhcConnection",
+        "summary": "Delete an RHC Connection",
+        "tags": [
+          "rhc-connections"
+        ]
+      }
+    },
+    "/rhc_connections/{id}/sources": {
+      "get": {
+        "description": "Returns an array of sources related to the provided Red Hat Connector Connection",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          },
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sources collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SourcesCollection"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "operationId": "getRhcConnectionSources",
+        "summary": "List sources related to an RHC Connection",
+        "tags": [
+          "rhc-connections"
+        ]
+      }
+    },
+    "/sources/{id}/rhc_connections": {
+      "get": {
+        "description": "Returns an array of Red Hat Connector Connections related to the provided source",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          },
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Red Hat Connector Collections",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RhcConnectionCollection"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "operationId": "getSourcesRhcConnection",
+        "summary": "List RHC Connections related to a source",
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/source_types": {
+      "get": {
+        "summary": "List SourceTypes",
+        "operationId": "listSourceTypes",
+        "description": "Returns an array of SourceType objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SourceTypes collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceTypesCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "source types"
+        ]
+      }
+    },
+    "/source_types/{id}": {
+      "get": {
+        "summary": "Show an existing SourceType",
+        "operationId": "showSourceType",
+        "description": "Returns a SourceType object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SourceType info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceType"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "source types"
+        ]
+      }
+    },
+    "/source_types/{id}/sources": {
+      "get": {
+        "summary": "List Sources for SourceType",
+        "operationId": "listSourceTypeSources",
+        "description": "Returns an array of Source objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sources collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcesCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "source types"
+        ]
+      }
+    },
+    "/sources": {
+      "get": {
+        "summary": "List Sources",
+        "operationId": "listSources",
+        "description": "Returns an array of Source objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sources collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcesCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      },
+      "post": {
+        "summary": "Create a new Source",
+        "operationId": "createSource",
+        "description": "Creates a Source object",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceCreate"
+              }
+            }
+          },
+          "description": "Source attributes to create",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Source creation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Source"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The payload is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/sources/{id}": {
+      "get": {
+        "summary": "Get a source",
+        "operationId": "showSource",
+        "description": "Returns a source object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested source's payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Source"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      },
+      "patch": {
+        "summary": "Update an existing Source",
+        "operationId": "updateSource",
+        "description": "Updates a Source object.\n\nIn the case of the source being paused, the allowed attributes to be updated are:\n\n `availability_status`, `last_checked_at` and `last_available_at`",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceEdit"
+              }
+            }
+          },
+          "description": "Source attributes to update",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The updated source's payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Source"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Please check that the source is not paused since you might be trying to update unpermitted parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      },
+      "delete": {
+        "summary": "Delete an existing Source",
+        "operationId": "deleteSource",
+        "description": "Deletes a source and all its sub resources",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Source and subresources deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/sources/{id}/application_types": {
+      "get": {
+        "summary": "List ApplicationTypes for Source",
+        "operationId": "listSourceApplicationTypes",
+        "description": "Returns an array of ApplicationType objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ApplicationTypes collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationTypesCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/sources/{id}/applications": {
+      "get": {
+        "summary": "List Applications for Source",
+        "operationId": "listSourceApplications",
+        "description": "Returns an array of Application objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Applications collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/sources/{id}/authentications": {
+      "get": {
+        "summary": "List Authentications for Source",
+        "operationId": "listSourceAuthentications",
+        "description": "Returns an array of Authentication objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authentications collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/sources/{id}/check_availability": {
+      "post": {
+        "summary": "Checks Availability of a Source",
+        "operationId": "checkAvailabilitySource",
+        "description": "Checks Availability of a Source",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Availability Check Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/sources/{id}/endpoints": {
+      "get": {
+        "summary": "List Endpoints for Source",
+        "operationId": "listSourceEndpoints",
+        "description": "Returns an array of Endpoint objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          },
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoints collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EndpointsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/sources/{id}/pause": {
+      "post": {
+        "summary": "Pause a source and its applications",
+        "operationId": "pauseSource",
+        "description": "Pauses a source and all its dependant applications",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Source and its applications have been paused"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/sources/{id}/unpause": {
+      "post": {
+        "summary": "Unpauses a source and its applications",
+        "operationId": "unpauseSource",
+        "description": "Unpauses a Source and all its dependant applications",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Source and its applications unpaused"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    },
+    "/app_meta_data": {
+      "get": {
+        "summary": "List AppMetaData",
+        "operationId": "listAllAppMetaData",
+        "description": "Returns an array of AppMetaData objects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AppMetaData collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppMetaDataCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "app metadata"
+        ]
+      }
+    },
+    "/app_meta_data/{id}": {
+      "get": {
+        "summary": "Show an existing AppMetaData",
+        "operationId": "showAppMetaData",
+        "description": "Returns a AppMetaData object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AppMetaData info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppMetaData"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "app metadata"
+        ]
+      }
+    },
+    "/bulk_create": {
+      "post": {
+        "summary": "Bulk-create resources",
+        "operationId": "bulkCreate",
+        "description": "Bulk-create a source and the specified sub-resources",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkCreatePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resources created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "sources"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://console.redhat.com/{basePath}",
+      "description": "Production Server",
+      "variables": {
+        "basePath": {
+          "default": "api/sources/v3.1"
+        }
+      }
+    },
+    {
+      "url": "https://console.stage.redhat.com/{basePath}",
+      "description": "Staging Server",
+      "variables": {
+        "basePath": {
+          "default": "api/sources/v3.1"
+        }
+      }
+    },
+    {
+      "url": "http://localhost:{port}/{basePath}",
+      "description": "Development Server",
+      "variables": {
+        "port": {
+          "default": "3000"
+        },
+        "basePath": {
+          "default": "api/sources/v3.1"
+        }
+      }
+    }
+  ],
+  "components": {
+    "parameters": {
+      "ID": {
+        "name": "id",
+        "in": "path",
+        "description": "ID of the resource",
+        "required": true,
+        "schema": {
+          "example": "12345",
+          "pattern": "^\\d+$",
+          "type": "string"
+        }
+      },
+      "QueryFilter": {
+        "in": "query",
+        "name": "filter",
+        "description": "Filter for querying collections. The format of the filters is as follows: `filter[subresource][field][operation]=\"value\"`.\n",
+        "example": "filter[name][eq]=\"My shiny source\"\n",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "QueryLimit": {
+        "in": "query",
+        "name": "limit",
+        "description": "The numbers of items to return per page.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100
+        }
+      },
+      "QueryOffset": {
+        "in": "query",
+        "name": "offset",
+        "description": "The number of items to skip before starting to collect the result set.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "QuerySortBy": {
+        "in": "query",
+        "name": "sort_by",
+        "description": "The list of attribute and order to sort the result set by.",
+        "example": "sort_by=name",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "securitySchemes": {
+      "basic-auth": {
+        "description": "Basic authentication. Required for the \"stage\" and \"production\" environments",
+        "scheme": "basic",
+        "type": "http"
+      },
+      "x-rh-identity": {
+        "description": "Base64 encoded XRHID header's value",
+        "in": "header",
+        "name": "x-rh-identity",
+        "type": "apiKey"
+      },
+      "x-rh-sources-account-number": {
+        "description": "EBS account number to identify the tenant. Warning: it's being deprecated",
+        "in": "header",
+        "name": "x-rh-sources-account-number",
+        "type": "apiKey"
+      },
+      "x-rh-sources-org-id": {
+        "description": "OrgId value to identify the tenant",
+        "in": "header",
+        "name": "x-rh-sources-org-id",
+        "type": "apiKey"
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "There is a problem either with the parameters or the payload",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorBadRequest"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The requested resource was not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorNotFound"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Either the \"x-rh-identity\" or the \"x-rh-sources-psk\" headers are missing, or you don't have enough permission to query the endpoint",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorUnauthorized"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Application": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "application_type_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "availability_status": {
+            "description": "The availability status of the application",
+            "enum": [
+              "available",
+              "in_progress",
+              "partially_available",
+              "unavailable"
+            ],
+            "example": "available",
+            "type": "string"
+          },
+          "availability_status_error": {
+            "description": "The received error message when polling for the availability status",
+            "example": "Destination host unreachable",
+            "type": "string"
+          },
+          "extra": {
+            "description": "Any extra information you want stored for the application, in JSON format",
+            "type": "object"
+          },
+          "last_available_at": {
+            "description": "The timestamp for when the application was last available at.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "description": "Timestamp of the last time the availability was checked for the application",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "source_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "created_at": {
+            "description": "The timestamp of the creation of the application",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "The timestamp of the last time this application got updated",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "paused_at": {
+            "description": "The timestamp for when the application was paused",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationCreate": {
+        "description": "Expected payload to create an application",
+        "properties": {
+          "application_type_id": {
+            "$ref": "#/components/schemas/IDW"
+          },
+          "extra": {
+            "description": "Any extra information you want stored for the application, in JSON format",
+            "type": "object"
+          },
+          "source_id": {
+            "$ref": "#/components/schemas/IDW"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationUpdate": {
+        "description": "Expected payload to update an application",
+        "properties": {
+          "availability_status": {
+            "description": "The availability status of the application",
+            "enum": [
+              "available",
+              "in_progress",
+              "partially_available",
+              "unavailable"
+            ],
+            "example": "available",
+            "type": "string"
+          },
+          "availability_status_error": {
+            "description": "The received error message when polling for the availability status",
+            "example": "Destination host unreachable",
+            "type": "string"
+          },
+          "extra": {
+            "description": "Any extra information you want stored for the application, in JSON format",
+            "type": "object"
+          },
+          "last_available_at": {
+            "description": "The timestamp for when the application was last available at.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "description": "Timestamp of the last time the availability was checked for the application",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationAuthentication": {
+        "type": "object",
+        "properties": {
+          "application_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "authentication_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationAuthenticationCreate": {
+        "description": "Expected payload when creating an application authentication",
+        "properties": {
+          "application_id": {
+            "$ref": "#/components/schemas/IDW"
+          },
+          "authentication_id": {
+            "$ref": "#/components/schemas/IDW"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationAuthenticationRead": {
+        "description": "ApplicationAuthentication object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "application_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "authentication_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "created_at": {
+            "description": "The timestamp of the creation of the application",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "The timestamp of the last time this application got updated",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApplicationAuthenticationsCollection": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationAuthenticationRead"
+            }
+          }
+        }
+      },
+      "ApplicationType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "name": {
+            "description": "The name for the application type",
+            "example": "/insights/platform/my-application_type",
+            "type": "string"
+          },
+          "display_name": {
+            "description": "The display name for the application type",
+            "example": "My application type",
+            "type": "string"
+          },
+          "dependent_applications": {
+            "description": "The dependent applications of this application type",
+            "type": "object"
+          },
+          "supported_source_types": {
+            "description": "The supported source types the applications of this type support",
+            "example": [
+              "amazon",
+              "red-hat"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "supported_authentication_types": {
+            "description": "The supported authentication types the applications of this type support",
+            "example": "{\n  \"amazon\": [\n    \"arn\"\n  ],\n  \"red-hat\": [\n    \"red-hat-creds\"\n  ]\n}\n",
+            "type": "object"
+          },
+          "created_at": {
+            "description": "The timestamp of the creation of the application type",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "The timestamp of the last time this application type got updated",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        }
+      },
+      "ApplicationTypesCollection": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationType"
+            }
+          }
+        }
+      },
+      "AppMetaData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "application_type_id": {
+            "description": "The ID of the application the metadata belongs to",
+            "example": "12345",
+            "pattern": "^\\d+$",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the step of the metadata",
+            "example": "s3",
+            "type": "string"
+          },
+          "payload": {
+            "description": "The payload of the step",
+            "type": "object"
+          },
+          "created_at": {
+            "description": "The timestamp of the creation of the app metadata type",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "The timestamp of the last time this app metadata type got updated",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppMetaDataCollection": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppMetaData"
+            }
+          }
+        }
+      },
+      "ApplicationsCollection": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Application"
+            }
+          }
+        }
+      },
+      "AuthenticationEdit": {
+        "description": "Expected payload when editing an Authentication object",
+        "properties": {
+          "name": {
+            "description": "The authentication's name",
+            "example": "OpenShift default",
+            "type": "string"
+          },
+          "authtype": {
+            "description": "The type of the authentication",
+            "enum": [
+              "access_key_secret_key",
+              "api_token_account_id",
+              "arn",
+              "bitbucket-app-password",
+              "cloud-meter-arn",
+              "docker-access-token",
+              "github-personal-access-token",
+              "gitlab-personal-access-token",
+              "lighthouse_subscription_id",
+              "marketplace-token",
+              "ocid",
+              "project_id_service_account_json",
+              "quay-encrypted-password",
+              "receptor_node",
+              "tenant_id_client_id_client_secret",
+              "token",
+              "username_password"
+            ]
+          },
+          "username": {
+            "description": "The username for the authentication",
+            "example": "user@example.com",
+            "type": "string"
+          },
+          "password": {
+            "description": "The password for the authentication",
+            "example": "MyS3cr3Tp4$$w0rD",
+            "type": "string"
+          },
+          "extra": {
+            "description": "Any extra information the authentication may have",
+            "type": "object"
+          },
+          "availability_status": {
+            "description": "The availability status of the authentication",
+            "example": "available",
+            "enum": [
+              "available",
+              "unavailable"
+            ]
+          },
+          "availability_status_error": {
+            "description": "The received error message when polling for the availability status",
+            "example": "Destination host unreachable",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AuthenticationRead": {
+        "description": "Authentication object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "name": {
+            "description": "The authentication's name",
+            "example": "OpenShift default",
+            "type": "string"
+          },
+          "authtype": {
+            "description": "The type of the authentication",
+            "enum": [
+              "access_key_secret_key",
+              "api_token_account_id",
+              "arn",
+              "bitbucket-app-password",
+              "cloud-meter-arn",
+              "docker-access-token",
+              "github-personal-access-token",
+              "gitlab-personal-access-token",
+              "lighthouse_subscription_id",
+              "marketplace-token",
+              "ocid",
+              "project_id_service_account_json",
+              "quay-encrypted-password",
+              "receptor_node",
+              "tenant_id_client_id_client_secret",
+              "token",
+              "username_password"
+            ]
+          },
+          "username": {
+            "description": "The username for the authentication",
+            "example": "user@example.com",
+            "type": "string"
+          },
+          "extra": {
+            "description": "Any extra information the authentication may have",
+            "properties": {
+              "azure": {
+                "properties": {
+                  "tenant_id": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "marketplace": {
+                "description": "If the authentication is of the \"marketplace-token\" type, then this key will contain an unexpired token for the API key that the authentication stores.",
+                "properties": {
+                  "expiration": {
+                    "description": "The Unix timestamp for the expiration of the token",
+                    "example": 1609455600,
+                    "type": "number"
+                  },
+                  "access_token": {
+                    "description": "The authorization token",
+                    "example": "abcdef-token",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "availability_status": {
+            "description": "The availability status of the authentication",
+            "example": "available",
+            "enum": [
+              "available",
+              "unavailable"
+            ]
+          },
+          "availability_status_error": {
+            "description": "The received error message when polling for the availability status",
+            "example": "Destination host unreachable",
+            "type": "string"
+          },
+          "resource_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "resource_type": {
+            "description": "The type of the resource this authentication belongs to",
+            "enum": [
+              "Application",
+              "Authentication",
+              "Endpoint",
+              "Source"
+            ],
+            "example": "Endpoint",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AuthenticationCreate": {
+        "description": "Expected payload to create an Authentication",
+        "properties": {
+          "name": {
+            "description": "The authentication's name",
+            "example": "OpenShift default",
+            "type": "string"
+          },
+          "authtype": {
+            "description": "The type of the authentication",
+            "enum": [
+              "access_key_secret_key",
+              "api_token_account_id",
+              "arn",
+              "bitbucket-app-password",
+              "cloud-meter-arn",
+              "docker-access-token",
+              "github-personal-access-token",
+              "gitlab-personal-access-token",
+              "lighthouse_subscription_id",
+              "marketplace-token",
+              "ocid",
+              "project_id_service_account_json",
+              "quay-encrypted-password",
+              "receptor_node",
+              "tenant_id_client_id_client_secret",
+              "token",
+              "username_password"
+            ]
+          },
+          "username": {
+            "description": "The username for the authentication",
+            "example": "user@example.com",
+            "type": "string"
+          },
+          "password": {
+            "description": "The password for the authentication",
+            "example": "MyS3cr3Tp4$$w0rD",
+            "type": "string"
+          },
+          "extra": {
+            "description": "Any extra information the authentication may have",
+            "type": "object"
+          },
+          "availability_status_error": {
+            "description": "The received error message when polling for the availability status",
+            "example": "Destination host unreachable",
+            "type": "string"
+          },
+          "resource_id": {
+            "$ref": "#/components/schemas/IDW"
+          },
+          "resource_type": {
+            "description": "The type of the resource this authentication belongs to",
+            "enum": [
+              "Application",
+              "Authentication",
+              "Endpoint",
+              "Source"
+            ],
+            "example": "Endpoint",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AuthenticationsCollection": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthenticationRead"
+            }
+          }
+        }
+      },
+      "CollectionLinks": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "description": "The link to the first object of the list",
+            "example": "https://example.com/resource/1",
+            "type": "string"
+          },
+          "last": {
+            "description": "The link to the last object of the list",
+            "example": "https://example.com/resource/10000",
+            "type": "string"
+          },
+          "next": {
+            "description": "The link to the next page of objects",
+            "example": "https://example.com/resource/11",
+            "type": "string"
+          },
+          "prev": {
+            "description": "The link to the previous page of objects",
+            "example": "https://example.com/resource/1",
+            "type": "string"
+          }
+        }
+      },
+      "CollectionMetadata": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "description": "The total amount of objects in the database",
+            "example": 1000,
+            "type": "integer"
+          },
+          "limit": {
+            "description": "The limit of objects that was applied to the object list",
+            "example": 100,
+            "default": 100,
+            "type": "integer"
+          },
+          "offset": {
+            "description": "The offset that was applied to the list",
+            "example": 0,
+            "default": 0,
+            "type": "integer"
+          }
+        }
+      },
+      "Endpoint": {
+        "description": "Representation of an endpoint object",
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "availability_status": {
+            "description": "The availability status of the endpoint.",
+            "example": "available",
+            "enum": [
+              "",
+              "available",
+              "unavailable"
+            ],
+            "type": "string"
+          },
+          "availability_status_error": {
+            "description": "The received error message when polling for the availability status",
+            "example": "Destination host unreachable",
+            "type": "string"
+          },
+          "certificate_authority": {
+            "description": "Optional X.509 Certificate Authority",
+            "type": "string"
+          },
+          "default": {
+            "description": "Mark endpoint as the default endpoint? Each source can only have one default endpoint. It gets set to true by default if the given source has no endpoints.",
+            "example": false,
+            "type": "boolean"
+          },
+          "host": {
+            "description": "URI host component of the endpoint.",
+            "example": "example.com",
+            "type": "string"
+          },
+          "path": {
+            "description": "URI path component of the endpoint.",
+            "example": "/example/path",
+            "type": "string"
+          },
+          "port": {
+            "default": 443,
+            "description": "URI port component of the endpoint.",
+            "example": 443,
+            "type": "integer"
+          },
+          "receptor_node": {
+            "description": "Identifier of a receptor node.",
+            "type": "string"
+          },
+          "role": {
+            "description": "The role of the endpoint. It must be unique among the source's endpoints.",
+            "type": "string"
+          },
+          "scheme": {
+            "default": "https",
+            "description": "The scheme of the protocol.",
+            "example": "https",
+            "type": "string"
+          },
+          "source_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "verify_ssl": {
+            "default": true,
+            "description": "Should the SSL certificate be verified?",
+            "example": true,
+            "type": "boolean"
+          },
+          "last_checked_at": {
+            "description": "Timestamp of the last time the availability was checked for the connection",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_available_at": {
+            "description": "Timestamp of the last time the connection was available",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "created_at": {
+            "description": "The timestamp for when the endpoint was created.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "paused_at": {
+            "description": "The timestamp for when the endpoint was paused",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "The timestamp for when the source was last updated",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        }
+      },
+      "EndpointEdit": {
+        "description": "Expected payload when editing an endpoint",
+        "properties": {
+          "availability_status": {
+            "description": "The availability status of the endpoint.",
+            "example": "available",
+            "enum": [
+              "",
+              "available",
+              "unavailable"
+            ],
+            "type": "string"
+          },
+          "availability_status_error": {
+            "description": "The received error message when polling for the availability status",
+            "example": "Destination host unreachable",
+            "type": "string"
+          },
+          "certificate_authority": {
+            "description": "Optional X.509 Certificate Authority",
+            "type": "string"
+          },
+          "default": {
+            "description": "Mark endpoint as the default endpoint? Each source can only have one default endpoint. It gets set to true by default if the given source has no endpoints.",
+            "example": false,
+            "type": "boolean"
+          },
+          "host": {
+            "description": "URI host component of the endpoint.",
+            "example": "example.com",
+            "type": "string"
+          },
+          "path": {
+            "description": "URI path component of the endpoint.",
+            "example": "/example/path",
+            "type": "string"
+          },
+          "port": {
+            "default": 443,
+            "description": "URI port component of the endpoint.",
+            "example": 443,
+            "type": "integer"
+          },
+          "receptor_node": {
+            "description": "Identifier of a receptor node.",
+            "type": "string"
+          },
+          "role": {
+            "description": "The role of the endpoint. It must be unique among the source's endpoints.",
+            "type": "string"
+          },
+          "scheme": {
+            "default": "https",
+            "description": "The scheme of the protocol.",
+            "example": "https",
+            "type": "string"
+          },
+          "verify_ssl": {
+            "default": true,
+            "description": "Should the SSL certificate be verified?",
+            "example": true,
+            "type": "boolean"
+          },
+          "last_checked_at": {
+            "description": "Timestamp of the last time the availability was checked for the connection",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_available_at": {
+            "description": "Timestamp of the last time the connection was available",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EndpointRead": {
+        "description": "Endpoint object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "availability_status": {
+            "description": "The availability status of the endpoint.",
+            "example": "available",
+            "enum": [
+              "",
+              "available",
+              "unavailable"
+            ],
+            "type": "string"
+          },
+          "availability_status_error": {
+            "description": "The received error message when polling for the availability status",
+            "example": "Destination host unreachable",
+            "type": "string"
+          },
+          "certificate_authority": {
+            "description": "Optional X.509 Certificate Authority",
+            "type": "string"
+          },
+          "default": {
+            "description": "Mark endpoint as the default endpoint? Each source can only have one default endpoint. It gets set to true by default if the given source has no endpoints.",
+            "example": false,
+            "type": "boolean"
+          },
+          "host": {
+            "description": "URI host component of the endpoint.",
+            "example": "example.com",
+            "type": "string"
+          },
+          "path": {
+            "description": "URI path component of the endpoint.",
+            "example": "/example/path",
+            "type": "string"
+          },
+          "port": {
+            "default": 443,
+            "description": "URI port component of the endpoint.",
+            "example": 443,
+            "type": "integer"
+          },
+          "receptor_node": {
+            "description": "Identifier of a receptor node.",
+            "type": "string"
+          },
+          "role": {
+            "description": "The role of the endpoint. It must be unique among the source's endpoints.",
+            "type": "string"
+          },
+          "scheme": {
+            "default": "https",
+            "description": "The scheme of the protocol.",
+            "example": "https",
+            "type": "string"
+          },
+          "source_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "verify_ssl": {
+            "default": true,
+            "description": "Should the SSL certificate be verified?",
+            "example": true,
+            "type": "boolean"
+          },
+          "last_checked_at": {
+            "description": "Timestamp of the last time the availability was checked for the connection",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_available_at": {
+            "description": "Timestamp of the last time the connection was available",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "created_at": {
+            "description": "The timestamp for when the endpoint was created.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "paused_at": {
+            "description": "The timestamp for when the endpoint was paused",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "The timestamp for when the source was last updated",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EndpointsCollection": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EndpointRead"
+            }
+          }
+        }
+      },
+      "EndpointCreate": {
+        "type": "object",
+        "properties": {
+          "availability_status": {
+            "description": "The availability status of the endpoint.",
+            "example": "available",
+            "enum": [
+              "",
+              "available",
+              "unavailable"
+            ],
+            "type": "string"
+          },
+          "certificate_authority": {
+            "description": "Optional X.509 Certificate Authority.",
+            "example": "Let's Encrypt",
+            "type": "string"
+          },
+          "default": {
+            "description": "Mark endpoint as the default endpoint? Each source can only have one default endpoint. It gets set to true by default if the given source has no endpoints.",
+            "example": false,
+            "type": "boolean"
+          },
+          "host": {
+            "description": "URI host component of the endpoint.",
+            "example": "example.com",
+            "type": "string"
+          },
+          "path": {
+            "description": "URI path component of the endpoint.",
+            "example": "/example/path",
+            "type": "string"
+          },
+          "port": {
+            "default": 443,
+            "description": "URI port component of the endpoint.",
+            "example": 443,
+            "type": "integer"
+          },
+          "receptor_node": {
+            "description": "Identifier of a receptor node.",
+            "type": "string"
+          },
+          "role": {
+            "description": "The role of the endpoint. It must be unique among the source's endpoints.",
+            "type": "string"
+          },
+          "scheme": {
+            "default": "https",
+            "description": "The scheme of the protocol.",
+            "example": "https",
+            "type": "string"
+          },
+          "source_id": {
+            "description": "The id of the source this endpoint relates to.",
+            "example": "12",
+            "type": "string"
+          },
+          "verify_ssl": {
+            "default": true,
+            "description": "Should the SSL certificate be verified?",
+            "example": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source_id"
+        ]
+      },
+      "ErrorBadRequest": {
+        "description": "Error structure for the \"Bad Request\" responses",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "Status of the response",
+                  "example": 400,
+                  "type": "string"
+                },
+                "detail": {
+                  "description": "Detail of the error",
+                  "type": "string",
+                  "example": "The provided path parameters are invalid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ErrorNotFound": {
+        "description": "Error structure for the \"Not Found\" responses",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "Status of the response",
+                  "example": 404,
+                  "type": "string"
+                },
+                "detail": {
+                  "description": "Detail of the error",
+                  "type": "string",
+                  "example": "The resource was not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ErrorUnauthorized": {
+        "description": "Error structure for the \"Unauthorized\" responses",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "description": "Status of the response",
+                  "example": 401,
+                  "type": "string"
+                },
+                "detail": {
+                  "description": "Detail of the error",
+                  "type": "string",
+                  "example": "x-rh-identity header missing"
+                }
+              }
+            }
+          }
+        }
+      },
+      "GraphQLRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The GraphQL query",
+            "default": "{}"
+          },
+          "operationName": {
+            "type": "string",
+            "description": "If the Query contains several named operations, the operationName controls which one should be executed",
+            "default": ""
+          },
+          "variables": {
+            "type": "object",
+            "description": "Optional Query variables",
+            "nullable": true
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "GraphQLResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "Results from the GraphQL query"
+          },
+          "errors": {
+            "type": "array",
+            "description": "Errors resulting from the GraphQL query",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "ID": {
+        "type": "string",
+        "description": "ID of the resource",
+        "example": "12345",
+        "pattern": "^\\d+$",
+        "readOnly": true
+      },
+      "IDW": {
+        "type": "string",
+        "description": "ID of the resource. Not \"readonly\", since it might be used for create/update payloads",
+        "example": "12345",
+        "pattern": "^\\d+$"
+      },
+      "RhcConnectionCollection": {
+        "description": "Collection of Red Hat Connector Connections along with the metadata",
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RhcConnectionRead"
+            }
+          }
+        }
+      },
+      "RhcConnectionCreate": {
+        "type": "object",
+        "properties": {
+          "rhc_id": {
+            "description": "The UUID of the connection",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "type": "string"
+          },
+          "extra": {
+            "description": "Extra data in JSON format",
+            "example": {
+              "hello": "world"
+            },
+            "type": "object"
+          },
+          "source_id": {
+            "description": "Hehe",
+            "type": "string"
+          }
+        }
+      },
+      "RhcConnectionRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "rhc_id": {
+            "description": "The UUID of the connection",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "readOnly": true,
+            "type": "string"
+          },
+          "extra": {
+            "description": "Extra data in JSON format",
+            "example": {
+              "hello": "world"
+            },
+            "type": "object"
+          },
+          "availability_status": {
+            "description": "The availability status of the connection",
+            "enum": [
+              "available",
+              "in_progress",
+              "partially_available",
+              "unavailable"
+            ],
+            "example": "available",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "description": "Timestamp of the last time the availability was checked for the connection",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_available_at": {
+            "description": "Timestamp of the last time the connection was available",
+            "example": "2000-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "availability_status_error": {
+            "description": "The received error message when polling for the availability status",
+            "example": "Destination host unreachable",
+            "type": "string"
+          },
+          "source_ids": {
+            "description": "The connection's related sources",
+            "example": [
+              "92",
+              "106",
+              "231"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ID"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "RhcConnectionUpdate": {
+        "type": "object",
+        "properties": {
+          "extra": {
+            "description": "Extra data in JSON format",
+            "example": {
+              "hello": "world"
+            },
+            "type": "object"
+          }
+        }
+      },
+      "Source": {
+        "type": "object",
+        "properties": {
+          "app_creation_workflow": {
+            "type": "string",
+            "readOnly": true,
+            "enum": [
+              "manual_configuration",
+              "account_authorization"
+            ]
+          },
+          "availability_status": {
+            "description": "The availability status of the source",
+            "enum": [
+              "available",
+              "in_progress",
+              "partially_available",
+              "unavailable"
+            ],
+            "example": "available",
+            "type": "string"
+          },
+          "created_at": {
+            "description": "The timestamp for when the source was created.",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "imported": {
+            "description": "Was the source imported?",
+            "example": "true",
+            "type": "string"
+          },
+          "last_available_at": {
+            "description": "The timestamp for when the source was last available at.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "description": "The timestamp for when the source was last checked at for the availability status.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the source",
+            "example": "My shiny source",
+            "type": "string"
+          },
+          "source_ref": {
+            "description": "The external referece or ID for the source",
+            "example": "my-long-external-ref",
+            "type": "string"
+          },
+          "source_type_id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "uid": {
+            "description": "Unique ID of the inventory source installation",
+            "example": "my-long-uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "The timestamp for when the source was last updated",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "version": {
+            "description": "The version of the source",
+            "example": "1.2.3",
+            "readOnly": true,
+            "type": "string"
+          },
+          "paused_at": {
+            "description": "The timestamp for when the source was paused",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SourceCreate": {
+        "description": "The payload that the back end accepts when creating a source",
+        "properties": {
+          "name": {
+            "description": "The name of the source",
+            "example": "My shiny source",
+            "type": "string"
+          },
+          "uid": {
+            "description": "Unique ID of the inventory source installation",
+            "example": "my-long-uuid",
+            "type": "string"
+          },
+          "version": {
+            "description": "The version of the source",
+            "example": "1.2.3",
+            "type": "string"
+          },
+          "imported": {
+            "description": "Was the source imported?",
+            "example": "true",
+            "type": "string"
+          },
+          "source_ref": {
+            "description": "The external referece or ID for the source",
+            "example": "my-long-external-ref",
+            "type": "string"
+          },
+          "app_creation_workflow": {
+            "description": "The way the source is going to be created: manually, or using superkey?",
+            "enum": [
+              "manual_configuration",
+              "account_authorization"
+            ],
+            "type": "string"
+          },
+          "availability_status": {
+            "description": "The availability status of the source",
+            "enum": [
+              "available",
+              "in_progress",
+              "partially_available",
+              "unavailable"
+            ],
+            "example": "available",
+            "type": "string"
+          },
+          "source_type_id": {
+            "description": "The ID of the source type",
+            "example": "12345",
+            "type": "string",
+            "pattern": "^\\d+$"
+          }
+        },
+        "type": "object"
+      },
+      "SourceEdit": {
+        "description": "The payload that the back end accepts when editing a source",
+        "properties": {
+          "name": {
+            "description": "The name of the source",
+            "example": "My shiny source",
+            "type": "string"
+          },
+          "version": {
+            "description": "The version of the source",
+            "example": "1.2.3",
+            "type": "string"
+          },
+          "imported": {
+            "description": "Was the source imported?",
+            "example": "true",
+            "type": "string"
+          },
+          "source_ref": {
+            "description": "The external referece or ID for the source",
+            "example": "my-long-external-ref",
+            "type": "string"
+          },
+          "availability_status": {
+            "description": "The availability status of the source",
+            "enum": [
+              "available",
+              "in_progress",
+              "partially_available",
+              "unavailable"
+            ],
+            "example": "available",
+            "type": "string"
+          },
+          "last_available_at": {
+            "description": "The timestamp of the last time the source was seen as available",
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "description": "The timestamp of the last time the source was checked for the availability status",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SourceType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "category": {
+            "description": "The category of this source type",
+            "example": "Cloud",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the source type",
+            "example": "openshift",
+            "type": "string"
+          },
+          "product_name": {
+            "description": "The name of the product",
+            "example": "OpenShift",
+            "type": "string"
+          },
+          "vendor": {
+            "description": "The vendor that developed this product",
+            "example": "Red Hat",
+            "type": "string"
+          },
+          "schema": {
+            "description": "The schema for the front end to interpret how to show this source type",
+            "type": "object"
+          },
+          "icon_url": {
+            "description": "The icon's URL for this source type",
+            "example": "https://example.com/icons/example-st.svg",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        }
+      },
+      "SourceTypesCollection": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourceType"
+            }
+          }
+        }
+      },
+      "SourcesCollection": {
+        "description": "An array containing source objects",
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            }
+          }
+        }
+      },
+      "BulkCreatePayload": {
+        "type": "object",
+        "properties": {
+          "sources": {
+            "description": "Array of source objects to create\n",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "description": "The name of the source",
+                  "example": "My shiny source",
+                  "type": "string"
+                },
+                "source_type_name": {
+                  "description": "The type of the source that will be created",
+                  "example": "amazon",
+                  "enum": [
+                    "amazon",
+                    "azure",
+                    "bitbucket",
+                    "dockerhub",
+                    "google",
+                    "github",
+                    "gitlab",
+                    "oracle-cloud-infraestructure",
+                    "openshift",
+                    "quay",
+                    "rh-marketplace",
+                    "satellite",
+                    "ibm"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "source_type_name"
+              ]
+            }
+          },
+          "endpoints": {
+            "description": "Array of endpoint objects to create. The operation looks up the parent source by the `source_name` attribute so the `source_name` must match one of the `source`'s names in the payload.\n",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source_name": {
+                  "description": "The name of the source this endpoint will be attached to",
+                  "example": "My shiny source",
+                  "type": "string"
+                },
+                "host": {
+                  "description": "URI host component of the endpoint.",
+                  "example": "example.com",
+                  "type": "string"
+                },
+                "path": {
+                  "description": "URI path component of the endpoint.",
+                  "example": "/example/path",
+                  "type": "string"
+                },
+                "port": {
+                  "default": 443,
+                  "description": "URI port component of the endpoint.",
+                  "example": 443,
+                  "type": "integer"
+                },
+                "scheme": {
+                  "default": "https",
+                  "description": "URI scheme component of the endpoint.",
+                  "example": "https",
+                  "type": "string"
+                },
+                "verify_ssl": {
+                  "default": true,
+                  "description": "Should the SSL certificate be verified?",
+                  "example": true,
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "source_name"
+              ]
+            }
+          },
+          "applications": {
+            "description": "Array of application objects to create. The operation looks up the parent Source by the `source_name` attribute so the `source_name` must match one of the `source` names in the payload. You can specify the application type by using either the `application_type_name` or the `application_type_id`.\n",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source_name": {
+                  "description": "The name of the source this application will be attached to",
+                  "example": "My shiny source",
+                  "type": "string"
+                },
+                "source_id": {
+                  "description": "The ID of the soruce this application will be attached to",
+                  "example": "412",
+                  "type": "string"
+                },
+                "application_type_name": {
+                  "description": "The name of the application type",
+                  "example": "/insights/platform/app-studio",
+                  "type": "string"
+                },
+                "application_type_id": {
+                  "description": "The ID of the application type",
+                  "example": "2",
+                  "type": "string"
+                },
+                "extra": {
+                  "description": "Any extra information you would like to store in JSON format",
+                  "format": "string",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "source_name"
+              ]
+            }
+          },
+          "authentications": {
+            "description": "Array of authentications to create. `resource_type` tells the action where to look for the parent, must be either application, endpoint or source.\nIf the parent is a source, it looks up by name. If the parent is an endpoint, it looks up via host so the hostname must match. If the parent is an application, it looks up via application type so the value must match the application type which matches.\n",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "authtype": {
+                  "description": "The type of the authentication. You can find this by listing the source types or the application types",
+                  "enum": [
+                    "access_key_secret_key",
+                    "api_token_account_id",
+                    "arn",
+                    "bitbucket-app-password",
+                    "cloud-meter-arn",
+                    "docker-access-token",
+                    "github-personal-access-token",
+                    "gitlab-personal-access-token",
+                    "lighthouse_subscription_id",
+                    "marketplace-token",
+                    "ocid",
+                    "project_id_service_account_json",
+                    "quay-encrypted-password",
+                    "receptor_node",
+                    "tenant_id_client_id_client_secret",
+                    "token",
+                    "username_password"
+                  ],
+                  "example": "arn",
+                  "type": "string"
+                },
+                "username": {
+                  "description": "The username of the authentication",
+                  "example": "arn:whatever",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "The password of the authentication",
+                  "example": "MyP4ssW0rd",
+                  "type": "string"
+                },
+                "resource_name": {
+                  "description": "The name of the resource this authentication relates to",
+                  "example": "My shiny source",
+                  "type": "string"
+                },
+                "resource_type": {
+                  "description": "The type of the resource this authentication relates to",
+                  "enum": [
+                    "application",
+                    "endpoint",
+                    "source"
+                  ],
+                  "example": "application",
+                  "type": "string"
+                },
+                "extra": {
+                  "description": "Any extra information you would like to store in JSON format",
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BulkCreateResponse": {
+        "type": "object",
+        "properties": {
+          "sources": {
+            "description": "An array containing the created sources",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            }
+          },
+          "endpoints": {
+            "description": "An array containing the created endpoints",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Endpoint"
+            }
+          },
+          "applications": {
+            "description": "An array containing the created applications",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Application"
+            }
+          },
+          "authentications": {
+            "description": "An array containing the created authentications",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthenticationCreate"
+            }
+          }
+        }
+      }
+    }
+  }
+}

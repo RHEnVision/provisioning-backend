@@ -27,10 +27,6 @@
 #   secret:
 #   session:
 
-# Image Builder configuration
-# imageBuilder:
-#   url: 
-
 # AWS CloudWatch logger
 # cloudwatch:
 #   enabled: false
@@ -40,6 +36,12 @@
 #   session:
 #   group: group
 #   stream: stream
+
+# restEndpoints:
+#   imageBuilder:
+#     url:
+#   sources:
+#     url:
 
 # featureFlags:
 #   # development or production
