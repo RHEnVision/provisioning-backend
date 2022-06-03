@@ -1,5 +1,3 @@
-BEGIN;
-
 -- Unicode-safe empty check
 CREATE OR REPLACE FUNCTION empty(t TEXT)
   RETURNS BOOLEAN AS
@@ -29,7 +27,7 @@ BEGIN
             FROM information_schema.tables
             WHERE table_schema = 'public'
               AND table_type = 'BASE TABLE'
-              AND table_name != 'schema_migrations'
+              AND table_name != 'schema_version'
     LOOP
       EXECUTE format(
         'SELECT setval(pg_get_serial_sequence(''"%s"'', ''id''), (SELECT COALESCE(MAX("id"), 1) from "%s"))', tn, tn);
@@ -48,5 +46,3 @@ BEGIN
   RETURN NEW;
 END;
 $prevent_tag_update$ LANGUAGE 'plpgsql';
-
-COMMIT;

@@ -29,12 +29,17 @@ func main() {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
 
-	log.Info().Msg("Migrating database")
-	db.Migrate()
-	log.Info().Msgf("Migration complete")
+	err = db.Migrate()
+	if err != nil {
+		logger.Fatal().Err(err).Msg("Error running migration")
+		return
+	}
+
 	if config.Database.SeedScript != "" {
-		log.Info().Msgf("Seeding '%s'", config.Database.SeedScript)
-		db.Seed(config.Database.SeedScript)
-		log.Info().Msg("Seed complete")
+		err = db.Seed(config.Database.SeedScript)
+		if err != nil {
+			logger.Fatal().Err(err).Msg("Error running migration")
+			return
+		}
 	}
 }
