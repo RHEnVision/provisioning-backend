@@ -1,23 +1,22 @@
 package db
 
 import (
+	"context"
 	"embed"
+	"errors"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
-	stdlog "log"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/pkg/errors"
-	"github.com/rs/zerolog"
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v4/stdlib"
 	"github.com/rs/zerolog/log"
 
-	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/pgx"
-	"github.com/golang-migrate/migrate/v4/source/iofs"
 	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/jackc/tern/migrate"
 )
 
 //go:embed migrations
@@ -26,52 +25,149 @@ var embeddedMigrations embed.FS
 //go:embed seeds
 var embeddedSeeds embed.FS
 
-// MigrationLogger implements
-// https://github.com/golang-migrate/migrate/blob/master/log.go
-type MigrationLogger struct {
-	logger zerolog.Logger
+type EmbeddedFS struct {
+	efs *embed.FS
 }
 
-func NewMigrationLogger(logger zerolog.Logger) *MigrationLogger {
-	return &MigrationLogger{logger: logger}
+func NewEmbeddedFS(fs *embed.FS) *EmbeddedFS {
+	return &EmbeddedFS{efs: fs}
 }
 
-func (log *MigrationLogger) Printf(format string, v ...interface{}) {
-	log.logger.Info().Msgf(format, v...)
+func (efs *EmbeddedFS) ReadDir(dirname string) ([]fs.FileInfo, error) {
+	dirEntries, err := efs.efs.ReadDir(dirname)
+	if err != nil {
+		return nil, fmt.Errorf("unable to read dir: %w", err)
+	}
+	result := make([]fs.FileInfo, 0, len(dirEntries))
+	for _, de := range dirEntries {
+		fi, err := de.Info()
+		if err != nil {
+			return nil, fmt.Errorf("unable to read dir: %w", err)
+		}
+		result = append(result, fi)
+	}
+	return result, nil
 }
 
-// Verbose should return true when verbose logging output is wanted
-func (log *MigrationLogger) Verbose() bool {
-	return true
+func (efs *EmbeddedFS) ReadFile(filename string) ([]byte, error) {
+	result, err := efs.efs.ReadFile(filename)
+	if err != nil {
+		return nil, fmt.Errorf("unable to read file: %w", err)
+	}
+	return result, nil
 }
+
+func (efs *EmbeddedFS) Glob(pattern string) (matches []string, err error) {
+	result, err := fs.Glob(efs.efs, pattern)
+	if err != nil {
+		return nil, fmt.Errorf("unable to glob: %w", err)
+	}
+	return result, nil
+}
+
+func fmtDetailedError(sql string, mgErr *pgconn.PgError) string {
+	var errb strings.Builder
+	errb.WriteString(mgErr.Error())
+
+	if mgErr.Detail != "" {
+		errb.WriteString(fmt.Sprintln("DETAIL:", mgErr.Detail))
+	}
+
+	if mgErr.Position != 0 {
+		ele, err := ExtractErrorLine(sql, int(mgErr.Position))
+		if err != nil {
+			errb.WriteString(err.Error())
+			return errb.String()
+		}
+
+		prefix := fmt.Sprintf("\nLINE %d: ", ele.LineNum)
+		errb.WriteString(fmt.Sprintf("%s%s\n", prefix, ele.Text))
+
+		padding := strings.Repeat(" ", len(prefix)+ele.ColumnNum-1)
+		errb.WriteString(fmt.Sprintf("%s^\n", padding))
+	}
+
+	if mgErr.Where != "" {
+		errb.WriteString(fmt.Sprintf(", WHERE: %s\n", mgErr.Where))
+	}
+
+	if mgErr.InternalPosition != 0 {
+		ele, err := ExtractErrorLine(mgErr.InternalQuery, int(mgErr.InternalPosition))
+		if err != nil {
+			errb.WriteString(err.Error())
+			return errb.String()
+		}
+
+		prefix := fmt.Sprintf("LINE %d: ", ele.LineNum)
+		errb.WriteString(fmt.Sprintf("%s%s\n", prefix, ele.Text))
+
+		padding := strings.Repeat(" ", len(prefix)+ele.ColumnNum-1)
+		errb.WriteString(fmt.Sprintf("%s^\n", padding))
+	}
+
+	return errb.String()
+}
+
+var ErrNoMigrationsFound = errors.New("no migrations found")
+var ErrMigration = errors.New("unable to perform migration")
+var ErrSeedProduction = errors.New("seed in production")
 
 // Migrate executes embedded SQL scripts from internal/db/migrations. For the time being
 // only "up" migrations are supported. When this package is initialized, the directory
 // is verified that it only contains XXX_*.up.sql files (XXX = numbers).
-func Migrate() {
-	mlog := log.Logger.With().Bool("migration", true).Logger()
-	d, err := iofs.New(embeddedMigrations, "migrations")
-	if err != nil {
-		mlog.Fatal().Err(err).Msg("Error reading migrations")
-	}
+func Migrate() error {
+	logger := log.Logger.With().Bool("migration", true).Logger()
+	ctx := context.Background()
+	logger.Debug().Msgf("Started migration")
 
-	m, err := migrate.NewWithSourceInstance("iofs", d, GetConnectionString("pgx"))
-	if err != nil {
-		mlog.Fatal().Err(err).Msg("Error connecting to database")
+	stdConn, connErr := DB.Conn(ctx)
+	if connErr != nil {
+		return fmt.Errorf("error acquiring connection from pool: %w", connErr)
 	}
-	m.Log = NewMigrationLogger(mlog)
+	defer stdConn.Close()
 
-	// Perform migration
-	if err = m.Up(); errors.Is(err, migrate.ErrNoChange) {
-		mlog.Info().Msg("No changes")
-	} else if err != nil {
-		mlog.Fatal().Err(err).Msg("Error performing migrations")
+	wrapErr := stdConn.Raw(func(pgxConn interface{}) error {
+		conn := pgxConn.(*stdlib.Conn).Conn()
+		opts := migrate.MigratorOptions{
+			MigratorFS: NewEmbeddedFS(&embeddedMigrations),
+		}
+		migrator, err := migrate.NewMigratorEx(ctx, conn, "public.schema_version", &opts)
+		if err != nil {
+			return fmt.Errorf("error initializing migrator: %w", err)
+		}
+		err = migrator.LoadMigrations("migrations/")
+		if err != nil {
+			return fmt.Errorf("error loading migrations: %w", err)
+		}
+		if len(migrator.Migrations) == 0 {
+			return ErrNoMigrationsFound
+		}
+
+		migrator.OnStart = func(sequence int32, name, direction, sql string) {
+			logger.Info().Str("sql", sql).Msgf("Executing migration %s %s", name, direction)
+		}
+
+		err = migrator.Migrate(ctx)
+		if err != nil {
+			var mgErr *migrate.MigrationPgError
+			var pgErr *pgconn.PgError
+			if errors.As(err, &mgErr) && errors.As(err, &pgErr) {
+				return fmt.Errorf("%w: %s", ErrMigration, fmtDetailedError(mgErr.Sql, pgErr))
+			} else {
+				return fmt.Errorf("unable to perform migration: %w", err)
+			}
+		}
+
+		return nil
+	})
+	if wrapErr != nil {
+		return fmt.Errorf("error migrating: %w", wrapErr)
 	}
 
 	// Print some additional info
 	rows, err := DB.Query("SELECT version, applied_at FROM schema_migrations_history")
 	if err != nil {
-		mlog.Fatal().Err(err).Msg("Error querying schema history")
+		logger.Fatal().Err(err).Msg("Error querying schema history")
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -79,71 +175,47 @@ func Migrate() {
 		var appliedAt time.Time
 
 		if err := rows.Scan(&version, &appliedAt); err != nil {
-			mlog.Fatal().Err(err).Msg("Error scanning schema history")
+			logger.Fatal().Err(err).Msg("Error scanning schema history")
 		}
-		mlog.Info().Msgf("Version %d was applied %v", version, appliedAt.UTC())
+		logger.Info().Msgf("Version %d was applied %v", version, appliedAt.UTC())
 	}
 	if err := rows.Err(); err != nil {
-		mlog.Fatal().Err(err).Msg("Error scanning schema history")
+		logger.Fatal().Err(err).Msg("Error scanning schema history")
 	}
+
+	logger.Info().Msgf("Finished with migration")
+	return nil
 }
 
 // Seed executes embedded SQL scripts from internal/db/seeds
-func Seed(seedScript string) {
-	mlog := log.Logger.With().Bool("migration", true).Logger()
+func Seed(seedScript string) error {
+	logger := log.Logger.With().Bool("seed", true).Logger()
+	logger.Debug().Msgf("Started execution of seed script %s", seedScript)
 
 	// Prevent from accidental execution of drop_all seed in production
 	if seedScript == "drop_all" && config.Features.Environment != "development" {
-		mlog.Fatal().Msgf("An attempt to run drop_all seed script in non %s environment", config.Features.Environment)
-		return
+		return fmt.Errorf("%w: an attempt to run drop_all seed script in non %s environment", ErrSeedProduction, config.Features.Environment)
 	}
 	file, err := embeddedSeeds.Open(fmt.Sprintf("seeds/%s.sql", seedScript))
 	if err != nil {
-		mlog.Fatal().Err(err).Msgf("Unable to open seed script %s", seedScript)
+		return fmt.Errorf("unable to open seed script %s: %w", seedScript, err)
 	}
 	defer file.Close()
 	buffer, err := ioutil.ReadAll(file)
 	if err != nil {
-		mlog.Fatal().Err(err).Msgf("Unable to read seed script %s", seedScript)
+		return fmt.Errorf("unable to read seed script %s: %w", seedScript, err)
 	}
 	_, err = DB.Exec(string(buffer))
 	if err != nil {
-		mlog.Fatal().Err(err).Msgf("Unable to execute script %s", seedScript)
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			detail := fmtDetailedError(string(buffer), pgErr)
+			logger.Fatal().Err(pgErr).Msg(detail)
+		} else {
+			return fmt.Errorf("unable to execute script %s: %w", seedScript, err)
+		}
 	}
-	mlog.Info().Msgf("Executed seed script %s", seedScript)
-}
 
-// Checks that migration files are in proper format and index has no gaps or
-// reused numbers. Note this runs during package import, so the main logger
-// is not yet available. Typically, this fails before it gets into production
-// (e.g. during local testing or on CI).
-func init() {
-	dir, err := embeddedMigrations.ReadDir("migrations")
-	if err != nil {
-		stdlog.Fatal("Unable to open migrations embedded directory")
-	}
-	// count migration prefixes
-	checks := make([]int, len(dir))
-	for _, de := range dir {
-		// check prefix number
-		ix, err := strconv.Atoi(de.Name()[:3])
-		if err != nil {
-			stdlog.Fatalf("Migration %s does not start with an integer?", de.Name())
-		}
-		if ix-1 > len(checks)-1 {
-			stdlog.Fatalf("Is there a gap in migration numbers? Number %d is way too high", ix)
-		}
-		checks[ix-1]++
-
-		// check suffix
-		if !strings.HasSuffix(de.Name(), "up.sql") {
-			stdlog.Fatalf("Migration %s does not end with up.sql, down migrations are not accepted", de.Name())
-		}
-	}
-	// check expected result
-	for i, x := range checks {
-		if x != 1 {
-			stdlog.Fatalf("Migration with index %03d was not found exactly once, but %d times", i+1, x)
-		}
-	}
+	logger.Info().Msgf("Executed seed script %s", seedScript)
+	return nil
 }
