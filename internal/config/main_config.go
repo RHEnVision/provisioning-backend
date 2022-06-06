@@ -111,10 +111,14 @@ func DumpConfig(logger zerolog.Logger) {
 	if IsProduction() {
 		logger.Warn().Msg("Dumping configuration in production mode!")
 	}
+	replacement := "****"
 	configCopy := config
-	configCopy.Database.Password = "*****"
-	configCopy.Cloudwatch.Key = "*****"
-	configCopy.Cloudwatch.Secret = "*****"
-	configCopy.Cloudwatch.Session = "*****"
+	configCopy.Database.Password = replacement
+	configCopy.Cloudwatch.Key = replacement
+	configCopy.Cloudwatch.Secret = replacement
+	configCopy.Cloudwatch.Session = replacement
+	configCopy.AWS.Key = replacement
+	configCopy.AWS.Secret = replacement
+	configCopy.AWS.Session = replacement
 	logger.Info().Msgf("Configuration: %+v", configCopy)
 }
