@@ -3,6 +3,7 @@ package ctxval
 import (
 	"context"
 
+	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -31,4 +32,8 @@ func GetRequestId(ctx context.Context) string {
 		return ""
 	}
 	return ctx.Value(RequestIdCtxKey).(string)
+}
+
+func GetIdentity(ctx context.Context) identity.XRHID {
+	return identity.Get(ctx)
 }
