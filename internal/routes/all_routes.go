@@ -7,6 +7,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
+	"github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
 func SetupRoutes(r *chi.Mux) {
@@ -20,6 +21,7 @@ func pathPrefix() string {
 
 func apiRouter() http.Handler {
 	r := chi.NewRouter()
+	r.Use(identity.EnforceIdentity)
 	r.Route("/accounts", func(r chi.Router) {
 		r.Get("/", s.ListAccounts)
 		r.Route("/{ID}", func(r chi.Router) {
