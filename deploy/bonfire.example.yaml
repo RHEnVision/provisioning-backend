@@ -4,7 +4,7 @@
 appsFile:
   host: gitlab
   repo: insights-platform/cicd-common
-  path: bonfire_configs/ephemeral_apps.yaml
+  path: bonfire_configs/ephemeral_apps_deprecated.yaml
 
 # (optional) define any apps locally. An app defined here with <name> will override config for app
 # <name> in above fetched config.
