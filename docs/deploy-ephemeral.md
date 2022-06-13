@@ -11,6 +11,8 @@
 7. You've run `podman login quay.io` to login into quay with your account
 
 # Deploy to Ephemeral
+> **_Mac users:_** the build process is a bit memory heavy, please increase the podman's
+> machine memory to at least 8GB by running `podman machine set -m 8192` 
 
 1. Copy `deploy/bonfire.example.yaml` to `deploy/bonfire.yaml`
 2. set `<path_to_service_dir>` to the path to the local path of this repo
