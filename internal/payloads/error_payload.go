@@ -55,6 +55,34 @@ func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	}
 }
 
+func New3rdPartyClientError(ctx context.Context, message string, err error) *ResponseError {
+	msg := fmt.Sprintf("3rd Party Client error: %s: %v", message, err)
+	if logger := ctxval.GetLogger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
+		RequestId:      ctxval.GetRequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
+func NewClientInitializationError(ctx context.Context, message string, err error) *ResponseError {
+	msg := fmt.Sprintf("HTTP client initialization error: %s: %v", message, err)
+	if logger := ctxval.GetLogger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
+		RequestId:      ctxval.GetRequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
 func NewNotFoundError(ctx context.Context, err error) *ResponseError {
 	msg := fmt.Sprintf("not found: %v", err)
 	if logger := ctxval.GetLogger(ctx); logger != nil {

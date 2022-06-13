@@ -8,7 +8,8 @@ INSERT INTO accounts(id, account_number, org_id)
 VALUES (1, '13', '000013'),
        (2, '15', '000015'),
        (3, NULL, '000042'),
-       (4, NULL, '000077')
+       (4, NULL, '000077'),
+       (5, '6089719', '000016')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO pubkeys(id, account_id, name, body)
