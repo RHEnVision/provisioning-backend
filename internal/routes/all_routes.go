@@ -22,6 +22,13 @@ func pathPrefix() string {
 func apiRouter() http.Handler {
 	r := chi.NewRouter()
 	r.Use(identity.EnforceIdentity)
+	r.Route("/sources", func(r chi.Router) {
+		r.Get("/", s.ListSources)
+		r.Route("/{ID}", func(r chi.Router) {
+			r.Get("/", s.GetSource)
+		})
+	})
+
 	r.Route("/accounts", func(r chi.Router) {
 		r.Get("/", s.ListAccounts)
 		r.Route("/{ID}", func(r chi.Router) {
