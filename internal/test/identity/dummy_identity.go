@@ -1,4 +1,4 @@
-package testutils
+package identity
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/redhatinsights/platform-go-middlewares/identity"
+	rh_identity "github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
 // accountNumber to be used in the tests.
@@ -29,7 +30,7 @@ func AddIdentityHeader(t *testing.T, req *http.Request) *http.Request {
 }
 
 func WithIdentity(t *testing.T, ctx context.Context) context.Context {
-	return context.WithValue(ctx, identity.Key, xRhId)
+	return context.WithValue(ctx, rh_identity.Key, xRhId)
 }
 
 // setUpValidIdentity returns a base64 encoded valid identity.
