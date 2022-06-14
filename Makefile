@@ -29,16 +29,15 @@ prep:
 run:
 	go run ./cmd/pbapi
 
-.PHONY: generate-clients
-generate-clients:
-	generate-ib-client
+.PHONY: update-clients
+update-clients:
+	wget -O ./configs/ib_api.yaml -qN https://raw.githubusercontent.com/osbuild/image-builder/main/internal/v1/api.yaml
 
-.PHONY: generate-ib-client
-generate-ib-client:
-	cd internal/clients/image_builder
-	wget https://raw.githubusercontent.com/osbuild/image-builder/main/internal/v1/api.yaml
+generate-clients: internal/clients/image_builder/client.gen.go
+
+internal/clients/image_builder/client.gen.go: configs/ib_config.yaml configs/ib_api.yaml
 	oapi-codegen -config ./configs/ib_config.yaml ./configs/ib_api.yaml
-	
+
 .PHONY: install-tools
 install-tools:
 	go install golang.org/x/tools/cmd/goimports@latest
