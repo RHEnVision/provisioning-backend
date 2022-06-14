@@ -10,7 +10,7 @@ import (
 
 	dao_stubs "github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/test/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
 )
 
