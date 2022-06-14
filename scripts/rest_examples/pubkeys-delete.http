@@ -1,3 +1,4 @@
 // @no-log
-DELETE http://localhost:8000/api/provisioning/pubkeys/101 HTTP/1.1
+DELETE http://{{hostname}}:{{port}}/{{prefix}}/pubkeys/101 HTTP/1.1
 Content-Type: application/json
+X-Rh-Identity: {{identity}}
