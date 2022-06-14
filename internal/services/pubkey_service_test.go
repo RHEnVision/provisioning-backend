@@ -10,7 +10,7 @@ import (
 
 	dao_stubs "github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/testutils"
+	"github.com/RHEnVision/provisioning-backend/internal/test/identity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +30,7 @@ func buildPkStore() []*models.Pubkey {
 
 func TestListPubkeysHandler(t *testing.T) {
 	ctx := context.Background()
-	ctx = testutils.WithIdentity(t, ctx)
+	ctx = identity.WithIdentity(t, ctx)
 	ctx = dao_stubs.WithPubkeyDao(ctx, buildPkStore())
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/pubkeys", nil)
