@@ -16,7 +16,12 @@ func ListSources(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client", err))
 		return
 	}
-	resp, err := client.ListSourcesWithResponse(r.Context(), &sources.ListSourcesParams{}, AddIdentityHeader)
+
+	name := r.URL.Query().Get("provider")
+	filter := sources.QueryFilter("[source_type][name]=" + name)
+
+	resp, err := client.ListSourcesWithResponse(r.Context(), &sources.ListSourcesParams{Filter: &filter}, AddIdentityHeader)
+
 	if err != nil {
 		renderError(w, r, payloads.New3rdPartyClientError(r.Context(), "list sources", err))
 		return
