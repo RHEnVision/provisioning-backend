@@ -34,9 +34,9 @@ update-clients:
 	wget -O ./configs/ib_api.yaml -qN https://raw.githubusercontent.com/osbuild/image-builder/main/internal/v1/api.yaml
 	wget -O ./configs/sources_api.json -qN https://raw.githubusercontent.com/RedHatInsights/sources-api-go/main/public/openapi-3-v3.1.json
 
-generate-clients: internal/clients/image_builder/client.gen.go internal/clients/sources/sources_client.gen.go
+generate-clients: internal/clients/image_builder/client.gen.go internal/clients/sources/client.gen.go
 
-internal/clients/sources/sources_client.gen.go: configs/sources_config.yml configs/sources_api.json
+internal/clients/sources/client.gen.go: configs/sources_config.yml configs/sources_api.json
 	oapi-codegen -config ./configs/sources_config.yml ./configs/sources_api.json
 
 internal/clients/image_builder/client.gen.go: configs/ib_config.yaml configs/ib_api.yaml
