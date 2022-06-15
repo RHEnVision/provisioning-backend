@@ -27,7 +27,13 @@ issues:
       linters:
         - sqlclosecheck
 
-    # easier to write test code
+    # Makes easier to write test code.
     - path: '(.+)_test\.go'
       linters:
         - forcetypeassert
+
+    # Exclude generated files.
+    - path: \.gen\.go
+      linters:
+        - typecheck
+        - errcheck

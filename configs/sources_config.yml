@@ -1,8 +1,14 @@
---- 
-generate:
-  - client
-  - types
+---
 package: sources
-output: ./internal/clients/sources/sources_client.gen.go
+generate:
+  models: true
+  client: true
+output: ./internal/clients/sources/client.gen.go
+compatibility:
+  old-enum-conflicts: true # generator issue: redeclaration of EndpointAvailabilityStatus
 output-options:
-  skip-prune: true
+  include-tags:
+    - sources
+  exclude-schemas:
+    - BulkCreateResponse # generator issue: redeclaration
+

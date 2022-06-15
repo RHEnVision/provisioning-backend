@@ -1,8 +1,6 @@
---- 
-generate:
-  - client
-  - types
+---
 package: image_builder
+generate:
+  models: true
+  client: true
 output: ./internal/clients/image_builder/client.gen.go
-output-options:
-  skip-prune: true
