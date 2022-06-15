@@ -32,7 +32,7 @@ run:
 .PHONY: update-clients
 update-clients:
 	wget -O ./configs/ib_api.yaml -qN https://raw.githubusercontent.com/osbuild/image-builder/main/internal/v1/api.yaml
-	wget -O ./configs/sources_api.json -qN https://raw.githubusercontent.com/RedHatInsights/sources-api-go/main/public/openapi-3-v3.1.json 
+	wget -O ./configs/sources_api.json -qN https://raw.githubusercontent.com/RedHatInsights/sources-api-go/main/public/openapi-3-v3.1.json
 
 generate-clients: internal/clients/image_builder/client.gen.go internal/clients/sources/sources_client.gen.go
 
@@ -62,6 +62,10 @@ lint:
 .PHONY: migrate
 migrate:
 	go run ./cmd/pbmigrate
+
+.PHONY: dropdb
+dbpurge:
+	go run ./cmd/pbmigrate dbpurge
 
 .PHONY: test
 test:
