@@ -1,7 +1,7 @@
---- 
+---
 generate:
-  - client
-  - types
+  client: true
+  models: true
 package: image_builder
 output: ./internal/clients/image_builder/client.gen.go
 output-options:
