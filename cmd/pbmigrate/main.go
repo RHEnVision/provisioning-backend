@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -27,6 +29,16 @@ func main() {
 	err = db.Initialize()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing database")
+	}
+
+	if len(os.Args[1:]) > 0 && os.Args[1] == "dbpurge" {
+		err = db.Seed("drop_all")
+		if err != nil {
+			logger.Fatal().Err(err).Msg("Error purging the database")
+			return
+		}
+		logger.Info().Msgf("Database %s has been purged to blank state", config.Database.Name)
+		return
 	}
 
 	err = db.Migrate()
