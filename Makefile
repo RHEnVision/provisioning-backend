@@ -32,7 +32,7 @@ run:
 .PHONY: update-clients
 update-clients:
 	wget -O ./configs/ib_api.yaml -qN https://raw.githubusercontent.com/osbuild/image-builder/main/internal/v1/api.yaml
-	wget -O ./configs/sources_api.json -qN https://raw.githubusercontent.com/RedHatInsights/sources-api-go/main/public/openapi-3-v3.1.json 
+	wget -O ./configs/sources_api.json -qN https://raw.githubusercontent.com/RedHatInsights/sources-api-go/main/public/openapi-3-v3.1.json
 
 generate-clients: internal/clients/image_builder/client.gen.go internal/clients/sources/sources_client.gen.go
 
@@ -47,7 +47,7 @@ install-tools:
 	go install golang.org/x/tools/cmd/goimports@latest
 	# pin for a bug: https://github.com/golangci/golangci-lint/issues/2851
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2
-	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+	go install github.com/jackc/tern@latest
 	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 
 .PHONY: fmt
