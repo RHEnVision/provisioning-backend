@@ -63,9 +63,9 @@ lint:
 migrate:
 	go run ./cmd/pbmigrate
 
-.PHONY: dropdb
-dbpurge:
-	go run ./cmd/pbmigrate dbpurge
+.PHONY: purgedb
+purgedb:
+	go run ./cmd/pbmigrate purgedb
 
 .PHONY: test
 test:
