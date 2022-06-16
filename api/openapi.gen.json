@@ -7,8 +7,7 @@
             "type": "string"
           },
           "id": {
-            "maximum": 18446744073709552000,
-            "minimum": 0,
+            "format": "int64",
             "type": "integer"
           },
           "org_id": {
@@ -20,16 +19,14 @@
       "v1.Pubkey": {
         "properties": {
           "account_id": {
-            "maximum": 18446744073709552000,
-            "minimum": 0,
+            "format": "int64",
             "type": "integer"
           },
           "body": {
             "type": "string"
           },
           "id": {
-            "maximum": 18446744073709552000,
-            "minimum": 0,
+            "format": "int64",
             "type": "integer"
           },
           "name": {
@@ -56,13 +53,13 @@
       "name": "GPL-3.0"
     },
     "title": "provisioning-api",
-    "version": "0.0.1"
+    "version": "0.0.2"
   },
   "openapi": "3.0.0",
   "paths": {
     "/pubkeys": {
       "get": {
-        "description": "Get Pubkeys list",
+        "description": "Returns list of resources.",
         "operationId": "getPubkeyList",
         "responses": {
           "200": {
@@ -76,21 +73,23 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "Returned on success."
           }
         }
       }
     },
     "/pubkeys/{ID}": {
       "get": {
+        "description": "Returns a particular resource.",
         "operationId": "getPubkeyByID",
         "parameters": [
           {
-            "description": "unique pubkey id",
+            "description": "Database ID of resource.",
             "in": "path",
             "name": "ID",
             "required": true,
             "schema": {
+              "format": "int64",
               "type": "integer"
             }
           }
@@ -104,7 +103,7 @@
                 }
               }
             },
-            "description": "OK"
+            "description": "Returned on success."
           },
           "404": {
             "content": {
@@ -114,7 +113,7 @@
                 }
               }
             },
-            "description": "pubkey was not found."
+            "description": "Returned when resource cannot be found."
           },
           "500": {
             "content": {
@@ -124,7 +123,7 @@
                 }
               }
             },
-            "description": "There was an internal server error."
+            "description": "Returned when an internal error occurs."
           }
         }
       }

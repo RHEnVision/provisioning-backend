@@ -23,8 +23,8 @@ func (s *APISchemaGen) init() {
 			Description: "Local development",
 			URL:         "http://0.0.0.0:{port}/api/{applicationName}",
 			Variables: map[string]*openapi3.ServerVariable{
-				"applicationName": &openapi3.ServerVariable{Default: "provisioning"},
-				"port":            &openapi3.ServerVariable{Default: "8000"},
+				"applicationName": {Default: "provisioning"},
+				"port":            {Default: "8000"},
 			},
 		},
 	}
@@ -67,17 +67,17 @@ func main() {
 	checkErr(err)
 
 	b = &bytes.Buffer{}
-	b.Write(schema)
 	b.Write(paths)
+	b.Write(schema)
 
 	doc, err := openapi3.NewLoader().LoadFromData(b.Bytes())
 	checkErr(err)
 
 	jsonB, err := json.MarshalIndent(doc, "", "  ")
 	checkErr(err)
-	err = ioutil.WriteFile("./api/openapi.json", jsonB, 0644) // #nosec G306
+	err = ioutil.WriteFile("./api/openapi.gen.json", jsonB, 0644) // #nosec G306
 	checkErr(err)
-	err = ioutil.WriteFile("./api/openapi.yaml", b.Bytes(), 0644) // #nosec G306
+	err = ioutil.WriteFile("./api/openapi.gen.yaml", b.Bytes(), 0644) // #nosec G306
 	checkErr(err)
 	fmt.Println("Spec was generated successfully")
 }
