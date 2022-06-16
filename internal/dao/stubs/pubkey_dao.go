@@ -58,10 +58,10 @@ func (*PubkeyDaoStub) CreateWithResource(ctx context.Context, pk *models.Pubkey,
 	return nil
 }
 func (*PubkeyDaoStub) Update(ctx context.Context, pk *models.Pubkey) error { return nil }
-func (mock *PubkeyDaoStub) GetById(ctx context.Context, id uint64) (*models.Pubkey, error) {
+func (mock *PubkeyDaoStub) GetById(ctx context.Context, id int64) (*models.Pubkey, error) {
 	return mock.store[0], nil
 }
-func (mock *PubkeyDaoStub) List(ctx context.Context, limit, offset uint64) ([]*models.Pubkey, error) {
+func (mock *PubkeyDaoStub) List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error) {
 	return mock.store, nil
 }
-func (*PubkeyDaoStub) Delete(ctx context.Context, id uint64) error { return nil }
+func (*PubkeyDaoStub) Delete(ctx context.Context, id int64) error { return nil }

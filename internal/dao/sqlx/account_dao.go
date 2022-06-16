@@ -57,7 +57,7 @@ func init() {
 	dao.GetAccountDao = getAccountDao
 }
 
-func (di *accountDaoSqlx) GetById(ctx context.Context, id uint64) (*models.Account, error) {
+func (di *accountDaoSqlx) GetById(ctx context.Context, id int64) (*models.Account, error) {
 	query := getAccountById
 	stmt := di.getById
 	result := &models.Account{}
@@ -93,7 +93,7 @@ func (di *accountDaoSqlx) GetByOrgId(ctx context.Context, orgId string) (*models
 	return result, nil
 }
 
-func (di *accountDaoSqlx) List(ctx context.Context, limit, offset uint64) ([]*models.Account, error) {
+func (di *accountDaoSqlx) List(ctx context.Context, limit, offset int64) ([]*models.Account, error) {
 	query := listAccounts
 	stmt := di.list
 	var result []*models.Account
