@@ -3,7 +3,7 @@ package payloads
 import (
 	"net/http"
 
-	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/go-chi/render"
 )
 
