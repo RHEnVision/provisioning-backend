@@ -28,7 +28,7 @@ func ListAccounts(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAccount(w http.ResponseWriter, r *http.Request) {
-	id, err := ParseUint64(r, "ID")
+	id, err := ParseInt64(r, "ID")
 	if err != nil {
 		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
 		return

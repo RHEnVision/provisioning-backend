@@ -96,7 +96,7 @@ func (di *pubkeyDaoSqlx) CreateWithResource(ctx context.Context, pk *models.Pubk
 	return nil
 }
 
-func (di *pubkeyDaoSqlx) GetById(ctx context.Context, id uint64) (*models.Pubkey, error) {
+func (di *pubkeyDaoSqlx) GetById(ctx context.Context, id int64) (*models.Pubkey, error) {
 	query := getPubkeyById
 	stmt := di.getById
 	result := &models.Pubkey{}
@@ -126,7 +126,7 @@ func (di *pubkeyDaoSqlx) Update(ctx context.Context, pubkey *models.Pubkey) erro
 	return nil
 }
 
-func (di *pubkeyDaoSqlx) List(ctx context.Context, limit, offset uint64) ([]*models.Pubkey, error) {
+func (di *pubkeyDaoSqlx) List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error) {
 	query := listPubkeys
 	stmt := di.list
 	var result []*models.Pubkey
@@ -138,7 +138,7 @@ func (di *pubkeyDaoSqlx) List(ctx context.Context, limit, offset uint64) ([]*mod
 	return result, nil
 }
 
-func (di *pubkeyDaoSqlx) Delete(ctx context.Context, id uint64) error {
+func (di *pubkeyDaoSqlx) Delete(ctx context.Context, id int64) error {
 	query := deletePubkeyById
 	stmt := di.deleteById
 

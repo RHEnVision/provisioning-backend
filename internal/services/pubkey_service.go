@@ -55,7 +55,7 @@ func ListPubkeys(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPubkey(w http.ResponseWriter, r *http.Request) {
-	id, err := ParseUint64(r, "ID")
+	id, err := ParseInt64(r, "ID")
 	if err != nil {
 		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
 		return
@@ -84,7 +84,7 @@ func GetPubkey(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeletePubkey(w http.ResponseWriter, r *http.Request) {
-	id, err := ParseUint64(r, "ID")
+	id, err := ParseInt64(r, "ID")
 	if err != nil {
 		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
 		return
@@ -111,7 +111,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 }
 
 func UploadPubkeyResourceAWS(w http.ResponseWriter, r *http.Request) {
-	id, err := ParseUint64(r, "ID")
+	id, err := ParseInt64(r, "ID")
 	if err != nil {
 		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
 		return
@@ -166,7 +166,7 @@ func UploadPubkeyResourceAWS(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteAllPubkeyResources(w http.ResponseWriter, r *http.Request) {
-	id, err := ParseUint64(r, "ID")
+	id, err := ParseInt64(r, "ID")
 	if err != nil {
 		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
 		return
