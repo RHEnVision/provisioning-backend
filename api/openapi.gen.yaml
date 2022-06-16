@@ -51,3 +51,43 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/v1.Pubkey'
+components:
+  schemas:
+    v1.Account:
+      properties:
+        account_number:
+          type: string
+        id:
+          format: int64
+          type: integer
+        org_id:
+          type: string
+      type: object
+    v1.Pubkey:
+      properties:
+        account_id:
+          format: int64
+          type: integer
+        body:
+          type: string
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+      type: object
+    v1.ResponseError:
+      properties:
+        msg:
+          type: string
+        request_id:
+          type: string
+      type: object
+servers:
+- description: Local development
+  url: http://0.0.0.0:{port}/api/{applicationName}
+  variables:
+    applicationName:
+      default: provisioning
+    port:
+      default: "8000"
