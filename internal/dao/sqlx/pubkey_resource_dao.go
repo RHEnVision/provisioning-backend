@@ -82,7 +82,7 @@ func (di *pubkeyResourceDaoSqlx) Update(ctx context.Context, pkr *models.PubkeyR
 	return nil
 }
 
-func (di *pubkeyResourceDaoSqlx) Delete(ctx context.Context, id uint64) error {
+func (di *pubkeyResourceDaoSqlx) Delete(ctx context.Context, id int64) error {
 	query := deletePubkeyResourceById
 	stmt := di.deleteById
 
@@ -97,7 +97,7 @@ func (di *pubkeyResourceDaoSqlx) Delete(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (di *pubkeyResourceDaoSqlx) ListByPubkeyId(ctx context.Context, pkId uint64) ([]*models.PubkeyResource, error) {
+func (di *pubkeyResourceDaoSqlx) ListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error) {
 	query := listByPubkeyId
 	stmt := di.listByPubkeyId
 	var result []*models.PubkeyResource

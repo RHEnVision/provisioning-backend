@@ -3,7 +3,7 @@ package models
 // Account represents a Red Hat Console account
 type Account struct {
 	// Required auto-generated PK.
-	ID uint64 `db:"id" json:"id"`
+	ID int64 `db:"id" json:"id"`
 
 	// Organization ID. Required.
 	OrgID string `db:"org_id" json:"org_id"`
