@@ -15,6 +15,10 @@ build-pbmigrate:
 strip: build
 	strip pbapi pbmigrate
 
+.PHONY: clean
+clean:
+	rm pbapi pbmigrate
+
 .PHONY: build-podman
 build-podman:
 	# remote podman build has problem with -f option, so we link the file as workaround
