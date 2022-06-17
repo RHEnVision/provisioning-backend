@@ -1,0 +1,29 @@
+Sources backend setup scripts
+=============================
+
+Easy to use scripts for getting sources backend up and running locally. Tested
+on Fedora Workstation. How does this work:
+
+Review ./sources.conf configuration. If you would like to do any changes,
+create ./sources.local.conf which overrides the main configuration file and it
+is ignored by git.
+
+Install database, redis, init database, create sources user and database. Can
+be executed multiple times. You will be asked for "sudo" password.
+
+	./sources.setup.sh
+
+Checkout, compile and start sources backend. If you want to update the app,
+just do "git pull" and start again.
+
+	./sources.start.sh
+
+Populate database with some data, with the sources app running do:
+
+	./sources.seed.sh
+
+When you want to start over, to delete the database and user and git checkouts:
+
+	./sources.clean.sh
+
+That's all.

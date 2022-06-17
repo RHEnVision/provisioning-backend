@@ -10,3 +10,5 @@ TAGS
 /deploy/bonfire.yaml
 /Containerfile
 /tern.conf
+/scripts/sources-*/
+/scripts/sources.local.conf
