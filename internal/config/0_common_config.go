@@ -10,6 +10,7 @@ import (
 func init() {
 	viper.SetDefault("app.name", "provisioning")
 	viper.SetDefault("app.port", 8000)
+	viper.SetDefault("app.version", "v1")
 	viper.SetDefault("logging.level", 1)
 	viper.SetDefault("database.host", "localhost")
 	viper.SetDefault("database.port", 5432)

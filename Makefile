@@ -90,7 +90,7 @@ generate-spec:
 
 .PHONY: validate-spec
 validate-spec: generate-spec
-	git diff --exit-code api/openapi.gen.yaml
+	git diff --exit-code api/openapi.gen.json
 
 .PHONY: validate
 validate: validate-spec validate-clients
