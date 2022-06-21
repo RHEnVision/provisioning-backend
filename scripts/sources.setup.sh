@@ -2,8 +2,9 @@
 #
 # See README.sources
 #
-source sources.conf
-git clone https://github.com/RedHatInsights/sources-api-go
+BASEDIR=$(dirname $0)
+source $BASEDIR/sources.conf
+git clone https://github.com/RedHatInsights/sources-api-go $BASEDIR/sources-api-go
 sudo dnf install redis postgresql postgresql-server
 export PGSETUP_INITDB_OPTIONS="--auth=trust"
 sudo postgresql-setup --initdb --unit postgresql
