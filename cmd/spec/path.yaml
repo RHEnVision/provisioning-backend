@@ -1,10 +1,11 @@
 ---
 openapi: 3.0.0
 info:
+  description: "THIS API IS IN DEVELOPMENT - ENDPOINTS MIGHT CHANGE"
   license:
     name: GPL-3.0
   title: provisioning-api
-  version: 0.0.2
+  version: 1.0.0
 
 paths:
   /pubkeys/{ID}:

@@ -12,8 +12,9 @@ import (
 
 var config struct {
 	App struct {
-		Name string
-		Port int
+		Name    string
+		Port    int
+		Version string
 	}
 	Database struct {
 		Host        string
