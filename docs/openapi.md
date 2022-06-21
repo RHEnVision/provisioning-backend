@@ -6,7 +6,7 @@ This service uses openapi v.3 for documenting the service's API
 
 We use [redoc](https://github.com/Redocly/redoc) for auto generating swagger UI based on the spec file
 The docs locates under `<root>/docs` and the json spec under `<root>/spec.json`
-In addition, you can get the `openapi.json` file under `/api/provisioning/openapi.json`
+In addition, you can get the `openapi.json` file under `/api/provisioning/v1/openapi.json`
 
 ## Adding new endpoint
 

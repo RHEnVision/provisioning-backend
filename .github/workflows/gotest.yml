@@ -54,6 +54,6 @@ jobs:
       - uses: openapi-generators/openapitools-generator-action@v1
         with:
           generator: python
-          openapi-file: api/openapi.gen.yaml
+          openapi-file: api/openapi.gen.json
       - run: |
           make validate
