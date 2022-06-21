@@ -152,6 +152,34 @@ const (
 	SourceEditAvailabilityStatusUnavailable        SourceEditAvailabilityStatus = "unavailable"
 )
 
+// AppMetaData defines model for AppMetaData.
+type AppMetaData struct {
+	// The ID of the application the metadata belongs to
+	ApplicationTypeId *string `json:"application_type_id,omitempty"`
+
+	// The timestamp of the creation of the app metadata type
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+
+	// ID of the resource
+	Id *ID `json:"id,omitempty"`
+
+	// The name of the step of the metadata
+	Name *string `json:"name,omitempty"`
+
+	// The payload of the step
+	Payload *map[string]interface{} `json:"payload,omitempty"`
+
+	// The timestamp of the last time this app metadata type got updated
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+}
+
+// AppMetaDataCollection defines model for AppMetaDataCollection.
+type AppMetaDataCollection struct {
+	Data  *[]AppMetaData      `json:"data,omitempty"`
+	Links *CollectionLinks    `json:"links,omitempty"`
+	Meta  *CollectionMetadata `json:"meta,omitempty"`
+}
+
 // Application defines model for Application.
 type Application struct {
 	// ID of the resource
@@ -751,6 +779,51 @@ type BadRequest = ErrorBadRequest
 // Error structure for the "Not Found" responses
 type NotFound = ErrorNotFound
 
+// ListApplicationTypesParams defines parameters for ListApplicationTypes.
+type ListApplicationTypesParams struct {
+	// The numbers of items to return per page.
+	Limit *QueryLimit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// The number of items to skip before starting to collect the result set.
+	Offset *QueryOffset `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Filter for querying collections. The format of the filters is as follows: `filter[subresource][field][operation]="value"`.
+	Filter *QueryFilter `form:"filter,omitempty" json:"filter,omitempty"`
+
+	// The list of attribute and order to sort the result set by.
+	SortBy *QuerySortBy `form:"sort_by,omitempty" json:"sort_by,omitempty"`
+}
+
+// ListApplicationTypeAppMetaDataParams defines parameters for ListApplicationTypeAppMetaData.
+type ListApplicationTypeAppMetaDataParams struct {
+	// The numbers of items to return per page.
+	Limit *QueryLimit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// The number of items to skip before starting to collect the result set.
+	Offset *QueryOffset `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Filter for querying collections. The format of the filters is as follows: `filter[subresource][field][operation]="value"`.
+	Filter *QueryFilter `form:"filter,omitempty" json:"filter,omitempty"`
+
+	// The list of attribute and order to sort the result set by.
+	SortBy *QuerySortBy `form:"sort_by,omitempty" json:"sort_by,omitempty"`
+}
+
+// ListApplicationTypeSourcesParams defines parameters for ListApplicationTypeSources.
+type ListApplicationTypeSourcesParams struct {
+	// The numbers of items to return per page.
+	Limit *QueryLimit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// The number of items to skip before starting to collect the result set.
+	Offset *QueryOffset `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Filter for querying collections. The format of the filters is as follows: `filter[subresource][field][operation]="value"`.
+	Filter *QueryFilter `form:"filter,omitempty" json:"filter,omitempty"`
+
+	// The list of attribute and order to sort the result set by.
+	SortBy *QuerySortBy `form:"sort_by,omitempty" json:"sort_by,omitempty"`
+}
+
 // BulkCreateJSONBody defines parameters for BulkCreate.
 type BulkCreateJSONBody = BulkCreatePayload
 
@@ -932,6 +1005,18 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// ListApplicationTypes request
+	ListApplicationTypes(ctx context.Context, params *ListApplicationTypesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ShowApplicationType request
+	ShowApplicationType(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListApplicationTypeAppMetaData request
+	ListApplicationTypeAppMetaData(ctx context.Context, id ID, params *ListApplicationTypeAppMetaDataParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListApplicationTypeSources request
+	ListApplicationTypeSources(ctx context.Context, id ID, params *ListApplicationTypeSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// BulkCreate request with any body
 	BulkCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -979,6 +1064,54 @@ type ClientInterface interface {
 
 	// UnpauseSource request
 	UnpauseSource(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) ListApplicationTypes(ctx context.Context, params *ListApplicationTypesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListApplicationTypesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ShowApplicationType(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewShowApplicationTypeRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListApplicationTypeAppMetaData(ctx context.Context, id ID, params *ListApplicationTypeAppMetaDataParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListApplicationTypeAppMetaDataRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListApplicationTypeSources(ctx context.Context, id ID, params *ListApplicationTypeSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListApplicationTypeSourcesRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) BulkCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -1183,6 +1316,339 @@ func (c *Client) UnpauseSource(ctx context.Context, id ID, reqEditors ...Request
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewListApplicationTypesRequest generates requests for ListApplicationTypes
+func NewListApplicationTypesRequest(server string, params *ListApplicationTypesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/application_types")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Limit != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Offset != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.SortBy != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewShowApplicationTypeRequest generates requests for ShowApplicationType
+func NewShowApplicationTypeRequest(server string, id ID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/application_types/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListApplicationTypeAppMetaDataRequest generates requests for ListApplicationTypeAppMetaData
+func NewListApplicationTypeAppMetaDataRequest(server string, id ID, params *ListApplicationTypeAppMetaDataParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/application_types/%s/app_meta_data", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Limit != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Offset != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.SortBy != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListApplicationTypeSourcesRequest generates requests for ListApplicationTypeSources
+func NewListApplicationTypeSourcesRequest(server string, id ID, params *ListApplicationTypeSourcesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/application_types/%s/sources", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Limit != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Offset != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.SortBy != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // NewBulkCreateRequest calls the generic BulkCreate builder with application/json body
@@ -2130,6 +2596,18 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// ListApplicationTypes request
+	ListApplicationTypesWithResponse(ctx context.Context, params *ListApplicationTypesParams, reqEditors ...RequestEditorFn) (*ListApplicationTypesResponse, error)
+
+	// ShowApplicationType request
+	ShowApplicationTypeWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*ShowApplicationTypeResponse, error)
+
+	// ListApplicationTypeAppMetaData request
+	ListApplicationTypeAppMetaDataWithResponse(ctx context.Context, id ID, params *ListApplicationTypeAppMetaDataParams, reqEditors ...RequestEditorFn) (*ListApplicationTypeAppMetaDataResponse, error)
+
+	// ListApplicationTypeSources request
+	ListApplicationTypeSourcesWithResponse(ctx context.Context, id ID, params *ListApplicationTypeSourcesParams, reqEditors ...RequestEditorFn) (*ListApplicationTypeSourcesResponse, error)
+
 	// BulkCreate request with any body
 	BulkCreateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BulkCreateResponse, error)
 
@@ -2177,6 +2655,101 @@ type ClientWithResponsesInterface interface {
 
 	// UnpauseSource request
 	UnpauseSourceWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*UnpauseSourceResponse, error)
+}
+
+type ListApplicationTypesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ApplicationTypesCollection
+	JSON400      *ErrorBadRequest
+}
+
+// Status returns HTTPResponse.Status
+func (r ListApplicationTypesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListApplicationTypesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ShowApplicationTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ApplicationType
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ShowApplicationTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ShowApplicationTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListApplicationTypeAppMetaDataResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AppMetaDataCollection
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListApplicationTypeAppMetaDataResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListApplicationTypeAppMetaDataResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListApplicationTypeSourcesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SourcesCollection
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListApplicationTypeSourcesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListApplicationTypeSourcesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type BulkCreateResponse struct {
@@ -2508,6 +3081,42 @@ func (r UnpauseSourceResponse) StatusCode() int {
 	return 0
 }
 
+// ListApplicationTypesWithResponse request returning *ListApplicationTypesResponse
+func (c *ClientWithResponses) ListApplicationTypesWithResponse(ctx context.Context, params *ListApplicationTypesParams, reqEditors ...RequestEditorFn) (*ListApplicationTypesResponse, error) {
+	rsp, err := c.ListApplicationTypes(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListApplicationTypesResponse(rsp)
+}
+
+// ShowApplicationTypeWithResponse request returning *ShowApplicationTypeResponse
+func (c *ClientWithResponses) ShowApplicationTypeWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*ShowApplicationTypeResponse, error) {
+	rsp, err := c.ShowApplicationType(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseShowApplicationTypeResponse(rsp)
+}
+
+// ListApplicationTypeAppMetaDataWithResponse request returning *ListApplicationTypeAppMetaDataResponse
+func (c *ClientWithResponses) ListApplicationTypeAppMetaDataWithResponse(ctx context.Context, id ID, params *ListApplicationTypeAppMetaDataParams, reqEditors ...RequestEditorFn) (*ListApplicationTypeAppMetaDataResponse, error) {
+	rsp, err := c.ListApplicationTypeAppMetaData(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListApplicationTypeAppMetaDataResponse(rsp)
+}
+
+// ListApplicationTypeSourcesWithResponse request returning *ListApplicationTypeSourcesResponse
+func (c *ClientWithResponses) ListApplicationTypeSourcesWithResponse(ctx context.Context, id ID, params *ListApplicationTypeSourcesParams, reqEditors ...RequestEditorFn) (*ListApplicationTypeSourcesResponse, error) {
+	rsp, err := c.ListApplicationTypeSources(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListApplicationTypeSourcesResponse(rsp)
+}
+
 // BulkCreateWithBodyWithResponse request with arbitrary body returning *BulkCreateResponse
 func (c *ClientWithResponses) BulkCreateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BulkCreateResponse, error) {
 	rsp, err := c.BulkCreateWithBody(ctx, contentType, body, reqEditors...)
@@ -2656,6 +3265,159 @@ func (c *ClientWithResponses) UnpauseSourceWithResponse(ctx context.Context, id 
 		return nil, err
 	}
 	return ParseUnpauseSourceResponse(rsp)
+}
+
+// ParseListApplicationTypesResponse parses an HTTP response from a ListApplicationTypesWithResponse call
+func ParseListApplicationTypesResponse(rsp *http.Response) (*ListApplicationTypesResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListApplicationTypesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ApplicationTypesCollection
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseShowApplicationTypeResponse parses an HTTP response from a ShowApplicationTypeWithResponse call
+func ParseShowApplicationTypeResponse(rsp *http.Response) (*ShowApplicationTypeResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ShowApplicationTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ApplicationType
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListApplicationTypeAppMetaDataResponse parses an HTTP response from a ListApplicationTypeAppMetaDataWithResponse call
+func ParseListApplicationTypeAppMetaDataResponse(rsp *http.Response) (*ListApplicationTypeAppMetaDataResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListApplicationTypeAppMetaDataResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AppMetaDataCollection
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListApplicationTypeSourcesResponse parses an HTTP response from a ListApplicationTypeSourcesWithResponse call
+func ParseListApplicationTypeSourcesResponse(rsp *http.Response) (*ListApplicationTypeSourcesResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListApplicationTypeSourcesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SourcesCollection
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseBulkCreateResponse parses an HTTP response from a BulkCreateWithResponse call
