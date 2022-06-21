@@ -46,6 +46,10 @@ internal/clients/sources/client.gen.go: configs/sources_config.yml configs/sourc
 internal/clients/image_builder/client.gen.go: configs/ib_config.yaml configs/ib_api.yaml
 	oapi-codegen -config ./configs/ib_config.yaml ./configs/ib_api.yaml
 
+.PHONY: validate-clients
+validate-clients: generate-clients
+	git diff --exit-code internal/clients/*/client.gen.go
+
 .PHONY: install-tools
 install-tools:
 	go install golang.org/x/tools/cmd/goimports@latest
@@ -83,3 +87,10 @@ generate-migration:
 .PHONY: generate-spec
 generate-spec:
 	go run ./cmd/spec
+
+.PHONY: validate-spec
+validate-spec: generate-spec
+	git diff --exit-code api/openapi.gen.yaml
+
+.PHONY: validate
+validate: validate-spec validate-clients

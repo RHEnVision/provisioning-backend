@@ -44,7 +44,7 @@ jobs:
           make test
 
   openapi:
-    name: validate and compare spec
+    name: validate and compare spec and client code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -56,6 +56,4 @@ jobs:
           generator: python
           openapi-file: api/openapi.gen.yaml
       - run: |
-          make generate-spec
-      - run: |
-          git diff --exit-code api/openapi.gen.yaml
+          make validate
