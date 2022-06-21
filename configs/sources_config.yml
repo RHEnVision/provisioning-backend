@@ -9,6 +9,6 @@ compatibility:
 output-options:
   include-tags:
     - sources
+    - "application types"
   exclude-schemas:
     - BulkCreateResponse # generator issue: redeclaration
-
