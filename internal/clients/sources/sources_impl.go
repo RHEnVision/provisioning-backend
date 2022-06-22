@@ -7,7 +7,7 @@ import (
 )
 
 func getSourcesClient(ctx context.Context) (SourcesIntegration, error) {
-	return NewClientWithResponses(*config.SourcesURL)
+	return NewClientWithResponses(config.Sources.URL)
 }
 
 func init() {

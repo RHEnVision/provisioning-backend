@@ -60,7 +60,8 @@ var config struct {
 			URL string
 		}
 		Sources struct {
-			URL string
+			URL   string
+			AppId string
 		}
 	}
 }
@@ -72,8 +73,8 @@ var Logging = &config.Logging
 var Cloudwatch = &config.Cloudwatch
 var AWS = &config.AWS
 var Features = &config.FeatureFlags
-var ImageBuilderURL = &config.RestEndpoints.ImageBuilder.URL
-var SourcesURL = &config.RestEndpoints.Sources.URL
+var ImageBuilder = &config.RestEndpoints.ImageBuilder
+var Sources = &config.RestEndpoints.Sources
 
 func Initialize() {
 	err := viper.Unmarshal(&config)

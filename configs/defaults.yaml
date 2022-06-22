@@ -42,6 +42,7 @@
 #     url:
 #   sources:
 #     url:
+#     appId:
 
 # featureFlags:
 #   # development or production
