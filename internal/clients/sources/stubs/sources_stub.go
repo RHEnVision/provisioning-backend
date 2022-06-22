@@ -43,8 +43,8 @@ func (mock *SourcesIntegrationStub) ShowSourceWithResponse(ctx context.Context, 
 		JSON200: &lst[0],
 	}, nil
 }
-func (mock *SourcesIntegrationStub) ListSourcesWithResponse(ctx context.Context, params *sources.ListSourcesParams, reqEditors ...sources.RequestEditorFn) (*sources.ListSourcesResponse, error) {
-	return &sources.ListSourcesResponse{
+func (mock *SourcesIntegrationStub) ListApplicationTypeSourcesWithResponse(ctx context.Context, appId sources.ID, params *sources.ListApplicationTypeSourcesParams, reqEditors ...sources.RequestEditorFn) (*sources.ListApplicationTypeSourcesResponse, error) {
+	return &sources.ListApplicationTypeSourcesResponse{
 		JSON200: &sources.SourcesCollection{
 			Data: mock.store,
 		},
