@@ -16,6 +16,39 @@
         },
         "type": "object"
       },
+      "v1.BadRequestError": {
+        "properties": {
+          "msg": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1.InternalRequestError": {
+        "properties": {
+          "msg": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1.NotFoundError": {
+        "properties": {
+          "msg": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "v1.Pubkey": {
         "properties": {
           "account_id": {
@@ -30,17 +63,6 @@
             "type": "integer"
           },
           "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "v1.ResponseError": {
-        "properties": {
-          "msg": {
-            "type": "string"
-          },
-          "request_id": {
             "type": "string"
           }
         },
@@ -74,6 +96,16 @@
               }
             },
             "description": "Returned on success."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.InternalRequestError"
+                }
+              }
+            },
+            "description": "Returned when an internal error occurs."
           }
         }
       }
@@ -109,7 +141,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/v1.ResponseError"
+                  "$ref": "#/components/schemas/v1.NotFoundError"
                 }
               }
             },
@@ -119,7 +151,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/v1.ResponseError"
+                  "$ref": "#/components/schemas/v1.InternalRequestError"
                 }
               }
             },

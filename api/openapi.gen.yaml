@@ -31,13 +31,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/v1.ResponseError"
+                $ref: "#/components/schemas/v1.NotFoundError"
         "500":
           description: 'Returned when an internal error occurs.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1.ResponseError'
+                $ref: '#/components/schemas/v1.InternalRequestError'
   /pubkeys:
     get:
       operationId: getPubkeyList
@@ -51,6 +51,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/v1.Pubkey'
+        "500":
+          description: 'Returned when an internal error occurs.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.InternalRequestError'
 components:
   schemas:
     v1.Account:
@@ -61,6 +67,27 @@ components:
           format: int64
           type: integer
         org_id:
+          type: string
+      type: object
+    v1.BadRequestError:
+      properties:
+        msg:
+          type: string
+        request_id:
+          type: string
+      type: object
+    v1.InternalRequestError:
+      properties:
+        msg:
+          type: string
+        request_id:
+          type: string
+      type: object
+    v1.NotFoundError:
+      properties:
+        msg:
+          type: string
+        request_id:
           type: string
       type: object
     v1.Pubkey:
@@ -74,13 +101,6 @@ components:
           format: int64
           type: integer
         name:
-          type: string
-      type: object
-    v1.ResponseError:
-      properties:
-        msg:
-          type: string
-        request_id:
           type: string
       type: object
 servers:

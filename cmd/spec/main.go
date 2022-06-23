@@ -46,7 +46,10 @@ func main() {
 	gen.addSchema("v1.Pubkey", &payloads.PubkeyPayload{})
 
 	// errors
-	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})
+	gen.addSchema("v1.NotFoundError", &payloads.NotFoundError{})
+	gen.addSchema("v1.BadRequestError", &payloads.BadRequestError{})
+	gen.addSchema("v1.InternalRequestError", &payloads.InternalServerError{})
+
 	type Swagger struct {
 		Components openapi3.Components `json:"components,omitempty" yaml:"components,omitempty"`
 		Servers    openapi3.Servers    `json:"servers,omitempty" yaml:"servers,omitempty"`
