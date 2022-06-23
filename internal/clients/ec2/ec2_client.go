@@ -99,3 +99,17 @@ func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, 
 
 	return newClient, nil
 }
+
+func (c *Client) ListInstanceTypes() ([]types.InstanceTypeInfo, error) {
+	log.Trace().Msgf("Listing AWS EC2 instance types")
+	input := &ec2.DescribeInstanceTypesInput{
+		//TODO: Which filters do we want to support?
+		// What is The maximum number of results to return for the request in a single page?
+	}
+	resp, err := c.ec2.DescribeInstanceTypes(c.context, input)
+	if err != nil {
+		return nil, fmt.Errorf("cannot list instance types: %w", err)
+	}
+
+	return resp.InstanceTypes, nil
+}
