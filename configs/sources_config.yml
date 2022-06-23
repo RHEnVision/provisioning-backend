@@ -10,5 +10,6 @@ output-options:
   include-tags:
     - sources
     - "application types"
+    - "applications"
   exclude-schemas:
     - BulkCreateResponse # generator issue: redeclaration

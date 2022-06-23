@@ -61,5 +61,11 @@ func apiRouter() http.Handler {
 		})
 	})
 
+	r.Route("/instance_types", func(r chi.Router) {
+		r.Route("/{source_id}", func(r chi.Router) {
+			r.Get("/", s.ListInstanceTypes)
+		})
+	})
+
 	return r
 }

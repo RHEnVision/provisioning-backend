@@ -13,7 +13,7 @@ import (
 func init() {
 	if clowder.IsClowderEnabled() {
 		cfg := clowder.LoadedConfig
-		viper.Set("restEndpoints.sources.appId", 11)
+		viper.Set("restEndpoints.sources.appTypeId", 11)
 		viper.Set("featureFlags.environment", "production")
 		viper.Set("database.host", cfg.Database.Hostname)
 		viper.Set("database.port", cfg.Database.Port)

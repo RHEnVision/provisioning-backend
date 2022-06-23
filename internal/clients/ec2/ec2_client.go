@@ -83,7 +83,7 @@ func (c *Client) DeleteSSHKey(handle string) error {
 }
 
 func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, error) {
-	newCfg, err := cfg.LoadDefaultConfig(c.context, cfg.WithCredentialsProvider(
+	newCfg, err := cfg.LoadDefaultConfig(c.context, cfg.WithRegion(config.AWS.Region), cfg.WithCredentialsProvider(
 		credentials.NewStaticCredentialsProvider(*crd.AccessKeyId, *crd.SecretAccessKey, *crd.SessionToken),
 	))
 
@@ -98,4 +98,23 @@ func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, 
 	}
 
 	return newClient, nil
+}
+
+func (c *Client) ListInstanceTypes() ([]types.InstanceTypeInfo, error) {
+	log.Trace().Msg("Listing AWS EC2 instance types")
+	input := &ec2.DescribeInstanceTypesInput{
+		MaxResults: aws.Int32(100),
+	}
+
+	resp, err := c.ec2.DescribeInstanceTypes(c.context, input)
+	if err != nil {
+		return nil, fmt.Errorf("cannot list instance types: %w", err)
+	}
+
+	log.Debug().Msgf("Number AWS EC2 instance types: %d", len(resp.InstanceTypes))
+	if len(resp.InstanceTypes) == 100 {
+		return nil, OperationNotPermittedErr
+	}
+
+	return resp.InstanceTypes, nil
 }
