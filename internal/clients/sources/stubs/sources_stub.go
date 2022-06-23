@@ -11,7 +11,8 @@ type sourcesCtxKeyType string
 var sourcesCtxKey sourcesCtxKeyType = "sources-interface"
 
 type SourcesIntegrationStub struct {
-	store *[]sources.Source
+	store           *[]sources.Source
+	authentications *[]sources.AuthenticationRead
 }
 
 func init() {
@@ -25,7 +26,7 @@ func (m *contextReadError) Error() string {
 }
 
 func WithSourcesIntegration(parent context.Context, init_store *[]sources.Source) context.Context {
-	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesIntegrationStub{init_store})
+	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesIntegrationStub{store: init_store})
 	return ctx
 }
 
@@ -47,6 +48,14 @@ func (mock *SourcesIntegrationStub) ListApplicationTypeSourcesWithResponse(ctx c
 	return &sources.ListApplicationTypeSourcesResponse{
 		JSON200: &sources.SourcesCollection{
 			Data: mock.store,
+		},
+	}, nil
+}
+
+func (mock *SourcesIntegrationStub) ListSourceAuthenticationsWithResponse(ctx context.Context, sourceId sources.ID, params *sources.ListSourceAuthenticationsParams, reqEditors ...sources.RequestEditorFn) (*sources.ListSourceAuthenticationsResponse, error) {
+	return &sources.ListSourceAuthenticationsResponse{
+		JSON200: &sources.AuthenticationsCollection{
+			Data: mock.authentications,
 		},
 	}, nil
 }

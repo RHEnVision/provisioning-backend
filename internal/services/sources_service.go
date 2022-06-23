@@ -1,6 +1,8 @@
 package services
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
@@ -46,4 +48,13 @@ func GetSource(w http.ResponseWriter, r *http.Request) {
 	if err := render.Render(w, r, payloads.NewShowSourcesResponse(resp.JSON200)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "show source", err))
 	}
+}
+
+func fetchARN(ctx context.Context, client sources.SourcesIntegration, sourceId string) (string, error) {
+	resp, err := client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &sources.ListSourceAuthenticationsParams{}, AddIdentityHeader)
+	if err != nil {
+		return "", fmt.Errorf("cannot list source authentication: %w", err)
+	}
+	auth := *resp.JSON200.Data
+	return *auth[0].Username, nil
 }
