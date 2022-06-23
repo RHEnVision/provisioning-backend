@@ -61,8 +61,8 @@ var config struct {
 			URL string
 		}
 		Sources struct {
-			URL   string
-			AppId string
+			URL       string
+			AppTypeId string
 		}
 	}
 }

@@ -33,6 +33,14 @@ const (
 	ApplicationAvailabilityStatusUnavailable        ApplicationAvailabilityStatus = "unavailable"
 )
 
+// Defines values for ApplicationUpdateAvailabilityStatus.
+const (
+	ApplicationUpdateAvailabilityStatusAvailable          ApplicationUpdateAvailabilityStatus = "available"
+	ApplicationUpdateAvailabilityStatusInProgress         ApplicationUpdateAvailabilityStatus = "in_progress"
+	ApplicationUpdateAvailabilityStatusPartiallyAvailable ApplicationUpdateAvailabilityStatus = "partially_available"
+	ApplicationUpdateAvailabilityStatusUnavailable        ApplicationUpdateAvailabilityStatus = "unavailable"
+)
+
 // Defines values for AuthenticationCreateResourceType.
 const (
 	AuthenticationCreateResourceTypeApplication    AuthenticationCreateResourceType = "Application"
@@ -219,6 +227,18 @@ type Application struct {
 // The availability status of the application
 type ApplicationAvailabilityStatus string
 
+// Expected payload to create an application
+type ApplicationCreate struct {
+	// ID of the resource. Not "readonly", since it might be used for create/update payloads
+	ApplicationTypeId *IDW `json:"application_type_id,omitempty"`
+
+	// Any extra information you want stored for the application, in JSON format
+	Extra *map[string]interface{} `json:"extra,omitempty"`
+
+	// ID of the resource. Not "readonly", since it might be used for create/update payloads
+	SourceId *IDW `json:"source_id,omitempty"`
+}
+
 // ApplicationType defines model for ApplicationType.
 type ApplicationType struct {
 	// The timestamp of the creation of the application type
@@ -252,6 +272,27 @@ type ApplicationTypesCollection struct {
 	Links *CollectionLinks    `json:"links,omitempty"`
 	Meta  *CollectionMetadata `json:"meta,omitempty"`
 }
+
+// Expected payload to update an application
+type ApplicationUpdate struct {
+	// The availability status of the application
+	AvailabilityStatus *ApplicationUpdateAvailabilityStatus `json:"availability_status,omitempty"`
+
+	// The received error message when polling for the availability status
+	AvailabilityStatusError *string `json:"availability_status_error,omitempty"`
+
+	// Any extra information you want stored for the application, in JSON format
+	Extra *map[string]interface{} `json:"extra,omitempty"`
+
+	// The timestamp for when the application was last available at.
+	LastAvailableAt *time.Time `json:"last_available_at,omitempty"`
+
+	// Timestamp of the last time the availability was checked for the application
+	LastCheckedAt *time.Time `json:"last_checked_at,omitempty"`
+}
+
+// The availability status of the application
+type ApplicationUpdateAvailabilityStatus string
 
 // ApplicationsCollection defines model for ApplicationsCollection.
 type ApplicationsCollection struct {
@@ -824,6 +865,42 @@ type ListApplicationTypeSourcesParams struct {
 	SortBy *QuerySortBy `form:"sort_by,omitempty" json:"sort_by,omitempty"`
 }
 
+// ListApplicationsParams defines parameters for ListApplications.
+type ListApplicationsParams struct {
+	// The numbers of items to return per page.
+	Limit *QueryLimit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// The number of items to skip before starting to collect the result set.
+	Offset *QueryOffset `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Filter for querying collections. The format of the filters is as follows: `filter[subresource][field][operation]="value"`.
+	Filter *QueryFilter `form:"filter,omitempty" json:"filter,omitempty"`
+
+	// The list of attribute and order to sort the result set by.
+	SortBy *QuerySortBy `form:"sort_by,omitempty" json:"sort_by,omitempty"`
+}
+
+// CreateApplicationJSONBody defines parameters for CreateApplication.
+type CreateApplicationJSONBody = ApplicationCreate
+
+// UpdateApplicationJSONBody defines parameters for UpdateApplication.
+type UpdateApplicationJSONBody = ApplicationUpdate
+
+// ListApplicationAuthenticationsParams defines parameters for ListApplicationAuthentications.
+type ListApplicationAuthenticationsParams struct {
+	// The numbers of items to return per page.
+	Limit *QueryLimit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// The number of items to skip before starting to collect the result set.
+	Offset *QueryOffset `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Filter for querying collections. The format of the filters is as follows: `filter[subresource][field][operation]="value"`.
+	Filter *QueryFilter `form:"filter,omitempty" json:"filter,omitempty"`
+
+	// The list of attribute and order to sort the result set by.
+	SortBy *QuerySortBy `form:"sort_by,omitempty" json:"sort_by,omitempty"`
+}
+
 // BulkCreateJSONBody defines parameters for BulkCreate.
 type BulkCreateJSONBody = BulkCreatePayload
 
@@ -923,6 +1000,12 @@ type GetSourcesRhcConnectionParams struct {
 	SortBy *QuerySortBy `form:"sort_by,omitempty" json:"sort_by,omitempty"`
 }
 
+// CreateApplicationJSONRequestBody defines body for CreateApplication for application/json ContentType.
+type CreateApplicationJSONRequestBody = CreateApplicationJSONBody
+
+// UpdateApplicationJSONRequestBody defines body for UpdateApplication for application/json ContentType.
+type UpdateApplicationJSONRequestBody = UpdateApplicationJSONBody
+
 // BulkCreateJSONRequestBody defines body for BulkCreate for application/json ContentType.
 type BulkCreateJSONRequestBody = BulkCreateJSONBody
 
@@ -1017,6 +1100,34 @@ type ClientInterface interface {
 	// ListApplicationTypeSources request
 	ListApplicationTypeSources(ctx context.Context, id ID, params *ListApplicationTypeSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListApplications request
+	ListApplications(ctx context.Context, params *ListApplicationsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateApplication request with any body
+	CreateApplicationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateApplication(ctx context.Context, body CreateApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteApplication request
+	DeleteApplication(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ShowApplication request
+	ShowApplication(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateApplication request with any body
+	UpdateApplicationWithBody(ctx context.Context, id ID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateApplication(ctx context.Context, id ID, body UpdateApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListApplicationAuthentications request
+	ListApplicationAuthentications(ctx context.Context, id ID, params *ListApplicationAuthenticationsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PauseApplication request
+	PauseApplication(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UnpauseApplication request
+	UnpauseApplication(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// BulkCreate request with any body
 	BulkCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1104,6 +1215,126 @@ func (c *Client) ListApplicationTypeAppMetaData(ctx context.Context, id ID, para
 
 func (c *Client) ListApplicationTypeSources(ctx context.Context, id ID, params *ListApplicationTypeSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListApplicationTypeSourcesRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListApplications(ctx context.Context, params *ListApplicationsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListApplicationsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateApplicationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateApplicationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateApplication(ctx context.Context, body CreateApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateApplicationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteApplication(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteApplicationRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ShowApplication(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewShowApplicationRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateApplicationWithBody(ctx context.Context, id ID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateApplicationRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateApplication(ctx context.Context, id ID, body UpdateApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateApplicationRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListApplicationAuthentications(ctx context.Context, id ID, params *ListApplicationAuthenticationsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListApplicationAuthenticationsRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PauseApplication(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPauseApplicationRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnpauseApplication(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnpauseApplicationRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1644,6 +1875,426 @@ func NewListApplicationTypeSourcesRequest(server string, id ID, params *ListAppl
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListApplicationsRequest generates requests for ListApplications
+func NewListApplicationsRequest(server string, params *ListApplicationsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Limit != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Offset != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.SortBy != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateApplicationRequest calls the generic CreateApplication builder with application/json body
+func NewCreateApplicationRequest(server string, body CreateApplicationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateApplicationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateApplicationRequestWithBody generates requests for CreateApplication with any type of body
+func NewCreateApplicationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteApplicationRequest generates requests for DeleteApplication
+func NewDeleteApplicationRequest(server string, id ID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewShowApplicationRequest generates requests for ShowApplication
+func NewShowApplicationRequest(server string, id ID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateApplicationRequest calls the generic UpdateApplication builder with application/json body
+func NewUpdateApplicationRequest(server string, id ID, body UpdateApplicationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateApplicationRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateApplicationRequestWithBody generates requests for UpdateApplication with any type of body
+func NewUpdateApplicationRequestWithBody(server string, id ID, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListApplicationAuthenticationsRequest generates requests for ListApplicationAuthentications
+func NewListApplicationAuthenticationsRequest(server string, id ID, params *ListApplicationAuthenticationsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications/%s/authentications", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Limit != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Offset != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.SortBy != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPauseApplicationRequest generates requests for PauseApplication
+func NewPauseApplicationRequest(server string, id ID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications/%s/pause", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUnpauseApplicationRequest generates requests for UnpauseApplication
+func NewUnpauseApplicationRequest(server string, id ID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/applications/%s/unpause", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -2608,6 +3259,34 @@ type ClientWithResponsesInterface interface {
 	// ListApplicationTypeSources request
 	ListApplicationTypeSourcesWithResponse(ctx context.Context, id ID, params *ListApplicationTypeSourcesParams, reqEditors ...RequestEditorFn) (*ListApplicationTypeSourcesResponse, error)
 
+	// ListApplications request
+	ListApplicationsWithResponse(ctx context.Context, params *ListApplicationsParams, reqEditors ...RequestEditorFn) (*ListApplicationsResponse, error)
+
+	// CreateApplication request with any body
+	CreateApplicationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateApplicationResponse, error)
+
+	CreateApplicationWithResponse(ctx context.Context, body CreateApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateApplicationResponse, error)
+
+	// DeleteApplication request
+	DeleteApplicationWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*DeleteApplicationResponse, error)
+
+	// ShowApplication request
+	ShowApplicationWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*ShowApplicationResponse, error)
+
+	// UpdateApplication request with any body
+	UpdateApplicationWithBodyWithResponse(ctx context.Context, id ID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateApplicationResponse, error)
+
+	UpdateApplicationWithResponse(ctx context.Context, id ID, body UpdateApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateApplicationResponse, error)
+
+	// ListApplicationAuthentications request
+	ListApplicationAuthenticationsWithResponse(ctx context.Context, id ID, params *ListApplicationAuthenticationsParams, reqEditors ...RequestEditorFn) (*ListApplicationAuthenticationsResponse, error)
+
+	// PauseApplication request
+	PauseApplicationWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*PauseApplicationResponse, error)
+
+	// UnpauseApplication request
+	UnpauseApplicationWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*UnpauseApplicationResponse, error)
+
 	// BulkCreate request with any body
 	BulkCreateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BulkCreateResponse, error)
 
@@ -2746,6 +3425,193 @@ func (r ListApplicationTypeSourcesResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ListApplicationTypeSourcesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListApplicationsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ApplicationsCollection
+	JSON400      *ErrorBadRequest
+}
+
+// Status returns HTTPResponse.Status
+func (r ListApplicationsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListApplicationsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateApplicationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Application
+	JSON400      *ErrorBadRequest
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateApplicationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateApplicationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteApplicationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteApplicationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteApplicationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ShowApplicationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Application
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ShowApplicationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ShowApplicationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateApplicationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Application
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateApplicationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateApplicationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListApplicationAuthenticationsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AuthenticationsCollection
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListApplicationAuthenticationsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListApplicationAuthenticationsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PauseApplicationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r PauseApplicationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PauseApplicationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UnpauseApplicationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r UnpauseApplicationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UnpauseApplicationResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3117,6 +3983,94 @@ func (c *ClientWithResponses) ListApplicationTypeSourcesWithResponse(ctx context
 	return ParseListApplicationTypeSourcesResponse(rsp)
 }
 
+// ListApplicationsWithResponse request returning *ListApplicationsResponse
+func (c *ClientWithResponses) ListApplicationsWithResponse(ctx context.Context, params *ListApplicationsParams, reqEditors ...RequestEditorFn) (*ListApplicationsResponse, error) {
+	rsp, err := c.ListApplications(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListApplicationsResponse(rsp)
+}
+
+// CreateApplicationWithBodyWithResponse request with arbitrary body returning *CreateApplicationResponse
+func (c *ClientWithResponses) CreateApplicationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateApplicationResponse, error) {
+	rsp, err := c.CreateApplicationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateApplicationResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateApplicationWithResponse(ctx context.Context, body CreateApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateApplicationResponse, error) {
+	rsp, err := c.CreateApplication(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateApplicationResponse(rsp)
+}
+
+// DeleteApplicationWithResponse request returning *DeleteApplicationResponse
+func (c *ClientWithResponses) DeleteApplicationWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*DeleteApplicationResponse, error) {
+	rsp, err := c.DeleteApplication(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteApplicationResponse(rsp)
+}
+
+// ShowApplicationWithResponse request returning *ShowApplicationResponse
+func (c *ClientWithResponses) ShowApplicationWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*ShowApplicationResponse, error) {
+	rsp, err := c.ShowApplication(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseShowApplicationResponse(rsp)
+}
+
+// UpdateApplicationWithBodyWithResponse request with arbitrary body returning *UpdateApplicationResponse
+func (c *ClientWithResponses) UpdateApplicationWithBodyWithResponse(ctx context.Context, id ID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateApplicationResponse, error) {
+	rsp, err := c.UpdateApplicationWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateApplicationResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateApplicationWithResponse(ctx context.Context, id ID, body UpdateApplicationJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateApplicationResponse, error) {
+	rsp, err := c.UpdateApplication(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateApplicationResponse(rsp)
+}
+
+// ListApplicationAuthenticationsWithResponse request returning *ListApplicationAuthenticationsResponse
+func (c *ClientWithResponses) ListApplicationAuthenticationsWithResponse(ctx context.Context, id ID, params *ListApplicationAuthenticationsParams, reqEditors ...RequestEditorFn) (*ListApplicationAuthenticationsResponse, error) {
+	rsp, err := c.ListApplicationAuthentications(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListApplicationAuthenticationsResponse(rsp)
+}
+
+// PauseApplicationWithResponse request returning *PauseApplicationResponse
+func (c *ClientWithResponses) PauseApplicationWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*PauseApplicationResponse, error) {
+	rsp, err := c.PauseApplication(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePauseApplicationResponse(rsp)
+}
+
+// UnpauseApplicationWithResponse request returning *UnpauseApplicationResponse
+func (c *ClientWithResponses) UnpauseApplicationWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*UnpauseApplicationResponse, error) {
+	rsp, err := c.UnpauseApplication(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUnpauseApplicationResponse(rsp)
+}
+
 // BulkCreateWithBodyWithResponse request with arbitrary body returning *BulkCreateResponse
 func (c *ClientWithResponses) BulkCreateWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BulkCreateResponse, error) {
 	rsp, err := c.BulkCreateWithBody(ctx, contentType, body, reqEditors...)
@@ -3401,6 +4355,291 @@ func ParseListApplicationTypeSourcesResponse(rsp *http.Response) (*ListApplicati
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListApplicationsResponse parses an HTTP response from a ListApplicationsWithResponse call
+func ParseListApplicationsResponse(rsp *http.Response) (*ListApplicationsResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListApplicationsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ApplicationsCollection
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateApplicationResponse parses an HTTP response from a CreateApplicationWithResponse call
+func ParseCreateApplicationResponse(rsp *http.Response) (*CreateApplicationResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateApplicationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Application
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteApplicationResponse parses an HTTP response from a DeleteApplicationWithResponse call
+func ParseDeleteApplicationResponse(rsp *http.Response) (*DeleteApplicationResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteApplicationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseShowApplicationResponse parses an HTTP response from a ShowApplicationWithResponse call
+func ParseShowApplicationResponse(rsp *http.Response) (*ShowApplicationResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ShowApplicationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Application
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateApplicationResponse parses an HTTP response from a UpdateApplicationWithResponse call
+func ParseUpdateApplicationResponse(rsp *http.Response) (*UpdateApplicationResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateApplicationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Application
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListApplicationAuthenticationsResponse parses an HTTP response from a ListApplicationAuthenticationsWithResponse call
+func ParseListApplicationAuthenticationsResponse(rsp *http.Response) (*ListApplicationAuthenticationsResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListApplicationAuthenticationsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AuthenticationsCollection
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePauseApplicationResponse parses an HTTP response from a PauseApplicationWithResponse call
+func ParsePauseApplicationResponse(rsp *http.Response) (*PauseApplicationResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PauseApplicationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUnpauseApplicationResponse parses an HTTP response from a UnpauseApplicationWithResponse call
+func ParseUnpauseApplicationResponse(rsp *http.Response) (*UnpauseApplicationResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UnpauseApplicationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
 		var dest ErrorBadRequest
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {

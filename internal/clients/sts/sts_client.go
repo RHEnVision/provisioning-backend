@@ -26,7 +26,7 @@ func NewSTSClient(ctx context.Context) (*Client, error) {
 		log: ctxval.GetLogger(ctx).With().Str("client", "sts").Logger(),
 	}
 
-	cfg, err := con.LoadDefaultConfig(ctx,
+	cfg, err := con.LoadDefaultConfig(ctx, con.WithRegion(config.AWS.Region),
 		con.WithCredentialsProvider(
 			credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
 	if err != nil {
