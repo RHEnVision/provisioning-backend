@@ -7,5 +7,5 @@ import "github.com/spf13/viper"
 
 func init() {
 	viper.Set("featureFlags.environment", "test")
-	viper.Set("restEndpoints.sources.appId", 11)
+	viper.Set("restEndpoints.sources.appTypeId", 11)
 }

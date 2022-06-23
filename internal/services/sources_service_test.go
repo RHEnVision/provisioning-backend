@@ -10,49 +10,35 @@ import (
 
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources/stubs"
+	"github.com/RHEnVision/provisioning-backend/internal/pointer"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	uid1 = "5eebe172-7baa-4280-823f-19e597d091e9"
-	uid2 = "31b5338b-685d-4056-ba39-d00b4d7f19cc"
-)
-
 func buildSourcesStore() *[]sources.Source {
-	source1 := "source1"
-	id1 := "1"
-	type1 := "1"
-	source2 := "source2"
-	id2 := "2"
-	type2 := "2"
-
 	var TestSourceData = []sources.Source{
 		{
-			Id:           &id1,
-			Name:         &source1,
-			SourceTypeId: &type1,
-			Uid:          &uid1,
+			Id:           pointer.String("1"),
+			Name:         pointer.String("source1"),
+			SourceTypeId: pointer.String("1"),
+			Uid:          pointer.String("5eebe172-7baa-4280-823f-19e597d091e9"),
 		},
 		{
-			Id:           &id2,
-			Name:         &source2,
-			SourceTypeId: &type2,
-			Uid:          &uid2,
+			Id:           pointer.String("2"),
+			Name:         pointer.String("source2"),
+			SourceTypeId: pointer.String("2"),
+			Uid:          pointer.String("31b5338b-685d-4056-ba39-d00b4d7f19cc"),
 		},
 	}
 	return &TestSourceData
 }
 func buildSource() *[]sources.Source {
-	source1 := "source1"
-	id1 := "1"
-	type1 := "1"
 	var TestSourceData = []sources.Source{
 		{
-			Id:           &id1,
-			Name:         &source1,
-			SourceTypeId: &type1,
-			Uid:          &uid1,
+			Id:           pointer.String("1"),
+			Name:         pointer.String("source1"),
+			SourceTypeId: pointer.String("1"),
+			Uid:          pointer.String("5eebe172-7baa-4280-823f-19e597d091e9"),
 		},
 	}
 	return &TestSourceData
@@ -103,4 +89,23 @@ func TestShowSourceHandler(t *testing.T) {
 	}
 
 	assert.Equal(t, "1", *s.Id, "expected source with id = 1")
+}
+
+func TestFilterSourceAuthentications(t *testing.T) {
+	auth, err := filterSourceAuthentications(&[]sources.AuthenticationRead{
+		{
+			ResourceType: (*sources.AuthenticationReadResourceType)(pointer.String("Application")),
+			Name:         pointer.String("test"),
+			ResourceId:   pointer.String("1"),
+		},
+		{
+			ResourceType: (*sources.AuthenticationReadResourceType)(pointer.String("Source")),
+			Name:         pointer.String("test2"),
+			ResourceId:   pointer.String("3"),
+		},
+	})
+	if err != nil {
+		t.Errorf("Error number of authentications does not equal to one: %v", err)
+	}
+	assert.Equal(t, "test", *auth.Name, "expected authentication with Name = test")
 }

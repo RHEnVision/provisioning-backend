@@ -15,7 +15,7 @@ require (
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/render v1.0.1
-	github.com/go-openapi/runtime v0.24.1 // indirect
+	github.com/go-openapi/runtime v0.24.1
 	github.com/jackc/pgconn v1.8.0
 	github.com/jackc/pgx/v4 v4.10.1
 	github.com/jackc/tern v1.13.0
@@ -27,6 +27,7 @@ require (
 	github.com/redhatinsights/platform-go-middlewares v0.17.0
 	github.com/rs/xid v1.4.0
 	github.com/rs/zerolog v1.26.1
+	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.7.1
 )
