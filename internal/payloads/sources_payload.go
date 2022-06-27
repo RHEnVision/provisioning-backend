@@ -7,6 +7,9 @@ import (
 	"github.com/go-chi/render"
 )
 
+type SourceID struct {
+	SourceId string `json:"source_id"`
+}
 type SourceResponse struct {
 	*sources.Source
 }

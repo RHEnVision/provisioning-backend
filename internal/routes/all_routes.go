@@ -48,5 +48,11 @@ func apiRouter() http.Handler {
 		})
 	})
 
+	r.Route("/instance_types", func(r chi.Router) {
+		// TODO: source_id is supposed to be saved in a global session
+		r.Post("/", s.ListInstanceTypes)
+
+	})
+
 	return r
 }
