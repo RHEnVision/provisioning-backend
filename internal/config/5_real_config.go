@@ -23,7 +23,7 @@ func init() {
 		viper.Set("prometheus.port", cfg.MetricsPort)
 		viper.Set("prometheus.path", cfg.MetricsPath)
 	} else {
-		viper.SetDefault("featureFlags.environment", "developement")
+		viper.SetDefault("featureFlags.environment", "development")
 		viper.SetDefault("restEndpoints.sources.appId", 11)
 
 		viper.AddConfigPath("./configs")
