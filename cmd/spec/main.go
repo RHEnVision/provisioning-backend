@@ -51,6 +51,7 @@ func main() {
 	gen.addSchema("v1.Account", &payloads.AccountPayload{})
 	gen.addSchema("v1.Pubkey", &payloads.PubkeyPayload{})
 	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})
+	gen.addSchema("v1.Source", &payloads.SourceResponse{})
 
 	// errors
 	gen.addResponse("NotFound", "The specified resource was not found", "#/components/schemas/v1.ResponseError")
