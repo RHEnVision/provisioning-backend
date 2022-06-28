@@ -27,17 +27,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/v1.Pubkey'
         "404":
-          description: 'Returned when resource cannot be found.'
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/v1.ResponseError"
+            $ref: "#/components/responses/NotFound"
         "500":
-          description: 'Returned when an internal error occurs.'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1.ResponseError'
+            $ref: '#/components/responses/InternalError'
   /pubkeys:
     get:
       operationId: getPubkeyList
@@ -51,3 +43,5 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/v1.Pubkey'
+        "500":
+            $ref: '#/components/responses/InternalError'
