@@ -72,6 +72,8 @@ objects:
       database:
         name: provisioning-backend
         version: 13
+      dependencies:
+        - sources-api
 
 parameters:
   - description: ClowdEnv Name
