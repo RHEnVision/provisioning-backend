@@ -77,6 +77,58 @@
           }
         },
         "type": "object"
+      },
+      "v1.Source": {
+        "properties": {
+          "app_creation_workflow": {
+            "type": "string"
+          },
+          "availability_status": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "imported": {
+            "type": "string"
+          },
+          "last_available_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "paused_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "source_ref": {
+            "type": "string"
+          },
+          "source_type_id": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "type": "object"
       }
     }
   },
@@ -139,6 +191,66 @@
               }
             },
             "description": "Returned on success."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/sources": {
+      "get": {
+        "description": "Return list of provisioning sources",
+        "operationId": "getListSources",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/v1.Source"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Returned on success."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/sources/{ID}": {
+      "get": {
+        "description": "Return a provisioning source by id",
+        "operationId": "getSourceID",
+        "parameters": [
+          {
+            "description": "Database ID of resource.",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.Source"
+                }
+              }
+            },
+            "description": "Return on success."
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
