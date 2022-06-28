@@ -44,7 +44,45 @@ paths:
                 items:
                   $ref: '#/components/schemas/v1.Pubkey'
         "500":
-            $ref: '#/components/responses/InternalError'
+          $ref: '#/components/responses/InternalError'
+  /sources:
+    get:
+      description: 'Return list of provisioning sources'
+      operationId: getListSources
+      responses:
+        '200':
+          description: Returned on success.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/v1.Source'
+        '500':
+          $ref: "#/components/responses/InternalError"
+  /sources/{ID}:
+    get:
+      description: 'Return a provisioning source by id'
+      operationId: getSourceID
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          description: 'Database ID of resource.'
+          schema:
+            type: integer
+            format: int64  
+      responses:
+        '200':
+          description: Return on success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.Source'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalError"
 components:
   responses:
     BadRequest:
@@ -94,6 +132,42 @@ components:
         msg:
           type: string
         request_id:
+          type: string
+      type: object
+    v1.Source:
+      properties:
+        app_creation_workflow:
+          type: string
+        availability_status:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        id:
+          type: string
+        imported:
+          type: string
+        last_available_at:
+          format: date-time
+          type: string
+        last_checked_at:
+          format: date-time
+          type: string
+        name:
+          type: string
+        paused_at:
+          format: date-time
+          type: string
+        source_ref:
+          type: string
+        source_type_id:
+          type: string
+        uid:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        version:
           type: string
       type: object
 servers:
