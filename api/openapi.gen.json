@@ -1,5 +1,37 @@
 {
   "components": {
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/v1.ResponseError"
+            }
+          }
+        },
+        "description": "The request's parameters are not sufficient"
+      },
+      "InternalError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/v1.ResponseError"
+            }
+          }
+        },
+        "description": "The server encountered with an internal error"
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/v1.ResponseError"
+            }
+          }
+        },
+        "description": "The specified resource was not found"
+      }
+    },
     "schemas": {
       "v1.Account": {
         "properties": {
@@ -74,6 +106,9 @@
               }
             },
             "description": "Returned on success."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
           }
         }
       }
@@ -106,24 +141,10 @@
             "description": "Returned on success."
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/v1.ResponseError"
-                }
-              }
-            },
-            "description": "Returned when resource cannot be found."
+            "$ref": "#/components/responses/NotFound"
           },
           "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/v1.ResponseError"
-                }
-              }
-            },
-            "description": "Returned when an internal error occurs."
+            "$ref": "#/components/responses/InternalError"
           }
         }
       }

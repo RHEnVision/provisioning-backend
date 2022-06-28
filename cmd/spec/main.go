@@ -30,6 +30,7 @@ func (s *APISchemaGen) init() {
 	}
 	s.Components = openapi3.NewComponents()
 	s.Components.Schemas = make(map[string]*openapi3.SchemaRef)
+	s.Components.Responses = make(map[string]*openapi3.ResponseRef)
 }
 
 func (s *APISchemaGen) addSchema(name string, model interface{}) {
@@ -38,15 +39,24 @@ func (s *APISchemaGen) addSchema(name string, model interface{}) {
 	s.Components.Schemas[name] = schema
 }
 
+func (s *APISchemaGen) addResponse(name string, description string, ref string) {
+	response := openapi3.NewResponse().WithDescription(description).WithJSONSchemaRef(&openapi3.SchemaRef{Ref: ref})
+	s.Components.Responses[name] = &openapi3.ResponseRef{Value: response}
+}
+
 func main() {
 	gen := APISchemaGen{}
 	gen.init()
-	// models
+	// payloads
 	gen.addSchema("v1.Account", &payloads.AccountPayload{})
 	gen.addSchema("v1.Pubkey", &payloads.PubkeyPayload{})
+	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})
 
 	// errors
-	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})
+	gen.addResponse("NotFound", "The specified resource was not found", "#/components/schemas/v1.ResponseError")
+	gen.addResponse("InternalError", "The server encountered with an internal error", "#/components/schemas/v1.ResponseError")
+	gen.addResponse("BadRequest", "The request's parameters are not sufficient", "#/components/schemas/v1.ResponseError")
+
 	type Swagger struct {
 		Components openapi3.Components `json:"components,omitempty" yaml:"components,omitempty"`
 		Servers    openapi3.Servers    `json:"servers,omitempty" yaml:"servers,omitempty"`

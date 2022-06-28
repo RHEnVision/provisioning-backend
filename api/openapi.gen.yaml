@@ -27,17 +27,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/v1.Pubkey'
         "404":
-          description: 'Returned when resource cannot be found.'
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/v1.ResponseError"
+            $ref: "#/components/responses/NotFound"
         "500":
-          description: 'Returned when an internal error occurs.'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1.ResponseError'
+            $ref: '#/components/responses/InternalError'
   /pubkeys:
     get:
       operationId: getPubkeyList
@@ -51,7 +43,28 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/v1.Pubkey'
+        "500":
+            $ref: '#/components/responses/InternalError'
 components:
+  responses:
+    BadRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/v1.ResponseError'
+      description: The request's parameters are not sufficient
+    InternalError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/v1.ResponseError'
+      description: The server encountered with an internal error
+    NotFound:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/v1.ResponseError'
+      description: The specified resource was not found
   schemas:
     v1.Account:
       properties:
