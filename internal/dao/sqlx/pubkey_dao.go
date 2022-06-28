@@ -43,7 +43,7 @@ func getPubkeyDao(ctx context.Context) (dao.PubkeyDao, error) {
 	}
 	daoImpl.getById, err = db.DB.PreparexContext(ctx, getPubkeyById)
 	if err != nil {
-		return nil, NewPrepareStatementError(ctx, &daoImpl, getAccountById, err)
+		return nil, NewPrepareStatementError(ctx, &daoImpl, getPubkeyById, err)
 	}
 	daoImpl.list, err = db.DB.PreparexContext(ctx, listPubkeys)
 	if err != nil {
