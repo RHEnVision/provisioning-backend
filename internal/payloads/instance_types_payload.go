@@ -8,7 +8,7 @@ import (
 )
 
 type InstanceTypeResponse struct {
-	Identifier string
+	Identifier string `json:"id"`
 }
 
 func (s *InstanceTypeResponse) Bind(_ *http.Request) error {
