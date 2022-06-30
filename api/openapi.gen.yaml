@@ -69,7 +69,7 @@ paths:
         - name: ID
           in: path
           required: true
-          description: 'Database ID of resource.'
+          description: 'Source ID from Sources Database.'
           schema:
             type: integer
             format: int64  
@@ -84,6 +84,29 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalError"
+  /instance_types/{source_id}:
+      get:
+        description: 'Return a list of instance types'
+        operationId: getListInstanceTypes
+        parameters:
+          - name: source_id
+            in: path
+            required: true
+            description: 'Source ID from Sources Database.'
+            schema:
+              type: integer
+              format: int64
+        responses:
+          '200':
+            description: Return on success.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/v1.InstanceType'
+          '404':
+            $ref: "#/components/responses/NotFound"
+          '500':
+            $ref: "#/components/responses/InternalError"
 components:
   responses:
     BadRequest:
@@ -113,6 +136,11 @@ components:
           format: int64
           type: integer
         org_id:
+          type: string
+      type: object
+    v1.InstanceType:
+      properties:
+        id:
           type: string
       type: object
     v1.Pubkey:
