@@ -48,6 +48,14 @@
         },
         "type": "object"
       },
+      "v1.InstanceType": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "v1.Pubkey": {
         "properties": {
           "account_id": {
@@ -142,6 +150,42 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/instance_types/{source_id}": {
+      "get": {
+        "description": "Return a list of instance types",
+        "operationId": "getListInstanceTypes",
+        "parameters": [
+          {
+            "description": "Source ID from Sources Database.",
+            "in": "path",
+            "name": "source_id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.InstanceType"
+                }
+              }
+            },
+            "description": "Return on success."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
     "/pubkeys": {
       "get": {
         "description": "Returns list of resources.",
@@ -232,7 +276,7 @@
         "operationId": "getSourceID",
         "parameters": [
           {
-            "description": "Database ID of resource.",
+            "description": "Source ID from Sources Database.",
             "in": "path",
             "name": "ID",
             "required": true,
