@@ -1,8 +1,11 @@
 package main
 
 import (
+	"syscall"
+
 	// Performs initialization of DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 
 	"context"
 	"errors"
@@ -50,6 +53,17 @@ func main() {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
 
+	// initialize the job queue
+	ctx := context.Background()
+	err = jobs.Initialize(ctx, &logger)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error initializing dejq queue")
+	}
+	if config.Worker.Queue == "memory" {
+		jobs.RegisterJobs(&logger)
+	}
+	jobs.StartDequeueLoop(ctx, &logger)
+
 	// Routes for the main service
 	r := chi.NewRouter()
 	r.Use(m.RequestID)
@@ -78,10 +92,10 @@ func main() {
 		Handler: mr,
 	}
 
-	idleConnsClosed := make(chan struct{})
+	waitForSignal := make(chan struct{})
 	go func() {
 		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt)
+		signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)
 		<-sigint
 		if err := srv.Shutdown(context.Background()); err != nil {
 			log.Fatal().Err(err).Msg("Main service shutdown error")
@@ -89,7 +103,7 @@ func main() {
 		if err := msrv.Shutdown(context.Background()); err != nil {
 			log.Fatal().Err(err).Msg("Metrics service shutdown error")
 		}
-		close(idleConnsClosed)
+		close(waitForSignal)
 	}()
 
 	go func() {
@@ -106,6 +120,10 @@ func main() {
 		}
 	}
 
-	<-idleConnsClosed
+	<-waitForSignal
+
+	if config.Worker.Queue == "memory" {
+		jobs.Queue.Stop()
+	}
 	log.Info().Msg("Shutdown finished, exiting")
 }
