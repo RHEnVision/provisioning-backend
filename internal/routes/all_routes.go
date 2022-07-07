@@ -60,11 +60,11 @@ func apiRouter() http.Handler {
 		r.Route("/reservations", func(r chi.Router) {
 			r.Post("/", s.CreateReservation)
 		})
-	})
 
-	r.Route("/instance_types", func(r chi.Router) {
-		r.Route("/{source_id}", func(r chi.Router) {
-			r.Get("/", s.ListInstanceTypes)
+		r.Route("/instance_types", func(r chi.Router) {
+			r.Route("/{source_id}", func(r chi.Router) {
+				r.Get("/", s.ListInstanceTypes)
+			})
 		})
 	})
 
