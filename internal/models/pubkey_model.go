@@ -6,7 +6,7 @@ type Pubkey struct {
 	ID int64 `db:"id" json:"id"`
 
 	// Associated Account model. Required.
-	AccountID int64 `db:"account_id" json:"account_id"`
+	AccountID int64 `db:"account_id" json:"-"`
 
 	// User-facing name. Required.
 	Name string `db:"name" json:"name"`

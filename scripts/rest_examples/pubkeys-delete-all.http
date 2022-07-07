@@ -1,4 +1,0 @@
-// @no-log
-GET http://{{hostname}}:{{port}}/{{prefix}}/pubkeys/1/delete_all HTTP/1.1
-Content-Type: application/json
-X-Rh-Identity: {{identity}}

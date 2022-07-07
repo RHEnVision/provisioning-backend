@@ -5,16 +5,14 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	cfg "github.com/aws/aws-sdk-go-v2/config"
-
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	cfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	stsTypes "github.com/aws/aws-sdk-go-v2/service/sts/types"
-
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -63,7 +61,11 @@ func (c *Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
 	output, err := c.ec2.ImportKeyPair(c.context, input)
 
 	if err != nil {
-		return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
+		if IsOperationError(err, "InvalidKeyPair.Duplicate") {
+			return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, DuplicatePubkeyErr)
+		} else {
+			return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
+		}
 	}
 
 	return aws.ToString(output.KeyPairId), nil

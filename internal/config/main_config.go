@@ -65,6 +65,12 @@ var config struct {
 			AppTypeId string
 		}
 	}
+	Worker struct {
+		Queue        string
+		Concurrency  int
+		HeartbeatSec int
+		MaxBeats     int
+	}
 }
 
 var Application = &config.App
@@ -76,6 +82,7 @@ var AWS = &config.AWS
 var Features = &config.FeatureFlags
 var ImageBuilder = &config.RestEndpoints.ImageBuilder
 var Sources = &config.RestEndpoints.Sources
+var Worker = &config.Worker
 
 func Initialize() {
 	err := viper.Unmarshal(&config)
