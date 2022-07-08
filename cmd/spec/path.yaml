@@ -10,7 +10,7 @@ info:
 paths:
   /pubkeys/{ID}:
     get:
-      operationId: getPubkeyByID
+      operationId: getPubkeyById
       description: 'Returns a particular resource.'
       parameters:
         - name: ID
@@ -49,7 +49,7 @@ paths:
   /sources:
     get:
       description: 'Return list of provisioning sources'
-      operationId: getListSources
+      operationId: getSourceList
       responses:
         '200':
           description: Returned on success.
@@ -64,7 +64,7 @@ paths:
   /sources/{ID}:
     get:
       description: 'Return a provisioning source by id'
-      operationId: getSourceID
+      operationId: getSourceById
       parameters:
         - name: ID
           in: path
@@ -72,7 +72,7 @@ paths:
           description: 'Source ID from Sources Database.'
           schema:
             type: integer
-            format: int64  
+            format: int64
       responses:
         '200':
           description: Return on success.
@@ -87,7 +87,7 @@ paths:
   /instance_types/{source_id}:
       get:
         description: 'Return a list of instance types'
-        operationId: getListInstanceTypes
+        operationId: getInstanceTypeList
         parameters:
           - name: source_id
             in: path

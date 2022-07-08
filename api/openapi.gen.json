@@ -209,7 +209,7 @@
     "/pubkeys/{ID}": {
       "get": {
         "description": "Returns a particular resource.",
-        "operationId": "getPubkeyByID",
+        "operationId": "getPubkeyById",
         "parameters": [
           {
             "description": "Database ID of resource.",
@@ -245,7 +245,7 @@
     "/sources": {
       "get": {
         "description": "Return list of provisioning sources",
-        "operationId": "getListSources",
+        "operationId": "getSourceList",
         "responses": {
           "200": {
             "content": {
@@ -269,7 +269,7 @@
     "/sources/{ID}": {
       "get": {
         "description": "Return a provisioning source by id",
-        "operationId": "getSourceID",
+        "operationId": "getSourceById",
         "parameters": [
           {
             "description": "Source ID from Sources Database.",
