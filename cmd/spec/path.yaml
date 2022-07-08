@@ -11,7 +11,9 @@ paths:
   /pubkeys/{ID}:
     get:
       operationId: getPubkeyById
-      description: 'Returns a particular resource.'
+      description: >
+        A pubkey represents an SSH public portion of a key pair with name and body.
+        To find if a pubkey was uploaded to particular cloud, check PubkeyResource resource.
       parameters:
         - name: ID
           in: path
@@ -28,13 +30,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/v1.Pubkey'
         "404":
-            $ref: "#/components/responses/NotFound"
+          $ref: "#/components/responses/NotFound"
         "500":
-            $ref: '#/components/responses/InternalError'
+          $ref: '#/components/responses/InternalError'
+    delete:
+      operationId: removePubkeyById
+      description: >
+        A pubkey represents an SSH public portion of a key pair with name and body.
+        If a pubkey was uploaded to one or more clouds, the deletion request will
+        attempt to delete those SSH keys from all clouds. This means in order to delete
+        a pubkey the account must have valid credentials to all cloud accounts the pubkey
+        was uploaded to, otherwise the delete operation will fail and the pubkey will
+        not be deleted from Provisioning database.
+      parameters:
+        - name: ID
+          in: path
+          required: true
+          description: 'Database ID of resource.'
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: 'Returned on success.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.Pubkey'
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: '#/components/responses/InternalError'
   /pubkeys:
+    post:
+      operationId: createPubkey
+      description: >
+        A pubkey represents an SSH public portion of a key pair with name and body.
+        When pubkey is created, it is stored in the Provisioning database. Pubkeys are
+        uploaded to clouds when an instance is launched.
+      responses:
+        '200':
+          description: 'Returned on success.'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/v1.Pubkey'
+        "500":
+          $ref: '#/components/responses/InternalError'
     get:
       operationId: getPubkeyList
-      description: 'Returns list of resources.'
+      description: >
+        A pubkey represents an SSH public portion of a key pair with name and body.
+        This operation returns list of all pubkeys for particular account.
       responses:
         '200':
           description: 'Returned on success.'

@@ -44,7 +44,7 @@ paths:
 Operation naming convention:
 
 * GET /resource - getResourceList
-* POST /resource - addResource
+* POST /resource - createResource
 * GET /resource/ID - getResourceById
 * DELETE /resource/ID - removeResourceById
 
