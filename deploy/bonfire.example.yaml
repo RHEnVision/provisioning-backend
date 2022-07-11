@@ -1,12 +1,13 @@
 # Bonfire deployment configuration
 
+# DEPRECATED: there should only be overrides in this file and we should use appsre as main source
 # Defines where to fetch the file that defines application configs
-appsFile:
-  host: gitlab
-  repo: insights-platform/cicd-common
-  path: bonfire_configs/ephemeral_apps_deprecated.yaml
+# appsFile:
+#   host: gitlab
+#   repo: insights-platform/cicd-common
+#   path: bonfire_configs/ephemeral_apps_deprecated.yaml
 
-# (optional) define any apps locally. An app defined here with <name> will override config for app
+# define any apps locally. An app defined here with <name> will override config for app
 # <name> in above fetched config.
 apps:
 - name: provisioning
