@@ -141,3 +141,8 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.AWS.Session = replacement
 	logger.Info().Msgf("Configuration: %+v", configCopy)
 }
+
+func SetSourcesAppTypeId(appTypeId string) bool {
+	config.RestEndpoints.Sources.AppTypeId = appTypeId
+	return true
+}

@@ -26,7 +26,6 @@ func init() {
 		}
 	} else {
 		viper.SetDefault("featureFlags.environment", "development")
-		viper.SetDefault("restEndpoints.sources.appId", 11)
 
 		viper.AddConfigPath("./configs")
 		viper.SetConfigName("defaults")
