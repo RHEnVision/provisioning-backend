@@ -13,7 +13,6 @@ import (
 func init() {
 	if clowder.IsClowderEnabled() {
 		cfg := clowder.LoadedConfig
-		viper.Set("restEndpoints.sources.appTypeId", 11)
 		viper.Set("featureFlags.environment", "production")
 		viper.Set("database.host", cfg.Database.Hostname)
 		viper.Set("database.port", cfg.Database.Port)
@@ -22,6 +21,7 @@ func init() {
 		viper.Set("database.name", cfg.Database.Name)
 		viper.Set("prometheus.port", cfg.MetricsPort)
 		viper.Set("prometheus.path", cfg.MetricsPath)
+		viper.Set("restEndpoints.sources.url", clowder.DependencyEndpoints["sources-api"]["svc"])
 	} else {
 		viper.SetDefault("featureFlags.environment", "development")
 		viper.SetDefault("restEndpoints.sources.appId", 11)
