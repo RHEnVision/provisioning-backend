@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION valid_provider(i INTEGER)
   RETURNS BOOLEAN AS
 $valid_provider$
 BEGIN
-  RETURN i BETWEEN 1 AND 3;
+  RETURN i BETWEEN 1 AND 4;
 END;
 $valid_provider$ LANGUAGE 'plpgsql';
 
