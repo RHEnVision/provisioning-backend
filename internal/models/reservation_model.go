@@ -12,11 +12,14 @@ type Reservation struct {
 	// Required auto-generated PK.
 	ID int64 `db:"id" json:"id"`
 
+	// Provider type. Required.
+	Provider ProviderType `db:"provider" json:"provider"`
+
 	// Account ID. Required.
 	AccountID int64 `db:"account_id" json:"-"`
 
 	// Pubkey ID.
-	PubkeyID int64 `db:"pubkey_id" json:"pubkey_id"`
+	PubkeyID sql.NullInt64 `db:"pubkey_id" json:"pubkey_id"`
 
 	// Time when reservation was made.
 	CreatedAt time.Time `db:"created_at" json:"created_at"`

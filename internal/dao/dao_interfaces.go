@@ -41,5 +41,8 @@ var GetReservationDao func(ctx context.Context) (ReservationDao, error)
 
 type ReservationDao interface {
 	Create(ctx context.Context, reservation *models.Reservation) error
+	List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error)
+	UpdateStatus(ctx context.Context, id int64, status string) error
+	Finish(ctx context.Context, id int64, success bool, status string) error
 	Delete(ctx context.Context, id int64) error
 }

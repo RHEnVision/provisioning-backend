@@ -6,8 +6,16 @@ const (
 	// ProviderTypeUnknown is reserved
 	ProviderTypeUnknown ProviderType = iota
 
+	// No operation (testing) provider
+	ProviderTypeNoop
+
+	// Amazon AWS provider
 	ProviderTypeAWS
+
+	// Microsoft Azure provider
 	ProviderTypeAzure
+
+	// Google Compute Engine provider
 	ProviderTypeGCE
 )
 
@@ -16,6 +24,7 @@ var AllProviders []ProviderType
 
 func init() {
 	AllProviders = []ProviderType{
+		ProviderTypeNoop,
 		ProviderTypeAWS,
 		ProviderTypeAzure,
 		ProviderTypeGCE,

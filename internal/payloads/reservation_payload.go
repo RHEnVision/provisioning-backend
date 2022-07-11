@@ -12,7 +12,8 @@ type ReservationPayload struct {
 }
 
 type ReservationRequest struct {
-	Pubkey struct {
+	Provider models.ProviderType `json:"provider"`
+	Pubkey   struct {
 		ExistingID *int64  `json:"existing_id"`
 		NewName    *string `json:"new_name"`
 		NewBody    *string `json:"new_body"`

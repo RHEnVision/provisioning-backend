@@ -4,7 +4,5 @@ Content-Type: application/json
 X-Rh-Identity: {{identity}}
 
 {
-  "pubkey": {
-    "existing_id": 1
-  }
+  "provider": 1
 }

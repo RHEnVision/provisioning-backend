@@ -1,0 +1,11 @@
+// @no-log
+POST http://{{hostname}}:{{port}}/{{prefix}}/reservations/ HTTP/1.1
+Content-Type: application/json
+X-Rh-Identity: {{identity}}
+
+{
+  "provider": 2,
+  "pubkey": {
+    "existing_id": 1
+  }
+}
