@@ -76,26 +76,6 @@ func (di *pubkeyDaoSqlx) Create(ctx context.Context, pubkey *models.Pubkey) erro
 	return nil
 }
 
-// TODO: This is just an example of transactions, will be deleted later
-func (di *pubkeyDaoSqlx) CreateWithResource(ctx context.Context, pk *models.Pubkey, pkr *models.PubkeyResource) error {
-	err := dao.WithTransaction(ctx, func(tx *sqlx.Tx) error {
-		err := tx.GetContext(ctx, pk, createPubkey, pk.AccountID, pk.Name, pk.Body)
-		if err != nil {
-			return NewGetError(ctx, di, createPubkey, err)
-		}
-		pkr.PubkeyID = pk.ID
-		err = tx.GetContext(ctx, pkr, createPubkeyResource, pkr.PubkeyID, pkr.Provider, pkr.Handle, pkr.Tag)
-		if err != nil {
-			return NewGetError(ctx, di, createPubkeyResource, err)
-		}
-		return nil
-	})
-	if err != nil {
-		return NewTransactionError(ctx, err)
-	}
-	return nil
-}
-
 func (di *pubkeyDaoSqlx) GetById(ctx context.Context, id int64) (*models.Pubkey, error) {
 	query := getPubkeyById
 	stmt := di.getById

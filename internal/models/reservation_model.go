@@ -18,9 +18,6 @@ type Reservation struct {
 	// Account ID. Required.
 	AccountID int64 `db:"account_id" json:"-"`
 
-	// Pubkey ID.
-	PubkeyID sql.NullInt64 `db:"pubkey_id" json:"pubkey_id"`
-
 	// Time when reservation was made.
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 
@@ -32,4 +29,15 @@ type Reservation struct {
 
 	// Flag indicating success, error or unknown state (NULL). See Status for the actual error.
 	Success sql.NullBool `db:"success" json:"success"`
+}
+
+type NoopReservation struct {
+	Reservation
+}
+
+type AWSReservation struct {
+	Reservation
+
+	// Pubkey ID.
+	PubkeyID sql.NullInt64 `db:"pubkey_id" json:"pubkey_id"`
 }
