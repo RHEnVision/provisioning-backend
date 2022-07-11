@@ -18,7 +18,7 @@ objects:
         service: provisioning
     spec:
       envName: ${ENV_NAME}
-      testing: 
+      testing:
         iqePlugin: hms-provisioning
       deployments:
         - name: service
