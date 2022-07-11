@@ -19,11 +19,13 @@ import (
 var Queue dejq.Jobs
 
 const (
+	TypeNoop            = "no_operation"
 	TypePubkeyUploadAws = "pubkey_upload_aws"
 )
 
 func RegisterJobs(logger *zerolog.Logger) {
 	logger.Debug().Msg("Initializing job queue")
+	Queue.RegisterHandler(TypeNoop, HandleNoop)
 	Queue.RegisterHandler(TypePubkeyUploadAws, HandlePubkeyUploadAWS)
 }
 

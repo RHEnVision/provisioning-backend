@@ -35,15 +35,16 @@ func EnqueuePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) 
 }
 
 func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
-	logger := ctxval.Logger(ctx)
-	logger.Debug().Msg("Started pubkey upload AWS job")
+	ctxLogger := ctxval.Logger(ctx)
+	ctxLogger.Debug().Msg("Started pubkey upload AWS job")
 
 	args := PubkeyUploadAWSTaskArgs{}
 	err := job.Decode(&args)
 	if err != nil {
-		logger.Error().Err(err).Msg("unable to decode arguments")
+		ctxLogger.Error().Err(err).Msg("unable to decode arguments")
 		return fmt.Errorf("unable to decode args: %w", err)
 	}
+	logger := ctxLogger.With().Int64("reservation", args.ReservationID).Logger()
 	logger.Info().Interface("args", args).Msg("Processing pubkey upload AWS job")
 
 	pkDao, err := dao.GetPubkeyDao(ctx)
@@ -83,6 +84,16 @@ func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 	err = pkrDao.Create(ctx, &pkr)
 	if err != nil {
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
+	}
+
+	// mark the reservation as finished
+	rDao, err := dao.GetReservationDao(ctx)
+	if err != nil {
+		return fmt.Errorf("cannot get reservation DAO: %w", err)
+	}
+	err = rDao.UpdateStatus(ctx, args.ReservationID, "Finished")
+	if err != nil {
+		return fmt.Errorf("cannot update reservation status: %w", err)
 	}
 
 	return nil
