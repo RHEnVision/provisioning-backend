@@ -7,6 +7,7 @@ import (
 
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/parsing"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -19,11 +20,19 @@ func ListSources(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp, err := client.ListApplicationTypeSourcesWithResponse(r.Context(), config.Sources.AppTypeId, &sources.ListApplicationTypeSourcesParams{}, AddIdentityHeader)
+	statusCode := resp.StatusCode()
 	if err != nil {
-		renderError(w, r, payloads.New3rdPartyClientError(r.Context(), "list sources", err))
+		renderError(w, r, payloads.SourcesClientError(r.Context(), "list sources", err, statusCode))
 		return
 	}
-
+	if parsing.IsHTTPNotFound(statusCode) {
+		renderError(w, r, payloads.SourcesClientError(r.Context(), "sources not found", err, statusCode))
+		return
+	}
+	if !parsing.IsHTTPStatus2xx(statusCode) {
+		renderError(w, r, payloads.SourcesClientError(r.Context(), "sources client error", err, statusCode))
+		return
+	}
 	if err := render.RenderList(w, r, payloads.NewListSourcesResponse(resp.JSON200.Data)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "list sources", err))
 		return
@@ -41,8 +50,17 @@ func GetSource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp, err := client.ShowSourceWithResponse(r.Context(), sources.ID(id), AddIdentityHeader)
+	statusCode := resp.StatusCode()
 	if err != nil {
-		renderError(w, r, payloads.New3rdPartyClientError(r.Context(), "show source", err))
+		renderError(w, r, payloads.SourcesClientError(r.Context(), "show source", err, statusCode))
+		return
+	}
+	if parsing.IsHTTPNotFound(statusCode) {
+		renderError(w, r, payloads.SourcesClientError(r.Context(), "source not found", err, statusCode))
+		return
+	}
+	if !parsing.IsHTTPStatus2xx(statusCode) {
+		renderError(w, r, payloads.SourcesClientError(r.Context(), "sources client error", err, statusCode))
 		return
 	}
 	if err := render.Render(w, r, payloads.NewShowSourcesResponse(resp.JSON200)); err != nil {
@@ -56,7 +74,13 @@ func fetchARN(ctx context.Context, client sources.SourcesIntegration, sourceId s
 	if err != nil {
 		return "", fmt.Errorf("cannot list source authentication: %w", err)
 	}
-
+	statusCode := resp.StatusCode()
+	if parsing.IsHTTPNotFound(statusCode) {
+		return "", sources.AuthenticationForSourcesNotFoundErr
+	}
+	if !parsing.IsHTTPStatus2xx(statusCode) {
+		return "", sources.SourcesClientErr
+	}
 	// Filter authentications to include only auth where resource_type == "Application"
 	auth, err := filterSourceAuthentications(resp.JSON200.Data)
 	if err != nil {
@@ -67,6 +91,13 @@ func fetchARN(ctx context.Context, client sources.SourcesIntegration, sourceId s
 	res, err := client.ShowApplicationWithResponse(ctx, *auth.ResourceId, AddIdentityHeader)
 	if err != nil {
 		return "", fmt.Errorf("cannot list source authentication: %w", err)
+	}
+	statusCode = res.StatusCode()
+	if parsing.IsHTTPNotFound(statusCode) {
+		return "", sources.ApplicationNotFoundErr
+	}
+	if !parsing.IsHTTPStatus2xx(statusCode) {
+		return "", sources.SourcesClientErr
 	}
 
 	if *res.JSON200.ApplicationTypeId == config.Sources.AppTypeId {

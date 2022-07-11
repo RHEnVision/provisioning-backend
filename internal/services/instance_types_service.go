@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
@@ -23,7 +24,15 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 
 	arn, err := fetchARN(r.Context(), sourcesClient, sourceId)
 	if err != nil {
-		renderError(w, r, payloads.New3rdPartyClientError(r.Context(), "can't fetch arn from sources", err))
+		if errors.Is(err, sources.ApplicationNotFoundErr) {
+			renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources: application not found", err, 404))
+			return
+		}
+		if errors.Is(err, sources.AuthenticationForSourcesNotFoundErr) {
+			renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources: authentication not found", err, 404))
+			return
+		}
+		renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources", err, 500))
 		return
 	}
 
@@ -35,7 +44,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 
 	crd, err := stsClient.AssumeRole(arn)
 	if err != nil {
-		renderError(w, r, payloads.New3rdPartyClientError(r.Context(), "assume role sts", err))
+		renderError(w, r, payloads.NewAWSError(r.Context(), "assume role sts", err))
 		return
 	}
 
