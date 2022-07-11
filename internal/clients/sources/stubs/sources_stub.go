@@ -2,6 +2,7 @@ package stubs
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 )
@@ -42,12 +43,18 @@ func (mock *SourcesIntegrationStub) ShowSourceWithResponse(ctx context.Context, 
 	lst := *mock.store
 	return &sources.ShowSourceResponse{
 		JSON200: &lst[0],
+		HTTPResponse: &http.Response{
+			StatusCode: 200,
+		},
 	}, nil
 }
 func (mock *SourcesIntegrationStub) ListApplicationTypeSourcesWithResponse(ctx context.Context, appTypeId sources.ID, params *sources.ListApplicationTypeSourcesParams, reqEditors ...sources.RequestEditorFn) (*sources.ListApplicationTypeSourcesResponse, error) {
 	return &sources.ListApplicationTypeSourcesResponse{
 		JSON200: &sources.SourcesCollection{
 			Data: mock.store,
+		},
+		HTTPResponse: &http.Response{
+			StatusCode: 200,
 		},
 	}, nil
 }
@@ -57,11 +64,17 @@ func (mock *SourcesIntegrationStub) ListSourceAuthenticationsWithResponse(ctx co
 		JSON200: &sources.AuthenticationsCollection{
 			Data: mock.authentications,
 		},
+		HTTPResponse: &http.Response{
+			StatusCode: 200,
+		},
 	}, nil
 }
 
 func (mock *SourcesIntegrationStub) ShowApplicationWithResponse(ctx context.Context, appId sources.ID, reqEditors ...sources.RequestEditorFn) (*sources.ShowApplicationResponse, error) {
 	return &sources.ShowApplicationResponse{
 		JSON200: &sources.Application{},
+		HTTPResponse: &http.Response{
+			StatusCode: 200,
+		},
 	}, nil
 }
