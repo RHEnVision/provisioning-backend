@@ -55,13 +55,13 @@ func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	}
 }
 
-func New3rdPartyClientError(ctx context.Context, message string, err error) *ResponseError {
-	msg := fmt.Sprintf("3rd Party Client error: %s: %v", message, err)
+func SourcesClientError(ctx context.Context, message string, err error, status int) *ResponseError {
+	msg := fmt.Sprintf("Sources error: %s: %v", message, err)
 	if logger := ctxval.GetLogger(ctx); logger != nil {
 		logger.Error().Msg(msg)
 	}
 	return &ResponseError{
-		HTTPStatusCode: 500,
+		HTTPStatusCode: status,
 		Message:        msg,
 		RequestId:      ctxval.GetRequestId(ctx),
 		Err:            err,
