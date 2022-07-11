@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	createReservation       = `INSERT INTO reservations (provider, account_id, pubkey_id, status) VALUES ($1, $2, $3, $4) RETURNING *`
+	createReservation       = `INSERT INTO reservations (provider, account_id, status) VALUES ($1, $2, $3) RETURNING *`
+	createAwsDetail         = `INSERT INTO aws_reservation_details (reservation_id, pubkey_id) VALUES ($1, $2)`
 	updateReservationStatus = `UPDATE reservations SET status = $2 WHERE id = $1 RETURNING *`
 	finishReservationStatus = `UPDATE reservations SET status = $2, success = $3, finished_at = now() WHERE id = $1 RETURNING *`
 	deleteReservationById   = `DELETE FROM reservations WHERE id = $1`
@@ -18,12 +19,13 @@ const (
 )
 
 type reservationDaoSqlx struct {
-	name         string
-	create       *sqlx.Stmt
-	updateStatus *sqlx.Stmt
-	finishStatus *sqlx.Stmt
-	deleteById   *sqlx.Stmt
-	list         *sqlx.Stmt
+	name            string
+	create          *sqlx.Stmt
+	createAwsDetail *sqlx.Stmt
+	updateStatus    *sqlx.Stmt
+	finishStatus    *sqlx.Stmt
+	deleteById      *sqlx.Stmt
+	list            *sqlx.Stmt
 }
 
 func getReservationDao(ctx context.Context) (dao.ReservationDao, error) {
@@ -34,6 +36,10 @@ func getReservationDao(ctx context.Context) (dao.ReservationDao, error) {
 	daoImpl.create, err = db.DB.PreparexContext(ctx, createReservation)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, createReservation, err)
+	}
+	daoImpl.createAwsDetail, err = db.DB.PreparexContext(ctx, createAwsDetail)
+	if err != nil {
+		return nil, NewPrepareStatementError(ctx, &daoImpl, createAwsDetail, err)
 	}
 	daoImpl.updateStatus, err = db.DB.PreparexContext(ctx, updateReservationStatus)
 	if err != nil {
@@ -63,13 +69,39 @@ func init() {
 	dao.GetReservationDao = getReservationDao
 }
 
-func (di *reservationDaoSqlx) Create(ctx context.Context, reservation *models.Reservation) error {
+func (di *reservationDaoSqlx) CreateNoop(ctx context.Context, reservation *models.NoopReservation) error {
 	query := createReservation
 	stmt := di.create
 
-	err := stmt.GetContext(ctx, reservation, reservation.Provider, reservation.AccountID, reservation.PubkeyID, reservation.Status)
+	err := stmt.GetContext(ctx, reservation, reservation.Provider, reservation.AccountID, reservation.Status)
 	if err != nil {
 		return NewGetError(ctx, di, query, err)
+	}
+	return nil
+}
+
+func (di *reservationDaoSqlx) CreateAWS(ctx context.Context, reservation *models.AWSReservation) error {
+	err := dao.WithTransaction(ctx, func(tx *sqlx.Tx) error {
+		query := createReservation
+		stmt := di.create
+		err := stmt.GetContext(ctx, reservation, reservation.Provider, reservation.AccountID, reservation.Status)
+		if err != nil {
+			return NewGetError(ctx, di, query, err)
+		}
+
+		query = createAwsDetail
+		stmt = di.createAwsDetail
+		res, err := stmt.ExecContext(ctx, reservation.ID, reservation.PubkeyID)
+		if err != nil {
+			return NewExecUpdateError(ctx, di, query, err)
+		}
+		if rows, _ := res.RowsAffected(); rows != 1 {
+			return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
+		}
+		return nil
+	})
+	if err != nil {
+		return NewTransactionError(ctx, err)
 	}
 	return nil
 }

@@ -1,5 +1,7 @@
 package models
 
+import "strings"
+
 type ProviderType int
 
 const (
@@ -19,14 +21,17 @@ const (
 	ProviderTypeGCE
 )
 
-// AllProviders is a slice of all supported providers
-var AllProviders []ProviderType
-
-func init() {
-	AllProviders = []ProviderType{
-		ProviderTypeNoop,
-		ProviderTypeAWS,
-		ProviderTypeAzure,
-		ProviderTypeGCE,
+func ProviderTypeFromString(str string) ProviderType {
+	switch strings.ToLower(str) {
+	case "noop":
+		return ProviderTypeNoop
+	case "aws":
+		return ProviderTypeAWS
+	case "azure":
+		return ProviderTypeAzure
+	case "gce":
+		return ProviderTypeGCE
+	default:
+		return ProviderTypeUnknown
 	}
 }

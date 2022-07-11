@@ -20,7 +20,6 @@ var GetPubkeyDao func(ctx context.Context) (PubkeyDao, error)
 
 type PubkeyDao interface {
 	Create(ctx context.Context, pk *models.Pubkey) error
-	CreateWithResource(ctx context.Context, pk *models.Pubkey, pkr *models.PubkeyResource) error
 	Update(ctx context.Context, pk *models.Pubkey) error
 	GetById(ctx context.Context, id int64) (*models.Pubkey, error)
 	List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error)
@@ -40,7 +39,8 @@ type PubkeyResourceDao interface {
 var GetReservationDao func(ctx context.Context) (ReservationDao, error)
 
 type ReservationDao interface {
-	Create(ctx context.Context, reservation *models.Reservation) error
+	CreateNoop(ctx context.Context, reservation *models.NoopReservation) error
+	CreateAWS(ctx context.Context, reservation *models.AWSReservation) error
 	List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error)
 	UpdateStatus(ctx context.Context, id int64, status string) error
 	Finish(ctx context.Context, id int64, success bool, status string) error

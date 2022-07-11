@@ -31,9 +31,6 @@ func (mock *PubkeyDaoStub) Create(ctx context.Context, pk *models.Pubkey) error 
 	mock.store = append(mock.store, pk)
 	return nil
 }
-func (*PubkeyDaoStub) CreateWithResource(ctx context.Context, pk *models.Pubkey, pkr *models.PubkeyResource) error {
-	return nil
-}
 func (*PubkeyDaoStub) Update(ctx context.Context, pk *models.Pubkey) error { return nil }
 func (mock *PubkeyDaoStub) GetById(ctx context.Context, id int64) (*models.Pubkey, error) {
 	return mock.store[0], nil

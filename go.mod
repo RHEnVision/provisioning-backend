@@ -23,17 +23,15 @@ require (
 	github.com/go-openapi/runtime v0.24.1
 	github.com/go-openapi/spec v0.20.6 // indirect
 	github.com/go-openapi/validate v0.22.0 // indirect
+	github.com/hashicorp/golang-lru v0.5.4
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/invopop/yaml v0.2.0 // indirect
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/jackc/pgconn v1.12.1
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/jackc/tern v1.13.0
-	github.com/jmoiron/sqlx v1.3.5
-	github.com/lzap/cloudwatchwriter2 v1.0.0
-	github.com/lzap/dejq v1.0.1
-	github.com/mitchellh/copystructure v1.2.0 // indirect
-	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
+	github.com/jmoiron/sqlx v1.3.1
+	github.com/lzap/cloudwatchwriter2 v0.0.0-20220422105429-49017f04c285
+	github.com/lzap/dejq v1.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.12.2
 	github.com/prometheus/common v0.36.0 // indirect
