@@ -15,7 +15,7 @@ type NoopJobArgs struct {
 }
 
 func EnqueueNoop(ctx context.Context, args *NoopJobArgs) error {
-	logger := ctxval.GetLogger(ctx)
+	logger := ctxval.Logger(ctx)
 	logger.Debug().Interface("arg", args).Msgf("Enqueuing no operation job: %+v", args)
 
 	pj := dejq.PendingJob{
@@ -31,7 +31,7 @@ func EnqueueNoop(ctx context.Context, args *NoopJobArgs) error {
 }
 
 func HandleNoop(ctx context.Context, job dejq.Job) error {
-	ctxLogger := ctxval.GetLogger(ctx)
+	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started no operation job")
 
 	args := NoopJobArgs{}

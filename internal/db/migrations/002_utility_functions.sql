@@ -16,6 +16,39 @@ BEGIN
 END;
 $valid_provider$ LANGUAGE 'plpgsql';
 
+-- A global constant functions for each provider
+CREATE OR REPLACE FUNCTION provider_type_noop()
+  RETURNS INTEGER AS
+$provider_type_noop$
+BEGIN
+  RETURN(SELECT 1);
+END;
+$provider_type_noop$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION provider_type_aws()
+  RETURNS INTEGER AS
+$provider_type_aws$
+BEGIN
+  RETURN(SELECT 2);
+END;
+$provider_type_aws$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION provider_type_azure()
+  RETURNS INTEGER AS
+$provider_type_azure$
+BEGIN
+  RETURN(SELECT 3);
+END;
+$provider_type_azure$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
+
+CREATE OR REPLACE FUNCTION provider_type_gce()
+  RETURNS INTEGER AS
+$provider_type_gce$
+BEGIN
+  RETURN(SELECT 4);
+END;
+$provider_type_gce$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
+
 -- Reset all sequences to the maximum value, works on empty tables too
 CREATE OR REPLACE FUNCTION reset_sequences()
   RETURNS void AS
@@ -28,6 +61,7 @@ BEGIN
             WHERE table_schema = 'public'
               AND table_type = 'BASE TABLE'
               AND table_name !~* '^(schema_version|jobs|job_dependencies|heartbeats)$'
+              AND table_name !~* '_reservation_details$'
     LOOP
       EXECUTE format(
         'SELECT setval(pg_get_serial_sequence(''"%s"'', ''id''), (SELECT COALESCE(MAX("id"), 1) from "%s"))', tn, tn);
