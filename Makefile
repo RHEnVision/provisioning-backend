@@ -23,7 +23,7 @@ clean:
 build-podman:
 	# remote podman build has problem with -f option, so we link the file as workaround
 	ln -f build/Dockerfile Containerfile
-	podman build -t provisioning-backend .
+	podman build --build-arg quay_expiration=2d -t provisioning-backend .
 
 .PHONY: prep
 prep:
