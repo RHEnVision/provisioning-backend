@@ -42,8 +42,6 @@
 #     url:
 #   sources:
 #     url:
-      # The application_type_id the provisioning app has locally or on stage  
-#     appTypeId:
 
 # featureFlags:
 #   # development or production
