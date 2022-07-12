@@ -113,9 +113,9 @@ func (c *Client) ListInstanceTypes() ([]types.InstanceTypeInfo, error) {
 		return nil, fmt.Errorf("cannot list instance types: %w", err)
 	}
 
-	log.Debug().Msgf("Number AWS EC2 instance types: %d", len(resp.InstanceTypes))
+	log.Debug().Msgf("Number of AWS EC2 instance types: %d", len(resp.InstanceTypes))
 	if len(resp.InstanceTypes) == 100 {
-		return nil, OperationNotPermittedErr
+		return nil, MoreThan100InstanceTypes
 	}
 
 	return resp.InstanceTypes, nil
