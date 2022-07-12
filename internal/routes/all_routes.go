@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/api"
-	"github.com/RHEnVision/provisioning-backend/internal/routes/helpers"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
 	redoc "github.com/go-openapi/runtime/middleware"
@@ -14,7 +13,7 @@ import (
 
 func redocMiddleware(handler http.Handler) http.Handler {
 	opt := redoc.RedocOpts{
-		SpecURL: fmt.Sprintf("%s/openapi.json", helpers.PathPrefix()),
+		SpecURL: fmt.Sprintf("%s/openapi.json", PathPrefix()),
 	}
 	return redoc.Redoc(opt, handler)
 }
@@ -25,7 +24,7 @@ func SetupRoutes(r *chi.Mux) {
 		r.Use(redocMiddleware)
 		r.Get("/openapi.json", api.ServeOpenAPISpec)
 	})
-	r.Mount(helpers.PathPrefix(), apiRouter())
+	r.Mount(PathPrefix(), apiRouter())
 }
 
 func apiRouter() http.Handler {

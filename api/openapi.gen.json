@@ -149,7 +149,7 @@
     "/instance_types/{source_id}": {
       "get": {
         "description": "Return a list of instance types",
-        "operationId": "getListInstanceTypes",
+        "operationId": "getInstanceTypeList",
         "parameters": [
           {
             "description": "Source ID from Sources Database.",
@@ -184,8 +184,30 @@
     },
     "/pubkeys": {
       "get": {
-        "description": "Returns list of resources.",
+        "description": "A pubkey represents an SSH public portion of a key pair with name and body. This operation returns list of all pubkeys for particular account.\n",
         "operationId": "getPubkeyList",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/v1.Pubkey"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Returned on success."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      },
+      "post": {
+        "description": "A pubkey represents an SSH public portion of a key pair with name and body. When pubkey is created, it is stored in the Provisioning database. Pubkeys are uploaded to clouds when an instance is launched.\n",
+        "operationId": "createPubkey",
         "responses": {
           "200": {
             "content": {
@@ -207,9 +229,43 @@
       }
     },
     "/pubkeys/{ID}": {
+      "delete": {
+        "description": "A pubkey represents an SSH public portion of a key pair with name and body. If a pubkey was uploaded to one or more clouds, the deletion request will attempt to delete those SSH keys from all clouds. This means in order to delete a pubkey the account must have valid credentials to all cloud accounts the pubkey was uploaded to, otherwise the delete operation will fail and the pubkey will not be deleted from Provisioning database.\n",
+        "operationId": "removePubkeyById",
+        "parameters": [
+          {
+            "description": "Database ID of resource.",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.Pubkey"
+                }
+              }
+            },
+            "description": "Returned on success."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      },
       "get": {
-        "description": "Returns a particular resource.",
-        "operationId": "getPubkeyByID",
+        "description": "A pubkey represents an SSH public portion of a key pair with name and body. To find if a pubkey was uploaded to particular cloud, check PubkeyResource resource.\n",
+        "operationId": "getPubkeyById",
         "parameters": [
           {
             "description": "Database ID of resource.",
@@ -245,7 +301,7 @@
     "/sources": {
       "get": {
         "description": "Return list of provisioning sources",
-        "operationId": "getListSources",
+        "operationId": "getSourceList",
         "responses": {
           "200": {
             "content": {
@@ -269,7 +325,7 @@
     "/sources/{ID}": {
       "get": {
         "description": "Return a provisioning source by id",
-        "operationId": "getSourceID",
+        "operationId": "getSourceById",
         "parameters": [
           {
             "description": "Source ID from Sources Database.",
