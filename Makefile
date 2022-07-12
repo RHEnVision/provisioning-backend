@@ -107,4 +107,3 @@ update-test-deps: update-deps test
 integration-test:
 	go test -c -tags=integration -o dao_tests.test ./cmd/dao_tests
 	./dao_tests.test
-
