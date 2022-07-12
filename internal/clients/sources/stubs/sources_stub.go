@@ -39,6 +39,10 @@ func getSourcesClientStub(ctx context.Context) (si sources.SourcesIntegration, e
 	return si, err
 }
 
+func (mock *SourcesIntegrationStub) GetProvisioningTypeId(ctx context.Context, reqEditors ...sources.RequestEditorFn) (string, error) {
+	return "11", nil
+}
+
 func (mock *SourcesIntegrationStub) ShowSourceWithResponse(ctx context.Context, id sources.ID, reqEditors ...sources.RequestEditorFn) (*sources.ShowSourceResponse, error) {
 	lst := *mock.store
 	return &sources.ShowSourceResponse{

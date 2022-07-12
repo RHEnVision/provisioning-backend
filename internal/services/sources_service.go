@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/parsing"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
@@ -19,7 +18,12 @@ func ListSources(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client", err))
 		return
 	}
-	resp, err := client.ListApplicationTypeSourcesWithResponse(r.Context(), config.Sources.AppTypeId, &sources.ListApplicationTypeSourcesParams{}, AddIdentityHeader)
+	appTypeId, err := client.GetProvisioningTypeId(r.Context(), AddIdentityHeader)
+	if err != nil {
+		renderError(w, r, payloads.SourcesClientError(r.Context(), "get provisioning app type", err, 500))
+		return
+	}
+	resp, err := client.ListApplicationTypeSourcesWithResponse(r.Context(), appTypeId, &sources.ListApplicationTypeSourcesParams{}, AddIdentityHeader)
 	statusCode := resp.StatusCode()
 	if err != nil {
 		renderError(w, r, payloads.SourcesClientError(r.Context(), "list sources", err, statusCode))
@@ -100,7 +104,12 @@ func fetchARN(ctx context.Context, client sources.SourcesIntegration, sourceId s
 		return "", sources.SourcesClientErr
 	}
 
-	if *res.JSON200.ApplicationTypeId == config.Sources.AppTypeId {
+	appTypeId, err := client.GetProvisioningTypeId(ctx, AddIdentityHeader)
+	if err != nil {
+		return "", fmt.Errorf("cannot get provisioning app type: %w", err)
+	}
+
+	if *res.JSON200.ApplicationTypeId == appTypeId {
 		return *auth.Username, nil
 
 	}

@@ -61,8 +61,7 @@ var config struct {
 			URL string
 		}
 		Sources struct {
-			URL       string
-			AppTypeId string
+			URL string
 		}
 	}
 	Worker struct {
@@ -140,9 +139,4 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.AWS.Secret = replacement
 	configCopy.AWS.Session = replacement
 	logger.Info().Msgf("Configuration: %+v", configCopy)
-}
-
-func SetSourcesAppTypeId(appTypeId string) bool {
-	config.RestEndpoints.Sources.AppTypeId = appTypeId
-	return true
 }
