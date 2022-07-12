@@ -9,6 +9,7 @@ import (
 var GetAccountDao func(ctx context.Context) (AccountDao, error)
 
 type AccountDao interface {
+	Create(ctx context.Context, pk *models.Account) error
 	GetById(ctx context.Context, id int64) (*models.Account, error)
 	GetOrCreateByIdentity(ctx context.Context, orgId string, accountNumber string) (*models.Account, error)
 	GetByOrgId(ctx context.Context, orgId string) (*models.Account, error)

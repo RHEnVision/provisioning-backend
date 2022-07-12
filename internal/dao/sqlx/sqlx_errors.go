@@ -60,6 +60,11 @@ func NewGetError(context context.Context, daoName NamedForError, sql string, err
 	return newError(context, msg, err)
 }
 
+func NewCreateError(context context.Context, daoName NamedForError, sql string, err error) dao.Error {
+	msg := fmt.Sprintf("sqlx %s exec create error: %s: %v", daoName.NameForError(), sql, err)
+	return newError(context, msg, err)
+}
+
 func NewSelectError(context context.Context, daoName NamedForError, sql string, err error) dao.Error {
 	msg := fmt.Sprintf("sqlx %s select error: %s: %v", daoName.NameForError(), sql, err)
 	return newError(context, msg, err)

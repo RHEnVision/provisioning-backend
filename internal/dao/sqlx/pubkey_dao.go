@@ -71,7 +71,7 @@ func (di *pubkeyDaoSqlx) Create(ctx context.Context, pubkey *models.Pubkey) erro
 
 	err := stmt.GetContext(ctx, pubkey, pubkey.AccountID, pubkey.Name, pubkey.Body)
 	if err != nil {
-		return NewGetError(ctx, di, query, err)
+		return NewCreateError(ctx, di, query, err)
 	}
 	return nil
 }

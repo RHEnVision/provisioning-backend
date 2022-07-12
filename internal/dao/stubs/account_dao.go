@@ -9,11 +9,13 @@ import (
 )
 
 type accountDaoStub struct {
-	store []*models.Account
+	store  []*models.Account
+	lastId int64
 }
 
 func buildAccountDaoWithOneAccount() *accountDaoStub {
 	return &accountDaoStub{
+		lastId: 1,
 		store: []*models.Account{{
 			ID:            1,
 			OrgID:         "1",
@@ -28,6 +30,13 @@ func init() {
 
 func getAccountDao(ctx context.Context) (dao.AccountDao, error) {
 	return getAccountDaoStub(ctx)
+}
+
+func (stub *accountDaoStub) Create(ctx context.Context, pk *models.Account) error {
+	pk.ID = stub.lastId + 1
+	stub.store = append(stub.store, pk)
+	stub.lastId++
+	return nil
 }
 
 func (stub *accountDaoStub) GetById(ctx context.Context, id int64) (*models.Account, error) {
