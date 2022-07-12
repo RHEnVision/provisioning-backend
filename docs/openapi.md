@@ -28,7 +28,7 @@ It is recommended to use a dedicated openapi editor plugin for your IDE for fast
 paths:
   /<NEW_ENDPOINT>:
     get:
-      operationId: getListOfNewStuff
+      operationId: getResourceList
       description: ''
       responses:
         '200':
@@ -40,6 +40,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/v1.<YOUR_PAYLOAD>' # a reference to the registered type 
 ```
+
+Operation naming convention:
+
+* GET /resource - getResourceList
+* POST /resource - createResource
+* GET /resource/ID - getResourceById
+* DELETE /resource/ID - removeResourceById
 
 ### How to add error responses to endpoints
 You can reuse and reference predefined error responses:
