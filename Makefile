@@ -102,3 +102,7 @@ update-deps:
 
 .PHONY: update-test-deps
 update-test-deps: update-deps test
+
+.PHONY: integration-test
+integration-test:
+	go run ./cmd/dao_tests/pubkey.go
