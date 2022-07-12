@@ -4,7 +4,7 @@
 BEGIN;
 
 INSERT INTO accounts(id, account_number, org_id)
-VALUES (1, '13', '000013')
+VALUES (1, '1', '1')
   ON CONFLICT DO NOTHING;
 
 COMMIT;
