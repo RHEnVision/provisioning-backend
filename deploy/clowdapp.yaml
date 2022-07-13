@@ -73,7 +73,7 @@ objects:
         name: provisioning-backend
         version: 13
       dependencies:
-        - sources-api
+        - sources
 
 parameters:
   - description: ClowdEnv Name
