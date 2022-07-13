@@ -8,6 +8,15 @@ Review ./sources.conf configuration. If you would like to do any changes,
 create ./sources.local.conf which overrides the main configuration file and it
 is ignored by git.
 
+The minimum configuration values required are:
+
+* ARN_ROLE: Amazon AWS role ARN string that will be used to seed the sources.
+A new Source, Application and Authentication records will be created with the
+credential. The Account/Tenant will be created with account_id/org_id 13/000013,
+therefore the same account number must be used in provisioning application.
+The resulting Source record will have ID 1 and name "Amazon provisioning".
+Example format: arn:aws:iam::123456789:role/redhat-provisioning-1
+
 Install database, redis, init database, create sources user and database. Can
 be executed multiple times. You will be asked for "sudo" password.
 
