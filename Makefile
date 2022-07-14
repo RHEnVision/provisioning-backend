@@ -94,3 +94,11 @@ validate-spec: generate-spec
 
 .PHONY: validate
 validate: validate-spec validate-clients
+
+.PHONY: update-deps
+update-deps:
+	go get -u all
+	go mod tidy
+
+.PHONY: update-test-deps
+update-test-deps: update-deps test
