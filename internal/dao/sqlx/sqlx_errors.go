@@ -34,11 +34,12 @@ func newMismatchAffectedError(ctx context.Context, msg string) *dao.MismatchAffe
 	}
 }
 
-func newNoRowsError(ctx context.Context, msg string) *dao.NoRowsError {
+func newNoRowsError(ctx context.Context, msg string, noRowsErr error) *dao.NoRowsError {
 	if logger := ctxval.GetLogger(ctx); logger != nil {
-		logger.Warn().Msg(msg)
+		logger.Debug().Err(noRowsErr).Msg(msg)
 	}
 	return &dao.NoRowsError{
+		Err:     noRowsErr,
 		Message: msg,
 		Context: ctx,
 	}
@@ -84,7 +85,7 @@ func NewUpdateMismatchAffectedError(context context.Context, daoName NamedForErr
 	return newMismatchAffectedError(context, msg)
 }
 
-func NewNoRowsError(context context.Context, daoName NamedForError, sql string) *dao.NoRowsError {
+func NewNoRowsError(context context.Context, daoName NamedForError, sql string, noRowsErr error) *dao.NoRowsError {
 	msg := fmt.Sprintf("sqlx %s no rows returned from: %s", daoName.NameForError(), sql)
-	return newNoRowsError(context, msg)
+	return newNoRowsError(context, msg, noRowsErr)
 }
