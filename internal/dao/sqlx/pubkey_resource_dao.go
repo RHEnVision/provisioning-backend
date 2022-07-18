@@ -73,7 +73,7 @@ func (di *pubkeyResourceDaoSqlx) GetResourceByProviderType(ctx context.Context, 
 	err := stmt.GetContext(ctx, result, pubkeyId, provider)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, NewNoRowsError(ctx, di, query)
+			return nil, NewNoRowsError(ctx, di, query, err)
 		} else {
 			return nil, NewGetError(ctx, di, query, err)
 		}
