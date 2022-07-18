@@ -16,6 +16,7 @@ type Error struct {
 type NoRowsError struct {
 	Message string
 	Context context.Context
+	Err     error
 }
 
 // MismatchAffectedError is returned when affected rows do not match expectation (e.g. create/delete).
@@ -34,6 +35,10 @@ func (e *Error) Unwrap() error {
 
 func (e *NoRowsError) Error() string {
 	return fmt.Sprintf("DAO no rows returned: %s", e.Message)
+}
+
+func (e *NoRowsError) Unwrap() error {
+	return e.Err
 }
 
 func (e *MismatchAffectedError) Error() string {

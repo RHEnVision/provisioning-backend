@@ -104,7 +104,7 @@ func (di *pubkeyDaoSqlx) GetById(ctx context.Context, id int64) (*models.Pubkey,
 	err := stmt.GetContext(ctx, result, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, NewNoRowsError(ctx, di, query)
+			return nil, NewNoRowsError(ctx, di, query, err)
 		} else {
 			return nil, NewGetError(ctx, di, query, err)
 		}
