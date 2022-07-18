@@ -28,6 +28,15 @@ type ResponseError struct {
 	Context context.Context `json:"-"`
 }
 
+type ClientError struct {
+	Message string `json:"msg"`
+	Body    string `json:"body"`
+}
+
+func (e ClientError) Error() string {
+	return e.Message
+}
+
 func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
 	render.Status(r, e.HTTPStatusCode)
 	return nil
@@ -58,7 +67,7 @@ func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 func SourcesClientError(ctx context.Context, message string, err error, status int) *ResponseError {
 	msg := fmt.Sprintf("Sources error: %s: %v", message, err)
 	if logger := ctxval.GetLogger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Error().Msg(err.Error())
 	}
 	return &ResponseError{
 		HTTPStatusCode: status,
