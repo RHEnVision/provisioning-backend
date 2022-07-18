@@ -25,22 +25,22 @@ type MismatchAffectedError struct {
 	Context context.Context
 }
 
-func (e *Error) Error() string {
+func (e Error) Error() string {
 	return fmt.Sprintf("DAO error: %s: %s", e.Message, e.Err.Error())
 }
 
-func (e *Error) Unwrap() error {
+func (e Error) Unwrap() error {
 	return e.Err
 }
 
-func (e *NoRowsError) Error() string {
+func (e NoRowsError) Error() string {
 	return fmt.Sprintf("DAO no rows returned: %s", e.Message)
 }
 
-func (e *NoRowsError) Unwrap() error {
+func (e NoRowsError) Unwrap() error {
 	return e.Err
 }
 
-func (e *MismatchAffectedError) Error() string {
+func (e MismatchAffectedError) Error() string {
 	return fmt.Sprintf("DAO mismatch affected rows: %s", e.Message)
 }
