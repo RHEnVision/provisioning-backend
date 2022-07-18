@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
@@ -22,17 +23,20 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	arn, err := fetchARN(r.Context(), sourcesClient, sourceId)
+	arn, clientErrors, err := fetchARN(r.Context(), sourcesClient, sourceId)
 	if err != nil {
 		if errors.Is(err, sources.ApplicationNotFoundErr) {
-			renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources: application not found", err, 404))
+			sourcesErr := payloads.ClientError{Message: fmt.Sprintf("can't fetch arn from sources: application not found %s", string(clientErrors))}
+			renderError(w, r, payloads.NewNotFoundError(r.Context(), sourcesErr))
 			return
 		}
 		if errors.Is(err, sources.AuthenticationForSourcesNotFoundErr) {
-			renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources: authentication not found", err, 404))
+			sourcesErr := payloads.ClientError{Message: fmt.Sprintf("can't fetch arn from sources: authentication not found %s", string(clientErrors))}
+			renderError(w, r, payloads.NewNotFoundError(r.Context(), sourcesErr))
 			return
 		}
-		renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources", err, 500))
+		sourcesErr := payloads.ClientError{Message: fmt.Sprintf("can't fetch arn from sources %s", string(clientErrors))}
+		renderError(w, r, payloads.SourcesClientError(r.Context(), "list instance types", sourcesErr, 500))
 		return
 	}
 

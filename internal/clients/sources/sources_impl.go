@@ -50,7 +50,7 @@ func loadAppId(ctx context.Context, client *ClientWithResponses) (string, error)
 	}
 	if !parsing.IsHTTPStatus2xx(resp.StatusCode) {
 		ctxval.Logger(ctx).Warn().Msgf("Sources replied with unexpected status while fetching ApplicationTypes: %s", resp.Status)
-		return "", fmt.Errorf("%w, status: '%s'", ApplicationTypesFetchUnsuccessful, resp.Status)
+		return "", fmt.Errorf("%w, status: '%s'", ApplicationTypesFetchUnsuccessfulErr, resp.Status)
 	}
 	defer resp.Body.Close()
 	var appTypesData dataElement
@@ -63,5 +63,5 @@ func loadAppId(ctx context.Context, client *ClientWithResponses) (string, error)
 			return t.Id, nil
 		}
 	}
-	return "", ApplicationTypeNotFound
+	return "", ApplicationTypeNotFoundErr
 }

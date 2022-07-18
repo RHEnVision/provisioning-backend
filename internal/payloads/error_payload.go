@@ -28,6 +28,15 @@ type ResponseError struct {
 	Context context.Context `json:"-"`
 }
 
+type ClientError struct {
+	Message string `json:"msg"`
+	Body    string `json:"body"`
+}
+
+func (e ClientError) Error() string {
+	return e.Message
+}
+
 func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
 	render.Status(r, e.HTTPStatusCode)
 	return nil
