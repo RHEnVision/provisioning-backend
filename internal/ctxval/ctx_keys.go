@@ -3,8 +3,7 @@ package ctxval
 type CommonKeyId int
 
 const (
-	LoggerCtxKey     CommonKeyId = iota
-	RequestIdCtxKey  CommonKeyId = iota
-	RequestNumCtxKey CommonKeyId = iota
-	ResourceCtxKey   CommonKeyId = iota
+	loggerCtxKey     CommonKeyId = iota
+	requestIdCtxKey  CommonKeyId = iota
+	requestNumCtxKey CommonKeyId = iota
 )

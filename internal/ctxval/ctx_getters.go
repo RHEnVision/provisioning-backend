@@ -8,30 +8,30 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func GetStringValue(ctx context.Context, key CommonKeyId) string {
-	return ctx.Value(key).(string)
+// GetRequestNum returns request number or a 0 when not in the context
+func GetRequestNum(ctx context.Context) uint64 {
+	if ctx.Value(requestNumCtxKey) == nil {
+		return 0
+	}
+	return ctx.Value(requestNumCtxKey).(uint64)
 }
 
-func GetUInt64Value(ctx context.Context, key CommonKeyId) uint64 {
-	return ctx.Value(key).(uint64)
+// GetRequestId returns request id or an empty string when not in the context
+func GetRequestId(ctx context.Context) string {
+	if ctx.Value(requestIdCtxKey) == nil {
+		return ""
+	}
+	return ctx.Value(requestIdCtxKey).(string)
 }
 
 // GetLogger returns logger or the standard global logger when not in the context
 // or when context is nil.
 func GetLogger(ctx context.Context) *zerolog.Logger {
-	if ctx == nil || ctx.Value(LoggerCtxKey) == nil {
+	if ctx == nil || ctx.Value(loggerCtxKey) == nil {
 		return &log.Logger
 	}
-	logger := ctx.Value(LoggerCtxKey).(zerolog.Logger)
-	return &logger
-}
-
-// GetRequestId returns request id or an empty string when not in the context
-func GetRequestId(ctx context.Context) string {
-	if ctx.Value(RequestIdCtxKey) == nil {
-		return ""
-	}
-	return ctx.Value(RequestIdCtxKey).(string)
+	logger := ctx.Value(loggerCtxKey).(*zerolog.Logger)
+	return logger
 }
 
 func GetIdentity(ctx context.Context) identity.XRHID {
