@@ -4,6 +4,8 @@
 #
 BASEDIR=$(dirname $0)
 source $BASEDIR/sources.conf
+[[ -f $BASEDIR/sources.local.conf ]] && source $BASEDIR/sources.local.conf
+
 git clone https://github.com/RedHatInsights/sources-api-go $BASEDIR/sources-api-go
 sudo dnf install redis postgresql postgresql-server
 export PGSETUP_INITDB_OPTIONS="--auth=trust"
