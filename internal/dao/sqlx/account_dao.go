@@ -2,6 +2,10 @@ package sqlx
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -69,6 +73,28 @@ func (di *accountDaoSqlx) GetById(ctx context.Context, id int64) (*models.Accoun
 	return result, nil
 }
 
+func (di *accountDaoSqlx) GetOrCreateByIdentity(ctx context.Context, orgId string, accountNumber string) (*models.Account, error) {
+	var acc, err = di.GetByOrgId(ctx, orgId)
+	var norows *dao.NoRowsError
+	if err == nil {
+		return acc, nil
+	} else if errors.As(err, &norows) {
+		ctxval.GetLogger(ctx).Debug().Msgf("Account not found by org id %s", orgId)
+	} else {
+		return nil, err
+	}
+	acc, err = di.GetByAccountNumber(ctx, accountNumber)
+	if err == nil {
+		return acc, nil
+	} else if errors.As(err, &norows) {
+		ctxval.GetLogger(ctx).Debug().Msgf("Account not found by account number %s", accountNumber)
+	} else {
+		return nil, err
+	}
+	// TODO create HMSPROV-135
+	return nil, err
+}
+
 func (di *accountDaoSqlx) GetByAccountNumber(ctx context.Context, number string) (*models.Account, error) {
 	query := getAccountByAccountNumber
 	stmt := di.getByAccountNumber
@@ -76,7 +102,11 @@ func (di *accountDaoSqlx) GetByAccountNumber(ctx context.Context, number string)
 
 	err := stmt.GetContext(ctx, result, number)
 	if err != nil {
-		return nil, NewGetError(ctx, di, query, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, NewNoRowsError(ctx, di, query, err)
+		} else {
+			return nil, NewGetError(ctx, di, query, err)
+		}
 	}
 	return result, nil
 }
@@ -88,7 +118,11 @@ func (di *accountDaoSqlx) GetByOrgId(ctx context.Context, orgId string) (*models
 
 	err := stmt.GetContext(ctx, result, orgId)
 	if err != nil {
-		return nil, NewGetError(ctx, di, query, err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, NewNoRowsError(ctx, di, query, err)
+		} else {
+			return nil, NewGetError(ctx, di, query, err)
+		}
 	}
 	return result, nil
 }
