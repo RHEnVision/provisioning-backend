@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/api"
+	"github.com/RHEnVision/provisioning-backend/internal/middleware"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
 	redoc "github.com/go-openapi/runtime/middleware"
@@ -33,6 +34,7 @@ func apiRouter() http.Handler {
 	r.Get("/openapi.json", api.ServeOpenAPISpec)
 	r.Group(func(r chi.Router) {
 		r.Use(identity.EnforceIdentity)
+		r.Use(middleware.AccountMiddleware)
 		r.Route("/sources", func(r chi.Router) {
 			r.Get("/", s.ListSources)
 			r.Route("/{ID}", func(r chi.Router) {

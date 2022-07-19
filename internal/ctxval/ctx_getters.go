@@ -3,6 +3,7 @@ package ctxval
 import (
 	"context"
 
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -36,4 +37,11 @@ func GetRequestId(ctx context.Context) string {
 
 func GetIdentity(ctx context.Context) identity.XRHID {
 	return identity.Get(ctx)
+}
+
+func GetAccount(ctx context.Context) *models.Account {
+	if ctx.Value(AccountCtxKey) == nil {
+		return nil
+	}
+	return ctx.Value(AccountCtxKey).(*models.Account)
 }
