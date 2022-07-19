@@ -22,7 +22,7 @@ func init() {
 		viper.Set("prometheus.port", cfg.MetricsPort)
 		viper.Set("prometheus.path", cfg.MetricsPath)
 		if endpoint, ok := clowder.DependencyEndpoints["sources-api"]["svc"]; ok {
-			viper.Set("restEndpoints.sources.url", fmt.Sprintf("http://%s:%d/api/sources/v3", endpoint.Hostname, endpoint.Port))
+			viper.Set("restEndpoints.sources.url", fmt.Sprintf("http://%s:%d/api/sources/v3.1", endpoint.Hostname, endpoint.Port))
 		}
 	} else {
 		viper.SetDefault("featureFlags.environment", "development")
