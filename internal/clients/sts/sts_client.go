@@ -23,7 +23,7 @@ type Client struct {
 func NewSTSClient(ctx context.Context) (*Client, error) {
 	c := Client{
 		ctx: ctx,
-		log: ctxval.GetLogger(ctx).With().Str("client", "sts").Logger(),
+		log: ctxval.Logger(ctx).With().Str("client", "sts").Logger(),
 	}
 
 	cfg, err := con.LoadDefaultConfig(ctx, con.WithRegion(config.AWS.Region),

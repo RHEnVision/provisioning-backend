@@ -26,7 +26,7 @@ type Client struct {
 func NewEC2Client(ctx context.Context) *Client {
 	c := Client{
 		context: ctx,
-		log:     ctxval.GetLogger(ctx).With().Str("client", "ec2").Logger(),
+		log:     ctxval.Logger(ctx).With().Str("client", "ec2").Logger(),
 	}
 
 	log.Trace().Msg("Creating new EC2 client")
@@ -96,7 +96,7 @@ func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, 
 	newClient := &Client{
 		ec2:     ec2.NewFromConfig(newCfg),
 		context: c.context,
-		log:     ctxval.GetLogger(c.context).With().Str("client", "ec2").Logger(),
+		log:     ctxval.Logger(c.context).With().Str("client", "ec2").Logger(),
 	}
 
 	return newClient, nil

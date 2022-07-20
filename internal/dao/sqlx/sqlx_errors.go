@@ -14,7 +14,7 @@ type NamedForError interface {
 }
 
 func newError(ctx context.Context, msg string, err error) dao.Error {
-	if logger := ctxval.GetLogger(ctx); logger != nil {
+	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Error().Msg(msg)
 	}
 	return dao.Error{
@@ -25,7 +25,7 @@ func newError(ctx context.Context, msg string, err error) dao.Error {
 }
 
 func newMismatchAffectedError(ctx context.Context, msg string) dao.MismatchAffectedError {
-	if logger := ctxval.GetLogger(ctx); logger != nil {
+	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Warn().Msg(msg)
 	}
 	return dao.MismatchAffectedError{
@@ -35,7 +35,7 @@ func newMismatchAffectedError(ctx context.Context, msg string) dao.MismatchAffec
 }
 
 func newNoRowsError(ctx context.Context, msg string, noRowsErr error) dao.NoRowsError {
-	if logger := ctxval.GetLogger(ctx); logger != nil {
+	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Debug().Err(noRowsErr).Msg(msg)
 	}
 	return dao.NoRowsError{

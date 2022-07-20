@@ -19,7 +19,7 @@ type PubkeyUploadAWSTaskArgs struct {
 }
 
 func EnqueuePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) error {
-	logger := ctxval.GetLogger(ctx)
+	logger := ctxval.Logger(ctx)
 	logger.Debug().Interface("arg", args).Msgf("Enqueuing pubkey upload AWS job: %+v", args)
 
 	pj := dejq.PendingJob{
@@ -35,7 +35,7 @@ func EnqueuePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) 
 }
 
 func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
-	logger := ctxval.GetLogger(ctx)
+	logger := ctxval.Logger(ctx)
 	logger.Debug().Msg("Started pubkey upload AWS job")
 
 	args := PubkeyUploadAWSTaskArgs{}

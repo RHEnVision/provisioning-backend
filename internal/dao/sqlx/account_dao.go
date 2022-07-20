@@ -79,7 +79,7 @@ func (di *accountDaoSqlx) GetOrCreateByIdentity(ctx context.Context, orgId strin
 	if err == nil {
 		return acc, nil
 	} else if errors.As(err, &norows) {
-		ctxval.GetLogger(ctx).Debug().Msgf("Account not found by org id %s", orgId)
+		ctxval.Logger(ctx).Debug().Msgf("Account not found by org id %s", orgId)
 	} else {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (di *accountDaoSqlx) GetOrCreateByIdentity(ctx context.Context, orgId strin
 	if err == nil {
 		return acc, nil
 	} else if errors.As(err, &norows) {
-		ctxval.GetLogger(ctx).Debug().Msgf("Account not found by account number %s", accountNumber)
+		ctxval.Logger(ctx).Debug().Msgf("Account not found by account number %s", accountNumber)
 	} else {
 		return nil, err
 	}
