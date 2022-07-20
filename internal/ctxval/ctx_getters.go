@@ -17,9 +17,9 @@ func GetUInt64Value(ctx context.Context, key CommonKeyId) uint64 {
 	return ctx.Value(key).(uint64)
 }
 
-// GetLogger returns logger or the standard global logger when not in the context
-// or when context is nil.
-func GetLogger(ctx context.Context) *zerolog.Logger {
+// Logger returns the main logger with context fields or the standard global logger
+// when the main logger was not set.
+func Logger(ctx context.Context) *zerolog.Logger {
 	if ctx == nil || ctx.Value(LoggerCtxKey) == nil {
 		return &log.Logger
 	}
@@ -27,21 +27,20 @@ func GetLogger(ctx context.Context) *zerolog.Logger {
 	return &logger
 }
 
-// GetRequestId returns request id or an empty string when not in the context
-func GetRequestId(ctx context.Context) string {
+// RequestId returns request id or an empty string when not set.
+func RequestId(ctx context.Context) string {
 	if ctx.Value(RequestIdCtxKey) == nil {
 		return ""
 	}
 	return ctx.Value(RequestIdCtxKey).(string)
 }
 
-func GetIdentity(ctx context.Context) identity.XRHID {
+// Identity returns identity header struct or nil when not set.
+func Identity(ctx context.Context) identity.XRHID {
 	return identity.Get(ctx)
 }
 
-func GetAccount(ctx context.Context) *models.Account {
-	if ctx.Value(AccountCtxKey) == nil {
-		return nil
-	}
+// Account returns current account model or nil when not set.
+func Account(ctx context.Context) *models.Account {
 	return ctx.Value(AccountCtxKey).(*models.Account)
 }

@@ -10,8 +10,8 @@ import (
 
 func AccountMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		rhId := ctxval.GetIdentity(r.Context())
-		logger := ctxval.GetLogger(r.Context())
+		rhId := ctxval.Identity(r.Context())
+		logger := ctxval.Logger(r.Context())
 		accDao, err := dao.GetAccountDao(r.Context())
 		if err != nil {
 			logger.Error().Err(err).Msg("Failed to initialize connection to fetch Account info")
