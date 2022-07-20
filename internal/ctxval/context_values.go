@@ -9,6 +9,15 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+type commonKeyId int
+
+const (
+	loggerCtxKey     commonKeyId = iota
+	requestIdCtxKey  commonKeyId = iota
+	requestNumCtxKey commonKeyId = iota
+	accountCtxKey    commonKeyId = iota
+)
+
 // Logger returns the main logger with context fields or the standard global logger
 // when the main logger was not set.
 func Logger(ctx context.Context) *zerolog.Logger {
