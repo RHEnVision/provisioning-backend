@@ -5,7 +5,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/pointer"
+	"github.com/aws/smithy-go/ptr"
 )
 
 type accountDaoStub struct {
@@ -17,7 +17,7 @@ func buildAccountDaoWithOneAccount() *accountDaoStub {
 		store: []*models.Account{{
 			ID:            1,
 			OrgID:         "1",
-			AccountNumber: pointer.String("1"),
+			AccountNumber: ptr.String("1"),
 		}},
 	}
 }

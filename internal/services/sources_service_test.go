@@ -10,24 +10,24 @@ import (
 
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources/stubs"
-	"github.com/RHEnVision/provisioning-backend/internal/pointer"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
+	"github.com/aws/smithy-go/ptr"
 	"github.com/stretchr/testify/assert"
 )
 
 func buildSourcesStore() *[]sources.Source {
 	var TestSourceData = []sources.Source{
 		{
-			Id:           pointer.String("1"),
-			Name:         pointer.String("source1"),
-			SourceTypeId: pointer.String("1"),
-			Uid:          pointer.String("5eebe172-7baa-4280-823f-19e597d091e9"),
+			Id:           ptr.String("1"),
+			Name:         ptr.String("source1"),
+			SourceTypeId: ptr.String("1"),
+			Uid:          ptr.String("5eebe172-7baa-4280-823f-19e597d091e9"),
 		},
 		{
-			Id:           pointer.String("2"),
-			Name:         pointer.String("source2"),
-			SourceTypeId: pointer.String("2"),
-			Uid:          pointer.String("31b5338b-685d-4056-ba39-d00b4d7f19cc"),
+			Id:           ptr.String("2"),
+			Name:         ptr.String("source2"),
+			SourceTypeId: ptr.String("2"),
+			Uid:          ptr.String("31b5338b-685d-4056-ba39-d00b4d7f19cc"),
 		},
 	}
 	return &TestSourceData
@@ -35,10 +35,10 @@ func buildSourcesStore() *[]sources.Source {
 func buildSource() *[]sources.Source {
 	var TestSourceData = []sources.Source{
 		{
-			Id:           pointer.String("1"),
-			Name:         pointer.String("source1"),
-			SourceTypeId: pointer.String("1"),
-			Uid:          pointer.String("5eebe172-7baa-4280-823f-19e597d091e9"),
+			Id:           ptr.String("1"),
+			Name:         ptr.String("source1"),
+			SourceTypeId: ptr.String("1"),
+			Uid:          ptr.String("5eebe172-7baa-4280-823f-19e597d091e9"),
 		},
 	}
 	return &TestSourceData
@@ -94,14 +94,14 @@ func TestShowSourceHandler(t *testing.T) {
 func TestFilterSourceAuthentications(t *testing.T) {
 	auth, err := filterSourceAuthentications(&[]sources.AuthenticationRead{
 		{
-			ResourceType: (*sources.AuthenticationReadResourceType)(pointer.String("Application")),
-			Name:         pointer.String("test"),
-			ResourceId:   pointer.String("1"),
+			ResourceType: (*sources.AuthenticationReadResourceType)(ptr.String("Application")),
+			Name:         ptr.String("test"),
+			ResourceId:   ptr.String("1"),
 		},
 		{
-			ResourceType: (*sources.AuthenticationReadResourceType)(pointer.String("Source")),
-			Name:         pointer.String("test2"),
-			ResourceId:   pointer.String("3"),
+			ResourceType: (*sources.AuthenticationReadResourceType)(ptr.String("Source")),
+			Name:         ptr.String("test2"),
+			ResourceId:   ptr.String("3"),
 		},
 	})
 	if err != nil {
