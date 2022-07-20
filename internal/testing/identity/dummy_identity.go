@@ -12,10 +12,10 @@ import (
 )
 
 // accountNumber to be used in the tests.
-const accountNumber = "12345"
+const accountNumber = "1"
 
 // orgId to be used in the tests.
-const orgId = "abc-org-id"
+const orgId = "1"
 
 var xRhId = identity.XRHID{
 	Identity: identity.Identity{
