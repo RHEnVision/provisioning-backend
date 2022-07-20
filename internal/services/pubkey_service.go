@@ -67,7 +67,7 @@ func GetPubkey(w http.ResponseWriter, r *http.Request) {
 
 	pubkey, err := pubkeyDao.GetById(r.Context(), id)
 	if err != nil {
-		var e *dao.NoRowsError
+		var e dao.NoRowsError
 		if errors.As(err, &e) {
 			renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
 		} else {
