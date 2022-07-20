@@ -13,8 +13,8 @@ const (
 	pubkeyCtxKey  daoStubCtxKeyType = iota
 )
 
-func WithPubkeyDao(parent context.Context, init_store []*models.Pubkey) context.Context {
-	ctx := context.WithValue(parent, pubkeyCtxKey, &PubkeyDaoStub{init_store})
+func WithPubkeyDao(parent context.Context) context.Context {
+	ctx := context.WithValue(parent, pubkeyCtxKey, &PubkeyDaoStub{lastId: 0, store: []*models.Pubkey{}})
 	return ctx
 }
 

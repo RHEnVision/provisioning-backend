@@ -8,7 +8,8 @@ import (
 )
 
 type PubkeyDaoStub struct {
-	store []*models.Pubkey
+	lastId int64
+	store  []*models.Pubkey
 }
 
 func init() {
@@ -28,7 +29,9 @@ func getPubkeyDao(ctx context.Context) (dao.PubkeyDao, error) {
 }
 
 func (mock *PubkeyDaoStub) Create(ctx context.Context, pk *models.Pubkey) error {
+	pk.ID = mock.lastId + 1
 	mock.store = append(mock.store, pk)
+	mock.lastId++
 	return nil
 }
 func (*PubkeyDaoStub) Update(ctx context.Context, pk *models.Pubkey) error { return nil }
