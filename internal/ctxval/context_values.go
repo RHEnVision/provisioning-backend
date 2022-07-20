@@ -24,9 +24,7 @@ func Logger(ctx context.Context) *zerolog.Logger {
 	if ctx == nil || ctx.Value(loggerCtxKey) == nil {
 		return &log.Logger
 	}
-	// TODO: we should store pointer to logger instead: https://issues.redhat.com/browse/HMSPROV-118
-	logger := ctx.Value(loggerCtxKey).(zerolog.Logger)
-	return &logger
+	return ctx.Value(loggerCtxKey).(*zerolog.Logger)
 }
 
 func SetLogger(ctx context.Context, logger *zerolog.Logger) context.Context {
