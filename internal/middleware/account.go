@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -28,8 +27,8 @@ func AccountMiddleware(next http.Handler) http.Handler {
 		}
 
 		newLogger := logger.With().Str("org_id", acc.OrgID).Str("account_number", *acc.AccountNumber).Logger()
-		ctx := context.WithValue(r.Context(), ctxval.AccountCtxKey, acc)
-		ctx = context.WithValue(ctx, ctxval.LoggerCtxKey, newLogger)
+		ctx := ctxval.SetAccount(r.Context(), acc)
+		ctx = ctxval.SetLogger(ctx, &newLogger)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)

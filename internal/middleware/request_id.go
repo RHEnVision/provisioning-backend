@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -18,7 +17,7 @@ func RequestID(next http.Handler) http.Handler {
 		if requestID == "" {
 			requestID = xid.New().String()
 		}
-		ctx = context.WithValue(ctx, ctxval.RequestIdCtxKey, requestID)
+		ctx = ctxval.SetRequestId(ctx, requestID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)

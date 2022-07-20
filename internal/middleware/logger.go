@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"runtime/debug"
@@ -22,8 +21,8 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
 			bytesIn, _ := strconv.Atoi(r.Header.Get("Content-Length"))
-			rid := ctxval.GetStringValue(r.Context(), ctxval.RequestIdCtxKey)
-			rn := ctxval.GetUInt64Value(r.Context(), ctxval.RequestNumCtxKey)
+			rid := ctxval.RequestId(r.Context())
+			rn := ctxval.RequestNumber(r.Context())
 			logger := rootLogger.With().
 				Timestamp().
 				Str("rid", rid).
@@ -60,7 +59,7 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 						r.Method, r.URL.Path, duration.Round(time.Millisecond).String(), ww.Status()))
 			}()
 
-			ctx := context.WithValue(r.Context(), ctxval.LoggerCtxKey, logger)
+			ctx := ctxval.SetLogger(r.Context(), &logger)
 			next.ServeHTTP(ww, r.WithContext(ctx))
 		}
 		return http.HandlerFunc(fn)

@@ -1,11 +1,10 @@
 package ctxval
 
-type CommonKeyId int
+type commonKeyId int
 
 const (
-	LoggerCtxKey     CommonKeyId = iota
-	RequestIdCtxKey  CommonKeyId = iota
-	RequestNumCtxKey CommonKeyId = iota
-	AccountCtxKey    CommonKeyId = iota
-	ResourceCtxKey   CommonKeyId = iota
+	loggerCtxKey     commonKeyId = iota
+	requestIdCtxKey  commonKeyId = iota
+	requestNumCtxKey commonKeyId = iota
+	accountCtxKey    commonKeyId = iota
 )
