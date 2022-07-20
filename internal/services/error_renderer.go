@@ -10,7 +10,7 @@ import (
 
 // writeBasicError is used when rendering of the error fails so at least something is written
 func writeBasicError(w http.ResponseWriter, r *http.Request, err error) {
-	if logger := ctxval.GetLogger(r.Context()); logger != nil {
+	if logger := ctxval.Logger(r.Context()); logger != nil {
 		logger.Error().Msgf("unable to render error %v", err)
 	}
 	w.Header().Set("Content-Type", "application/json")

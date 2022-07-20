@@ -42,14 +42,14 @@ func (c *ClientWithResponses) GetProvisioningTypeId(ctx context.Context, reqEdit
 }
 
 func loadAppId(ctx context.Context, client *ClientWithResponses) (string, error) {
-	ctxval.GetLogger(ctx).Info().Msg("Fetching the Application Type ID of Provisioning for Sources")
+	ctxval.Logger(ctx).Info().Msg("Fetching the Application Type ID of Provisioning for Sources")
 	resp, err := client.ListApplicationTypes(ctx, &ListApplicationTypesParams{})
 	if err != nil {
-		ctxval.GetLogger(ctx).Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
+		ctxval.Logger(ctx).Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return "", fmt.Errorf("failed to fetch ApplicationTypes: %w", err)
 	}
 	if !parsing.IsHTTPStatus2xx(resp.StatusCode) {
-		ctxval.GetLogger(ctx).Warn().Msgf("Sources replied with unexpected status while fetching ApplicationTypes: %s", resp.Status)
+		ctxval.Logger(ctx).Warn().Msgf("Sources replied with unexpected status while fetching ApplicationTypes: %s", resp.Status)
 		return "", fmt.Errorf("%w, status: '%s'", ApplicationTypesFetchUnsuccessful, resp.Status)
 	}
 	defer resp.Body.Close()
@@ -59,7 +59,7 @@ func loadAppId(ctx context.Context, client *ClientWithResponses) (string, error)
 	}
 	for _, t := range appTypesData.Data {
 		if t.Name == "/insights/platform/provisioning" {
-			ctxval.GetLogger(ctx).Info().Msgf("The Application Type ID found: '%s' and it got cached", t.Id)
+			ctxval.Logger(ctx).Info().Msgf("The Application Type ID found: '%s' and it got cached", t.Id)
 			return t.Id, nil
 		}
 	}

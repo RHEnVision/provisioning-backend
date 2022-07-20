@@ -26,7 +26,7 @@ func TestAccountMiddleware(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var acc = ctxval.GetAccount(r.Context())
+		var acc = ctxval.Account(r.Context())
 		assert.NotNil(t, acc, "account was not set")
 	})
 

@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -10,8 +9,8 @@ import (
 
 func AccountMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		rhId := ctxval.GetIdentity(r.Context())
-		logger := ctxval.GetLogger(r.Context())
+		rhId := ctxval.Identity(r.Context())
+		logger := ctxval.Logger(r.Context())
 		accDao, err := dao.GetAccountDao(r.Context())
 		if err != nil {
 			logger.Error().Err(err).Msg("Failed to initialize connection to fetch Account info")
@@ -28,8 +27,8 @@ func AccountMiddleware(next http.Handler) http.Handler {
 		}
 
 		newLogger := logger.With().Str("org_id", acc.OrgID).Str("account_number", *acc.AccountNumber).Logger()
-		ctx := context.WithValue(r.Context(), ctxval.AccountCtxKey, acc)
-		ctx = context.WithValue(ctx, ctxval.LoggerCtxKey, newLogger)
+		ctx := ctxval.WithAccount(r.Context(), acc)
+		ctx = ctxval.WithLogger(ctx, &newLogger)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)

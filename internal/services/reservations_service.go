@@ -16,7 +16,7 @@ var InvalidRequestPubkeyNewError = errors.New("provide either existing (via NewN
 var InvalidRequestPubkeyMissingError = errors.New("provide both NewName and NewBody for pubkey")
 
 func CreateReservation(w http.ResponseWriter, r *http.Request) {
-	logger := ctxval.GetLogger(r.Context())
+	logger := ctxval.Logger(r.Context())
 
 	// TODO: get this from X-RH-Identity via middleware/context
 	var accountId int64 = 1

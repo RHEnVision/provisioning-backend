@@ -17,7 +17,7 @@ type TxFn func(tx *sqlx.Tx) error
 // WithTransaction creates a new transaction and handles rollback/commit based on the
 // error object returned by the `TxFn` or when it panics.
 func WithTransaction(ctx context.Context, fn TxFn) error {
-	logger := ctxval.GetLogger(ctx)
+	logger := ctxval.Logger(ctx)
 	tx, err := db.DB.BeginTxx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelDefault,
 		ReadOnly:  false,

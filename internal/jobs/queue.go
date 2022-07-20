@@ -47,7 +47,6 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 
 func StartDequeueLoop(ctx context.Context, logger *zerolog.Logger) {
 	logger.Debug().Msg("Starting dequeue loop")
-	// TODO: we should store pointer to logger instead: https://issues.redhat.com/browse/HMSPROV-118
-	ctx = context.WithValue(ctx, ctxval.LoggerCtxKey, *logger)
+	ctx = ctxval.WithLogger(ctx, logger)
 	Queue.DequeueLoop(ctx)
 }
