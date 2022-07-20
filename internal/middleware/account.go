@@ -27,8 +27,8 @@ func AccountMiddleware(next http.Handler) http.Handler {
 		}
 
 		newLogger := logger.With().Str("org_id", acc.OrgID).Str("account_number", *acc.AccountNumber).Logger()
-		ctx := ctxval.SetAccount(r.Context(), acc)
-		ctx = ctxval.SetLogger(ctx, &newLogger)
+		ctx := ctxval.WithAccount(r.Context(), acc)
+		ctx = ctxval.WithLogger(ctx, &newLogger)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)

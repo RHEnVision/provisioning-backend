@@ -18,6 +18,11 @@ const (
 	accountCtxKey    commonKeyId = iota
 )
 
+// Identity returns identity header struct or nil when not set.
+func Identity(ctx context.Context) identity.XRHID {
+	return identity.Get(ctx)
+}
+
 // Logger returns the main logger with context fields or the standard global logger
 // when the main logger was not set.
 func Logger(ctx context.Context) *zerolog.Logger {
@@ -27,7 +32,7 @@ func Logger(ctx context.Context) *zerolog.Logger {
 	return ctx.Value(loggerCtxKey).(*zerolog.Logger)
 }
 
-func SetLogger(ctx context.Context, logger *zerolog.Logger) context.Context {
+func WithLogger(ctx context.Context, logger *zerolog.Logger) context.Context {
 	return context.WithValue(ctx, loggerCtxKey, logger)
 }
 
@@ -39,7 +44,7 @@ func RequestId(ctx context.Context) string {
 	return ctx.Value(requestIdCtxKey).(string)
 }
 
-func SetRequestId(ctx context.Context, id string) context.Context {
+func WithRequestId(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, requestIdCtxKey, id)
 }
 
@@ -48,13 +53,8 @@ func RequestNumber(ctx context.Context) uint64 {
 	return ctx.Value(requestNumCtxKey).(uint64)
 }
 
-func SetRequestNumber(ctx context.Context, num uint64) context.Context {
+func WithRequestNumber(ctx context.Context, num uint64) context.Context {
 	return context.WithValue(ctx, requestNumCtxKey, num)
-}
-
-// Identity returns identity header struct or nil when not set.
-func Identity(ctx context.Context) identity.XRHID {
-	return identity.Get(ctx)
 }
 
 // Account returns current account model or nil when not set.
@@ -62,6 +62,6 @@ func Account(ctx context.Context) *models.Account {
 	return ctx.Value(accountCtxKey).(*models.Account)
 }
 
-func SetAccount(ctx context.Context, account *models.Account) context.Context {
+func WithAccount(ctx context.Context, account *models.Account) context.Context {
 	return context.WithValue(ctx, accountCtxKey, account)
 }

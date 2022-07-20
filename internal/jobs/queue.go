@@ -47,6 +47,6 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 
 func StartDequeueLoop(ctx context.Context, logger *zerolog.Logger) {
 	logger.Debug().Msg("Starting dequeue loop")
-	ctx = ctxval.SetLogger(ctx, logger)
+	ctx = ctxval.WithLogger(ctx, logger)
 	Queue.DequeueLoop(ctx)
 }

@@ -17,7 +17,7 @@ func RequestID(next http.Handler) http.Handler {
 		if requestID == "" {
 			requestID = xid.New().String()
 		}
-		ctx = ctxval.SetRequestId(ctx, requestID)
+		ctx = ctxval.WithRequestId(ctx, requestID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
