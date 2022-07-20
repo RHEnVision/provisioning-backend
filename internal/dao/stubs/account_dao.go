@@ -32,6 +32,14 @@ func getAccountDao(ctx context.Context) (dao.AccountDao, error) {
 	return getAccountDaoStub(ctx)
 }
 
+func AccountStubCount(ctx context.Context) (int, error) {
+	accdao, err := getAccountDaoStub(ctx)
+	if err != nil {
+		return 0, err
+	}
+	return len(accdao.store), nil
+}
+
 func (stub *accountDaoStub) Create(ctx context.Context, pk *models.Account) error {
 	pk.ID = stub.lastId + 1
 	stub.store = append(stub.store, pk)
@@ -57,7 +65,11 @@ func (stub *accountDaoStub) GetOrCreateByIdentity(ctx context.Context, orgId str
 	if err == nil {
 		return acc, nil
 	}
-	return nil, NewRecordNotFoundError(ctx, "Account")
+	acc = &models.Account{OrgID: orgId, AccountNumber: ptr.String(accountNumber)}
+	if err = stub.Create(ctx, acc); err != nil {
+		return nil, NewCreateError(ctx, "Account")
+	}
+	return acc, nil
 }
 
 func (stub *accountDaoStub) GetByOrgId(ctx context.Context, orgId string) (*models.Account, error) {

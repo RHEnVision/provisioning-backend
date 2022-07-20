@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/aws/smithy-go/ptr"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -108,8 +109,11 @@ func (di *accountDaoSqlx) GetOrCreateByIdentity(ctx context.Context, orgId strin
 	} else {
 		return nil, err
 	}
-	// TODO create HMSPROV-135
-	return nil, err
+	acc = &models.Account{OrgID: orgId, AccountNumber: ptr.String(accountNumber)}
+	if err = di.Create(ctx, acc); err != nil {
+		return nil, err
+	}
+	return acc, nil
 }
 
 func (di *accountDaoSqlx) GetByAccountNumber(ctx context.Context, number string) (*models.Account, error) {
