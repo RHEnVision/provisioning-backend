@@ -93,8 +93,8 @@ func (di *pubkeyDaoSqlx) GetById(ctx context.Context, id int64) (*models.Pubkey,
 }
 
 func (di *pubkeyDaoSqlx) Update(ctx context.Context, pubkey *models.Pubkey) error {
-	query := createPubkey
-	stmt := di.create
+	query := updatePubkey
+	stmt := di.update
 
 	res, err := stmt.ExecContext(ctx, pubkey.ID, pubkey.AccountID, pubkey.Name, pubkey.Body)
 	if err != nil {
