@@ -83,7 +83,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		logger.Debug().Msgf("Validating existing pubkey %d", *payload.Pubkey.ExistingID)
 		pk, err = pkDao.GetById(r.Context(), *payload.Pubkey.ExistingID)
 		if err != nil {
-			var e *dao.NoRowsError
+			var e dao.NoRowsError
 			if errors.As(err, &e) {
 				renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
 			} else {
@@ -109,7 +109,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	uploadNeeded := false
 	pkr, errDao := pkrDao.GetResourceByProviderType(r.Context(), pk.ID, models.ProviderTypeAWS)
 	if errDao != nil {
-		var e *dao.NoRowsError
+		var e dao.NoRowsError
 		if errors.As(errDao, &e) {
 			uploadNeeded = true
 		} else {
