@@ -9,6 +9,7 @@ import (
 )
 
 var ContextReadError = errors.New("missing variable in context")
+var RSAGenerationError = errors.New("rsa key generation failed")
 
 func NewRecordNotFoundError(ctx context.Context, stubName string) dao.NoRowsError {
 	return dao.NoRowsError{

@@ -13,15 +13,15 @@ const (
 	pubkeyCtxKey  daoStubCtxKeyType = iota
 )
 
-func WithPubkeyDao(parent context.Context, init_store []*models.Pubkey) context.Context {
-	ctx := context.WithValue(parent, pubkeyCtxKey, &PubkeyDaoStub{init_store})
+func WithPubkeyDao(parent context.Context) context.Context {
+	ctx := context.WithValue(parent, pubkeyCtxKey, &pubkeyDaoStub{lastId: 0, store: []*models.Pubkey{}})
 	return ctx
 }
 
-func getPubkeyDaoStub(ctx context.Context) (*PubkeyDaoStub, error) {
+func getPubkeyDaoStub(ctx context.Context) (*pubkeyDaoStub, error) {
 	var ok bool
-	var pkdao *PubkeyDaoStub
-	if pkdao, ok = ctx.Value(pubkeyCtxKey).(*PubkeyDaoStub); !ok {
+	var pkdao *pubkeyDaoStub
+	if pkdao, ok = ctx.Value(pubkeyCtxKey).(*pubkeyDaoStub); !ok {
 		return nil, ContextReadError
 	}
 	return pkdao, nil

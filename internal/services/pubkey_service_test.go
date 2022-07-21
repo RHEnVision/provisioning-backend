@@ -9,29 +9,19 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	dao_stubs "github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
+	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
 )
 
-func buildPkStore() []*models.Pubkey {
-	return []*models.Pubkey{&models.Pubkey{
-		ID:        1,
-		AccountID: 2,
-		Name:      "firstkey",
-		Body:      "sha-rsa body",
-	}, &models.Pubkey{
-		ID:        2,
-		AccountID: 4,
-		Name:      "secondkey",
-		Body:      "sha-rsa body",
-	}}
-}
-
 func TestListPubkeysHandler(t *testing.T) {
 	ctx := identity.WithIdentity(t, context.Background())
-	ctx = dao_stubs.WithPubkeyDao(ctx, buildPkStore())
+	ctx = stubs.WithPubkeyDao(ctx)
+	err := stubs.GeneratePubkey(ctx, models.Pubkey{})
+	assert.Nil(t, err, fmt.Sprintf("Error while generating a pubkey: %v", err))
+	err = stubs.GeneratePubkey(ctx, models.Pubkey{})
+	assert.Nil(t, err, fmt.Sprintf("Error while generating a pubkey: %v", err))
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/pubkeys", nil)
 	assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
@@ -56,7 +46,7 @@ func TestListPubkeysHandler(t *testing.T) {
 func TestCreatePubkeyHandler(t *testing.T) {
 	var err error
 	var json_data []byte
-	ctx := dao_stubs.WithPubkeyDao(context.Background(), nil)
+	ctx := stubs.WithPubkeyDao(context.Background())
 
 	values := map[string]interface{}{
 		"account_id": 1,
@@ -77,7 +67,7 @@ func TestCreatePubkeyHandler(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-	storecnt, err := dao_stubs.PubkeyStubCount(ctx)
+	storecnt, err := stubs.PubkeyStubCount(ctx)
 	assert.Nil(t, err, fmt.Sprintf("Error reading stub count: %v", err))
 	assert.Equal(t, 1, storecnt, "Pubkey has not been Created through DAO")
 }
