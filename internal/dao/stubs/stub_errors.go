@@ -16,3 +16,10 @@ func NewRecordNotFoundError(ctx context.Context, stubName string) dao.NoRowsErro
 		Context: ctx,
 	}
 }
+
+func NewCreateError(ctx context.Context, stubName string) dao.Error {
+	return dao.Error{
+		Message: fmt.Sprintf("create of %s failed", stubName),
+		Context: ctx,
+	}
+}

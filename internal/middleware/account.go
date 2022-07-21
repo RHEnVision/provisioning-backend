@@ -20,9 +20,7 @@ func AccountMiddleware(next http.Handler) http.Handler {
 		acc, err := accDao.GetOrCreateByIdentity(r.Context(), rhId.Identity.OrgID, rhId.Identity.AccountNumber)
 		if err != nil {
 			logger.Error().Err(err).Msgf("Failed to fetch account by org_id=%s/account=%s", rhId.Identity.OrgID, rhId.Identity.AccountNumber)
-			// TODO switch to error out once we enable account creation in HMSPROV-148
-			//http.Error(w, http.StatusText(500), 500)
-			next.ServeHTTP(w, r)
+			http.Error(w, http.StatusText(500), 500)
 			return
 		}
 
