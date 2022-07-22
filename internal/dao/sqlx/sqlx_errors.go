@@ -3,9 +3,11 @@ package sqlx
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/go-playground/validator/v10"
 )
 
 type NamedForError interface {
@@ -22,6 +24,19 @@ func newError(ctx context.Context, msg string, err error) dao.Error {
 		Context: ctx,
 		Err:     err,
 	}
+}
+
+func newValidationError(ctx context.Context, daoName NamedForError, model interface{}, validationErr validator.ValidationErrors) dao.ValidationError {
+	errors := []string{fmt.Sprintf("Validation of %s failed: ", daoName.NameForError())}
+	for _, ve := range validationErr {
+		errors = append(errors, ve.Error())
+	}
+	msg := strings.Join(errors, ", ")
+
+	if logger := ctxval.Logger(ctx); logger != nil {
+		logger.Info().Msg(msg)
+	}
+	return dao.ValidationError{Context: ctx, Message: msg, Err: validationErr, Model: model}
 }
 
 func newMismatchAffectedError(ctx context.Context, msg string) dao.MismatchAffectedError {

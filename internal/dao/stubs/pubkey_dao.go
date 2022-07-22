@@ -35,6 +35,9 @@ func (stub *pubkeyDaoStub) Create(ctx context.Context, pubkey *models.Pubkey) er
 	if pubkey.AccountID != ctxAccountId(ctx) {
 		return dao.WrongTenantError
 	}
+	if validationErr := models.Validate(ctx, pubkey); validationErr != nil {
+		return newValidationError(ctx, "pubkey", pubkey, validationErr)
+	}
 
 	pubkey.ID = stub.lastId + 1
 	stub.store = append(stub.store, pubkey)

@@ -13,6 +13,14 @@ type Error struct {
 	Err     error
 }
 
+// ValidationError is returned when validation on model fails
+type ValidationError struct {
+	Message string
+	Context context.Context
+	Err     error
+	Model   interface{}
+}
+
 // NoRowsError is returned when no rows were returned.
 type NoRowsError struct {
 	Message string
@@ -33,6 +41,14 @@ func (e Error) Error() string {
 }
 
 func (e Error) Unwrap() error {
+	return e.Err
+}
+
+func (e ValidationError) Error() string {
+	return fmt.Sprintf("DAO error: %s: %s", e.Message, e.Err.Error())
+}
+
+func (e ValidationError) Unwrap() error {
 	return e.Err
 }
 

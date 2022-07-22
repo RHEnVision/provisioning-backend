@@ -72,6 +72,9 @@ func (di *pubkeyDaoSqlx) Create(ctx context.Context, pubkey *models.Pubkey) erro
 	if pubkey.AccountID != ctxAccountId(ctx) {
 		return dao.WrongTenantError
 	}
+	if validationErr := models.Validate(ctx, pubkey); validationErr != nil {
+		return newValidationError(ctx, di, pubkey, validationErr)
+	}
 
 	query := createPubkey
 	stmt := di.create
