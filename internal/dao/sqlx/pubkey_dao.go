@@ -66,6 +66,10 @@ func init() {
 }
 
 func (di *pubkeyDaoSqlx) Create(ctx context.Context, pubkey *models.Pubkey) error {
+	if validationErr := models.Validate(ctx, pubkey); validationErr != nil {
+		return newValidationError(ctx, di, pubkey, validationErr)
+	}
+
 	query := createPubkey
 	stmt := di.create
 
