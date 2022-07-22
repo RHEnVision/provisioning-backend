@@ -3,6 +3,7 @@ package stubs
 import (
 	"context"
 
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 )
 
@@ -12,6 +13,10 @@ const (
 	accountCtxKey daoStubCtxKeyType = iota
 	pubkeyCtxKey  daoStubCtxKeyType = iota
 )
+
+func ctxAccountId(ctx context.Context) int64 {
+	return ctxval.Account(ctx).ID
+}
 
 func WithPubkeyDao(parent context.Context) context.Context {
 	if parent.Value(pubkeyCtxKey) != nil {
