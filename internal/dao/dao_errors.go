@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"errors"
 	"fmt"
 )
 
@@ -24,6 +25,8 @@ type MismatchAffectedError struct {
 	Message string
 	Context context.Context
 }
+
+var WrongTenantError = errors.New("trying to manipulate data of different tenant")
 
 func (e Error) Error() string {
 	return fmt.Sprintf("DAO error: %s: %s", e.Message, e.Err.Error())
