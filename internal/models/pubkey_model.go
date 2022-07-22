@@ -9,8 +9,8 @@ type Pubkey struct {
 	AccountID int64 `db:"account_id" json:"-"`
 
 	// User-facing name. Required.
-	Name string `db:"name" json:"name"`
+	Name string `db:"name" json:"name" validate:"required"`
 
 	// Public key body encoded in base64 (.pub format). Required.
-	Body string `db:"body" json:"body"`
+	Body string `db:"body" json:"body" validate:"required,sshPubkey"`
 }
