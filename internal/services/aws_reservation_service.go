@@ -96,6 +96,10 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reservation.PubkeyID = sql.NullInt64{Int64: pk.ID, Valid: true}
+	reservation.SourceID = payload.SourceID
+	reservation.Amount = payload.Amount
+	reservation.InstanceType = payload.InstanceType
+	reservation.ImageID = payload.ImageID
 
 	// create reservation in the database
 	err = rDao.CreateAWS(r.Context(), reservation)

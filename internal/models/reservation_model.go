@@ -40,4 +40,16 @@ type AWSReservation struct {
 
 	// Pubkey ID.
 	PubkeyID sql.NullInt64 `db:"pubkey_id" json:"pubkey_id"`
+
+	// Source ID.
+	SourceID int64 `db:"source_id" json:"source_id"`
+
+	//AWS Instance type.
+	InstanceType string `db:"instance_type" json:"instance_type"`
+
+	// Amount of instances to provision of type: Instance type.
+	Amount int64 `db:"amount" json:"amount"`
+
+	// The ID of the image from which the instance is created.
+	ImageID int64 `db:"image_id" json:"image_id"`
 }
