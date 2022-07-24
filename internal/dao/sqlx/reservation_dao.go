@@ -11,7 +11,7 @@ import (
 
 const (
 	createReservation       = `INSERT INTO reservations (provider, account_id, status) VALUES ($1, $2, $3) RETURNING *`
-	createAwsDetail         = `INSERT INTO aws_reservation_details (reservation_id, pubkey_id) VALUES ($1, $2)`
+	createAwsDetail         = `INSERT INTO aws_reservation_details (reservation_id, pubkey_id, source_id, instance_type, amount, image_id) VALUES ($1, $2, $3, $4, $5, $6)`
 	updateReservationStatus = `UPDATE reservations SET status = $2 WHERE id = $1 RETURNING *`
 	finishReservationStatus = `UPDATE reservations SET status = $2, success = $3, finished_at = now() WHERE id = $1 RETURNING *`
 	deleteReservationById   = `DELETE FROM reservations WHERE id = $1`
@@ -91,7 +91,7 @@ func (di *reservationDaoSqlx) CreateAWS(ctx context.Context, reservation *models
 
 		query = createAwsDetail
 		stmt = di.createAwsDetail
-		res, err := stmt.ExecContext(ctx, reservation.ID, reservation.PubkeyID)
+		res, err := stmt.ExecContext(ctx, reservation.ID, reservation.PubkeyID, reservation.SourceID, reservation.InstanceType, reservation.Amount, reservation.ImageID)
 		if err != nil {
 			return NewExecUpdateError(ctx, di, query, err)
 		}
