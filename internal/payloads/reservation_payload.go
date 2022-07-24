@@ -28,6 +28,8 @@ type AWSReservationRequest struct {
 		NewName    *string `json:"new_name"`
 		NewBody    *string `json:"new_body"`
 	}
+	// We have pubkey here as a struct and in the AWSReservation
+	*models.AWSReservation
 }
 
 type AWSReservationResponse struct {
@@ -63,6 +65,7 @@ func NewReservationResponse(reservation *models.Reservation) render.Renderer {
 }
 
 func NewAWSReservationResponse(reservation *models.AWSReservation) render.Renderer {
+	// TODO: this needes to be changed to Reservation?
 	return &AWSReservationResponse{AWSReservation: reservation}
 }
 
