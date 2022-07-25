@@ -44,7 +44,7 @@ func buildSource() *[]sources.Source {
 	return &TestSourceData
 }
 func TestListSourcesHandler(t *testing.T) {
-	ctx := identity.WithIdentity(t, context.Background())
+	ctx := identity.WithTenant(t, context.Background())
 	ctx = stubs.WithSourcesIntegration(ctx, buildSourcesStore())
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources", nil)
@@ -68,7 +68,7 @@ func TestListSourcesHandler(t *testing.T) {
 }
 
 func TestShowSourceHandler(t *testing.T) {
-	ctx := identity.WithIdentity(t, context.Background())
+	ctx := identity.WithTenant(t, context.Background())
 	ctx = stubs.WithSourcesIntegration(ctx, buildSource())
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources/1", nil)

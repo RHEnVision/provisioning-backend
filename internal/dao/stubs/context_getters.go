@@ -14,6 +14,10 @@ const (
 )
 
 func WithPubkeyDao(parent context.Context) context.Context {
+	if parent.Value(pubkeyCtxKey) != nil {
+		panic(ContextSecondInitializationError)
+	}
+
 	ctx := context.WithValue(parent, pubkeyCtxKey, &pubkeyDaoStub{lastId: 0, store: []*models.Pubkey{}})
 	return ctx
 }
@@ -28,6 +32,10 @@ func getPubkeyDaoStub(ctx context.Context) (*pubkeyDaoStub, error) {
 }
 
 func WithAccountDaoOne(parent context.Context) context.Context {
+	if parent.Value(accountCtxKey) != nil {
+		panic(ContextSecondInitializationError)
+	}
+
 	ctx := context.WithValue(parent, accountCtxKey, buildAccountDaoWithOneAccount())
 	return ctx
 }
