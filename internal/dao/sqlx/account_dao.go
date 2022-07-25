@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/aws/smithy-go/ptr"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -14,6 +15,7 @@ import (
 )
 
 const (
+	createAccount             = `INSERT INTO accounts (account_number, org_id) VALUES ($1, $2) RETURNING id`
 	getAccountById            = `SELECT * FROM accounts WHERE id = $1 LIMIT 1`
 	getAccountByAccountNumber = `SELECT * FROM accounts WHERE account_number = $1 LIMIT 1`
 	getAccountByOrgId         = `SELECT * FROM accounts WHERE org_id = $1 LIMIT 1`
@@ -22,6 +24,7 @@ const (
 
 type accountDaoSqlx struct {
 	name               string
+	create             *sqlx.Stmt
 	getById            *sqlx.Stmt
 	getByAccountNumber *sqlx.Stmt
 	getByOrgId         *sqlx.Stmt
@@ -33,6 +36,10 @@ func getAccountDao(ctx context.Context) (dao.AccountDao, error) {
 	daoImpl := accountDaoSqlx{}
 	daoImpl.name = "account"
 
+	daoImpl.create, err = db.DB.PreparexContext(ctx, createAccount)
+	if err != nil {
+		return nil, NewPrepareStatementError(ctx, &daoImpl, createAccount, err)
+	}
 	daoImpl.getById, err = db.DB.PreparexContext(ctx, getAccountById)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, getAccountById, err)
@@ -61,6 +68,17 @@ func init() {
 	dao.GetAccountDao = getAccountDao
 }
 
+func (di *accountDaoSqlx) Create(ctx context.Context, account *models.Account) error {
+	query := createAccount
+	stmt := di.create
+
+	err := stmt.GetContext(ctx, account, account.AccountNumber, account.OrgID)
+	if err != nil {
+		return NewCreateError(ctx, di, query, err)
+	}
+	return nil
+}
+
 func (di *accountDaoSqlx) GetById(ctx context.Context, id int64) (*models.Account, error) {
 	query := getAccountById
 	stmt := di.getById
@@ -78,21 +96,26 @@ func (di *accountDaoSqlx) GetOrCreateByIdentity(ctx context.Context, orgId strin
 	var norows *dao.NoRowsError
 	if err == nil {
 		return acc, nil
-	} else if errors.As(err, &norows) {
-		ctxval.Logger(ctx).Debug().Msgf("Account not found by org id %s", orgId)
-	} else {
+	} else if !errors.As(err, &norows) {
 		return nil, err
-	}
+	} // else it is NoRows and we just continue
+	ctxval.Logger(ctx).Debug().Msgf("Account not found by org id %s", orgId)
+
 	acc, err = di.GetByAccountNumber(ctx, accountNumber)
 	if err == nil {
 		return acc, nil
-	} else if errors.As(err, &norows) {
-		ctxval.Logger(ctx).Debug().Msgf("Account not found by account number %s", accountNumber)
-	} else {
+	} else if !errors.As(err, &norows) {
+		return nil, err
+	} // else it is NoRows and we just continue
+	ctxval.Logger(ctx).Debug().Msgf("Account not found by account number %s", accountNumber)
+
+	acc = &models.Account{OrgID: orgId, AccountNumber: ptr.String(accountNumber)}
+	// This can result in duplicate error if two request try this at once
+	// in which case we just error out and return 500
+	if err := di.Create(ctx, acc); err != nil {
 		return nil, err
 	}
-	// TODO create HMSPROV-135
-	return nil, err
+	return acc, nil
 }
 
 func (di *accountDaoSqlx) GetByAccountNumber(ctx context.Context, number string) (*models.Account, error) {
