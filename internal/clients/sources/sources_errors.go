@@ -22,13 +22,8 @@ func (e NotFoundError) Error() string {
 	return e.Message
 }
 
-func (e NotFoundError) Unwrap() error {
-	return e.Err
-}
-
-func NewNotFoundError(ctx context.Context, err error, message string) NotFoundError {
+func NewNotFoundError(ctx context.Context, message string) NotFoundError {
 	return NotFoundError{
 		Message: message,
-		Err:     err,
 	}
 }
