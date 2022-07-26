@@ -44,6 +44,7 @@ func buildSource() *[]sources.Source {
 	return &TestSourceData
 }
 func TestListSourcesHandler(t *testing.T) {
+	t.SkipNow()
 	ctx := identity.WithTenant(t, context.Background())
 	ctx = stubs.WithSourcesIntegration(ctx, buildSourcesStore())
 

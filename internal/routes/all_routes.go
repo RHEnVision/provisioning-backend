@@ -38,6 +38,7 @@ func apiRouter() http.Handler {
 		r.Route("/sources", func(r chi.Router) {
 			r.Get("/", s.ListSources)
 			r.Route("/{ID}", func(r chi.Router) {
+				//TODO: to remove after changing to new sources client
 				r.Get("/", s.GetSource)
 			})
 		})

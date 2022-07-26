@@ -16,13 +16,13 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "source_id")
 	ec2Client := ec2.NewEC2Client(r.Context())
 
-	sourcesClient, err := sources.GetSourcesClient(r.Context())
+	sourcesClient, err := sources.GetSourcesClientV2(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "can't init sources client", err))
 		return
 	}
 
-	arn, err := fetchARN(r.Context(), sourcesClient, sourceId)
+	arn, err := sourcesClient.GetArn(r.Context(), sourceId)
 	if err != nil {
 		if errors.Is(err, sources.ApplicationNotFoundErr) {
 			renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources: application not found", err, 404))
