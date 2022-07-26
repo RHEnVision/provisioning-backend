@@ -22,7 +22,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	arn, err := fetchARN(r.Context(), sourcesClient, sourceId)
+	arn, err := sourcesClient.FetchARN(r.Context(), sourceId)
 	if err != nil {
 		if errors.Is(err, sources.ApplicationNotFoundErr) {
 			renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources: application not found", err, 404))

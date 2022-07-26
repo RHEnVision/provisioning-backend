@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
+	"github.com/aws/smithy-go/ptr"
 )
 
 type sourcesCtxKeyType string
@@ -12,7 +13,7 @@ type sourcesCtxKeyType string
 var sourcesCtxKey sourcesCtxKeyType = "sources-interface"
 
 type SourcesIntegrationStub struct {
-	store           *[]sources.Source
+	sources         *[]sources.Source
 	authentications *[]sources.AuthenticationRead
 }
 
@@ -26,8 +27,8 @@ func (m *contextReadError) Error() string {
 	return "failed to find or convert dao stored in testing context"
 }
 
-func WithSourcesIntegration(parent context.Context, init_store *[]sources.Source) context.Context {
-	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesIntegrationStub{store: init_store})
+func WithSourcesIntegration(parent context.Context, sources *[]sources.Source, authentications *[]sources.AuthenticationRead) context.Context {
+	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesIntegrationStub{sources: sources, authentications: authentications})
 	return ctx
 }
 
@@ -44,7 +45,7 @@ func (mock *SourcesIntegrationStub) GetProvisioningTypeId(ctx context.Context, r
 }
 
 func (mock *SourcesIntegrationStub) ShowSourceWithResponse(ctx context.Context, id sources.ID, reqEditors ...sources.RequestEditorFn) (*sources.ShowSourceResponse, error) {
-	lst := *mock.store
+	lst := *mock.sources
 	return &sources.ShowSourceResponse{
 		JSON200: &lst[0],
 		HTTPResponse: &http.Response{
@@ -55,7 +56,7 @@ func (mock *SourcesIntegrationStub) ShowSourceWithResponse(ctx context.Context, 
 func (mock *SourcesIntegrationStub) ListApplicationTypeSourcesWithResponse(ctx context.Context, appTypeId sources.ID, params *sources.ListApplicationTypeSourcesParams, reqEditors ...sources.RequestEditorFn) (*sources.ListApplicationTypeSourcesResponse, error) {
 	return &sources.ListApplicationTypeSourcesResponse{
 		JSON200: &sources.SourcesCollection{
-			Data: mock.store,
+			Data: mock.sources,
 		},
 		HTTPResponse: &http.Response{
 			StatusCode: 200,
@@ -80,5 +81,17 @@ func (mock *SourcesIntegrationStub) ShowApplicationWithResponse(ctx context.Cont
 		HTTPResponse: &http.Response{
 			StatusCode: 200,
 		},
+	}, nil
+}
+
+func (mock *SourcesIntegrationStub) FetchARN(ctx context.Context, sourceId string) (string, error) {
+	return "arn:aws:iam::230934684733:role/Test", nil
+}
+
+func (mock *SourcesIntegrationStub) FilterSourceAuthentications(authentications *[]sources.AuthenticationRead) (sources.AuthenticationRead, error) {
+	return sources.AuthenticationRead{
+		ResourceType: (*sources.AuthenticationReadResourceType)(ptr.String("Application")),
+		Name:         ptr.String("test"),
+		ResourceId:   ptr.String("1"),
 	}, nil
 }

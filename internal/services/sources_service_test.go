@@ -43,9 +43,21 @@ func buildSource() *[]sources.Source {
 	}
 	return &TestSourceData
 }
+
+func buildAuth() *[]sources.AuthenticationRead {
+	var TestSourceData = []sources.AuthenticationRead{
+		{
+			Id:         ptr.String("1"),
+			ResourceId: ptr.String("1"),
+			Username:   ptr.String("arn:aws:iam::230934684733:role/Test"),
+		},
+	}
+	return &TestSourceData
+}
+
 func TestListSourcesHandler(t *testing.T) {
 	ctx := identity.WithTenant(t, context.Background())
-	ctx = stubs.WithSourcesIntegration(ctx, buildSourcesStore())
+	ctx = stubs.WithSourcesIntegration(ctx, buildSourcesStore(), nil)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources", nil)
 	assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
@@ -69,7 +81,7 @@ func TestListSourcesHandler(t *testing.T) {
 
 func TestShowSourceHandler(t *testing.T) {
 	ctx := identity.WithTenant(t, context.Background())
-	ctx = stubs.WithSourcesIntegration(ctx, buildSource())
+	ctx = stubs.WithSourcesIntegration(ctx, buildSource(), nil)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources/1", nil)
 	assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
@@ -91,8 +103,30 @@ func TestShowSourceHandler(t *testing.T) {
 	assert.Equal(t, "1", *s.Id, "expected source with id = 1")
 }
 
+func TestFetchARN(t *testing.T) {
+	ctx := identity.WithTenant(t, context.Background())
+	ctx = stubs.WithSourcesIntegration(ctx, buildSource(), buildAuth())
+	client, err := sources.GetSourcesClient(ctx)
+	if err != nil {
+		t.Errorf(" cannot get sources client stub: %v", err)
+
+	}
+	arn, err := client.FetchARN(ctx, "1")
+	if err != nil {
+		t.Errorf("could not fetch arn for source id 1: %v", err)
+	}
+	assert.Equal(t, "arn:aws:iam::230934684733:role/Test", arn, "expected arn equal to arn:aws:iam::230934684733:role/Test")
+}
+
 func TestFilterSourceAuthentications(t *testing.T) {
-	auth, err := filterSourceAuthentications(&[]sources.AuthenticationRead{
+	ctx := identity.WithTenant(t, context.Background())
+	ctx = stubs.WithSourcesIntegration(ctx, buildSource(), nil)
+	client, err := sources.GetSourcesClient(ctx)
+	if err != nil {
+		t.Errorf(" cannot get sources client stub: %v", err)
+
+	}
+	auth, err := client.FilterSourceAuthentications(&[]sources.AuthenticationRead{
 		{
 			ResourceType: (*sources.AuthenticationReadResourceType)(ptr.String("Application")),
 			Name:         ptr.String("test"),
