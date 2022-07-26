@@ -14,3 +14,10 @@ type Sources interface {
 	// GetProvisioningTypeId might not need exposing
 	GetProvisioningTypeId(ctx context.Context) (string, error)
 }
+
+var GetImageBuilderClient func(ctx context.Context) (ImageBuilder, error)
+
+type ImageBuilder interface {
+	// GetAWSAmi returns related AWS image AMI identifer
+	GetAWSAmi(ctx context.Context, composeID string) (string, error)
+}
