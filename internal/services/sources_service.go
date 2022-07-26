@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/parsing"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -13,7 +14,7 @@ import (
 )
 
 func ListSources(w http.ResponseWriter, r *http.Request) {
-	client, err := sources.GetSourcesClient(r.Context())
+	client, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client", err))
 		return
@@ -47,7 +48,7 @@ func ListSources(w http.ResponseWriter, r *http.Request) {
 func GetSource(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "ID")
 
-	client, err := sources.GetSourcesClient(r.Context())
+	client, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client", err))
 		return
@@ -72,7 +73,7 @@ func GetSource(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func fetchARN(ctx context.Context, client sources.SourcesIntegration, sourceId string) (string, error) {
+func fetchARN(ctx context.Context, client clients.SourcesIntegration, sourceId string) (string, error) {
 	// Get all the authentications linked to a specific source
 	resp, err := client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &sources.ListSourceAuthenticationsParams{}, AddIdentityHeader)
 	if err != nil {

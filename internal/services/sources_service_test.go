@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/sources/stubs"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/aws/smithy-go/ptr"
 	"github.com/stretchr/testify/assert"

@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/parsing"
 )
@@ -19,14 +18,6 @@ type AppType struct {
 
 type dataElement struct {
 	Data []AppType `json:"data"`
-}
-
-func getSourcesClient(ctx context.Context) (SourcesIntegration, error) {
-	return NewClientWithResponses(config.Sources.URL)
-}
-
-func init() {
-	GetSourcesClient = getSourcesClient
 }
 
 func (c *ClientWithResponses) GetProvisioningTypeId(ctx context.Context, reqEditors ...RequestEditorFn) (string, error) {

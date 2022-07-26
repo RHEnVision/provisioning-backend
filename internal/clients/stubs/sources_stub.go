@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 )
 
@@ -17,7 +18,7 @@ type SourcesIntegrationStub struct {
 }
 
 func init() {
-	sources.GetSourcesClient = getSourcesClientStub
+	clients.GetSourcesClient = getSourcesClientStub
 }
 
 type contextReadError struct{}
@@ -31,7 +32,7 @@ func WithSourcesIntegration(parent context.Context, init_store *[]sources.Source
 	return ctx
 }
 
-func getSourcesClientStub(ctx context.Context) (si sources.SourcesIntegration, err error) {
+func getSourcesClientStub(ctx context.Context) (si clients.SourcesIntegration, err error) {
 	var ok bool
 	if si, ok = ctx.Value(sourcesCtxKey).(*SourcesIntegrationStub); !ok {
 		err = &contextReadError{}
