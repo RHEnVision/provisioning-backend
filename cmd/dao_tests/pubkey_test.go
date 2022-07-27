@@ -10,6 +10,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
+	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -22,7 +23,8 @@ func Setup(t *testing.T, s string) (dao.PubkeyDao, context.Context, error) {
 		t.Errorf("Error purging the database: %v", err)
 		return nil, nil, err
 	}
-	ctx := context.Background()
+	ctx := identity.WithTenant(t, context.Background())
+	//ctx := context.Background()
 	pkDao, err := dao.GetPubkeyDao(ctx)
 	if err != nil {
 		t.Errorf("%s test had failed: %v", s, err)
