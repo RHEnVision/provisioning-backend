@@ -16,7 +16,8 @@ import (
 )
 
 func TestListPubkeysHandler(t *testing.T) {
-	ctx := identity.WithTenant(t, context.Background())
+	ctx := stubs.WithAccountDaoOne(context.Background())
+	ctx = identity.WithTenant(t, ctx)
 	ctx = stubs.WithPubkeyDao(ctx)
 	err := stubs.GeneratePubkey(ctx, models.Pubkey{})
 	assert.Nil(t, err, fmt.Sprintf("Error while generating a pubkey: %v", err))

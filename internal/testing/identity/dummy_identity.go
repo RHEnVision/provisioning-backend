@@ -21,13 +21,16 @@ func AddIdentityHeader(t *testing.T, req *http.Request) *http.Request {
 	return req
 }
 
+func WithIdentity(t *testing.T, ctx context.Context) context.Context {
+	return context.WithValue(ctx, rhidentity.Key, xRhId)
+}
+
 func WithCustomIdentity(t *testing.T, ctx context.Context, orgId string, accountNumber *string) context.Context {
 	return context.WithValue(ctx, rhidentity.Key, newIdentity(orgId, accountNumber))
 }
 
 func WithTenant(t *testing.T, ctx context.Context) context.Context {
-	ctx = context.WithValue(ctx, rhidentity.Key, xRhId)
-	ctx = stubs.WithAccountDaoOne(ctx)
+	ctx = WithIdentity(t, ctx)
 	accDao, err := dao.GetAccountDao(ctx)
 	if err != nil {
 		t.Errorf("failed to initialize account %v", err)
