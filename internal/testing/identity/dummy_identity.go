@@ -9,16 +9,26 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
-	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/aws/smithy-go/ptr"
 	rhidentity "github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
-var xRhId = newIdentity(stubs.DefaultOrgId, ptr.String(stubs.DefaultAccountNumber))
+const (
+	// DefaultOrgId to be used in the tests.
+	DefaultOrgId = "1"
+	// DefaultAccountNumber to be used in the tests.
+	DefaultAccountNumber = "1"
+)
+
+var xRhId = newIdentity(DefaultOrgId, ptr.String(DefaultAccountNumber))
 
 func AddIdentityHeader(t *testing.T, req *http.Request) *http.Request {
 	req.Header.Add("X-Rh-Identity", setUpValidIdentity(t))
 	return req
+}
+
+func WithIdentity(t *testing.T, ctx context.Context) context.Context {
+	return context.WithValue(ctx, rhidentity.Key, xRhId)
 }
 
 func WithCustomIdentity(t *testing.T, ctx context.Context, orgId string, accountNumber *string) context.Context {
@@ -26,13 +36,12 @@ func WithCustomIdentity(t *testing.T, ctx context.Context, orgId string, account
 }
 
 func WithTenant(t *testing.T, ctx context.Context) context.Context {
-	ctx = context.WithValue(ctx, rhidentity.Key, xRhId)
-	ctx = stubs.WithAccountDaoOne(ctx)
+	ctx = WithIdentity(t, ctx)
 	accDao, err := dao.GetAccountDao(ctx)
 	if err != nil {
 		t.Errorf("failed to initialize account %v", err)
 	}
-	acc, err := accDao.GetByOrgId(ctx, stubs.DefaultOrgId)
+	acc, err := accDao.GetByOrgId(ctx, DefaultOrgId)
 	if err != nil {
 		t.Errorf("failed to fetch account for default identity %v", err)
 	}
