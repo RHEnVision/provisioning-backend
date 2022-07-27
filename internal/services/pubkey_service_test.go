@@ -16,7 +16,8 @@ import (
 )
 
 func TestListPubkeysHandler(t *testing.T) {
-	ctx := identity.WithTenant(t, context.Background())
+	ctx := stubs.WithAccountDaoOne(context.Background())
+	ctx = identity.WithTenant(t, ctx)
 	ctx = stubs.WithPubkeyDao(ctx)
 	err := stubs.GeneratePubkey(ctx, models.Pubkey{})
 	assert.Nil(t, err, fmt.Sprintf("Error while generating a pubkey: %v", err))
@@ -46,7 +47,8 @@ func TestListPubkeysHandler(t *testing.T) {
 func TestCreatePubkeyHandler(t *testing.T) {
 	var err error
 	var json_data []byte
-	ctx := identity.WithTenant(t, context.Background())
+	ctx := stubs.WithAccountDaoOne(context.Background())
+	ctx = identity.WithTenant(t, ctx)
 	ctx = stubs.WithPubkeyDao(ctx)
 
 	values := map[string]interface{}{

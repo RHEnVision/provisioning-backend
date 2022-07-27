@@ -9,15 +9,16 @@ import (
 	"testing"
 
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/sources/stubs"
+	clientStub "github.com/RHEnVision/provisioning-backend/internal/clients/sources/stubs"
+	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListSourcesHandler(t *testing.T) {
-	t.SkipNow()
-	ctx := identity.WithTenant(t, context.Background())
-	ctx = stubs.WithSourcesClientV2(ctx)
+	ctx := stubs.WithAccountDaoOne(context.Background())
+	ctx = identity.WithTenant(t, ctx)
+	ctx = clientStub.WithSourcesClientV2(ctx)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources", nil)
 	assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
