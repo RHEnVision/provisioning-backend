@@ -28,17 +28,31 @@ func getPubkeyDao(ctx context.Context) (dao.PubkeyDao, error) {
 	return getPubkeyDaoStub(ctx)
 }
 
-func (stub *pubkeyDaoStub) Create(ctx context.Context, pk *models.Pubkey) error {
-	pk.ID = stub.lastId + 1
-	stub.store = append(stub.store, pk)
+func (stub *pubkeyDaoStub) Create(ctx context.Context, pubkey *models.Pubkey) error {
+	if pubkey.AccountID == 0 {
+		pubkey.AccountID = ctxAccountId(ctx)
+	}
+	if pubkey.AccountID != ctxAccountId(ctx) {
+		return dao.WrongTenantError
+	}
+
+	pubkey.ID = stub.lastId + 1
+	stub.store = append(stub.store, pubkey)
 	stub.lastId++
 	return nil
 }
 
-func (stub *pubkeyDaoStub) Update(ctx context.Context, pk *models.Pubkey) error {
+func (stub *pubkeyDaoStub) Update(ctx context.Context, pubkey *models.Pubkey) error {
+	if pubkey.AccountID == 0 {
+		pubkey.AccountID = ctxAccountId(ctx)
+	}
+	if pubkey.AccountID != ctxAccountId(ctx) {
+		return dao.WrongTenantError
+	}
+
 	for idx, p := range stub.store {
-		if p.ID == pk.ID {
-			stub.store[idx] = pk
+		if p.ID == pubkey.ID {
+			stub.store[idx] = pubkey
 			return nil
 		}
 	}
@@ -46,21 +60,27 @@ func (stub *pubkeyDaoStub) Update(ctx context.Context, pk *models.Pubkey) error 
 }
 
 func (stub *pubkeyDaoStub) GetById(ctx context.Context, id int64) (*models.Pubkey, error) {
-	for _, acc := range stub.store {
-		if acc.ID == id {
-			return acc, nil
+	for _, pk := range stub.store {
+		if pk.AccountID == ctxAccountId(ctx) && pk.ID == id {
+			return pk, nil
 		}
 	}
 	return nil, NewRecordNotFoundError(ctx, "Pubkey")
 }
 
 func (stub *pubkeyDaoStub) List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error) {
-	return stub.store, nil
+	var filtered []*models.Pubkey
+	for _, pk := range stub.store {
+		if pk.AccountID == ctxAccountId(ctx) {
+			filtered = append(filtered, pk)
+		}
+	}
+	return filtered, nil
 }
 
 func (stub *pubkeyDaoStub) Delete(ctx context.Context, id int64) error {
 	for idx, p := range stub.store {
-		if p.ID == id {
+		if p.AccountID == ctxAccountId(ctx) && p.ID == id {
 			stub.store = append(stub.store[:idx], stub.store[idx+1:]...)
 			return nil
 		}
