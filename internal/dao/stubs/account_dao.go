@@ -5,6 +5,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/aws/smithy-go/ptr"
 )
 
@@ -13,20 +14,13 @@ type accountDaoStub struct {
 	lastId int64
 }
 
-const (
-	// DefaultOrgId to be used in the tests.
-	DefaultOrgId = "1"
-	// DefaultAccountNumber to be used in the tests.
-	DefaultAccountNumber = "1"
-)
-
 func buildAccountDaoWithOneAccount() *accountDaoStub {
 	return &accountDaoStub{
 		lastId: 1,
 		store: []*models.Account{{
 			ID:            1,
-			OrgID:         DefaultOrgId,
-			AccountNumber: ptr.String(DefaultAccountNumber),
+			OrgID:         identity.DefaultOrgId,
+			AccountNumber: ptr.String(identity.DefaultAccountNumber),
 		}},
 	}
 }

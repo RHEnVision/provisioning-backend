@@ -17,7 +17,8 @@ import (
 
 func TestAccountMiddleware(t *testing.T) {
 	t.Run("existing account", func(t *testing.T) {
-		ctx := identity.WithTenant(t, context.Background())
+		ctx := stubs.WithAccountDaoOne(context.Background())
+		ctx = identity.WithTenant(t, ctx)
 
 		req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/v1/pubkeys", nil)
 		if err != nil {
