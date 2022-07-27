@@ -22,6 +22,10 @@ const (
 	listAccounts              = `SELECT * FROM accounts ORDER BY id LIMIT $1 OFFSET $2`
 )
 
+func ctxAccountId(ctx context.Context) int64 {
+	return ctxval.Account(ctx).ID
+}
+
 type accountDaoSqlx struct {
 	name               string
 	create             *sqlx.Stmt

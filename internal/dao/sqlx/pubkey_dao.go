@@ -13,10 +13,10 @@ import (
 
 const (
 	createPubkey     = `INSERT INTO pubkeys (account_id, name, body) VALUES ($1, $2, $3) RETURNING id`
-	updatePubkey     = `UPDATE pubkeys SET account_id = $2, name = $3, body = $4 WHERE id = $1`
-	getPubkeyById    = `SELECT * FROM pubkeys WHERE id = $1 LIMIT 1`
-	deletePubkeyById = `DELETE FROM pubkeys WHERE id = $1`
-	listPubkeys      = `SELECT * FROM pubkeys ORDER BY id LIMIT $1 OFFSET $2`
+	updatePubkey     = `UPDATE pubkeys SET name = $3, body = $4 WHERE account_id = $1 AND id = $2`
+	getPubkeyById    = `SELECT * FROM pubkeys WHERE account_id = $1 AND id = $2 LIMIT 1`
+	deletePubkeyById = `DELETE FROM pubkeys WHERE account_id = $1 AND id = $2`
+	listPubkeys      = `SELECT * FROM pubkeys WHERE account_id = $1 ORDER BY id LIMIT $2 OFFSET $3`
 )
 
 type pubkeyDaoSqlx struct {
@@ -66,10 +66,17 @@ func init() {
 }
 
 func (di *pubkeyDaoSqlx) Create(ctx context.Context, pubkey *models.Pubkey) error {
+	if pubkey.AccountID == 0 {
+		pubkey.AccountID = ctxAccountId(ctx)
+	}
+	if pubkey.AccountID != ctxAccountId(ctx) {
+		return dao.WrongTenantError
+	}
+
 	query := createPubkey
 	stmt := di.create
 
-	err := stmt.GetContext(ctx, pubkey, pubkey.AccountID, pubkey.Name, pubkey.Body)
+	err := stmt.GetContext(ctx, pubkey, ctxAccountId(ctx), pubkey.Name, pubkey.Body)
 	if err != nil {
 		return NewCreateError(ctx, di, query, err)
 	}
@@ -81,7 +88,7 @@ func (di *pubkeyDaoSqlx) GetById(ctx context.Context, id int64) (*models.Pubkey,
 	stmt := di.getById
 	result := &models.Pubkey{}
 
-	err := stmt.GetContext(ctx, result, id)
+	err := stmt.GetContext(ctx, result, ctxAccountId(ctx), id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, NewNoRowsError(ctx, di, query, err)
@@ -93,10 +100,17 @@ func (di *pubkeyDaoSqlx) GetById(ctx context.Context, id int64) (*models.Pubkey,
 }
 
 func (di *pubkeyDaoSqlx) Update(ctx context.Context, pubkey *models.Pubkey) error {
+	if pubkey.AccountID == 0 {
+		pubkey.AccountID = ctxAccountId(ctx)
+	}
+	if pubkey.AccountID != ctxAccountId(ctx) {
+		return dao.WrongTenantError
+	}
+
 	query := updatePubkey
 	stmt := di.update
 
-	res, err := stmt.ExecContext(ctx, pubkey.ID, pubkey.AccountID, pubkey.Name, pubkey.Body)
+	res, err := stmt.ExecContext(ctx, ctxAccountId(ctx), pubkey.ID, pubkey.Name, pubkey.Body)
 	if err != nil {
 		return NewExecUpdateError(ctx, di, query, err)
 	}
@@ -111,7 +125,7 @@ func (di *pubkeyDaoSqlx) List(ctx context.Context, limit, offset int64) ([]*mode
 	stmt := di.list
 	var result []*models.Pubkey
 
-	err := stmt.SelectContext(ctx, &result, limit, offset)
+	err := stmt.SelectContext(ctx, &result, ctxAccountId(ctx), limit, offset)
 	if err != nil {
 		return nil, NewSelectError(ctx, di, query, err)
 	}
@@ -122,7 +136,7 @@ func (di *pubkeyDaoSqlx) Delete(ctx context.Context, id int64) error {
 	query := deletePubkeyById
 	stmt := di.deleteById
 
-	res, err := stmt.ExecContext(ctx, id)
+	res, err := stmt.ExecContext(ctx, ctxAccountId(ctx), id)
 	if err != nil {
 		return NewExecDeleteError(ctx, di, query, err)
 	}
