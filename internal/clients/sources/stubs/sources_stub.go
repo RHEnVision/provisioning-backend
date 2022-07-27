@@ -20,7 +20,6 @@ type SourcesClientV2Stub struct{}
 
 func init() {
 	// We are currently using SourcesClientV2Stub
-	// sources.GetSourcesClient = getSourcesClientStub
 	sources.GetSourcesClientV2 = getSourcesClientV2Stub
 }
 
@@ -73,14 +72,6 @@ func (mock *SourcesClientV2Stub) ListProvisioningSources(ctx context.Context) (*
 func WithSourcesIntegration(parent context.Context, init_store *[]sources.Source) context.Context {
 	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesIntegrationStub{store: init_store})
 	return ctx
-}
-
-func getSourcesClientStub(ctx context.Context) (si sources.SourcesIntegration, err error) {
-	var ok bool
-	if si, ok = ctx.Value(sourcesCtxKey).(*SourcesIntegrationStub); !ok {
-		err = &contextReadError{}
-	}
-	return si, err
 }
 
 func (mock *SourcesIntegrationStub) GetProvisioningTypeId(ctx context.Context, reqEditors ...sources.RequestEditorFn) (string, error) {
