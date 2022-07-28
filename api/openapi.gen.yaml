@@ -110,29 +110,6 @@ paths:
                   $ref: '#/components/schemas/v1.Source'
         '500':
           $ref: "#/components/responses/InternalError"
-  /sources/{ID}:
-    get:
-      description: 'Return a provisioning source by id'
-      operationId: getSourceById
-      parameters:
-        - name: ID
-          in: path
-          required: true
-          description: 'Source ID from Sources Database.'
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Return on success.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1.Source'
-        '404':
-          $ref: "#/components/responses/NotFound"
-        '500':
-          $ref: "#/components/responses/InternalError"
   /instance_types/{source_id}:
       get:
         description: 'Return a list of instance types'
