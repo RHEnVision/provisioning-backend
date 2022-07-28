@@ -30,7 +30,3 @@ func NewListSourcesResponse(sl *[]sources.Source) []render.Renderer {
 	}
 	return list
 }
-
-func NewShowSourcesResponse(s *sources.Source) render.Renderer {
-	return &SourceResponse{Source: s}
-}
