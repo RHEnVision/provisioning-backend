@@ -5,7 +5,7 @@ labels:
   app: provisioning
   template: provisioning
 metadata:
-  name: provisioning
+  name: provisioning-backend
   annotations:
     description: API backend for provisioning in console.redhat.com
 
@@ -13,7 +13,7 @@ objects:
   - apiVersion: cloud.redhat.com/v1alpha1
     kind: ClowdApp
     metadata:
-      name: provisioning
+      name: provisioning-backend
       labels:
         service: provisioning
     spec:
