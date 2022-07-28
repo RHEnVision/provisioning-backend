@@ -321,42 +321,6 @@
           }
         }
       }
-    },
-    "/sources/{ID}": {
-      "get": {
-        "description": "Return a provisioning source by id",
-        "operationId": "getSourceById",
-        "parameters": [
-          {
-            "description": "Source ID from Sources Database.",
-            "in": "path",
-            "name": "ID",
-            "required": true,
-            "schema": {
-              "format": "int64",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/v1.Source"
-                }
-              }
-            },
-            "description": "Return on success."
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalError"
-          }
-        }
-      }
     }
   },
   "servers": [
