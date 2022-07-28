@@ -4,8 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/sts"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -16,6 +19,7 @@ type PubkeyUploadAWSTaskArgs struct {
 	AccountID     int64 `json:"account_id"`
 	ReservationID int64 `json:"reservation_id"`
 	PubkeyID      int64 `json:"pubkey_id"`
+	SourceID      int64 `json:"source_id"`
 }
 
 func EnqueuePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) error {
@@ -69,9 +73,38 @@ func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 	}
 	pkr.RandomizeTag()
 
+	// Get sources client
+	sourcesClient, err := sources.GetSourcesClientV2(ctx)
+	if err != nil {
+		return fmt.Errorf("cannot initialize sources client: %w", err)
+	}
+	// Parse source id
+	sourceId := strconv.Itoa(int(args.SourceID))
+
+	//Get ARN
+	arn, err := sourcesClient.GetArn(ctx, sourceId)
+	if err != nil {
+		return fmt.Errorf("cannot get arn for sources id %s: %w", sourceId, err)
+	}
+
 	// upload to cloud with a tag
 	client := ec2.NewEC2Client(ctx)
-	pkr.Handle, err = client.ImportPubkey(pubkey, pkr.FormattedTag())
+	stsClient, err := sts.NewSTSClient(ctx)
+	if err != nil {
+		return fmt.Errorf("cannot initialize sts client: %w", err)
+	}
+
+	crd, err := stsClient.AssumeRole(arn)
+	if err != nil {
+		return fmt.Errorf("cannot assume role: %w", err)
+	}
+
+	newEC2Client, err := client.CreateEC2ClientFromConfig(crd)
+	if err != nil {
+		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
+	}
+
+	pkr.Handle, err = newEC2Client.ImportPubkey(pubkey, pkr.FormattedTag())
 	if err != nil {
 		if errors.Is(err, ec2.DuplicatePubkeyErr) {
 			logger.Warn().Msgf("Pubkey '%s' already present, skipping", pubkey.Name)
