@@ -4,7 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/go-playground/validator/v10"
 )
+
+type NamedForError interface {
+	// NameForError returns DAO implementation name that is passed in the error message (e.g. "account").
+	NameForError() string
+}
 
 // Error represents a common DAO error.
 type Error struct {
@@ -62,4 +71,17 @@ func (e NoRowsError) Unwrap() error {
 
 func (e MismatchAffectedError) Error() string {
 	return fmt.Sprintf("DAO mismatch affected rows: %s", e.Message)
+}
+
+func NewValidationError(ctx context.Context, dao NamedForError, model interface{}, validationErr validator.ValidationErrors) ValidationError {
+	errors := []string{fmt.Sprintf("Validation of %s failed: ", dao.NameForError())}
+	for _, ve := range validationErr {
+		errors = append(errors, ve.Error())
+	}
+	msg := strings.Join(errors, ", ")
+
+	if logger := ctxval.Logger(ctx); logger != nil {
+		logger.Info().Msg(msg)
+	}
+	return ValidationError{Context: ctx, Message: msg, Err: validationErr, Model: model}
 }

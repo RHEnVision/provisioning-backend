@@ -28,6 +28,10 @@ func getPubkeyDao(ctx context.Context) (dao.PubkeyDao, error) {
 	return getPubkeyDaoStub(ctx)
 }
 
+func (stub *pubkeyDaoStub) NameForError() string {
+	return "pubkey"
+}
+
 func (stub *pubkeyDaoStub) Create(ctx context.Context, pubkey *models.Pubkey) error {
 	if pubkey.AccountID == 0 {
 		pubkey.AccountID = ctxAccountId(ctx)
@@ -36,7 +40,7 @@ func (stub *pubkeyDaoStub) Create(ctx context.Context, pubkey *models.Pubkey) er
 		return dao.WrongTenantError
 	}
 	if validationErr := models.Validate(ctx, pubkey); validationErr != nil {
-		return newValidationError(ctx, "pubkey", pubkey, validationErr)
+		return dao.NewValidationError(ctx, stub, pubkey, validationErr)
 	}
 
 	pubkey.ID = stub.lastId + 1
@@ -59,7 +63,7 @@ func (stub *pubkeyDaoStub) Update(ctx context.Context, pubkey *models.Pubkey) er
 			return nil
 		}
 	}
-	return NewRecordNotFoundError(ctx, "Pubkey")
+	return NewRecordNotFoundError(ctx, stub)
 }
 
 func (stub *pubkeyDaoStub) GetById(ctx context.Context, id int64) (*models.Pubkey, error) {
@@ -68,7 +72,7 @@ func (stub *pubkeyDaoStub) GetById(ctx context.Context, id int64) (*models.Pubke
 			return pk, nil
 		}
 	}
-	return nil, NewRecordNotFoundError(ctx, "Pubkey")
+	return nil, NewRecordNotFoundError(ctx, stub)
 }
 
 func (stub *pubkeyDaoStub) List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error) {

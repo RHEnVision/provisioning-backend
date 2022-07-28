@@ -73,7 +73,7 @@ func (di *pubkeyDaoSqlx) Create(ctx context.Context, pubkey *models.Pubkey) erro
 		return dao.WrongTenantError
 	}
 	if validationErr := models.Validate(ctx, pubkey); validationErr != nil {
-		return newValidationError(ctx, di, pubkey, validationErr)
+		return dao.NewValidationError(ctx, di, pubkey, validationErr)
 	}
 
 	query := createPubkey
