@@ -29,8 +29,7 @@ source $CICD_ROOT/build.sh
 source $CICD_ROOT/deploy_ephemeral_env.sh
 
 # Run smoke tests using a ClowdJobInvocation and iqe-tests
-COMPONENT_NAME="provisioning"  # name of app used in deploy-iqe-cji
 source $CICD_ROOT/cji_smoke_test.sh
 
 # Post a comment with test run IDs to the PR
-# source $CICD_ROOT/post_test_results.sh
+source $CICD_ROOT/post_test_results.sh
