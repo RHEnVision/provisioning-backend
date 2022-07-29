@@ -33,4 +33,5 @@ make build-podman \
 
 # push to logged in registries and tag for SHA
 podman tag "${IMAGE}:${IMAGE_TAG}" "${IMAGE}:${SMOKE_TEST_TAG}"
+podman push "${IMAGE}:${IMAGE_TAG}"
 podman push "${IMAGE}:${SMOKE_TEST_TAG}"
