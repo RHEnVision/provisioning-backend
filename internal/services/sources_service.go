@@ -3,13 +3,13 @@ package services
 import (
 	"net/http"
 
-	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
 )
 
 func ListSources(w http.ResponseWriter, r *http.Request) {
-	client, err := sources.GetSourcesClientV2(r.Context())
+	client, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client", err))
 		return

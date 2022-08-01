@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sts"
@@ -16,7 +17,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "source_id")
 	ec2Client := ec2.NewEC2Client(r.Context())
 
-	sourcesClient, err := sources.GetSourcesClientV2(r.Context())
+	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "can't init sources client", err))
 		return

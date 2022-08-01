@@ -18,10 +18,10 @@ type SourcesClient struct {
 }
 
 func init() {
-	GetSourcesClientV2 = newSourcesClient
+	clients.GetSourcesClient = newSourcesClient
 }
 
-func newSourcesClient(ctx context.Context) (ClientV2, error) {
+func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	c, err := NewClientWithResponses(config.Sources.URL)
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients
 	return &result, nil
 }
 
-func (c *SourcesClient) GetArn(ctx context.Context, sourceId string) (string, error) {
+func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string, error) {
 	ctxval.Logger(ctx).Info().Msgf("Getting ARN of source %v", sourceId)
 	// Get all the authentications linked to a specific source
 	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddIdentityHeader)
