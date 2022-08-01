@@ -4,9 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strconv"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sts"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -16,10 +14,10 @@ import (
 )
 
 type PubkeyUploadAWSTaskArgs struct {
-	AccountID     int64 `json:"account_id"`
-	ReservationID int64 `json:"reservation_id"`
-	PubkeyID      int64 `json:"pubkey_id"`
-	SourceID      int64 `json:"source_id"`
+	AccountID     int64  `json:"account_id"`
+	ReservationID int64  `json:"reservation_id"`
+	PubkeyID      int64  `json:"pubkey_id"`
+	ARN           string `json:"arn"`
 }
 
 func EnqueuePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) error {
@@ -48,6 +46,8 @@ func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 		ctxLogger.Error().Err(err).Msg("unable to decode arguments")
 		return fmt.Errorf("unable to decode args: %w", err)
 	}
+
+	ctx = ctxval.WithAccountId(ctx, args.AccountID)
 	logger := ctxLogger.With().Int64("reservation", args.ReservationID).Logger()
 	logger.Info().Interface("args", args).Msg("Processing pubkey upload AWS job")
 
@@ -73,20 +73,6 @@ func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 	}
 	pkr.RandomizeTag()
 
-	// Get sources client
-	sourcesClient, err := clients.GetSourcesClient(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot initialize sources client: %w", err)
-	}
-	// Parse source id
-	sourceId := strconv.Itoa(int(args.SourceID))
-
-	//Get ARN
-	arn, err := sourcesClient.GetArn(ctx, sourceId)
-	if err != nil {
-		return fmt.Errorf("cannot get arn for sources id %s: %w", sourceId, err)
-	}
-
 	// upload to cloud with a tag
 	client := ec2.NewEC2Client(ctx)
 	stsClient, err := sts.NewSTSClient(ctx)
@@ -94,7 +80,7 @@ func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 		return fmt.Errorf("cannot initialize sts client: %w", err)
 	}
 
-	crd, err := stsClient.AssumeRole(arn)
+	crd, err := stsClient.AssumeRole(args.ARN)
 	if err != nil {
 		return fmt.Errorf("cannot assume role: %w", err)
 	}

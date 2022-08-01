@@ -11,6 +11,12 @@ CREATE TABLE reservations
   UNIQUE (id, provider)
 );
 
+CREATE TABLE instance_reservation
+(
+  reservation_id BIGINT NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
+  instance_id TEXT NOT NULL UNIQUE
+);
+
 CREATE TABLE aws_reservation_details
 (
   reservation_id BIGINT NOT NULL,
@@ -19,7 +25,8 @@ CREATE TABLE aws_reservation_details
   source_id INTEGER NOT NULL,
   instance_type TEXT NOT NULL,
   amount INTEGER NOT NULL,
-  image_id INTEGER NOT NULL,
+  ami TEXT NOT NULL,
+  aws_reservation_id TEXT,
 
   FOREIGN KEY (reservation_id, provider) REFERENCES reservations(id, provider) ON DELETE CASCADE,
   CHECK (provider = provider_type_aws())
