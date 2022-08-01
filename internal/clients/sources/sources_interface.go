@@ -2,6 +2,8 @@ package sources
 
 import (
 	"context"
+
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 )
 
 var GetSourcesClient func(ctx context.Context) (SourcesIntegration, error)
@@ -17,7 +19,7 @@ type SourcesIntegration interface {
 
 type ClientV2 interface {
 	// ListProvisioningSources returns all sources that have provisioning credentials assigned
-	ListProvisioningSources(ctx context.Context) (*[]Source, error)
+	ListProvisioningSources(ctx context.Context) (*[]clients.Source, error)
 	// GetArn returns ARN associated with provisioning app for given sourceId
 	GetArn(ctx context.Context, sourceId ID) (string, error)
 	// GetProvisioningTypeId might not need exposing

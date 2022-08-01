@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/aws/smithy-go/ptr"
 )
@@ -50,8 +51,8 @@ func (mock *SourcesClientV2Stub) GetProvisioningTypeId(ctx context.Context) (str
 	return "11", nil
 }
 
-func (mock *SourcesClientV2Stub) ListProvisioningSources(ctx context.Context) (*[]sources.Source, error) {
-	var TestSourceData = []sources.Source{
+func (mock *SourcesClientV2Stub) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
+	var TestSourceData = []clients.Source{
 		{
 			Id:           ptr.String("1"),
 			Name:         ptr.String("source1"),
