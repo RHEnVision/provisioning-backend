@@ -45,7 +45,7 @@ func WithTenant(t *testing.T, ctx context.Context) context.Context {
 	if err != nil {
 		t.Errorf("failed to fetch account for default identity %v", err)
 	}
-	return ctxval.WithAccount(ctx, acc)
+	return ctxval.WithAccountId(ctx, acc.ID)
 }
 
 func newIdentity(orgId string, accountNumber *string) rhidentity.XRHID {
