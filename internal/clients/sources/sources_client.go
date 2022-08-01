@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
@@ -17,10 +18,10 @@ type SourcesClient struct {
 }
 
 func init() {
-	GetSourcesClientV2 = newSourcesClient
+	clients.GetSourcesClient = newSourcesClient
 }
 
-func newSourcesClient(ctx context.Context) (ClientV2, error) {
+func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	c, err := NewClientWithResponses(config.Sources.URL)
 	if err != nil {
 		return nil, err
@@ -28,7 +29,16 @@ func newSourcesClient(ctx context.Context) (ClientV2, error) {
 	return &SourcesClient{client: c}, nil
 }
 
-func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]Source, error) {
+func copySource(src Source) clients.Source {
+	return clients.Source{
+		Id:           src.Id,
+		Name:         src.Name,
+		SourceTypeId: src.SourceTypeId,
+		Uid:          src.Uid,
+	}
+}
+
+func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
 	ctxval.Logger(ctx).Info().Msg("Listing provisioning sources")
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
 	if err != nil {
@@ -49,10 +59,14 @@ func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]Source,
 		ctxval.Logger(ctx).Warn().Msgf("Sources replied with unexpected status while fetching sources of application type: %v", statusCode)
 		return nil, SourcesClientErr
 	}
-	return resp.JSON200.Data, nil
+	result := make([]clients.Source, 0, len(*resp.JSON200.Data))
+	for _, s := range *resp.JSON200.Data {
+		result = append(result, copySource(s))
+	}
+	return &result, nil
 }
 
-func (c *SourcesClient) GetArn(ctx context.Context, sourceId string) (string, error) {
+func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string, error) {
 	ctxval.Logger(ctx).Info().Msgf("Getting ARN of source %v", sourceId)
 	// Get all the authentications linked to a specific source
 	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddIdentityHeader)
