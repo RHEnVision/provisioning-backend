@@ -3,7 +3,6 @@ package ctxval
 import (
 	"context"
 
-	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -15,7 +14,7 @@ const (
 	loggerCtxKey     commonKeyId = iota
 	requestIdCtxKey  commonKeyId = iota
 	requestNumCtxKey commonKeyId = iota
-	accountCtxKey    commonKeyId = iota
+	accountIdCtxKey  commonKeyId = iota
 )
 
 // Identity returns identity header struct or nil when not set.
@@ -58,10 +57,10 @@ func WithRequestNumber(ctx context.Context, num uint64) context.Context {
 }
 
 // Account returns current account model or nil when not set.
-func Account(ctx context.Context) *models.Account {
-	return ctx.Value(accountCtxKey).(*models.Account)
+func AccountId(ctx context.Context) int64 {
+	return ctx.Value(accountIdCtxKey).(int64)
 }
 
-func WithAccount(ctx context.Context, account *models.Account) context.Context {
-	return context.WithValue(ctx, accountCtxKey, account)
+func WithAccountId(ctx context.Context, accountId int64) context.Context {
+	return context.WithValue(ctx, accountIdCtxKey, accountId)
 }
