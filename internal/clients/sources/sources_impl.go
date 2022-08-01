@@ -21,12 +21,12 @@ type dataElement struct {
 	Data []AppType `json:"data"`
 }
 
-func getSourcesClient(ctx context.Context) (SourcesIntegration, error) {
+func getSourcesClient(ctx context.Context) (APIClient, error) {
 	return NewClientWithResponses(config.Sources.URL)
 }
 
 func init() {
-	GetSourcesClient = getSourcesClient
+	GetSourcesAPIClient = getSourcesClient
 }
 
 func (c *ClientWithResponses) GetProvisioningTypeId(ctx context.Context, reqEditors ...RequestEditorFn) (string, error) {

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sts"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -74,7 +74,7 @@ func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 	pkr.RandomizeTag()
 
 	// Get sources client
-	sourcesClient, err := sources.GetSourcesClientV2(ctx)
+	sourcesClient, err := clients.GetSourcesClient(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot initialize sources client: %w", err)
 	}

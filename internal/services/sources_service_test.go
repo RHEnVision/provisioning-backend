@@ -18,7 +18,7 @@ import (
 func TestListSourcesHandler(t *testing.T) {
 	ctx := stubs.WithAccountDaoOne(context.Background())
 	ctx = identity.WithTenant(t, ctx)
-	ctx = clientStub.WithSourcesClientV2(ctx)
+	ctx = clientStub.WithSourcesClient(ctx)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources", nil)
 	assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/aws/smithy-go/ptr"
 )
@@ -16,11 +17,11 @@ type SourcesIntegrationStub struct {
 	store           *[]sources.Source
 	authentications *[]sources.AuthenticationRead
 }
-type SourcesClientV2Stub struct{}
+type SourcesClientStub struct{}
 
 func init() {
-	// We are currently using SourcesClientV2Stub
-	sources.GetSourcesClientV2 = getSourcesClientV2Stub
+	// We are currently using SourcesClientStub
+	clients.GetSourcesClient = getSourcesClientStub
 }
 
 type contextReadError struct{}
@@ -29,29 +30,29 @@ func (m *contextReadError) Error() string {
 	return "failed to find or convert dao stored in testing context"
 }
 
-// SourcesClientV2
-func WithSourcesClientV2(parent context.Context) context.Context {
-	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesClientV2Stub{})
+// SourcesClient
+func WithSourcesClient(parent context.Context) context.Context {
+	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesClientStub{})
 	return ctx
 }
 
-func getSourcesClientV2Stub(ctx context.Context) (si sources.ClientV2, err error) {
+func getSourcesClientStub(ctx context.Context) (si clients.Sources, err error) {
 	var ok bool
-	if si, ok = ctx.Value(sourcesCtxKey).(*SourcesClientV2Stub); !ok {
+	if si, ok = ctx.Value(sourcesCtxKey).(*SourcesClientStub); !ok {
 		err = &contextReadError{}
 	}
 	return si, err
 }
-func (mock *SourcesClientV2Stub) GetArn(ctx context.Context, sourceId sources.ID) (string, error) {
+func (mock *SourcesClientStub) GetArn(ctx context.Context, sourceId sources.ID) (string, error) {
 	return "arn:aws:iam::230214684733:role/Test", nil
 }
 
-func (mock *SourcesClientV2Stub) GetProvisioningTypeId(ctx context.Context) (string, error) {
+func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (string, error) {
 	return "11", nil
 }
 
-func (mock *SourcesClientV2Stub) ListProvisioningSources(ctx context.Context) (*[]sources.Source, error) {
-	var TestSourceData = []sources.Source{
+func (mock *SourcesClientStub) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
+	var TestSourceData = []clients.Source{
 		{
 			Id:           ptr.String("1"),
 			Name:         ptr.String("source1"),
@@ -68,7 +69,7 @@ func (mock *SourcesClientV2Stub) ListProvisioningSources(ctx context.Context) (*
 	return &TestSourceData, nil
 }
 
-// SourcesIntegration
+// APIClient
 func WithSourcesIntegration(parent context.Context, init_store *[]sources.Source) context.Context {
 	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesIntegrationStub{store: init_store})
 	return ctx
