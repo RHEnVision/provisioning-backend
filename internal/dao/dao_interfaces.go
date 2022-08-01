@@ -42,8 +42,11 @@ var GetReservationDao func(ctx context.Context) (ReservationDao, error)
 type ReservationDao interface {
 	CreateNoop(ctx context.Context, reservation *models.NoopReservation) error
 	CreateAWS(ctx context.Context, reservation *models.AWSReservation) error
+	CreateInstance(ctx context.Context, reservation *models.InstancesReservation) error
 	List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error)
+	ListInstances(ctx context.Context, limit, offset int64) ([]*models.InstancesReservation, error)
 	UpdateStatus(ctx context.Context, id int64, status string) error
+	UpdateReservationIDForAWS(ctx context.Context, id int64, awsReservationId string) error
 	Finish(ctx context.Context, id int64, success bool, status string) error
 	Delete(ctx context.Context, id int64) error
 }

@@ -120,3 +120,32 @@ func (c *Client) ListInstanceTypes() ([]types.InstanceTypeInfo, error) {
 
 	return resp.InstanceTypes, nil
 }
+
+func (c *Client) RunInstances(ctx context.Context, amount int32, instanceType types.InstanceType, AMI string, keyName string) ([]*string, *string, error) {
+	log.Trace().Msg("Run AWS EC2 instance")
+	input := &ec2.RunInstancesInput{
+		MaxCount:     aws.Int32(amount),
+		MinCount:     aws.Int32(amount),
+		InstanceType: instanceType,
+		ImageId:      aws.String(AMI),
+		KeyName:      &keyName,
+	}
+	resp, err := c.ec2.RunInstances(ctx, input)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot run instances: %w", err)
+	}
+	instances := c.parseRunInstancesResponse(resp)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot ParseRunInstancesResponse: %w", err)
+	}
+	return instances, resp.ReservationId, nil
+}
+
+func (c *Client) parseRunInstancesResponse(respAWS *ec2.RunInstancesOutput) []*string {
+	instances := respAWS.Instances
+	list := make([]*string, 0, len(instances))
+	for _, instance := range instances {
+		list = append(list, instance.InstanceId)
+	}
+	return list
+}

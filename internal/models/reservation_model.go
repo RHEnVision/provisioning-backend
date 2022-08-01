@@ -48,8 +48,16 @@ type AWSReservation struct {
 	InstanceType string `db:"instance_type" json:"instance_type"`
 
 	// Amount of instances to provision of type: Instance type.
-	Amount int64 `db:"amount" json:"amount"`
+	Amount int32 `db:"amount" json:"amount"`
 
 	// The ID of the image from which the instance is created.
-	ImageID int64 `db:"image_id" json:"image_id"`
+	AMI string `db:"ami" json:"ami"`
+}
+
+type InstancesReservation struct {
+	// Reservation ID.
+	ReservationID int64 `db:"reservation_id" json:"reservation_id"`
+
+	// Instance ID which has been created on a cloud provider.
+	InstanceID string `db:"instance_id" json:"instance_id"`
 }
