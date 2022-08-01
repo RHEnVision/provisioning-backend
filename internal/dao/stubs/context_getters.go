@@ -15,7 +15,7 @@ const (
 )
 
 func ctxAccountId(ctx context.Context) int64 {
-	return ctxval.Account(ctx).ID
+	return ctxval.AccountId(ctx)
 }
 
 func WithPubkeyDao(parent context.Context) context.Context {

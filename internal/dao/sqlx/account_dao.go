@@ -23,7 +23,7 @@ const (
 )
 
 func ctxAccountId(ctx context.Context) int64 {
-	return ctxval.Account(ctx).ID
+	return ctxval.AccountId(ctx)
 }
 
 type accountDaoSqlx struct {

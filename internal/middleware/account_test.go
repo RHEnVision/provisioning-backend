@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
@@ -28,8 +29,8 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var acc = ctxval.Account(r.Context())
-			assert.NotNil(t, acc, "account was not set")
+			var acc = ctxval.AccountId(r.Context())
+			assert.NotNil(t, acc, "account id was not set")
 		})
 
 		handler := middleware.AccountMiddleware(isAccInNext)
@@ -45,8 +46,16 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var acc = ctxval.Account(r.Context())
-			assert.NotNil(t, acc, "account was not set")
+			var accId = ctxval.AccountId(r.Context())
+			assert.NotNil(t, accId, "account id was not set")
+			accDao, innerErr := dao.GetAccountDao(r.Context())
+			if innerErr != nil {
+				t.Errorf("failed to initialize account: %v", err)
+			}
+			acc, innerErr := accDao.GetById(r.Context(), accId)
+			if innerErr != nil {
+				t.Errorf("could not fetch account by id: %v", err)
+			}
 			assert.Equal(t, "124", acc.OrgID)
 		})
 
