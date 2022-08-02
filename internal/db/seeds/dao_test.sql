@@ -1,5 +1,5 @@
 --
--- Testing seed data, to execute this file during migration set DB_SEED variable to "dao_pubkey".
+-- Testing seed data, to execute this file during migration set DB_SEED variable to "dao_test".
 --
 BEGIN;
 
