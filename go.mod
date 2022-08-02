@@ -23,6 +23,7 @@ require (
 	github.com/go-openapi/runtime v0.24.1
 	github.com/go-openapi/spec v0.20.6 // indirect
 	github.com/go-openapi/validate v0.22.0 // indirect
+	github.com/go-playground/mold/v4 v4.2.0
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/hashicorp/golang-lru v0.5.4
 	github.com/imdario/mergo v0.3.13 // indirect
@@ -44,7 +45,7 @@ require (
 	github.com/stretchr/testify v1.8.0
 	github.com/subosito/gotenv v1.4.0 // indirect
 	go.mongodb.org/mongo-driver v1.9.1 // indirect
-	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	golang.org/x/net v0.0.0-20220708220712-1185a9018129 // indirect
 	golang.org/x/sys v0.0.0-20220712014510-0a85c31ab51e // indirect
 	gopkg.in/ini.v1 v1.66.6 // indirect

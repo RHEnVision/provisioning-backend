@@ -39,8 +39,15 @@ func (stub *pubkeyDaoStub) Create(ctx context.Context, pubkey *models.Pubkey) er
 	if pubkey.AccountID != ctxAccountId(ctx) {
 		return dao.WrongTenantError
 	}
-	if validationErr := models.Validate(ctx, pubkey); validationErr != nil {
-		return dao.NewValidationError(ctx, stub, pubkey, validationErr)
+	if err := models.Validate(ctx, pubkey); err != nil {
+		return dao.NewValidationError(ctx, stub, pubkey, err)
+	}
+	if err := models.Transform(ctx, pubkey); err != nil {
+		return dao.TransformationError{
+			Message: "cannot generate SSH fingerprint",
+			Context: ctx,
+			Err:     err,
+		}
 	}
 
 	pubkey.ID = stub.lastId + 1
