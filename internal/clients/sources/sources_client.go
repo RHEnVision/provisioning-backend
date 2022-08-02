@@ -38,6 +38,16 @@ func copySource(src Source) clients.Source {
 	}
 }
 
+type appType struct {
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	DisplayName string `json:"display_name"`
+}
+
+type dataElement struct {
+	Data []appType `json:"data"`
+}
+
 func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
 	ctxval.Logger(ctx).Info().Msg("Listing provisioning sources")
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
