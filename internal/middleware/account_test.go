@@ -2,7 +2,6 @@ package middleware_test
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,9 +20,9 @@ func TestAccountMiddleware(t *testing.T) {
 		ctx := stubs.WithAccountDaoOne(context.Background())
 		ctx = identity.WithTenant(t, ctx)
 
-		req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/v1/pubkeys", nil)
+		req, err := http.NewRequestWithContext(ctx, "GET", "/test", nil)
 		if err != nil {
-			assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+			t.Errorf("Error creating a test request: %v", err)
 		}
 
 		rr := httptest.NewRecorder()
@@ -40,8 +39,10 @@ func TestAccountMiddleware(t *testing.T) {
 		ctx := identity.WithCustomIdentity(t, context.Background(), "124", ptr.String("12"))
 		ctx = stubs.WithAccountDaoOne(ctx)
 
-		req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/v1/pubkeys", nil)
-		assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+		req, err := http.NewRequestWithContext(ctx, "GET", "/test", nil)
+		if err != nil {
+			t.Errorf("Error creating a test request: %v", err)
+		}
 
 		rr := httptest.NewRecorder()
 
@@ -63,7 +64,9 @@ func TestAccountMiddleware(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		count, err := stubs.AccountStubCount(ctx)
-		assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+		if err != nil {
+			t.Errorf("Error while fetching account count: %v", err)
+		}
 		assert.Equal(t, 2, count)
 	})
 }
