@@ -1,6 +1,8 @@
 //go:build integration
 // +build integration
 
+// To override application configuration for integration tests, copy local.yaml into this directory.
+
 package main
 
 import (
@@ -13,14 +15,15 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
 
 func createPk() *models.Pubkey {
 	return &models.Pubkey{
-		ID:        1,
 		AccountID: 1,
 		Name:      "lzap-ed25519-2021",
 		Body:      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
@@ -29,8 +32,9 @@ func createPk() *models.Pubkey {
 
 func InitTestEnvironment() error {
 	config.Initialize()
+	log.Logger = logging.InitializeStdout()
 
-	err := db.Initialize()
+	err := db.Initialize("integration")
 	if err != nil {
 		panic(fmt.Errorf("database setup had failed: %v", err))
 	}
@@ -53,13 +57,14 @@ func Setup(t *testing.T, s string) (dao.PubkeyDao, context.Context, error) {
 }
 
 func CleanUpDatabase(t *testing.T) {
-	err := db.Seed("drop_all")
+	err := db.Seed("drop_integration")
 	if err != nil {
 		t.Errorf("Error purging the database: %v", err)
 		return
 	}
 
-	err = db.Migrate()
+	err = db.Migrate("integration")
+
 	if err != nil {
 		t.Errorf("Error running migration: %v", err)
 		return

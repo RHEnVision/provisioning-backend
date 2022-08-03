@@ -115,10 +115,13 @@ var ErrSeedProduction = errors.New("seed in production")
 // Migrate executes embedded SQL scripts from internal/db/migrations. For the time being
 // only "up" migrations are supported. When this package is initialized, the directory
 // is verified that it only contains XXX_*.up.sql files (XXX = numbers).
-func Migrate() error {
+func Migrate(schema string) error {
 	logger := log.Logger.With().Bool("migration", true).Logger()
 	ctx := context.Background()
 	logger.Debug().Msgf("Started migration")
+	if schema == "" {
+		schema = "public"
+	}
 
 	stdConn, connErr := DB.Conn(ctx)
 	if connErr != nil {
@@ -131,7 +134,8 @@ func Migrate() error {
 		opts := migrate.MigratorOptions{
 			MigratorFS: NewEmbeddedFS(&embeddedMigrations),
 		}
-		migrator, err := migrate.NewMigratorEx(ctx, conn, "public.schema_version", &opts)
+		table := fmt.Sprintf("%s.schema_version", schema)
+		migrator, err := migrate.NewMigratorEx(ctx, conn, table, &opts)
 		if err != nil {
 			return fmt.Errorf("error initializing migrator: %w", err)
 		}

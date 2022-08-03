@@ -18,6 +18,6 @@ VALUES (1, 1, 'lzap-ed25519-2021',
 ON CONFLICT DO NOTHING;
 
 -- Reset all primary key sequences (columns named "id") to the maximum value.
-SELECT reset_sequences();
+SELECT reset_sequences('public');
 
 COMMIT;
