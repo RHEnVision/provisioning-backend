@@ -48,7 +48,7 @@ func main() {
 
 	// initialize the database
 	logger.Debug().Msg("Initializing database connection")
-	err = db.Initialize()
+	err = db.Initialize("public")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}

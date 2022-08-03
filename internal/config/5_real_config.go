@@ -27,17 +27,15 @@ func init() {
 	} else {
 		viper.SetDefault("featureFlags.environment", "development")
 
+		// load from main subdirectory
 		viper.AddConfigPath("./configs")
-		viper.SetConfigName("defaults")
+		// load from working directory for integration tests
+		viper.AddConfigPath(".")
+		viper.SetConfigName("local")
 
 		err := viper.ReadInConfig()
 		if err != nil {
-			panic(err)
-		}
-		viper.SetConfigName("local")
-		err = viper.MergeInConfig()
-		if err != nil {
-			fmt.Println("Could not read local.yaml", err)
+			fmt.Println("Could not read configs/local.yaml, continuing with defaults")
 		}
 	}
 }

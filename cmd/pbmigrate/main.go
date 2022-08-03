@@ -26,7 +26,7 @@ func main() {
 	log.Logger = logger
 	logging.DumpConfigForDevelopment()
 
-	err = db.Initialize()
+	err = db.Initialize("public")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
@@ -41,7 +41,7 @@ func main() {
 		logger.Info().Msgf("Database %s has been purged to blank state", config.Database.Name)
 	}
 
-	err = db.Migrate()
+	err = db.Migrate("public")
 	if err != nil {
 		logger.Fatal().Err(err).Msg("Error running migration")
 		return

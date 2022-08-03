@@ -18,30 +18,35 @@ var (
 	DB *sqlx.DB
 )
 
-func GetConnectionString(prefix string) string {
+func GetConnectionString(prefix, schema string) string {
 	if len(config.Database.Password) > 0 {
-		return fmt.Sprintf("%s://%s:%s@%s:%d/%s",
+		return fmt.Sprintf("%s://%s:%s@%s:%d/%s?search_path=%s",
 			prefix,
 			url.QueryEscape(config.Database.User),
 			url.QueryEscape(config.Database.Password),
 			config.Database.Host,
 			config.Database.Port,
-			config.Database.Name)
+			config.Database.Name,
+			schema)
 	} else {
-		return fmt.Sprintf("%s://%s@%s:%d/%s",
+		return fmt.Sprintf("%s://%s@%s:%d/%s?search_path=%s",
 			prefix,
 			url.QueryEscape(config.Database.User),
 			config.Database.Host,
 			config.Database.Port,
-			config.Database.Name)
+			config.Database.Name,
+			schema)
 	}
 
 }
-func Initialize() error {
+func Initialize(schema string) error {
 	var err error
+	if schema == "" {
+		schema = "public"
+	}
 
 	// register and setup logging configuration
-	connStr := GetConnectionString("postgres")
+	connStr := GetConnectionString("postgres", schema)
 	connConfig, err := pgx.ParseConfig(connStr)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse database configuration")

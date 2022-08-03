@@ -14,6 +14,6 @@ ON CONFLICT DO NOTHING;
 
 -- Reset all primary key sequences. This can possibly slow down seeds in tests, in that case
 -- let's use implicit primary keys.
-SELECT reset_sequences();
+SELECT reset_sequences('integration');
 
 COMMIT;
