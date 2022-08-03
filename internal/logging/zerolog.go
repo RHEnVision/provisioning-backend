@@ -3,6 +3,7 @@ package logging
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
@@ -23,13 +24,27 @@ func init() {
 	hostname = h
 }
 
+func truncateText(s string, max int) string {
+	if max > len(s) {
+		return s
+	}
+	return s[:strings.LastIndex(s[:max], " ")] + "...\""
+}
+
 func decorate(l zerolog.Logger) zerolog.Logger {
 	return l.With().Timestamp().Str("hostname", hostname).Logger()
 }
 
 func InitializeStdout() zerolog.Logger {
 	zerolog.SetGlobalLevel(zerolog.Level(config.Logging.Level))
-	return decorate(log.Output(zerolog.ConsoleWriter{Out: os.Stdout}))
+	return decorate(log.Output(zerolog.ConsoleWriter{
+		Out:        os.Stdout,
+		TimeFormat: time.Kitchen,
+		NoColor:    true,
+		FormatFieldValue: func(i interface{}) string {
+			return truncateText(fmt.Sprintf("%s", i), 40)
+		},
+	}))
 }
 
 func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error) {

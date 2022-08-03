@@ -48,7 +48,7 @@ func main() {
 	logging.DumpConfigForDevelopment()
 
 	// initialize the rest
-	err = db.Initialize()
+	err = db.Initialize("public")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}

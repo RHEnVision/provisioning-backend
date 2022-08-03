@@ -1,4 +1,5 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- We use pg_catalog because we have two schemas: public and integration
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA "pg_catalog";
 
 -- https://github.com/osbuild/osbuild-composer/blob/main/internal/jobqueue/dbjobqueue/schemas/001_jobs.sql
 CREATE TABLE jobs(

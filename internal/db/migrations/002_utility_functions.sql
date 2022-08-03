@@ -50,7 +50,7 @@ END;
 $provider_type_gce$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
 
 -- Reset all sequences to the maximum value, works on empty tables too
-CREATE OR REPLACE FUNCTION reset_sequences()
+CREATE OR REPLACE FUNCTION reset_sequences(schema TEXT)
   RETURNS void AS
 $reset_sequences$
 DECLARE
@@ -58,7 +58,7 @@ DECLARE
 BEGIN
   FOR tn IN SELECT table_name
             FROM information_schema.tables
-            WHERE table_schema = 'public'
+            WHERE table_schema = schema
               AND table_type = 'BASE TABLE'
               AND table_name !~* '^(schema_version|jobs|job_dependencies|heartbeats)$'
               AND table_name !~* '_?reservation_(details|instances)$'

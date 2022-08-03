@@ -107,5 +107,4 @@ update-test-deps: update-deps test
 
 .PHONY: integration-test
 integration-test:
-	go test -c -tags=integration -o dao_tests.test ./cmd/dao_tests
-	./dao_tests.test
+	go test --count=1 -v -tags=integration ./cmd/dao_tests
