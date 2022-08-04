@@ -26,6 +26,13 @@ func createNoopReservation() *models.NoopReservation {
 	}
 }
 
+func createInstancesReservation() *models.InstancesReservation {
+	return &models.InstancesReservation{
+		ReservationID: 1,
+		InstanceID:    "1",
+	}
+}
+
 func createAWSReservation() *models.AWSReservation {
 	return &models.AWSReservation{
 		Reservation: models.Reservation{
@@ -95,6 +102,35 @@ func TestCreateAWS(t *testing.T) {
 	assert.Equal(t, 1, len(reservations), "Create AWS reservation error.")
 }
 
+func TestCreateInstance(t *testing.T) {
+	CleanUpDatabase(t)
+	reservationDao, ctx, err := SetupReservation(t, "Create Instance reservation")
+	if err != nil {
+		t.Errorf("Database setup failed: %v", err)
+		return
+	}
+
+	err = reservationDao.CreateAWS(ctx, createAWSReservation())
+	if err != nil {
+		t.Errorf("createAWS failed: %v", err)
+		return
+	}
+
+	err = reservationDao.CreateInstance(ctx, createInstancesReservation())
+	if err != nil {
+		t.Errorf("createInstance failed: %v", err)
+		return
+	}
+
+	reservations, err := reservationDao.ListInstances(ctx, 10, 0)
+	if err != nil {
+		t.Errorf("list failed: %v", err)
+		return
+	}
+
+	assert.Equal(t, 1, len(reservations), "Create Instances reservation error.")
+}
+
 func TestListReservation(t *testing.T) {
 	CleanUpDatabase(t)
 	reservationDao, ctx, err := SetupReservation(t, "List reservation")
@@ -119,6 +155,46 @@ func TestListReservation(t *testing.T) {
 		return
 	}
 	assert.Equal(t, 2, len(reservations), "List reservation error.")
+}
+
+func TestUpdateReservationIDForAWS(t *testing.T) {
+	CleanUpDatabase(t)
+	reservationDao, ctx, err := SetupReservation(t, "Update status reservation")
+	if err != nil {
+		t.Errorf("Database setup failed. %s", err)
+		return
+	}
+
+	reservation := createAWSReservation()
+
+	err = reservationDao.CreateAWS(ctx, reservation)
+	if err != nil {
+		t.Errorf("createAWS failed: %v", err)
+		return
+	}
+	var count int
+
+	err = db.DB.Get(&count, "SELECT COUNT(*) FROM aws_reservation_details")
+	if err != nil {
+		t.Errorf("count records in aws_reservation_details has failed: %v", err)
+		return
+	}
+	assert.Equal(t, 1, count, "Number of aws reservations mismatch.")
+
+	err = reservationDao.UpdateReservationIDForAWS(ctx, reservation.ID, "2")
+	if err != nil {
+		t.Errorf("UpdateReservationIDForAWS failed %s", err)
+		return
+	}
+
+	var awsReservationId string
+	err = db.DB.Get(&awsReservationId, "SELECT aws_reservation_id FROM aws_reservation_details WHERE reservation_id = $1", reservation.ID)
+	if err != nil {
+		t.Errorf("select aws_reservation_id from aws_reservation_details has failed: %v", err)
+		return
+	}
+	assert.Equal(t, "2", awsReservationId, "Update reservation id  error: aws reservation id does not match.")
+
 }
 
 func TestUpdateStatusReservation(t *testing.T) {
