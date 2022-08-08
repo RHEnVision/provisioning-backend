@@ -76,14 +76,14 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	arn, err := sourcesClient.GetArn(r.Context(), strconv.Itoa(int(payload.SourceID)))
 	if err != nil {
 		if errors.Is(err, sources.ApplicationNotFoundErr) {
-			renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources: application not found", err, 404))
+			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: application not found", err, 404))
 			return
 		}
 		if errors.Is(err, sources.AuthenticationForSourcesNotFoundErr) {
-			renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources: authentication not found", err, 404))
+			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: authentication not found", err, 404))
 			return
 		}
-		renderError(w, r, payloads.SourcesClientError(r.Context(), "can't fetch arn from sources", err, 500))
+		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 500))
 		return
 	}
 
