@@ -40,6 +40,7 @@ func createAWSReservation() *models.AWSReservation {
 			AccountID: 1,
 			Status:    "Created",
 		},
+		PubkeyID: 1,
 	}
 }
 

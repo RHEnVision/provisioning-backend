@@ -20,22 +20,6 @@ type PubkeyUploadAWSTaskArgs struct {
 	ARN           string `json:"arn"`
 }
 
-func EnqueuePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) error {
-	logger := ctxval.Logger(ctx)
-	logger.Debug().Interface("arg", args).Msgf("Enqueuing pubkey upload AWS job: %+v", args)
-
-	pj := dejq.PendingJob{
-		Type: TypePubkeyUploadAws,
-		Body: args,
-	}
-	err := Queue.Enqueue(ctx, pj)
-	if err != nil {
-		return fmt.Errorf("unable to enqueue: %w", err)
-	}
-
-	return nil
-}
-
 func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started pubkey upload AWS job")
@@ -64,6 +48,23 @@ func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 	pkrDao, err := dao.GetPubkeyResourceDao(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
+	}
+
+	// check presence first
+	skip := true
+	pkrCheck, errDao := pkrDao.GetResourceByProviderType(ctx, args.PubkeyID, models.ProviderTypeAWS)
+	if errDao != nil {
+		var e dao.NoRowsError
+		if errors.As(errDao, &e) {
+			skip = false
+		} else {
+			return fmt.Errorf("unable to check pubkey resource: %w", errDao)
+		}
+	}
+
+	if skip {
+		logger.Info().Msgf("SSH key-pair '%s' already present, no upload needed", pkrCheck.Handle)
+		return nil
 	}
 
 	// create new resource with randomized tag

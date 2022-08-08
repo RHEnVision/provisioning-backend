@@ -1,15 +1,13 @@
 // @no-log
-POST http://localhost:8005/api/provisioning/v1/reservations/aws HTTP/1.1
+POST http://{{hostname}}:{{port}}/{{prefix}}/reservations/aws HTTP/1.1
 Content-Type: application/json
 X-Rh-Identity: {{identity}}
 
 {
 
-  "source_id": 9, 
+  "source_id": 1,
   "ami": "ami-0cff7528ff583bf9a",
   "amount": 1,
   "instance_type": "t1.micro",
-  "pubkey": {
-    "existing_id": 1
-  }
+  "pubkey_id": 1
 }

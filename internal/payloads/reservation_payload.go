@@ -23,12 +23,6 @@ type NoopReservationResponse struct {
 }
 
 type AWSReservationRequest struct {
-	Pubkey struct {
-		ExistingID *int64  `json:"existing_id"`
-		NewName    *string `json:"new_name"`
-		NewBody    *string `json:"new_body"`
-	}
-	// We have pubkey here as a struct and in the AWSReservation
 	*models.AWSReservation
 }
 
@@ -60,13 +54,12 @@ func (p *NoopReservationResponse) Render(_ http.ResponseWriter, _ *http.Request)
 	return nil
 }
 
-func NewReservationResponse(reservation *models.Reservation) render.Renderer {
-	return &ReservationResponse{Reservation: reservation}
-}
-
 func NewAWSReservationResponse(reservation *models.AWSReservation) render.Renderer {
-	// TODO: this needes to be changed to Reservation?
-	return &AWSReservationResponse{AWSReservation: reservation}
+	response := ReservationResponse{Reservation: &models.Reservation{
+		ID:     reservation.ID,
+		Status: reservation.Status,
+	}}
+	return &response
 }
 
 func NewNoopReservationResponse(reservation *models.NoopReservation) render.Renderer {

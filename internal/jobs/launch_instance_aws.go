@@ -23,24 +23,8 @@ type LaunchInstanceAWSTaskArgs struct {
 	Amount int32 `json:"amount"`
 	// Amazon EC2 Instance Type
 	InstanceType string `json:"instance_type"`
-	// The ARN fetched fron Sources which is linked to a specific source
+	// The ARN fetched from Sources which is linked to a specific source
 	ARN string `json:"arn"`
-}
-
-func EnqueueLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
-	logger := ctxval.Logger(ctx)
-	logger.Debug().Interface("arg", args).Msgf("Enqueuing launch instance AWS job: %+v", args)
-
-	pj := dejq.PendingJob{
-		Type: TypeLaunchInstanceAws,
-		Body: args,
-	}
-	err := Queue.Enqueue(ctx, pj)
-	if err != nil {
-		return fmt.Errorf("unable to enqueue: %w", err)
-	}
-
-	return nil
 }
 
 func HandleLaunchInstanceAWS(ctx context.Context, job dejq.Job) error {
