@@ -55,8 +55,8 @@ func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	}
 }
 
-func SourcesClientError(ctx context.Context, message string, err error, status int) *ResponseError {
-	msg := fmt.Sprintf("Sources error: %s: %v", message, err)
+func ClientError(ctx context.Context, client string, message string, err error, status int) *ResponseError {
+	msg := fmt.Sprintf("%v error: %s: %v", client, message, err)
 	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Error().Msg(msg)
 	}
