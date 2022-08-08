@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"errors"
 	"net/http"
 	"strconv"
@@ -14,6 +13,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
+	"github.com/lzap/dejq"
 )
 
 func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
@@ -37,70 +37,25 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
 		return
 	}
-	pkrDao, err := dao.GetPubkeyResourceDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey resource DAO", err))
-		return
-	}
+
+	reservation := payload.AWSReservation
+	reservation.AccountID = accountId
+	reservation.Status = "Created"
+	reservation.Provider = models.ProviderTypeAWS
 
 	// validate pubkey
-	if payload.Pubkey.ExistingID == nil &&
-		payload.Pubkey.NewName == nil &&
-		payload.Pubkey.NewBody == nil {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), InvalidRequestPubkeyNewError))
-	}
-	if payload.Pubkey.ExistingID != nil &&
-		payload.Pubkey.NewName != nil &&
-		payload.Pubkey.NewBody != nil {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), InvalidRequestPubkeyNewError))
-	}
-	if payload.Pubkey.ExistingID == nil && (payload.Pubkey.NewName == nil || payload.Pubkey.NewBody == nil) {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), InvalidRequestPubkeyMissingError))
-	}
-
-	reservation := &models.AWSReservation{
-		Reservation: models.Reservation{
-			Provider:  models.ProviderTypeAWS,
-			AccountID: accountId,
-			Status:    "Created",
-		},
-	}
-
-	// create or validate pubkey
-	var pk *models.Pubkey
-	if payload.Pubkey.ExistingID == nil {
-		pk = &models.Pubkey{
-			AccountID: accountId,
-			Name:      *payload.Pubkey.NewName,
-			Body:      *payload.Pubkey.NewBody,
+	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
+	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
+	if err != nil {
+		var e dao.NoRowsError
+		if errors.As(err, &e) {
+			renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
+		} else {
+			renderError(w, r, payloads.NewDAOError(r.Context(), "get pubkey by id", err))
 		}
-		err = pkDao.Create(r.Context(), pk)
-		if err != nil {
-			renderError(w, r, payloads.NewDAOError(r.Context(), "create pubkey", err))
-			return
-		}
-		logger.Debug().Msgf("Created a new pubkey %d named '%s'", pk.ID, pk.Name)
-	} else {
-		// TODO: Must utilize account ID to scope the SQL search to prevent pubkey hijack
-		logger.Debug().Msgf("Validating existing pubkey %d", *payload.Pubkey.ExistingID)
-		pk, err = pkDao.GetById(r.Context(), *payload.Pubkey.ExistingID)
-		if err != nil {
-			var e dao.NoRowsError
-			if errors.As(err, &e) {
-				renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
-			} else {
-				renderError(w, r, payloads.NewDAOError(r.Context(), "get pubkey by id", err))
-			}
-			return
-		}
-		logger.Debug().Msgf("Found pubkey %d named '%s'", pk.ID, pk.Name)
-
+		return
 	}
-	reservation.PubkeyID = sql.NullInt64{Int64: pk.ID, Valid: true}
-	reservation.AMI = payload.AMI
-	reservation.SourceID = payload.SourceID
-	reservation.Amount = payload.Amount
-	reservation.InstanceType = payload.InstanceType
+	logger.Debug().Msgf("Found pubkey %d named '%s'", pk.ID, pk.Name)
 
 	// create reservation in the database
 	err = rDao.CreateAWS(r.Context(), reservation)
@@ -109,19 +64,6 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
-
-	// find existing resource
-	uploadNeeded := false
-	pkr, errDao := pkrDao.GetResourceByProviderType(r.Context(), pk.ID, models.ProviderTypeAWS)
-	if errDao != nil {
-		var e dao.NoRowsError
-		if errors.As(errDao, &e) {
-			uploadNeeded = true
-		} else {
-			renderError(w, r, payloads.NewDAOError(r.Context(), "get pubkey by id", errDao))
-			return
-		}
-	}
 
 	// Get Sources client
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
@@ -145,43 +87,41 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// enqueue upload job if the key was not uploaded yet
-	if uploadNeeded {
-		logger.Debug().Msgf("Enqueuing upload key job for pubkey %d", pk.ID)
-		args := &jobs.PubkeyUploadAWSTaskArgs{
+	// Prepare jobs
+	logger.Debug().Msgf("Enqueuing upload key job for pubkey %d", pk.ID)
+	uploadPubkeyJob := dejq.PendingJob{
+		Type: jobs.TypePubkeyUploadAws,
+		Body: &jobs.PubkeyUploadAWSTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			PubkeyID:      pk.ID,
 			ARN:           arn,
-		}
-		errUpload := jobs.EnqueuePubkeyUploadAWS(r.Context(), args)
-		if errUpload != nil {
-			renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "EnqueuePubkeyUploadAWS", errUpload))
-			return
-		}
-	} else {
-		logger.Debug().Msgf("Found existing pubkey resource %d, upload not enqueued", pkr.ID)
+		},
 	}
 
-	logger.Debug().Msgf("Enqueuing launch instance job for pubkey %d and source %d", pk.ID, reservation.SourceID)
-
-	argsLaunch := &jobs.LaunchInstanceAWSTaskArgs{
-		AccountID:     accountId,
-		ReservationID: reservation.ID,
-		PubkeyID:      pk.ID,
-		AMI:           reservation.AMI,
-		ARN:           arn,
-		Amount:        reservation.Amount,
-		InstanceType:  reservation.InstanceType,
+	logger.Debug().Msgf("Enqueuing launch instance job for source %d", reservation.SourceID)
+	launchJob := dejq.PendingJob{
+		Type: jobs.TypeLaunchInstanceAws,
+		Body: &jobs.LaunchInstanceAWSTaskArgs{
+			AccountID:     accountId,
+			ReservationID: reservation.ID,
+			PubkeyID:      pk.ID,
+			AMI:           reservation.AMI,
+			ARN:           arn,
+			Amount:        reservation.Amount,
+			InstanceType:  reservation.InstanceType,
+		},
 	}
-	errUpload := jobs.EnqueueLaunchInstanceAWS(r.Context(), argsLaunch)
-	if errUpload != nil {
-		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "EnqueueLaunchInstanceAWS", errUpload))
+
+	// Enqueue all jobs
+	err = jobs.Queue.Enqueue(r.Context(), uploadPubkeyJob, launchJob)
+	if err != nil {
+		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "AWS reservation", err))
 		return
 	}
 
+	// Return response payload
 	if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
 	}
-
 }

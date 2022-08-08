@@ -39,7 +39,7 @@ type AWSReservation struct {
 	Reservation
 
 	// Pubkey ID.
-	PubkeyID sql.NullInt64 `db:"pubkey_id" json:"pubkey_id"`
+	PubkeyID int64 `db:"pubkey_id" json:"pubkey_id"`
 
 	// Source ID.
 	SourceID int64 `db:"source_id" json:"source_id"`

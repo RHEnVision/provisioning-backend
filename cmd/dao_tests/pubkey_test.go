@@ -73,19 +73,20 @@ func TestCreatePubkey(t *testing.T) {
 		t.Errorf("Database setup had failed: %v", err)
 		return
 	}
-	err = pkDao.Create(ctx, createPk())
+	pk := createPk()
+	err = pkDao.Create(ctx, pk)
 	if err != nil {
 		t.Errorf("Create pubkey test had failed: %v", err)
 		return
 	}
 
-	pubkeys, err := pkDao.List(ctx, 10, 0)
+	pk2, err := pkDao.GetById(ctx, pk.ID)
 	if err != nil {
 		t.Errorf("Create pubkey test had failed: %v", err)
 		return
 	}
 
-	assert.Equal(t, 1, len(pubkeys), "Create pubkey test had failed.")
+	assert.Equal(t, pk.Name, pk2.Name, "Create pubkey test had failed.")
 }
 
 func TestListPubkey(t *testing.T) {
@@ -101,7 +102,7 @@ func TestListPubkey(t *testing.T) {
 		t.Errorf("List pubkey test had failed: %v", err)
 		return
 	}
-	assert.Equal(t, 1, len(pubkeys), "List Pubkey error.")
+	assert.Equal(t, 2, len(pubkeys), "List Pubkey error.")
 }
 
 func TestUpdatePubkey(t *testing.T) {
