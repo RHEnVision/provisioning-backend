@@ -11,7 +11,7 @@ CREATE TABLE reservations
   UNIQUE (id, provider)
 );
 
-CREATE TABLE instance_reservation
+CREATE TABLE reservation_instances
 (
   reservation_id BIGINT NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
   instance_id TEXT NOT NULL UNIQUE

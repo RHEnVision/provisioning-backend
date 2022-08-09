@@ -97,12 +97,12 @@ func HandleLaunchInstanceAWS(ctx context.Context, job dejq.Job) error {
 
 	// For each instance that was created in AWS, add it as a DB record
 	for _, instanceId := range instances {
-		err = resD.CreateInstance(ctx, &models.InstancesReservation{
+		err = resD.CreateInstance(ctx, &models.ReservationInstance{
 			ReservationID: args.ReservationID,
 			InstanceID:    *instanceId,
 		})
 		if err != nil {
-			return fmt.Errorf("cannot create InstancesReservation for id %d: %w", instanceId, err)
+			return fmt.Errorf("cannot create instance reservation for id %d: %w", instanceId, err)
 		}
 		logger.Info().Str("instance_id", *instanceId).Msgf("Created new instance via AWS reservation %s", *awsReservationId)
 	}

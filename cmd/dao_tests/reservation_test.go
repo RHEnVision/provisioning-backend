@@ -26,8 +26,8 @@ func createNoopReservation() *models.NoopReservation {
 	}
 }
 
-func createInstancesReservation() *models.InstancesReservation {
-	return &models.InstancesReservation{
+func createInstancesReservation() *models.ReservationInstance {
+	return &models.ReservationInstance{
 		ReservationID: 1,
 		InstanceID:    "1",
 	}
