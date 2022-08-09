@@ -6,7 +6,7 @@ X-Rh-Identity: {{identity}}
 {
 
   "source_id": 1,
-  "ami": "ami-0cff7528ff583bf9a",
+  "image_id": "2bc640f6-927a-404a-9594-5b2da7e06608",
   "amount": 1,
   "instance_type": "t1.micro",
   "pubkey_id": 1

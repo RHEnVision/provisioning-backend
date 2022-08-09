@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -99,6 +101,20 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
+	// Get Image builder client
+	IBClient, err := clients.GetImageBuilderClient(r.Context())
+	logger.Trace().Msg("Creating IB client")
+	if err != nil {
+		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "image builder client", err))
+		return
+	}
+
+	// Get AMI
+	ami, err := IBClient.GetAWSAmi(r.Context(), reservation.ImageID)
+	if err != nil {
+		renderError(w, r, payloads.ClientError(r.Context(), "Image Builder", "can't get ami from image builder", err, 500))
+	}
+
 	logger.Debug().Msgf("Enqueuing launch instance job for source %d", reservation.SourceID)
 	launchJob := dejq.PendingJob{
 		Type: jobs.TypeLaunchInstanceAws,
@@ -106,7 +122,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			PubkeyID:      pk.ID,
-			AMI:           reservation.AMI,
+			AMI:           ami,
 			ARN:           arn,
 			Amount:        reservation.Amount,
 			InstanceType:  reservation.InstanceType,
