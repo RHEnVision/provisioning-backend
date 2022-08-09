@@ -26,9 +26,9 @@ func createNoopReservation() *models.NoopReservation {
 	}
 }
 
-func createInstancesReservation() *models.ReservationInstance {
+func createInstancesReservation(reservationId int64) *models.ReservationInstance {
 	return &models.ReservationInstance{
-		ReservationID: 1,
+		ReservationID: reservationId,
 		InstanceID:    "1",
 	}
 }
@@ -111,13 +111,14 @@ func TestCreateInstance(t *testing.T) {
 		return
 	}
 
-	err = reservationDao.CreateAWS(ctx, createAWSReservation())
+	reservation := createAWSReservation()
+	err = reservationDao.CreateAWS(ctx, reservation)
 	if err != nil {
 		t.Errorf("createAWS failed: %v", err)
 		return
 	}
 
-	err = reservationDao.CreateInstance(ctx, createInstancesReservation())
+	err = reservationDao.CreateInstance(ctx, createInstancesReservation(reservation.ID))
 	if err != nil {
 		t.Errorf("createInstance failed: %v", err)
 		return
