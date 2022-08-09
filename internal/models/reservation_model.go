@@ -57,7 +57,7 @@ type AWSReservation struct {
 	AWSReservationID string `db:"aws_reservation_id" json:"aws_reservation_id"`
 }
 
-type InstancesReservation struct {
+type ReservationInstance struct {
 	// Reservation ID.
 	ReservationID int64 `db:"reservation_id" json:"reservation_id"`
 

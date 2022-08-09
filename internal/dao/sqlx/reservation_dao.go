@@ -17,8 +17,8 @@ const (
 	finishReservationStatus   = `UPDATE reservations SET status = $2, success = $3, finished_at = now() WHERE id = $1 RETURNING *`
 	deleteReservationById     = `DELETE FROM reservations WHERE id = $1`
 	listReservations          = `SELECT * FROM reservations ORDER BY id LIMIT $1 OFFSET $2`
-	createInstance            = `INSERT INTO instance_reservation (reservation_id, instance_id) VALUES ($1, $2)`
-	listInstanceReservations  = `SELECT * FROM instance_reservation ORDER BY reservation_id LIMIT $1 OFFSET $2`
+	createInstance            = `INSERT INTO reservation_instances (reservation_id, instance_id) VALUES ($1, $2)`
+	listInstanceReservations  = `SELECT * FROM reservation_instances ORDER BY reservation_id LIMIT $1 OFFSET $2`
 )
 
 type reservationDaoSqlx struct {
@@ -123,7 +123,7 @@ func (di *reservationDaoSqlx) CreateAWS(ctx context.Context, reservation *models
 	return nil
 }
 
-func (di *reservationDaoSqlx) CreateInstance(ctx context.Context, reservation *models.InstancesReservation) error {
+func (di *reservationDaoSqlx) CreateInstance(ctx context.Context, reservation *models.ReservationInstance) error {
 	err := dao.WithTransaction(ctx, func(tx *sqlx.Tx) error {
 		query := createInstance
 		stmt := di.createInstance
@@ -154,10 +154,10 @@ func (di *reservationDaoSqlx) List(ctx context.Context, limit, offset int64) ([]
 	return result, nil
 }
 
-func (di *reservationDaoSqlx) ListInstances(ctx context.Context, limit, offset int64) ([]*models.InstancesReservation, error) {
+func (di *reservationDaoSqlx) ListInstances(ctx context.Context, limit, offset int64) ([]*models.ReservationInstance, error) {
 	query := listInstanceReservations
 	stmt := di.listInstanceReservations
-	var result []*models.InstancesReservation
+	var result []*models.ReservationInstance
 
 	err := stmt.SelectContext(ctx, &result, limit, offset)
 	if err != nil {
