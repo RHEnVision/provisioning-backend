@@ -45,6 +45,15 @@ func WithAccountDaoOne(parent context.Context) context.Context {
 	return ctx
 }
 
+func WithAccountDaoNull(parent context.Context) context.Context {
+	if parent.Value(accountCtxKey) != nil {
+		panic(ContextSecondInitializationError)
+	}
+
+	ctx := context.WithValue(parent, accountCtxKey, buildAccountDaoWithNullValue())
+	return ctx
+}
+
 func getAccountDaoStub(ctx context.Context) (*accountDaoStub, error) {
 	var ok bool
 	var accdao *accountDaoStub

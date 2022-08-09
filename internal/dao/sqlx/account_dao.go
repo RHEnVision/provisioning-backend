@@ -6,8 +6,6 @@ import (
 	"errors"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-	"github.com/aws/smithy-go/ptr"
-
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -113,7 +111,8 @@ func (di *accountDaoSqlx) GetOrCreateByIdentity(ctx context.Context, orgId strin
 	} // else it is NoRows and we just continue
 	ctxval.Logger(ctx).Debug().Msgf("Account not found by account number %s", accountNumber)
 
-	acc = &models.Account{OrgID: orgId, AccountNumber: ptr.String(accountNumber)}
+	acc = &models.Account{OrgID: orgId, AccountNumber: sql.NullString{String: accountNumber, Valid: accountNumber != ""}}
+
 	// This can result in duplicate error if two request try this at once
 	// in which case we just error out and return 500
 	if err := di.Create(ctx, acc); err != nil {
