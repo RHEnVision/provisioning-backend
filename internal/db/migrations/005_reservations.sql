@@ -25,7 +25,7 @@ CREATE TABLE aws_reservation_details
   source_id INTEGER NOT NULL,
   instance_type TEXT NOT NULL,
   amount INTEGER NOT NULL,
-  ami TEXT NOT NULL,
+  image_id TEXT NOT NULL,
   aws_reservation_id TEXT,
 
   FOREIGN KEY (reservation_id, provider) REFERENCES reservations(id, provider) ON DELETE CASCADE,

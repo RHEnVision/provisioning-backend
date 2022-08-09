@@ -51,7 +51,7 @@ type AWSReservation struct {
 	Amount int32 `db:"amount" json:"amount"`
 
 	// The ID of the image from which the instance is created.
-	AMI string `db:"ami" json:"ami"`
+	ImageID string `db:"image_id" json:"image_id"`
 
 	// The ID of the aws reservation which was created.
 	AWSReservationID string `db:"aws_reservation_id" json:"aws_reservation_id"`
