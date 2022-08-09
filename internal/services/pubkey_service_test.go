@@ -11,6 +11,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/testing/factories"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,12 +20,25 @@ func TestListPubkeysHandler(t *testing.T) {
 	ctx := stubs.WithAccountDaoOne(context.Background())
 	ctx = identity.WithTenant(t, ctx)
 	ctx = stubs.WithPubkeyDao(ctx)
-	err := stubs.GeneratePubkey(ctx, models.Pubkey{})
-	assert.Nil(t, err, fmt.Sprintf("Error while generating a pubkey: %v", err))
-	err = stubs.GeneratePubkey(ctx, models.Pubkey{})
-	assert.Nil(t, err, fmt.Sprintf("Error while generating a pubkey: %v", err))
+	err := stubs.AddPubkey(ctx, &models.Pubkey{
+		Name: factories.GetSequenceName("pubkey"),
+		Body: factories.GenerateRSAPubKey(t),
+	})
+	if err != nil {
+		t.Fatalf("failed to add stubbed key: %v", err)
+	}
+	err = stubs.AddPubkey(ctx, &models.Pubkey{
+		Name: factories.GetSequenceName("pubkey"),
+		Body: factories.GenerateRSAPubKey(t),
+	})
+	if err != nil {
+		t.Fatalf("failed to add stubbed key: %v", err)
+	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/pubkeys", nil)
+	if err != nil {
+		t.Fatalf("Error creating a new request: %v", err)
+	}
 	assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
 
 	rr := httptest.NewRecorder()
