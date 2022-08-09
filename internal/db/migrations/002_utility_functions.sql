@@ -61,9 +61,7 @@ BEGIN
             WHERE table_schema = 'public'
               AND table_type = 'BASE TABLE'
               AND table_name !~* '^(schema_version|jobs|job_dependencies|heartbeats)$'
-              AND table_name !~* '_reservation_details$'
-              AND table_name !~* 'instance_reservation$'
-
+              AND table_name !~* '_?reservation_(details|instances)$'
     LOOP
       EXECUTE format(
         'SELECT setval(pg_get_serial_sequence(''"%s"'', ''id''), (SELECT COALESCE(MAX("id"), 1) from "%s"))', tn, tn);
