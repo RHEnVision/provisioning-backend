@@ -391,15 +391,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/v1.PubkeyResponse"
-                }
-              }
-            },
-            "description": "Returned on success."
+          "204": {
+            "description": "The Pubkey was deleted successfully."
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
