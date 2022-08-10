@@ -1,11 +1,24 @@
 --
--- Testing seed data, to execute this file during migration set DB_SEED variable to "dao_test".
+-- Truncate and seed test data. Only use for testing!
 --
 BEGIN;
 
+-- Truncate all tables in the integration schema
+DO
+$do$
+  BEGIN
+    EXECUTE
+      (SELECT 'TRUNCATE TABLE ' || string_agg(oid::regclass::text, ', ') || ' CASCADE'
+       FROM pg_class
+       WHERE relkind = 'r'
+         AND relnamespace = 'integration'::regnamespace);
+  END
+$do$;
+
+-- Seed the data
 INSERT INTO accounts(id, account_number, org_id)
 VALUES (1, '1', '1')
-  ON CONFLICT DO NOTHING;
+ON CONFLICT DO NOTHING;
 
 INSERT INTO pubkeys(id, account_id, name, body)
 VALUES (1, 1, 'lzap-ed25519-2021',

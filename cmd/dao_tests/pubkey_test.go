@@ -78,18 +78,18 @@ func TestUpdatePubkey(t *testing.T) {
 	defer teardownPubkey(t)
 	err := pkDao.Create(ctx, createPk())
 	if err != nil {
-		t.Errorf("Create pubkey test had failed. %s", err)
+		t.Errorf("Create pubkey test failed. %s", err)
 		return
 	}
 	err = pkDao.Update(ctx, updatePk)
 	if err != nil {
-		t.Errorf("Update pubkey test had failed. %s", err)
+		t.Errorf("Update pubkey test failed. %s", err)
 		return
 	}
 
 	pubkeys, err := pkDao.List(ctx, 10, 0)
 	if err != nil {
-		t.Errorf("Update pubkey test had failed. %s", err)
+		t.Errorf("Update pubkey test failed. %s", err)
 		return
 	}
 	assert.Equal(t, updatePk.Name, pubkeys[0].Name, "Update pubkey test had failed.")
