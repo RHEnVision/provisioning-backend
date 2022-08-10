@@ -44,29 +44,24 @@ func createAWSReservation() *models.AWSReservation {
 	}
 }
 
-func SetupReservation(t *testing.T, s string) (dao.ReservationDao, context.Context, error) {
-	err := db.Seed("dao_test")
-	if err != nil {
-		t.Errorf("Error purging the database: %v", err)
-		return nil, nil, err
-	}
+func setupReservation(t *testing.T) (dao.ReservationDao, context.Context) {
+	setup()
 	ctx := identity.WithTenant(t, context.Background())
 	reservationDao, err := dao.GetReservationDao(ctx)
 	if err != nil {
-		t.Errorf("%s test failed: %v", s, err)
-		return nil, nil, err
+		panic(err)
 	}
-	return reservationDao, ctx, nil
+	return reservationDao, ctx
+}
+
+func teardownReservation(_ *testing.T) {
+	teardown()
 }
 
 func TestCreateNoop(t *testing.T) {
-	CleanUpDatabase(t)
-	reservationDao, ctx, err := SetupReservation(t, "Create noop reservation")
-	if err != nil {
-		t.Errorf("Database setup failed: %v", err)
-		return
-	}
-	err = reservationDao.CreateNoop(ctx, createNoopReservation())
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
+	err := reservationDao.CreateNoop(ctx, createNoopReservation())
 	if err != nil {
 		t.Errorf("createNoop failed: %v", err)
 		return
@@ -82,13 +77,9 @@ func TestCreateNoop(t *testing.T) {
 }
 
 func TestCreateAWS(t *testing.T) {
-	CleanUpDatabase(t)
-	reservationDao, ctx, err := SetupReservation(t, "Create AWS reservation")
-	if err != nil {
-		t.Errorf("Database setup failed: %v", err)
-		return
-	}
-	err = reservationDao.CreateAWS(ctx, createAWSReservation())
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
+	err := reservationDao.CreateAWS(ctx, createAWSReservation())
 	if err != nil {
 		t.Errorf("createAWS failed: %v", err)
 		return
@@ -104,15 +95,11 @@ func TestCreateAWS(t *testing.T) {
 }
 
 func TestCreateInstance(t *testing.T) {
-	CleanUpDatabase(t)
-	reservationDao, ctx, err := SetupReservation(t, "Create Instance reservation")
-	if err != nil {
-		t.Errorf("Database setup failed: %v", err)
-		return
-	}
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
 
 	reservation := createAWSReservation()
-	err = reservationDao.CreateAWS(ctx, reservation)
+	err := reservationDao.CreateAWS(ctx, reservation)
 	if err != nil {
 		t.Errorf("createAWS failed: %v", err)
 		return
@@ -134,13 +121,9 @@ func TestCreateInstance(t *testing.T) {
 }
 
 func TestListReservation(t *testing.T) {
-	CleanUpDatabase(t)
-	reservationDao, ctx, err := SetupReservation(t, "List reservation")
-	if err != nil {
-		t.Errorf("Database setup failed: %v", err)
-		return
-	}
-	err = reservationDao.CreateAWS(ctx, createAWSReservation())
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
+	err := reservationDao.CreateAWS(ctx, createAWSReservation())
 	if err != nil {
 		t.Errorf("createAWS failed: %v", err)
 		return
@@ -160,16 +143,11 @@ func TestListReservation(t *testing.T) {
 }
 
 func TestUpdateReservationIDForAWS(t *testing.T) {
-	CleanUpDatabase(t)
-	reservationDao, ctx, err := SetupReservation(t, "Update status reservation")
-	if err != nil {
-		t.Errorf("Database setup failed. %s", err)
-		return
-	}
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
 
 	reservation := createAWSReservation()
-
-	err = reservationDao.CreateAWS(ctx, reservation)
+	err := reservationDao.CreateAWS(ctx, reservation)
 	if err != nil {
 		t.Errorf("createAWS failed: %v", err)
 		return
@@ -200,13 +178,9 @@ func TestUpdateReservationIDForAWS(t *testing.T) {
 }
 
 func TestUpdateStatusReservation(t *testing.T) {
-	CleanUpDatabase(t)
-	reservationDao, ctx, err := SetupReservation(t, "Update status reservation")
-	if err != nil {
-		t.Errorf("Database setup failed. %s", err)
-		return
-	}
-	err = reservationDao.CreateNoop(ctx, createNoopReservation())
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
+	err := reservationDao.CreateNoop(ctx, createNoopReservation())
 	if err != nil {
 		t.Errorf("createNoop failed. %s", err)
 		return
@@ -233,13 +207,9 @@ func TestUpdateStatusReservation(t *testing.T) {
 }
 
 func TestDeleteReservation(t *testing.T) {
-	CleanUpDatabase(t)
-	reservationDao, ctx, err := SetupReservation(t, "Delete reservation")
-	if err != nil {
-		t.Errorf("Database setup failed: %v", err)
-		return
-	}
-	err = reservationDao.CreateNoop(ctx, createNoopReservation())
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
+	err := reservationDao.CreateNoop(ctx, createNoopReservation())
 	if err != nil {
 		t.Errorf("createNoop failed: %v", err)
 		return
@@ -265,13 +235,9 @@ func TestDeleteReservation(t *testing.T) {
 }
 
 func TestFinishReservation(t *testing.T) {
-	CleanUpDatabase(t)
-	reservationDao, ctx, err := SetupReservation(t, "Delete reservation")
-	if err != nil {
-		t.Errorf("Database setup failed: %v", err)
-		return
-	}
-	err = reservationDao.CreateNoop(ctx, createNoopReservation())
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
+	err := reservationDao.CreateNoop(ctx, createNoopReservation())
 	if err != nil {
 		t.Errorf("createNoop failed: %v", err)
 		return
