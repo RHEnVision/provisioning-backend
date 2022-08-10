@@ -33,12 +33,16 @@ func (c *ImageBuilderClient) GetAWSAmi(ctx context.Context, composeID string) (s
 	if err != nil {
 		return "", err
 	}
+	ctxval.Logger(ctx).Debug().Msgf("Verifying AWS type")
 	if imageStatus.Type != UploadTypesAws {
 		ctxval.Logger(ctx).Warn().Err(err).Msg("Image is not AWS type")
 		return "", BadImageTypeErr
 	}
-	awsStatus := imageStatus.Options.(AWSUploadStatus)
-	return awsStatus.Ami, nil
+	awsStatus, ok := imageStatus.Options.(map[string]interface{})
+	if !ok {
+		return "", BadImageTypeErr
+	}
+	return awsStatus["ami"].(string), nil
 }
 
 func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
@@ -56,7 +60,8 @@ func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID str
 		ctxval.Logger(ctx).Warn().Msgf("Image builder replied with unexpected status while fetching image status: %v", statusCode)
 		return nil, ClientErr
 	}
-	err = verifyImage(resp.JSON200)
+
+	err = verifyImage(ctx, resp.JSON200)
 	if err != nil {
 		ctxval.Logger(ctx).Warn().Err(err).Msg("Image status in not ready")
 		return nil, err
@@ -65,7 +70,8 @@ func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID str
 
 }
 
-func verifyImage(compose *ComposeStatus) error {
+func verifyImage(ctx context.Context, compose *ComposeStatus) error {
+	ctxval.Logger(ctx).Debug().Msgf("Verifying image is ready to use")
 	if compose.ImageStatus.Status != ImageStatusStatusSuccess {
 		return ImageStatusErr
 	}
