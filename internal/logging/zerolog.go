@@ -3,8 +3,8 @@ package logging
 import (
 	"fmt"
 	"os"
-	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -24,11 +24,16 @@ func init() {
 	hostname = h
 }
 
-func truncateText(s string, max int) string {
-	if max > len(s) {
-		return s
+func truncateText(str string, length int) string {
+	if length <= 0 {
+		return ""
 	}
-	return s[:strings.LastIndex(s[:max], " ")] + "...\""
+
+	if utf8.RuneCountInString(str) <= length {
+		return str
+	}
+
+	return string([]rune(str)[:length]) + "...\""
 }
 
 func decorate(l zerolog.Logger) zerolog.Logger {
@@ -40,7 +45,6 @@ func InitializeStdout() zerolog.Logger {
 	return decorate(log.Output(zerolog.ConsoleWriter{
 		Out:        os.Stdout,
 		TimeFormat: time.Kitchen,
-		NoColor:    true,
 		FormatFieldValue: func(i interface{}) string {
 			return truncateText(fmt.Sprintf("%s", i), 40)
 		},
