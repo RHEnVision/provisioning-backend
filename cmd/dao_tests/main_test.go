@@ -17,8 +17,6 @@ import (
 )
 
 func setup() {
-	dbDrop()
-	dbMigrate()
 	dbSeed()
 }
 
@@ -59,6 +57,8 @@ func dbSeed() {
 
 func TestMain(t *testing.M) {
 	initEnvironment()
+	dbDrop()
+	dbMigrate()
 	exitVal := t.Run()
 	dbDrop()
 	os.Exit(exitVal)
