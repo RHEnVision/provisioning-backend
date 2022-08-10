@@ -20,7 +20,8 @@ func init() {
 }
 
 func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
-	c, err := NewClientWithResponses(config.ImageBuilder.URL)
+	proxiedClient, err := clients.GetProxiedClient()
+	c, err := NewClientWithResponses(config.ImageBuilder.URL, WithHTTPClient(proxiedClient))
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +44,7 @@ func (c *ImageBuilderClient) GetAWSAmi(ctx context.Context, composeID string) (s
 
 func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
 	ctxval.Logger(ctx).Info().Msgf("Fetching image status %v", composeID)
-	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddIdentityHeader)
+	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddBasicAuth)
 	if err != nil {
 		ctxval.Logger(ctx).Warn().Err(err).Msg("Failed to fetch image status from image builder")
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
@@ -56,6 +57,7 @@ func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID str
 		ctxval.Logger(ctx).Warn().Msgf("Image builder replied with unexpected status while fetching image status: %v", statusCode)
 		return nil, ClientErr
 	}
+	ctxval.Logger(ctx).Info().Msgf("Fetching image status was finished %+v\n", resp.JSON200.ImageStatus.UploadStatus)
 	err = verifyImage(resp.JSON200)
 	if err != nil {
 		ctxval.Logger(ctx).Warn().Err(err).Msg("Image status in not ready")
