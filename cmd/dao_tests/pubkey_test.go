@@ -1,24 +1,16 @@
 //go:build integration
 // +build integration
 
-// To override application configuration for integration tests, copy local.yaml into this directory.
-
 package main
 
 import (
 	"context"
-	"fmt"
-	"os"
 	"testing"
 
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
-	"github.com/RHEnVision/provisioning-backend/internal/db"
-	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
-	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,56 +22,25 @@ func createPk() *models.Pubkey {
 	}
 }
 
-func InitTestEnvironment() error {
-	config.Initialize()
-	log.Logger = logging.InitializeStdout()
-
-	err := db.Initialize("integration")
-	if err != nil {
-		panic(fmt.Errorf("database setup had failed: %v", err))
-	}
-	return nil
-}
-
-func Setup(t *testing.T, s string) (dao.PubkeyDao, context.Context, error) {
-	err := db.Seed("dao_test")
-	if err != nil {
-		t.Errorf("Error purging the database: %v", err)
-		return nil, nil, err
-	}
+func setupPubkey(t *testing.T) (dao.PubkeyDao, context.Context) {
+	setup()
 	ctx := identity.WithTenant(t, context.Background())
 	pkDao, err := dao.GetPubkeyDao(ctx)
 	if err != nil {
-		t.Errorf("%s test had failed: %v", s, err)
-		return nil, nil, err
+		panic(err)
 	}
-	return pkDao, ctx, nil
+	return pkDao, ctx
 }
 
-func CleanUpDatabase(t *testing.T) {
-	err := db.Seed("drop_integration")
-	if err != nil {
-		t.Errorf("Error purging the database: %v", err)
-		return
-	}
-
-	err = db.Migrate("integration")
-
-	if err != nil {
-		t.Errorf("Error running migration: %v", err)
-		return
-	}
+func teardownPubkey(_ *testing.T) {
+	teardown()
 }
 
 func TestCreatePubkey(t *testing.T) {
-	CleanUpDatabase(t)
-	pkDao, ctx, err := Setup(t, "Create pubkey")
-	if err != nil {
-		t.Errorf("Database setup had failed: %v", err)
-		return
-	}
+	pkDao, ctx := setupPubkey(t)
+	defer teardownPubkey(t)
 	pk := createPk()
-	err = pkDao.Create(ctx, pk)
+	err := pkDao.Create(ctx, pk)
 	if err != nil {
 		t.Errorf("Create pubkey test had failed: %v", err)
 		return
@@ -95,13 +56,9 @@ func TestCreatePubkey(t *testing.T) {
 }
 
 func TestListPubkey(t *testing.T) {
-	CleanUpDatabase(t)
-	pkDao, ctx, err := Setup(t, "List pubkey")
-	if err != nil {
-		t.Errorf("Database setup had failed: %v", err)
-		return
-	}
-	err = pkDao.Create(ctx, createPk())
+	pkDao, ctx := setupPubkey(t)
+	defer teardownPubkey(t)
+	err := pkDao.Create(ctx, createPk())
 	pubkeys, err := pkDao.List(ctx, 100, 0)
 	if err != nil {
 		t.Errorf("List pubkey test had failed: %v", err)
@@ -111,19 +68,19 @@ func TestListPubkey(t *testing.T) {
 }
 
 func TestUpdatePubkey(t *testing.T) {
-	CleanUpDatabase(t)
 	updatePk := &models.Pubkey{
 		ID:        1,
 		AccountID: 1,
 		Name:      "avitova-ed25519-2021",
 		Body:      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN avitova",
 	}
-	pkDao, ctx, err := Setup(t, "Update pubkey")
+	pkDao, ctx := setupPubkey(t)
+	defer teardownPubkey(t)
+	err := pkDao.Create(ctx, createPk())
 	if err != nil {
-		t.Errorf("Database setup had failed. %s", err)
+		t.Errorf("Create pubkey test had failed. %s", err)
 		return
 	}
-	err = pkDao.Create(ctx, createPk())
 	err = pkDao.Update(ctx, updatePk)
 	if err != nil {
 		t.Errorf("Update pubkey test had failed. %s", err)
@@ -139,13 +96,9 @@ func TestUpdatePubkey(t *testing.T) {
 }
 
 func TestGetPubkeyById(t *testing.T) {
-	CleanUpDatabase(t)
-	pkDao, ctx, err := Setup(t, "Get pubkey")
-	if err != nil {
-		t.Errorf("Database setup had failed. %s", err)
-		return
-	}
-	err = pkDao.Create(ctx, createPk())
+	pkDao, ctx := setupPubkey(t)
+	defer teardownPubkey(t)
+	err := pkDao.Create(ctx, createPk())
 	if err != nil {
 		t.Errorf("Delete pubkey test had failed. %s", err)
 		return
@@ -161,13 +114,9 @@ func TestGetPubkeyById(t *testing.T) {
 }
 
 func TestDeletePubkeyById(t *testing.T) {
-	CleanUpDatabase(t)
-	pkDao, ctx, err := Setup(t, "Delete pubkey")
-	if err != nil {
-		t.Errorf("Database setup had failed")
-		return
-	}
-	err = pkDao.Create(ctx, createPk())
+	pkDao, ctx := setupPubkey(t)
+	defer teardownPubkey(t)
+	err := pkDao.Create(ctx, createPk())
 	if err != nil {
 		t.Errorf("Delete pubkey test had failed. %s", err)
 		return
@@ -188,10 +137,4 @@ func TestDeletePubkeyById(t *testing.T) {
 		return
 	}
 	assert.Equal(t, len(pubkeys)-1, len(pubkeysAfter), "Delete Pubkey error.")
-}
-
-func TestMain(t *testing.M) {
-	InitTestEnvironment()
-	exitVal := t.Run()
-	os.Exit(exitVal)
 }
