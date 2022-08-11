@@ -1,8 +1,62 @@
 package services
 
-import "net/http"
+import (
+	"errors"
+	"net/http"
+	"strings"
 
-func StatusService(w http.ResponseWriter, r *http.Request) {
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/payloads"
+	"github.com/go-chi/chi/v5"
+)
+
+func write200(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
+}
+
+func write503(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(http.StatusServiceUnavailable)
+}
+
+func StatusService(w http.ResponseWriter, r *http.Request) {
+	write200(w, r)
+}
+
+func ReadyService(w http.ResponseWriter, r *http.Request) {
+	write200(w, r)
+}
+
+var UnknownReadinessServiceErr = errors.New("unknown service for readiness test")
+
+func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
+	service := chi.URLParam(r, "SRV")
+	switch strings.ToLower(service) {
+	case "sources":
+		client, err := clients.GetSourcesClient(r.Context())
+		if err != nil {
+			renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client", err))
+			return
+		}
+		err = client.Ready(r.Context())
+		if err != nil {
+			write503(w, r)
+			return
+		}
+	case "ib", "image_builder", "imagebuilder":
+		client, err := clients.GetImageBuilderClient(r.Context())
+		if err != nil {
+			renderError(w, r, payloads.NewClientInitializationError(r.Context(), "image builder client", err))
+			return
+		}
+		err = client.Ready(r.Context())
+		if err != nil {
+			write503(w, r)
+			return
+		}
+	default:
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "SRV", UnknownReadinessServiceErr))
+		return
+	}
 }

@@ -3,7 +3,11 @@ package main
 import (
 	"syscall"
 
-	// Performs initialization of DAO implementation, must be initialized before any database packages.
+	// HTTP client implementations
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
+
+	// DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 
