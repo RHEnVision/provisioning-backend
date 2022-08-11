@@ -10,6 +10,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+type proxy struct {
+	URL string
+}
+
 var config struct {
 	App struct {
 		Name    string
@@ -58,10 +62,16 @@ var config struct {
 	}
 	RestEndpoints struct {
 		ImageBuilder struct {
-			URL string
+			URL      string
+			Username string
+			Password string
+			Proxy    proxy
 		}
 		Sources struct {
-			URL string
+			URL      string
+			Username string
+			Password string
+			Proxy    proxy
 		}
 	}
 	Worker struct {

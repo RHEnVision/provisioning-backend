@@ -35,6 +35,14 @@ func apiRouter() http.Handler {
 	r.Group(func(r chi.Router) {
 		r.Use(identity.EnforceIdentity)
 		r.Use(middleware.AccountMiddleware)
+
+		r.Route("/ready", func(r chi.Router) {
+			r.Get("/", s.ReadyService)
+			r.Route("/{SRV}", func(r chi.Router) {
+				r.Get("/", s.ReadyBackendService)
+			})
+		})
+
 		r.Route("/sources", func(r chi.Router) {
 			r.Get("/", s.ListSources)
 		})

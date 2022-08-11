@@ -13,6 +13,8 @@ type Sources interface {
 	GetArn(ctx context.Context, sourceId ID) (string, error)
 	// GetProvisioningTypeId might not need exposing
 	GetProvisioningTypeId(ctx context.Context) (string, error)
+	// Ready returns readiness information
+	Ready(ctx context.Context) error
 }
 
 var GetImageBuilderClient func(ctx context.Context) (ImageBuilder, error)
@@ -20,4 +22,6 @@ var GetImageBuilderClient func(ctx context.Context) (ImageBuilder, error)
 type ImageBuilder interface {
 	// GetAWSAmi returns related AWS image AMI identifer
 	GetAWSAmi(ctx context.Context, composeID string) (string, error)
+	// Ready returns readiness information
+	Ready(ctx context.Context) error
 }

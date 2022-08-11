@@ -22,7 +22,19 @@ func init() {
 }
 
 func newSourcesClient(ctx context.Context) (clients.Sources, error) {
-	c, err := NewClientWithResponses(config.Sources.URL)
+	c, err := NewClientWithResponses(config.Sources.URL, func(c *Client) error {
+		if config.Sources.Proxy.URL != "" {
+			if config.Features.Environment != "development" {
+				return clients.ClientProxyProductionUseErr
+			}
+			client, err := clients.NewProxyDoer(ctx, config.Sources.Proxy.URL)
+			if err != nil {
+				return fmt.Errorf("cannot create proxy doer: %w", err)
+			}
+			c.Client = client
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -48,6 +60,20 @@ type dataElement struct {
 	Data []appType `json:"data"`
 }
 
+func (c *SourcesClient) Ready(ctx context.Context) error {
+	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
+	if err != nil {
+		ctxval.Logger(ctx).Error().Err(err).Msgf("Readiness request failed for sources: %s", err.Error())
+		return err
+	}
+	defer resp.Body.Close()
+	if !parsing.IsHTTPStatus2xx(resp.StatusCode) {
+		ctxval.Logger(ctx).Warn().Msgf("Readiness response from sources: %d", resp.StatusCode)
+		return SourcesClientErr
+	}
+	return nil
+}
+
 func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
 	ctxval.Logger(ctx).Info().Msg("Listing provisioning sources")
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
@@ -55,7 +81,7 @@ func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients
 		ctxval.Logger(ctx).Warn().Err(err).Msg("Failed to get provisioning type id")
 		return nil, fmt.Errorf("failed to get provisioning app type: %w", err)
 	}
-	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddIdentityHeader)
+	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
 		ctxval.Logger(ctx).Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return nil, fmt.Errorf("failed to get ApplicationTypes: %w", err)
@@ -79,7 +105,7 @@ func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients
 func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string, error) {
 	ctxval.Logger(ctx).Info().Msgf("Getting ARN of source %v", sourceId)
 	// Get all the authentications linked to a specific source
-	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddIdentityHeader)
+	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
 		return "", fmt.Errorf("cannot list source authentication: %w", err)
 	}
@@ -99,7 +125,7 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 	}
 	// Get the resource_id which equals to application_id
 	// and check that application_type_id in /applications/<app_id> equals to provisioning id
-	res, err := c.client.ShowApplicationWithResponse(ctx, *auth.ResourceId, headers.AddIdentityHeader)
+	res, err := c.client.ShowApplicationWithResponse(ctx, *auth.ResourceId, headers.AddSourcesIdentityHeader)
 	if err != nil {
 		return "", fmt.Errorf("cannot list source authentication: %w", err)
 	}
