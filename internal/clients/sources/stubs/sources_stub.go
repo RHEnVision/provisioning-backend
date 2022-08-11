@@ -43,6 +43,11 @@ func getSourcesClientStub(ctx context.Context) (si clients.Sources, err error) {
 	}
 	return si, err
 }
+
+func (_ *SourcesClientStub) Ready(ctx context.Context) error {
+	return nil
+}
+
 func (mock *SourcesClientStub) GetArn(ctx context.Context, sourceId sources.ID) (string, error) {
 	return "arn:aws:iam::230214684733:role/Test", nil
 }

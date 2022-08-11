@@ -39,9 +39,19 @@ cloudwatch:
 
 restEndpoints:
   imageBuilder:
-    url:
+    url: https://xxx.stage.redhat.com/api/image-builder/v1
+    # basic auth and proxy is only useful for development against stage
+    username: stage-account
+    password: only_for_development
+    proxy:
+      url: http://squid.xxx.redhat.com:3128
   sources:
-    url:
+    url: https://xxx.stage.redhat.com/api/sources/v3.1
+    # basic auth and proxy is only useful for development against stage
+    username: stage-account
+    password: only_for_development
+    proxy:
+      url: http://squid.xxx.redhat.com:3128
 
 featureFlags:
   # development or production
