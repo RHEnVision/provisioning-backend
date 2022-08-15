@@ -10,8 +10,9 @@ import (
 type daoStubCtxKeyType int
 
 const (
-	accountCtxKey daoStubCtxKeyType = iota
-	pubkeyCtxKey  daoStubCtxKeyType = iota
+	accountCtxKey     daoStubCtxKeyType = iota
+	pubkeyCtxKey      daoStubCtxKeyType = iota
+	reservationCtxKey daoStubCtxKeyType = iota
 )
 
 func ctxAccountId(ctx context.Context) int64 {
@@ -34,6 +35,24 @@ func getPubkeyDaoStub(ctx context.Context) (*pubkeyDaoStub, error) {
 		return nil, ContextReadError
 	}
 	return pkdao, nil
+}
+
+func WithReservationDao(parent context.Context) context.Context {
+	if parent.Value(reservationCtxKey) != nil {
+		panic(ContextSecondInitializationError)
+	}
+
+	ctx := context.WithValue(parent, reservationCtxKey, &reservationDaoStub{lastId: 0, store: []*models.AWSReservation{}})
+	return ctx
+}
+
+func getReservationDaoStub(ctx context.Context) (*reservationDaoStub, error) {
+	var ok bool
+	var resDao *reservationDaoStub
+	if resDao, ok = ctx.Value(reservationCtxKey).(*reservationDaoStub); !ok {
+		return nil, ContextReadError
+	}
+	return resDao, nil
 }
 
 func WithAccountDaoOne(parent context.Context) context.Context {
