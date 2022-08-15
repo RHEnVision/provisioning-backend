@@ -53,6 +53,10 @@ func main() {
 	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})
 	gen.addSchema("v1.Source", &payloads.SourceResponse{})
 	gen.addSchema("v1.InstanceType", &payloads.InstanceTypeResponse{})
+	gen.addSchema("v1.ReservationResponse", &payloads.GenericReservationResponsePayload{})
+	gen.addSchema("v1.NoopReservationResponse", &payloads.NoopReservationResponsePayload{})
+	gen.addSchema("v1.AWSReservationResponse", &payloads.AWSReservationResponsePayload{})
+	gen.addSchema("v1.AWSReservationRequest", &payloads.AWSReservationRequestPayload{})
 
 	// errors
 	gen.addResponse("NotFound", "The specified resource was not found", "#/components/schemas/v1.ResponseError")
