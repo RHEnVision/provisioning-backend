@@ -21,6 +21,9 @@ type PubkeyResource struct {
 	// Provider constant (for example ProviderTypeAWS). Required.
 	Provider ProviderType `db:"provider" json:"provider"`
 
+	// Required.
+	SourceID int64 `db:"source_id" json:"source_id"`
+
 	// Resource handle (id). Format is provider-dependant. Required.
 	Handle string `db:"handle" json:"handle"`
 }

@@ -17,6 +17,7 @@ type PubkeyUploadAWSTaskArgs struct {
 	AccountID     int64  `json:"account_id"`
 	ReservationID int64  `json:"reservation_id"`
 	PubkeyID      int64  `json:"pubkey_id"`
+	SourceID      int64  `json:"source_id"`
 	ARN           string `json:"arn"`
 }
 
@@ -71,6 +72,7 @@ func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 	pkr := models.PubkeyResource{
 		PubkeyID: pubkey.ID,
 		Provider: models.ProviderTypeAWS,
+		SourceID: args.SourceID,
 	}
 	pkr.RandomizeTag()
 
