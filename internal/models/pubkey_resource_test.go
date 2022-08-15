@@ -7,7 +7,7 @@ import (
 )
 
 func TestTagFormat(t *testing.T) {
-	pubkey := PubkeyResource{12, "ctNLLGsipCJYjeoGXdWy17", 25, 1, "aws-handle"}
+	pubkey := PubkeyResource{12, "ctNLLGsipCJYjeoGXdWy17", 25, 1, 1, "aws-handle"}
 
 	assert.Equal(t, "pk-ctNLLGsipCJYjeoGXdWy17", pubkey.FormattedTag(), "the tag format is incorrect")
 }

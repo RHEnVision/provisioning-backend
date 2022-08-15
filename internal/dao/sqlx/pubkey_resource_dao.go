@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	createPubkeyResource            = `INSERT INTO pubkey_resources (pubkey_id, provider, handle, tag) VALUES ($1, $2, $3, $4) RETURNING id, tag`
-	updatePubkeyResource            = `UPDATE pubkey_resources SET pubkey_id = $2, provider = $3, handle = $4 WHERE id = $1`
+	createPubkeyResource            = `INSERT INTO pubkey_resources (pubkey_id, provider, source_id, handle, tag) VALUES ($1, $2, $3, $4) RETURNING id, tag`
+	updatePubkeyResource            = `UPDATE pubkey_resources SET pubkey_id = $2, provider = $3, source_id = $4, handle = $5 WHERE id = $1`
 	deletePubkeyResourceById        = `DELETE FROM pubkey_resources WHERE id = $1`
 	listByPubkeyId                  = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1`
 	getPubkeyResourceByProviderType = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1 AND provider = $2`
@@ -85,7 +85,7 @@ func (di *pubkeyResourceDaoSqlx) Create(ctx context.Context, pkr *models.PubkeyR
 	query := createPubkeyResource
 	stmt := di.create
 
-	err := stmt.GetContext(ctx, pkr, pkr.PubkeyID, pkr.Provider, pkr.Handle, pkr.Tag)
+	err := stmt.GetContext(ctx, pkr, pkr.PubkeyID, pkr.Provider, pkr.SourceID, pkr.Handle, pkr.Tag)
 	if err != nil {
 		return NewGetError(ctx, di, query, err)
 	}
@@ -96,7 +96,7 @@ func (di *pubkeyResourceDaoSqlx) Update(ctx context.Context, pkr *models.PubkeyR
 	query := updatePubkeyResource
 	stmt := di.update
 
-	res, err := stmt.ExecContext(ctx, pkr.ID, pkr.PubkeyID, pkr.Provider, pkr.Handle)
+	res, err := stmt.ExecContext(ctx, pkr.ID, pkr.PubkeyID, pkr.Provider, pkr.SourceID, pkr.Handle)
 	if err != nil {
 		return NewExecUpdateError(ctx, di, query, err)
 	}

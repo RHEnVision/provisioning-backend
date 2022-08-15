@@ -98,6 +98,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 			ReservationID: reservation.ID,
 			PubkeyID:      pk.ID,
 			ARN:           arn,
+			SourceID:      reservation.SourceID,
 		},
 	}
 
