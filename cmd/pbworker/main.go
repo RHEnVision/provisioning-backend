@@ -68,6 +68,6 @@ func main() {
 	<-c
 
 	logger.Info().Msg("Graceful shutdown initiated - waiting for jobs to finish")
-	jobs.Queue.Stop()
+	jobs.StopDequeueLoop()
 	logger.Info().Msg("Graceful shutdown finished - exiting")
 }

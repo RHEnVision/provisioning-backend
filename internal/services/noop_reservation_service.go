@@ -9,6 +9,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
+	"github.com/lzap/dejq"
 )
 
 // CreateNoopReservation is used to create empty reservation that is processed without any operation
@@ -41,11 +42,15 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
 
 	// create a new job
-	args := &jobs.NoopJobArgs{
-		AccountID:     accountId,
-		ReservationID: reservation.ID,
+	pj := dejq.PendingJob{
+		Type: jobs.TypeNoop,
+		Body: &jobs.NoopJobArgs{
+			AccountID:     accountId,
+			ReservationID: reservation.ID,
+		},
 	}
-	err = jobs.EnqueueNoop(r.Context(), args)
+	logger.Debug().Interface("arg", pj.Body).Msgf("Enqueuing no operation job: %+v", pj.Body)
+	err = jobs.Enqueue(r.Context(), pj)
 	if err != nil {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "EnqueueNoop", err))
 		return

@@ -127,7 +127,7 @@ func main() {
 	<-waitForSignal
 
 	if config.Worker.Queue == "memory" {
-		jobs.Queue.Stop()
+		jobs.StopDequeueLoop()
 	}
 	log.Info().Msg("Shutdown finished, exiting")
 }
