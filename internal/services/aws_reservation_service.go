@@ -23,7 +23,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 
 	var accountId int64 = ctxval.AccountId(r.Context())
 
-	payload := &payloads.AWSReservationRequest{}
+	payload := &payloads.AWSReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), err))
 		return
@@ -40,7 +40,13 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reservation := payload.AWSReservation
+	reservation := &models.AWSReservation{
+		PubkeyID:     payload.PubkeyID,
+		SourceID:     payload.SourceID,
+		InstanceType: payload.InstanceType,
+		Amount:       payload.Amount,
+		ImageID:      payload.ImageID,
+	}
 	reservation.AccountID = accountId
 	reservation.Status = "Created"
 	reservation.Provider = models.ProviderTypeAWS

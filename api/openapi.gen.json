@@ -33,6 +33,59 @@
       }
     },
     "schemas": {
+      "v1.AWSReservationRequest": {
+        "properties": {
+          "amount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "image_id": {
+            "type": "string"
+          },
+          "instance_type": {
+            "type": "string"
+          },
+          "pubkey_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "v1.AWSReservationResponse": {
+        "properties": {
+          "amount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "aws_reservation_id": {
+            "type": "string"
+          },
+          "image_id": {
+            "type": "string"
+          },
+          "instance_type": {
+            "type": "string"
+          },
+          "pubkey_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reservation_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "v1.Account": {
         "properties": {
           "account_number": {
@@ -56,6 +109,15 @@
         },
         "type": "object"
       },
+      "v1.NoopReservationResponse": {
+        "properties": {
+          "reservation_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "v1.Pubkey": {
         "properties": {
           "body": {
@@ -67,6 +129,32 @@
           },
           "name": {
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1.ReservationResponse": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "finished_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "provider": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
           }
         },
         "type": "object"
@@ -261,6 +349,81 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/reservations": {
+      "get": {
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. This operation returns list of all reservations for particular account.\n",
+        "operationId": "getReservationsList",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/v1.ReservationResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Returned on success."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/reservations/aws": {
+      "post": {
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. An AWS reservation is a reservation created for an AWS job.\n",
+        "operationId": "createAwsReservation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/v1.AWSReservationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.AWSReservationResponse"
+                }
+              }
+            },
+            "description": "Returned on success."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/reservations/noop": {
+      "post": {
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. A Noop reservation actually does nothing and immediately finish background job. This reservation has no input payload\n",
+        "operationId": "createNoopReservation",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.NoopReservationResponse"
+                }
+              }
+            },
+            "description": "Returned on success."
           },
           "500": {
             "$ref": "#/components/responses/InternalError"
