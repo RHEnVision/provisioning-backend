@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	createPubkeyResource            = `INSERT INTO pubkey_resources (pubkey_id, provider, source_id, handle, tag) VALUES ($1, $2, $3, $4) RETURNING id, tag`
+	createPubkeyResource            = `INSERT INTO pubkey_resources (pubkey_id, provider, source_id, handle, tag) VALUES ($1, $2, $3, $4, $5) RETURNING id, tag`
 	updatePubkeyResource            = `UPDATE pubkey_resources SET pubkey_id = $2, provider = $3, source_id = $4, handle = $5 WHERE id = $1`
 	deletePubkeyResourceById        = `DELETE FROM pubkey_resources WHERE id = $1`
 	listByPubkeyId                  = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1`
