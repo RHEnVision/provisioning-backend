@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 )
 

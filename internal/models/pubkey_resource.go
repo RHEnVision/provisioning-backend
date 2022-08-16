@@ -15,7 +15,7 @@ type PubkeyResource struct {
 	// format it with a proper prefix.
 	Tag string `db:"tag" json:"-"`
 
-	// Associated Account model. Required.
+	// Associated Pubkey model. Required.
 	PubkeyID int64 `db:"pubkey_id" json:"pubkey_id"`
 
 	// Provider constant (for example ProviderTypeAWS). Required.
