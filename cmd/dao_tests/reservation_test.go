@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
-	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"

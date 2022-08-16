@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
-	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
