@@ -156,10 +156,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/v1.Pubkey"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/v1.Pubkey"
                 }
               }
             },
@@ -178,10 +175,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/v1.Pubkey"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/v1.Pubkey"
                 }
               }
             },
