@@ -6,15 +6,18 @@ import (
 	"os/signal"
 	"syscall"
 
+	// Job queue implementation
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/jobs"
-	"github.com/rs/xid"
 
 	// Performs initialization of DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
+
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
+	"github.com/rs/xid"
 	"github.com/rs/zerolog/log"
 )
 
@@ -55,12 +58,12 @@ func main() {
 
 	// initialize the job queue
 	ctx := context.Background()
-	err = jobs.Initialize(ctx, &logger)
+	err = dejq.Initialize(ctx, &logger)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing dejq queue")
 	}
-	jobs.RegisterJobs(&logger)
-	jobs.StartDequeueLoop(ctx, &logger)
+	dejq.RegisterJobs(&logger)
+	dejq.StartDequeueLoop(ctx, &logger)
 
 	// wait for term signal
 	c := make(chan os.Signal, 1)
@@ -68,6 +71,6 @@ func main() {
 	<-c
 
 	logger.Info().Msg("Graceful shutdown initiated - waiting for jobs to finish")
-	jobs.StopDequeueLoop()
+	dejq.StopDequeueLoop()
 	logger.Info().Msg("Graceful shutdown finished - exiting")
 }

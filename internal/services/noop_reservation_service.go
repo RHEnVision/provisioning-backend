@@ -6,6 +6,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
@@ -43,14 +44,14 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 
 	// create a new job
 	pj := dejq.PendingJob{
-		Type: jobs.TypeNoop,
+		Type: queue.TypeNoop,
 		Body: &jobs.NoopJobArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 		},
 	}
 	logger.Debug().Interface("arg", pj.Body).Msgf("Enqueuing no operation job: %+v", pj.Body)
-	err = jobs.Enqueue(r.Context(), pj)
+	err = queue.GetEnqueuer().Enqueue(r.Context(), pj)
 	if err != nil {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "EnqueueNoop", err))
 		return
