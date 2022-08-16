@@ -74,9 +74,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/v1.Pubkey'
+                $ref: '#/components/schemas/v1.Pubkey'
         "500":
           $ref: '#/components/responses/InternalError'
     get:
@@ -90,9 +88,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/v1.Pubkey'
+                $ref: '#/components/schemas/v1.Pubkey'
         "500":
           $ref: '#/components/responses/InternalError'
   /sources:
