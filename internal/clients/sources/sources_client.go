@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -41,13 +42,17 @@ func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	return &SourcesClient{client: c}, nil
 }
 
-func copySource(src Source) clients.Source {
-	return clients.Source{
-		Id:           src.Id,
+func copySource(src Source) (*clients.Source, error) {
+	srcId, err := strconv.ParseInt(*src.Id, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("cannot create proxy doer: %w", err)
+	}
+	return &clients.Source{
+		Id:           srcId,
 		Name:         src.Name,
 		SourceTypeId: src.SourceTypeId,
 		Uid:          src.Uid,
-	}
+	}, nil
 }
 
 type appType struct {
@@ -97,7 +102,11 @@ func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients
 	}
 	result := make([]clients.Source, 0, len(*resp.JSON200.Data))
 	for _, s := range *resp.JSON200.Data {
-		result = append(result, copySource(s))
+		src, err := copySource(s)
+		if err != nil {
+			return nil, fmt.Errorf("failed to copy source: %w", err)
+		}
+		result = append(result, *src)
 	}
 	return &result, nil
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type SourceID struct {
-	SourceId string `json:"source_id"`
+	SourceId int64 `json:"source_id"`
 }
 type SourceResponse struct {
 	*clients.Source

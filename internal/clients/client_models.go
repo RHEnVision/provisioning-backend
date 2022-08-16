@@ -5,7 +5,7 @@ type ID = string
 // Source defines model for Source.
 type Source struct {
 	// ID of the resource
-	Id *ID `json:"id,omitempty"`
+	Id int64 `json:"id,omitempty"`
 
 	// The name of the source
 	Name *string `json:"name,omitempty"`
