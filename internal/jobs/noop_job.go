@@ -14,22 +14,6 @@ type NoopJobArgs struct {
 	ReservationID int64 `json:"reservation_id"`
 }
 
-func EnqueueNoop(ctx context.Context, args *NoopJobArgs) error {
-	logger := ctxval.Logger(ctx)
-	logger.Debug().Interface("arg", args).Msgf("Enqueuing no operation job: %+v", args)
-
-	pj := dejq.PendingJob{
-		Type: TypeNoop,
-		Body: args,
-	}
-	err := Queue.Enqueue(ctx, pj)
-	if err != nil {
-		return fmt.Errorf("unable to enqueue: %w", err)
-	}
-
-	return nil
-}
-
 func HandleNoop(ctx context.Context, job dejq.Job) error {
 	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started no operation job")

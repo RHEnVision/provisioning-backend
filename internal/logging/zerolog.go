@@ -40,6 +40,8 @@ func decorate(l zerolog.Logger) zerolog.Logger {
 	return l.With().Timestamp().Str("hostname", hostname).Logger()
 }
 
+// InitializeStdout initializes logging to standard output with human-friendly output.
+// It is used before CloudWatch logging output is initialized, or in unit and integration tests.
 func InitializeStdout() zerolog.Logger {
 	zerolog.SetGlobalLevel(zerolog.Level(config.Logging.Level))
 	return decorate(log.Output(zerolog.ConsoleWriter{

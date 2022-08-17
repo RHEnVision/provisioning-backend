@@ -1,4 +1,4 @@
-package jobs
+package dejq
 
 import (
 	"context"
@@ -8,6 +8,8 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/go-logr/zerologr"
 	"github.com/lzap/dejq"
 	"github.com/lzap/dejq/mem"
@@ -15,36 +17,38 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// Queue is the main job queue
-var Queue dejq.Jobs
+// dejqQueue is the main job dejqQueue
+var dejqQueue dejq.Jobs
 
-const (
-	TypeNoop              = "no_operation"
-	TypePubkeyUploadAws   = "pubkey_upload_aws"
-	TypeLaunchInstanceAws = "launch_instance_aws"
-)
+func getEnqueuer() queue.Enqueuer {
+	return dejqQueue
+}
+
+func init() {
+	queue.GetEnqueuer = getEnqueuer
+}
 
 func RegisterJobs(logger *zerolog.Logger) {
 	logger.Debug().Msg("Initializing job queue")
-	Queue.RegisterHandler(TypeNoop, HandleNoop)
-	Queue.RegisterHandler(TypePubkeyUploadAws, HandlePubkeyUploadAWS)
-	Queue.RegisterHandler(TypeLaunchInstanceAws, HandleLaunchInstanceAWS)
+	dejqQueue.RegisterHandler(queue.TypeNoop, jobs.HandleNoop)
+	dejqQueue.RegisterHandler(queue.TypePubkeyUploadAws, jobs.HandlePubkeyUploadAWS)
+	dejqQueue.RegisterHandler(queue.TypeLaunchInstanceAws, jobs.HandleLaunchInstanceAWS)
 }
 
 func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 	var err error
 	if config.Worker.Queue == "memory" {
-		Queue, err = mem.NewClient(ctx, zerologr.New(logger))
+		dejqQueue, err = mem.NewClient(ctx, zerologr.New(logger))
 	} else if config.Worker.Queue == "postgres" {
-		Queue, err = postgres.NewClient(ctx, zerologr.New(logger), db.DB.DB,
+		dejqQueue, err = postgres.NewClient(ctx, zerologr.New(logger), db.DB.DB,
 			config.Worker.Concurrency,
 			time.Duration(config.Worker.HeartbeatSec)*time.Second,
 			config.Worker.MaxBeats)
 	} else if config.Worker.Queue == "sqs" {
-		panic("SQS queue implementation is not supported")
+		panic("SQS dejqQueue implementation is not supported")
 	}
 	if err != nil {
-		return fmt.Errorf("cannot initialize queue: %w", err)
+		return fmt.Errorf("cannot initialize dejqQueue: %w", err)
 	}
 	return nil
 }
@@ -52,5 +56,9 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 func StartDequeueLoop(ctx context.Context, logger *zerolog.Logger) {
 	logger.Debug().Msg("Starting dequeue loop")
 	ctx = ctxval.WithLogger(ctx, logger)
-	Queue.DequeueLoop(ctx)
+	dejqQueue.DequeueLoop(ctx)
+}
+
+func StopDequeueLoop() {
+	dejqQueue.Stop()
 }

@@ -9,6 +9,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
+
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/factories"

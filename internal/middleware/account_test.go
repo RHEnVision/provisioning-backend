@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
+
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"

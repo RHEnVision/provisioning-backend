@@ -12,8 +12,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
-	"github.com/RHEnVision/provisioning-backend/internal/logging"
-	"github.com/rs/zerolog/log"
 )
 
 func setup() {
@@ -26,8 +24,6 @@ func teardown() {
 
 func initEnvironment() {
 	config.Initialize()
-	log.Logger = logging.InitializeStdout()
-
 	err := db.Initialize("integration")
 	if err != nil {
 		panic(fmt.Errorf("cannot connect to database, create cmd/dao_tests/local.yaml: %v", err))
