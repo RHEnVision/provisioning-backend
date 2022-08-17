@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"strconv"
 
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
-
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
@@ -92,7 +92,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	// Prepare jobs
 	logger.Debug().Msgf("Enqueuing upload key job for pubkey %d", pk.ID)
 	uploadPubkeyJob := dejq.PendingJob{
-		Type: jobs.TypePubkeyUploadAws,
+		Type: queue.TypePubkeyUploadAws,
 		Body: &jobs.PubkeyUploadAWSTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
@@ -118,7 +118,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 
 	logger.Debug().Msgf("Enqueuing launch instance job for source %d", reservation.SourceID)
 	launchJob := dejq.PendingJob{
-		Type: jobs.TypeLaunchInstanceAws,
+		Type: queue.TypeLaunchInstanceAws,
 		Body: &jobs.LaunchInstanceAWSTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
@@ -131,7 +131,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Enqueue all jobs
-	err = jobs.Queue.Enqueue(r.Context(), uploadPubkeyJob, launchJob)
+	err = queue.GetEnqueuer().Enqueue(r.Context(), uploadPubkeyJob, launchJob)
 	if err != nil {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "AWS reservation", err))
 		return

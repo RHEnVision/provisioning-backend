@@ -7,9 +7,8 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 
-	// DAO implementation, must be initialized before any database packages.
-	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
-	"github.com/RHEnVision/provisioning-backend/internal/jobs"
+	// Job queue implementation
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
 
 	"context"
 	"errors"
@@ -17,6 +16,9 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+
+	// DAO implementation, must be initialized before any database packages.
+	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -59,14 +61,14 @@ func main() {
 
 	// initialize the job queue
 	ctx := context.Background()
-	err = jobs.Initialize(ctx, &logger)
+	err = dejq.Initialize(ctx, &logger)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing dejq queue")
 	}
 	if config.Worker.Queue == "memory" {
-		jobs.RegisterJobs(&logger)
+		dejq.RegisterJobs(&logger)
 	}
-	jobs.StartDequeueLoop(ctx, &logger)
+	dejq.StartDequeueLoop(ctx, &logger)
 
 	// Routes for the main service
 	r := chi.NewRouter()
@@ -127,7 +129,7 @@ func main() {
 	<-waitForSignal
 
 	if config.Worker.Queue == "memory" {
-		jobs.Queue.Stop()
+		dejq.StopDequeueLoop()
 	}
 	log.Info().Msg("Shutdown finished, exiting")
 }
