@@ -48,15 +48,19 @@ func main() {
 	gen := APISchemaGen{}
 	gen.init()
 	// payloads
-	gen.addSchema("v1.Account", &payloads.AccountPayload{})
-	gen.addSchema("v1.Pubkey", &payloads.PubkeyPayload{})
-	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})
-	gen.addSchema("v1.Source", &payloads.SourceResponse{})
-	gen.addSchema("v1.InstanceType", &payloads.InstanceTypeResponse{})
+	gen.addSchema("v1.AccountRequest", &payloads.AccountRequest{})
+	gen.addSchema("v1.AccountResponse", &payloads.AccountResponse{})
+	gen.addSchema("v1.PubkeyRequest", &payloads.PubkeyRequest{})
+	gen.addSchema("v1.PubkeyResponse", &payloads.PubkeyResponse{})
+	gen.addSchema("v1.SourceResponse", &payloads.SourceResponse{})
+	gen.addSchema("v1.InstanceTypeResponse", &payloads.InstanceTypeResponse{})
 	gen.addSchema("v1.ReservationResponse", &payloads.GenericReservationResponsePayload{})
 	gen.addSchema("v1.NoopReservationResponse", &payloads.NoopReservationResponsePayload{})
-	gen.addSchema("v1.AWSReservationResponse", &payloads.AWSReservationResponsePayload{})
 	gen.addSchema("v1.AWSReservationRequest", &payloads.AWSReservationRequestPayload{})
+	gen.addSchema("v1.AWSReservationResponse", &payloads.AWSReservationResponsePayload{})
+
+	// error payloads
+	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})
 
 	// errors
 	gen.addResponse("NotFound", "The specified resource was not found", "#/components/schemas/v1.ResponseError")
