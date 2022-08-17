@@ -163,6 +163,8 @@ objects:
       inMemoryDb: true
       dependencies:
         - sources-api
+      optionalDependencies:
+        - image-builder
 
 # possible application ENV variables are in config/api.env.example
 parameters:
