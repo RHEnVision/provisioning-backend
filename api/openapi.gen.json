@@ -170,6 +170,17 @@
       "post": {
         "description": "A pubkey represents an SSH public portion of a key pair with name and body. When pubkey is created, it is stored in the Provisioning database. Pubkeys are uploaded to clouds when an instance is launched.\n",
         "operationId": "createPubkey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/v1.Pubkey"
+              }
+            }
+          },
+          "description": "request body",
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
