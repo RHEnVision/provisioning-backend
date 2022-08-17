@@ -12,9 +12,8 @@ paths:
     get:
       operationId: getPubkeyById
       description: >
-        A pubkey represents an SSH public portion of a key pair with name and body. The
-        fingerprint field is read-only and any value will be ignored during creation.
-        Pubkeys must have unique name and body (fingerprint) per each account.
+        A pubkey represents an SSH public portion of a key pair with name and body.
+        Pubkeys must have unique name and body (SSH public key fingerprint) per each account.
         To find if a pubkey was uploaded to particular cloud, check PubkeyResource resource.
       parameters:
         - name: ID
@@ -30,7 +29,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1.Pubkey'
+                $ref: '#/components/schemas/v1.PubkeyResponse'
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -58,7 +57,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1.Pubkey'
+                $ref: '#/components/schemas/v1.PubkeyResponse'
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -74,9 +73,8 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/v1.Pubkey"
-        description: >
-          Name and body are required, fingerprint must not be set, in fact any value is ignored.
+              "$ref": "#/components/schemas/v1.PubkeyRequest"
+        description: request body
         required: true
       responses:
         '200':
@@ -84,7 +82,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1.Pubkey'
+                $ref: '#/components/schemas/v1.PubkeyResponse'
         "500":
           $ref: '#/components/responses/InternalError'
     get:
@@ -98,7 +96,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1.Pubkey'
+                $ref: '#/components/schemas/v1.PubkeyResponse'
         "500":
           $ref: '#/components/responses/InternalError'
   /sources:
@@ -113,7 +111,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/v1.Source'
+                  $ref: '#/components/schemas/v1.SourceResponse'
         '500':
           $ref: "#/components/responses/InternalError"
   /instance_types/{source_id}:
@@ -134,7 +132,7 @@ paths:
             content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/v1.InstanceType'
+                  $ref: '#/components/schemas/v1.InstanceTypeResponse'
           '404':
             $ref: "#/components/responses/NotFound"
           '500':
@@ -162,7 +160,7 @@ paths:
       description: >
         A reservation is a way to activate a job, keeps all data needed for a job to start.
         An AWS reservation is a reservation created for an AWS job.
-      requestBody: 
+      requestBody:
         content:
           application/json:
             schema:
@@ -173,7 +171,7 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/v1.AWSReservationResponse'
+                $ref: '#/components/schemas/v1.AWSReservationResponse'
         "500":
           $ref: '#/components/responses/InternalError'
   /reservations/noop:
@@ -189,7 +187,7 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/v1.NoopReservationResponse'
+                $ref: '#/components/schemas/v1.NoopReservationResponse'
         "500":
           $ref: '#/components/responses/InternalError'
 components:
@@ -250,7 +248,7 @@ components:
           format: int64
           type: integer
       type: object
-    v1.Account:
+    v1.AccountRequest:
       properties:
         account_number:
           type: string
@@ -260,7 +258,17 @@ components:
         org_id:
           type: string
       type: object
-    v1.InstanceType:
+    v1.AccountResponse:
+      properties:
+        account_number:
+          type: string
+        id:
+          format: int64
+          type: integer
+        org_id:
+          type: string
+      type: object
+    v1.InstanceTypeResponse:
       properties:
         id:
           type: string
@@ -271,7 +279,19 @@ components:
           format: int64
           type: integer
       type: object
-    v1.Pubkey:
+    v1.PubkeyRequest:
+      properties:
+        body:
+          type: string
+        fingerprint:
+          type: string
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+      type: object
+    v1.PubkeyResponse:
       properties:
         body:
           type: string
@@ -308,7 +328,7 @@ components:
         request_id:
           type: string
       type: object
-    v1.Source:
+    v1.SourceResponse:
       properties:
         id:
           type: string
