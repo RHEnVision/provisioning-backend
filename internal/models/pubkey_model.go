@@ -13,4 +13,7 @@ type Pubkey struct {
 
 	// Public key body encoded in base64 (.pub format). Required.
 	Body string `db:"body" json:"body" validate:"required,sshPubkey"`
+
+	// Public key SHA256 fingerprint. Generated (read-only).
+	Fingerprint string `db:"fingerprint" json:"fingerprint"`
 }

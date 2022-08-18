@@ -123,6 +123,9 @@
           "body": {
             "type": "string"
           },
+          "fingerprint": {
+            "type": "string"
+          },
           "id": {
             "format": "int64",
             "type": "integer"
@@ -266,7 +269,7 @@
               }
             }
           },
-          "description": "request body",
+          "description": "Name and body are required, fingerprint must not be set, in fact any value is ignored.\n",
           "required": true
         },
         "responses": {
@@ -322,7 +325,7 @@
         }
       },
       "get": {
-        "description": "A pubkey represents an SSH public portion of a key pair with name and body. To find if a pubkey was uploaded to particular cloud, check PubkeyResource resource.\n",
+        "description": "A pubkey represents an SSH public portion of a key pair with name and body. The fingerprint field is read-only and any value will be ignored during creation. Pubkeys must have unique name and body (fingerprint) per each account. To find if a pubkey was uploaded to particular cloud, check PubkeyResource resource.\n",
         "operationId": "getPubkeyById",
         "parameters": [
           {

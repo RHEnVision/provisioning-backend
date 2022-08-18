@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
@@ -24,7 +25,11 @@ func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 
 	err = pkDao.Create(r.Context(), payload.Pubkey)
 	if err != nil {
-		renderError(w, r, payloads.NewDAOError(r.Context(), "create pubkey", err))
+		if db.IsPostgresError(err, db.UniqueConstraintErrorCode) != nil {
+			renderError(w, r, payloads.PubkeyAlreadyExistsError(r.Context(), err))
+		} else {
+			renderError(w, r, payloads.NewDAOError(r.Context(), "create pubkey", err))
+		}
 		return
 	}
 
