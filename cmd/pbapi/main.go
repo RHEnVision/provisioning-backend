@@ -1,6 +1,12 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
 	"syscall"
 
 	// HTTP client implementations
@@ -9,13 +15,6 @@ import (
 
 	// Job queue implementation
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
-
-	"context"
-	"errors"
-	"fmt"
-	"net/http"
-	"os"
-	"os/signal"
 
 	// DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
@@ -72,6 +71,7 @@ func main() {
 
 	// Routes for the main service
 	r := chi.NewRouter()
+	r.Use(m.VersionMiddleware)
 	r.Use(m.RequestID)
 	r.Use(m.RequestNum)
 	r.Use(m.MetricsMiddleware)
