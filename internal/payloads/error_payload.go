@@ -47,7 +47,21 @@ func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 		logger.Error().Msg(msg)
 	}
 	return &ResponseError{
-		HTTPStatusCode: 500,
+		HTTPStatusCode: 400,
+		Message:        msg,
+		RequestId:      ctxval.RequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
+func PubkeyAlreadyExistsError(ctx context.Context, err error) *ResponseError {
+	msg := "pubkey with such name or fingerprint already exists for this account"
+	if logger := ctxval.Logger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 422,
 		Message:        msg,
 		RequestId:      ctxval.RequestId(ctx),
 		Err:            err,

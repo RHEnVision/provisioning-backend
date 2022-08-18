@@ -30,6 +30,9 @@ type ValidationError struct {
 	Model   interface{}
 }
 
+// TransformationError is returned when model transformation fails
+type TransformationError Error
+
 // NoRowsError is returned when no rows were returned.
 type NoRowsError struct {
 	Message string
@@ -71,6 +74,14 @@ func (e NoRowsError) Unwrap() error {
 
 func (e MismatchAffectedError) Error() string {
 	return fmt.Sprintf("DAO mismatch affected rows: %s", e.Message)
+}
+
+func (e TransformationError) Error() string {
+	return fmt.Sprintf("DAO error: %s: %s", e.Message, e.Err.Error())
+}
+
+func (e TransformationError) Unwrap() error {
+	return e.Err
 }
 
 func NewValidationError(ctx context.Context, dao NamedForError, model interface{}, validationErr validator.ValidationErrors) ValidationError {

@@ -15,6 +15,8 @@ type PubkeyRequest PubkeyPayload
 type PubkeyResponse PubkeyPayload
 
 func (p *PubkeyRequest) Bind(_ *http.Request) error {
+	// Fingerprint is read-only field
+	p.Fingerprint = ""
 	return nil
 }
 

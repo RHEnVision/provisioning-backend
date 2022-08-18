@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	createPubkey     = `INSERT INTO pubkeys (account_id, name, body) VALUES ($1, $2, $3) RETURNING id`
+	createPubkey     = `INSERT INTO pubkeys (account_id, name, body, fingerprint) VALUES ($1, $2, $3, $4) RETURNING id`
 	updatePubkey     = `UPDATE pubkeys SET name = $3, body = $4 WHERE account_id = $1 AND id = $2`
 	getPubkeyById    = `SELECT * FROM pubkeys WHERE account_id = $1 AND id = $2 LIMIT 1`
 	deletePubkeyById = `DELETE FROM pubkeys WHERE account_id = $1 AND id = $2`
@@ -75,11 +75,18 @@ func (di *pubkeyDaoSqlx) Create(ctx context.Context, pubkey *models.Pubkey) erro
 	if validationErr := models.Validate(ctx, pubkey); validationErr != nil {
 		return dao.NewValidationError(ctx, di, pubkey, validationErr)
 	}
+	if err := models.Transform(ctx, pubkey); err != nil {
+		return dao.TransformationError{
+			Message: "cannot generate SSH fingerprint",
+			Context: ctx,
+			Err:     err,
+		}
+	}
 
 	query := createPubkey
 	stmt := di.create
 
-	err := stmt.GetContext(ctx, pubkey, ctxAccountId(ctx), pubkey.Name, pubkey.Body)
+	err := stmt.GetContext(ctx, pubkey, ctxAccountId(ctx), pubkey.Name, pubkey.Body, pubkey.Fingerprint)
 	if err != nil {
 		return NewCreateError(ctx, di, query, err)
 	}

@@ -14,3 +14,4 @@ TAGS
 /scripts/sources-*/
 /scripts/sources.local.conf
 /scripts/rest_examples/*.local.http
+/dao_tests.test

@@ -14,11 +14,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createPk() *models.Pubkey {
+func createLukas2021Key() *models.Pubkey {
 	return &models.Pubkey{
 		AccountID: 1,
 		Name:      "lzap-ed25519-2021",
-		Body:      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
+		Body:      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap-2021",
+	}
+}
+
+func createLukas2013Key() *models.Pubkey {
+	return &models.Pubkey{
+		AccountID: 1,
+		Name:      "lzap-rsa-2013",
+		Body:      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8w6DONv1qn3IdgxSpkYOClq7oe7davWFqKVHPbLoS6+dFInru7gdEO5byhTih6+PwRhHv/b1I+Mtt5MDZ8Sv7XFYpX/3P/u5zQiy1PkMSFSz0brRRUfEQxhXLW97FJa7l+bej2HJDt7f9Gvcj+d/fNWC9Z58/GX11kWk4SIXaKotkN+kWn54xGGS7Zvtm86fP59Srt6wlklSsG8mZBF7jVUjyhAgm/V5gDFb2/6jfiwSb2HyJ9/NbhLkWNdwrvpdGZqQlYhnwTfEZdpwizW/Mj3MxP5O31HN45aE0wog0UeWY4gvTl4Ogb6kescizAM6pCff3RBslbFxLdOO7cR17 lzap-2013",
 	}
 }
 
@@ -39,7 +47,7 @@ func teardownPubkey(_ *testing.T) {
 func TestCreatePubkey(t *testing.T) {
 	pkDao, ctx := setupPubkey(t)
 	defer teardownPubkey(t)
-	pk := createPk()
+	pk := createLukas2013Key()
 	err := pkDao.Create(ctx, pk)
 	if err != nil {
 		t.Errorf("Create pubkey test had failed: %v", err)
@@ -55,10 +63,31 @@ func TestCreatePubkey(t *testing.T) {
 	assert.Equal(t, pk.Name, pk2.Name, "Create pubkey test had failed.")
 }
 
+func TestCreatePubkeyFingerprintSuccess(t *testing.T) {
+	pkDao, ctx := setupPubkey(t)
+	defer teardownPubkey(t)
+	pk := createLukas2013Key()
+	err := pkDao.Create(ctx, pk)
+	if err != nil {
+		t.Errorf("Create pubkey test had failed: %v", err)
+		return
+	}
+
+	assert.Equal(t, "SHA256:ENShRe/0uDLSw9c+7tc9PxkD/p4blyB/DTgBSIyTAJY", pk.Fingerprint)
+}
+
+func TestCreatePubkeyFingerprintFailure(t *testing.T) {
+	pkDao, ctx := setupPubkey(t)
+	defer teardownPubkey(t)
+	pk := createLukas2021Key()
+	err := pkDao.Create(ctx, pk)
+	assert.Error(t, err, "key should already exist")
+}
+
 func TestListPubkey(t *testing.T) {
 	pkDao, ctx := setupPubkey(t)
 	defer teardownPubkey(t)
-	err := pkDao.Create(ctx, createPk())
+	err := pkDao.Create(ctx, createLukas2013Key())
 	pubkeys, err := pkDao.List(ctx, 100, 0)
 	if err != nil {
 		t.Errorf("List pubkey test had failed: %v", err)
@@ -76,7 +105,7 @@ func TestUpdatePubkey(t *testing.T) {
 	}
 	pkDao, ctx := setupPubkey(t)
 	defer teardownPubkey(t)
-	err := pkDao.Create(ctx, createPk())
+	err := pkDao.Create(ctx, createLukas2013Key())
 	if err != nil {
 		t.Errorf("Create pubkey test failed. %s", err)
 		return
@@ -98,7 +127,7 @@ func TestUpdatePubkey(t *testing.T) {
 func TestGetPubkeyById(t *testing.T) {
 	pkDao, ctx := setupPubkey(t)
 	defer teardownPubkey(t)
-	err := pkDao.Create(ctx, createPk())
+	err := pkDao.Create(ctx, createLukas2013Key())
 	if err != nil {
 		t.Errorf("Delete pubkey test had failed. %s", err)
 		return
@@ -116,7 +145,7 @@ func TestGetPubkeyById(t *testing.T) {
 func TestDeletePubkeyById(t *testing.T) {
 	pkDao, ctx := setupPubkey(t)
 	defer teardownPubkey(t)
-	err := pkDao.Create(ctx, createPk())
+	err := pkDao.Create(ctx, createLukas2013Key())
 	if err != nil {
 		t.Errorf("Delete pubkey test had failed. %s", err)
 		return
