@@ -5,11 +5,15 @@ PACKAGE_BASE = github.com/RHEnVision/provisioning-backend/internal
 LDFLAGS = "-X $(PACKAGE_BASE)/version.BuildCommit=$(shell git rev-parse --short HEAD) -X $(PACKAGE_BASE)/version.BuildTime=$(shell date +'%Y-%m-%d_%T')"
 
 .PHONY: build
-build: build-pbapi build-pbmigrate
+build: build-pbapi build-pbmigrate build-pbworker
 
 .PHONY: build-pbapi
 build-pbapi:
 	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -o pbapi ./cmd/pbapi
+
+.PHONY: build-pbworker
+build-pbworker:
+	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -o pbworker ./cmd/pbworker
 
 .PHONY: build-pbmigrate
 build-pbmigrate:
