@@ -8,6 +8,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/version"
 
 	cww "github.com/lzap/cloudwatchwriter2"
 	"github.com/rs/zerolog"
@@ -37,7 +38,14 @@ func truncateText(str string, length int) string {
 }
 
 func decorate(l zerolog.Logger) zerolog.Logger {
-	return l.With().Timestamp().Str("hostname", hostname).Logger()
+	logger := l.With().Timestamp().
+		Str("hostname", hostname)
+
+	if version.BuildCommit != "" {
+		logger = logger.Str("version", version.BuildCommit)
+	}
+
+	return logger.Logger()
 }
 
 // InitializeStdout initializes logging to standard output with human-friendly output.

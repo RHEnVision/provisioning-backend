@@ -1,13 +1,15 @@
 TEST_TAGS?=test
 CONTAINER_BUILD_OPTS ?= --build-arg=quay_expiration=2d
 CONTAINER_IMAGE ?= provisioning-backend
+PACKAGE_BASE = github.com/RHEnVision/provisioning-backend/internal
+LDFLAGS = "-X $(PACKAGE_BASE)/version.BuildCommit=$(shell git rev-parse --short HEAD) -X $(PACKAGE_BASE)/version.BuildTime=$(shell date +'%Y-%m-%d_%T')"
 
 .PHONY: build
 build: build-pbapi build-pbmigrate
 
 .PHONY: build-pbapi
 build-pbapi:
-	CGO_ENABLED=0 go build -o pbapi ./cmd/pbapi
+	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -o pbapi ./cmd/pbapi
 
 .PHONY: build-pbmigrate
 build-pbmigrate:
