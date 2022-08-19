@@ -5,6 +5,9 @@ import (
 	// Initialize logging (must be kept the first)
 	_ "github.com/RHEnVision/provisioning-backend/internal/logging/testing"
 
+	// Cache
+	_ "github.com/RHEnVision/provisioning-backend/internal/cache/noop"
+
 	// HTTP client stub implementations
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder/stubs"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/sources/stubs"

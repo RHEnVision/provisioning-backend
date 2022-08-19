@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
+	github.com/akyoto/cache v1.0.6
 	github.com/aws/aws-sdk-go-v2 v1.16.7
 	github.com/aws/aws-sdk-go-v2/config v1.15.14
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.9
@@ -25,7 +26,6 @@ require (
 	github.com/go-openapi/validate v0.22.0 // indirect
 	github.com/go-playground/mold/v4 v4.2.0
 	github.com/go-playground/validator/v10 v10.11.0
-	github.com/hashicorp/golang-lru v0.5.4
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/invopop/yaml v0.2.0 // indirect
 	github.com/jackc/pgconn v1.12.1

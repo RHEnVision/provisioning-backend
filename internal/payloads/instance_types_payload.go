@@ -3,7 +3,6 @@ package payloads
 import (
 	"net/http"
 
-	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/go-chi/render"
 )
 
@@ -19,12 +18,12 @@ func (s *InstanceTypeResponse) Render(_ http.ResponseWriter, _ *http.Request) er
 	return nil
 }
 
-func NewListInstanceTypeResponse(sl *[]types.InstanceTypeInfo) []render.Renderer {
+func NewListInstanceTypeResponse(sl *[]string) []render.Renderer {
 	sList := *sl
 	list := make([]render.Renderer, 0, len(sList))
 	for i := range sList {
 		list = append(list, &InstanceTypeResponse{
-			Identifier: string(sList[i].InstanceType),
+			Identifier: sList[i],
 		})
 	}
 	return list

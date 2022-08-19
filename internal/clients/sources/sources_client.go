@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -151,14 +151,14 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 }
 
 func (c *SourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
-	if appTypeId, ok := cache.AppTypeId(); ok {
+	if appTypeId, ok := cache.GetGlobalCache().AppTypeId(ctx); ok {
 		return appTypeId, nil
 	}
 	appTypeId, err := c.loadAppId(ctx)
 	if err != nil {
 		return "", err
 	}
-	cache.SetAppTypeId(appTypeId)
+	cache.GetGlobalCache().SetAppTypeId(ctx, appTypeId)
 	return appTypeId, nil
 }
 

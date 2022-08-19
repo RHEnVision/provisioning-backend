@@ -6,15 +6,21 @@ import (
 	"os/signal"
 	"syscall"
 
+	// HTTP client implementations
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
+
+	// Cache implementation
+	_ "github.com/RHEnVision/provisioning-backend/internal/cache/mem"
+
+	// Performs initialization of DAO implementation, must be initialized before any database packages.
+	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
+
 	// Job queue implementation
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-
-	// Performs initialization of DAO implementation, must be initialized before any database packages.
-	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
-
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/rs/xid"

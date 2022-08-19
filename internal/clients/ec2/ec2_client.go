@@ -102,7 +102,7 @@ func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, 
 	return newClient, nil
 }
 
-func (c *Client) ListInstanceTypes() ([]types.InstanceTypeInfo, error) {
+func (c *Client) ListInstanceTypes() ([]string, error) {
 	log.Trace().Msg("Listing AWS EC2 instance types")
 	input := &ec2.DescribeInstanceTypesInput{
 		MaxResults: aws.Int32(100),
@@ -118,7 +118,11 @@ func (c *Client) ListInstanceTypes() ([]types.InstanceTypeInfo, error) {
 		return nil, MoreThan100InstanceTypes
 	}
 
-	return resp.InstanceTypes, nil
+	result := make([]string, 0, len(resp.InstanceTypes))
+	for i := range resp.InstanceTypes {
+		result[i] = string(resp.InstanceTypes[i].InstanceType)
+	}
+	return result, nil
 }
 
 func (c *Client) RunInstances(ctx context.Context, amount int32, instanceType types.InstanceType, AMI string, keyName string) ([]*string, *string, error) {

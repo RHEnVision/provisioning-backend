@@ -13,6 +13,9 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 
+	// Cache implementation
+	_ "github.com/RHEnVision/provisioning-backend/internal/cache/mem"
+
 	// Job queue implementation
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
 

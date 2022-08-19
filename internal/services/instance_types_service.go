@@ -2,7 +2,9 @@ package services
 
 import (
 	"errors"
+	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"net/http"
+	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
@@ -16,6 +18,7 @@ import (
 func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "source_id")
 	ec2Client := ec2.NewEC2Client(r.Context())
+	region := "us-east-1"
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
@@ -55,13 +58,20 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := newEC2Client.ListInstanceTypes()
-	if err != nil {
-		renderError(w, r, payloads.NewAWSError(r.Context(), "can't list EC2 instance types", err))
-		return
+	var cached []string
+	var ok bool
+	cached, ok = cache.GetGlobalCache().InstanceTypes(r.Context(), sourceId, region)
+	if !ok {
+		// TODO: How to list instance types for a different region??
+		cached, err = newEC2Client.ListInstanceTypes()
+		if err != nil {
+			renderError(w, r, payloads.NewAWSError(r.Context(), "can't list EC2 instance types", err))
+			return
+		}
+		cache.GetGlobalCache().SetInstanceTypes(r.Context(), sourceId, region, cached, 5*time.Minute)
 	}
 
-	if err := render.RenderList(w, r, payloads.NewListInstanceTypeResponse(&res)); err != nil {
+	if err := render.RenderList(w, r, payloads.NewListInstanceTypeResponse(&cached)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "list instance types", err))
 		return
 	}
