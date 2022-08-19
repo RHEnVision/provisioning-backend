@@ -25,7 +25,7 @@ strip: build
 
 .PHONY: clean
 clean:
-	rm pbapi pbmigrate
+	rm pbapi pbmigrate pbworker
 
 .PHONY: build-podman
 build-podman:
