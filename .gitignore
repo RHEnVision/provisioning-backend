@@ -5,6 +5,7 @@ TAGS
 /*.db
 /pbapi
 /pbmigrate
+/pbworker
 /vendor/
 /configs/local.yaml
 /deploy/bonfire.yaml
