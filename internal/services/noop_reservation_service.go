@@ -17,9 +17,7 @@ import (
 // being made. This is useful when testing the job queue. The endpoint has no payload.
 func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	logger := ctxval.Logger(r.Context())
-
-	// TODO: get this from X-RH-Identity via middleware/context
-	var accountId int64 = 1
+	accountId := ctxval.AccountId(r.Context())
 
 	rDao, err := dao.GetReservationDao(r.Context())
 	if err != nil {
