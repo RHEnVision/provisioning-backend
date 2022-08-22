@@ -86,36 +86,6 @@
         },
         "type": "object"
       },
-      "v1.AccountRequest": {
-        "properties": {
-          "account_number": {
-            "type": "string"
-          },
-          "id": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "org_id": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "v1.AccountResponse": {
-        "properties": {
-          "account_number": {
-            "type": "string"
-          },
-          "id": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "org_id": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "v1.InstanceTypeResponse": {
         "properties": {
           "id": {
