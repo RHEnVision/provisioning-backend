@@ -34,8 +34,9 @@ var config struct {
 		LogLevel    int
 	}
 	Logging struct {
-		Level  int
-		Stdout bool
+		Level    int
+		Stdout   bool
+		MaxField int
 	}
 	Cloudwatch struct {
 		Enabled bool
