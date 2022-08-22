@@ -47,8 +47,7 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 							Bool("panic", true).
 							Int("status", panicStatus).
 							Interface("recover_info", rec).
-							Bytes("debug_stack", debug.Stack()).
-							Msg("Unhandled panic")
+							Msgf("Unhandled panic: %s", debug.Stack())
 						http.Error(ww, http.StatusText(panicStatus), panicStatus)
 					}
 				}
