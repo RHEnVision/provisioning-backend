@@ -19,6 +19,10 @@ logging:
   level: 1
   # Write logs to standard output in human-readable form
   stdout: false
+  # Truncate log fields to specific size, only useful for development to keep
+  # the standard output clean and human-readable. Set to zero or comment out
+  # to disable.
+  maxField: 0
 
 # AWS provisioning account (EC2, STS...)
 aws:
