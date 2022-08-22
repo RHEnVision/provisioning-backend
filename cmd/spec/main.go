@@ -48,8 +48,6 @@ func main() {
 	gen := APISchemaGen{}
 	gen.init()
 	// payloads
-	gen.addSchema("v1.AccountRequest", &payloads.AccountRequest{})
-	gen.addSchema("v1.AccountResponse", &payloads.AccountResponse{})
 	gen.addSchema("v1.PubkeyRequest", &payloads.PubkeyRequest{})
 	gen.addSchema("v1.PubkeyResponse", &payloads.PubkeyResponse{})
 	gen.addSchema("v1.SourceResponse", &payloads.SourceResponse{})
