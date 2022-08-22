@@ -13,7 +13,6 @@ import (
 
 const (
 	createPubkeyResource            = `INSERT INTO pubkey_resources (pubkey_id, provider, source_id, handle, tag) VALUES ($1, $2, $3, $4, $5) RETURNING id, tag`
-	updatePubkeyResource            = `UPDATE pubkey_resources SET pubkey_id = $2, provider = $3, source_id = $4, handle = $5 WHERE id = $1`
 	deletePubkeyResourceById        = `DELETE FROM pubkey_resources WHERE id = $1`
 	listByPubkeyId                  = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1`
 	getPubkeyResourceByProviderType = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1 AND provider = $2`
@@ -22,7 +21,6 @@ const (
 type pubkeyResourceDaoSqlx struct {
 	name              string
 	create            *sqlx.Stmt
-	update            *sqlx.Stmt
 	deleteById        *sqlx.Stmt
 	getByProviderType *sqlx.Stmt
 	listByPubkeyId    *sqlx.Stmt
@@ -40,10 +38,6 @@ func getPubkeyResourceDao(ctx context.Context) (dao.PubkeyResourceDao, error) {
 	daoImpl.create, err = db.DB.PreparexContext(ctx, createPubkeyResource)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, createPubkeyResource, err)
-	}
-	daoImpl.update, err = db.DB.PreparexContext(ctx, updatePubkeyResource)
-	if err != nil {
-		return nil, NewPrepareStatementError(ctx, &daoImpl, updatePubkeyResource, err)
 	}
 	daoImpl.deleteById, err = db.DB.PreparexContext(ctx, deletePubkeyResourceById)
 	if err != nil {
@@ -88,20 +82,6 @@ func (di *pubkeyResourceDaoSqlx) Create(ctx context.Context, pkr *models.PubkeyR
 	err := stmt.GetContext(ctx, pkr, pkr.PubkeyID, pkr.Provider, pkr.SourceID, pkr.Handle, pkr.Tag)
 	if err != nil {
 		return NewGetError(ctx, di, query, err)
-	}
-	return nil
-}
-
-func (di *pubkeyResourceDaoSqlx) Update(ctx context.Context, pkr *models.PubkeyResource) error {
-	query := updatePubkeyResource
-	stmt := di.update
-
-	res, err := stmt.ExecContext(ctx, pkr.ID, pkr.PubkeyID, pkr.Provider, pkr.SourceID, pkr.Handle)
-	if err != nil {
-		return NewExecUpdateError(ctx, di, query, err)
-	}
-	if rows, _ := res.RowsAffected(); rows != 1 {
-		return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
 	}
 	return nil
 }
