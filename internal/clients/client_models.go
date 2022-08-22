@@ -29,5 +29,11 @@ type InstanceType struct {
 	Cores *int32 `json:"cores,omitempty"`
 
 	// The size of the memory, in MiB.
-	Memory int64 `json:"memory,omitempty"`
+	MemoryMiB int64 `json:"memory,omitempty"`
+
+	// Does the instance type supports RHEL
+	Supported bool `json:"supported,omitempty"`
+
+	// Instance type's Architecture: i386, arm64, x86_64
+	Architecture string `json:"architecture,omitempty"`
 }

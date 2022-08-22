@@ -248,8 +248,21 @@ components:
       type: object
     v1.InstanceTypeResponse:
       properties:
-        id:
+        architecture:
           type: string
+        cores:
+          format: int32
+          type: integer
+        memory:
+          format: int64
+          type: integer
+        name:
+          type: string
+        supported:
+          type: boolean
+        vcpus:
+          format: int32
+          type: integer
       type: object
     v1.NoopReservationResponse:
       properties:
