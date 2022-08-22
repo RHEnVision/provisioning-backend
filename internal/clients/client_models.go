@@ -16,3 +16,18 @@ type Source struct {
 	// Unique ID of the inventory source installation
 	Uid *string `json:"uid,omitempty"`
 }
+
+// An instance type defines a model for an instance type that corresponds to one in a cloud provider.
+type InstanceType struct {
+	// The name of the instance type
+	Name string `json:"name,omitempty"`
+
+	// Virtual CPU (maps to hypervisor hyper-thread)
+	VCPUs *int32 `json:"vcpus,omitempty"`
+
+	// Core (physical or virtual core)
+	Cores *int32 `json:"cores,omitempty"`
+
+	// The size of the memory, in MiB.
+	Memory int64 `json:"memory,omitempty"`
+}
