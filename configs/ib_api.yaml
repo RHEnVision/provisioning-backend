@@ -383,9 +383,11 @@ components:
     Distributions:
       type: string
       enum:
+        - rhel-8
         - rhel-84
         - rhel-85
         - rhel-86
+        - rhel-9
         - rhel-90
         - centos-8
         - centos-9
@@ -413,7 +415,6 @@ components:
         - aws
         - azure
         - edge-commit
-        - edge-container
         - edge-installer
         - gcp
         - guest-image
@@ -617,6 +618,13 @@ components:
           type: string
         ref:
           type: string
+          example: 'rhel/8/x86_64/edge'
+        parent:
+          type: string
+          description: >
+            Can be either a commit (example:
+            02604b2da6e954bd34b8b82a835e5a77d2b60ffa), or a branch-like
+            reference (example: rhel/8/x86_64/edge)
           example: 'rhel/8/x86_64/edge'
     PackagesResponse:
       type: object

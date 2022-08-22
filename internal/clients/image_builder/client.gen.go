@@ -21,9 +21,11 @@ import (
 const (
 	Centos8 Distributions = "centos-8"
 	Centos9 Distributions = "centos-9"
+	Rhel8   Distributions = "rhel-8"
 	Rhel84  Distributions = "rhel-84"
 	Rhel85  Distributions = "rhel-85"
 	Rhel86  Distributions = "rhel-86"
+	Rhel9   Distributions = "rhel-9"
 	Rhel90  Distributions = "rhel-90"
 )
 
@@ -48,7 +50,6 @@ const (
 	ImageTypesAws               ImageTypes = "aws"
 	ImageTypesAzure             ImageTypes = "azure"
 	ImageTypesEdgeCommit        ImageTypes = "edge-commit"
-	ImageTypesEdgeContainer     ImageTypes = "edge-container"
 	ImageTypesEdgeInstaller     ImageTypes = "edge-installer"
 	ImageTypesGcp               ImageTypes = "gcp"
 	ImageTypesGuestImage        ImageTypes = "guest-image"
@@ -265,8 +266,10 @@ type ImageTypes string
 
 // OSTree defines model for OSTree.
 type OSTree struct {
-	Ref *string `json:"ref,omitempty"`
-	Url *string `json:"url,omitempty"`
+	// Can be either a commit (example: 02604b2da6e954bd34b8b82a835e5a77d2b60ffa), or a branch-like reference (example: rhel/8/x86_64/edge)
+	Parent *string `json:"parent,omitempty"`
+	Ref    *string `json:"ref,omitempty"`
+	Url    *string `json:"url,omitempty"`
 }
 
 // Package defines model for Package.
