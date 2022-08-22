@@ -33,7 +33,6 @@ type PubkeyResourceDao interface {
 	GetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error)
 	ListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error)
 	Create(ctx context.Context, pkr *models.PubkeyResource) error
-	Update(ctx context.Context, pkr *models.PubkeyResource) error
 	Delete(ctx context.Context, id int64) error
 }
 
