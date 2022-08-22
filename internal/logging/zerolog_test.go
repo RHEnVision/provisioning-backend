@@ -21,7 +21,17 @@ func TestTruncateExactly(t *testing.T) {
 	assert.Equal(t, "test", result)
 }
 
+func TestTruncateExactlyQuoted(t *testing.T) {
+	result := truncateText("\"test\"", 6)
+	assert.Equal(t, "\"test\"", result)
+}
+
 func TestTruncateOne(t *testing.T) {
 	result := truncateText("test", 3)
-	assert.Equal(t, "tes...\"", result)
+	assert.Equal(t, "tes...", result)
+}
+
+func TestTruncateOneQuoted(t *testing.T) {
+	result := truncateText("\"test\"", 3)
+	assert.Equal(t, "\"te...\"", result)
 }

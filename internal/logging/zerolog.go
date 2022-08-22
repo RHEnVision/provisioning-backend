@@ -27,14 +27,20 @@ func init() {
 
 func truncateText(str string, length int) string {
 	if length <= 0 {
-		return ""
+		return str
 	}
 
 	if utf8.RuneCountInString(str) <= length {
 		return str
 	}
 
-	return string([]rune(str)[:length]) + "...\""
+	trimmed := []rune(str)[:length]
+
+	if trimmed[0] == '"' {
+		return string(trimmed) + "...\""
+	} else {
+		return string(trimmed) + "..."
+	}
 }
 
 func decorate(l zerolog.Logger) zerolog.Logger {
@@ -56,7 +62,7 @@ func InitializeStdout() zerolog.Logger {
 		Out:        os.Stdout,
 		TimeFormat: time.Kitchen,
 		FormatFieldValue: func(i interface{}) string {
-			return truncateText(fmt.Sprintf("%s", i), 40)
+			return truncateText(fmt.Sprintf("%s", i), config.Logging.MaxField)
 		},
 	}))
 }
