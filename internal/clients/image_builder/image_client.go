@@ -22,12 +22,16 @@ func init() {
 func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 	c, err := NewClientWithResponses(config.ImageBuilder.URL, func(c *Client) error {
 		if config.ImageBuilder.Proxy.URL != "" {
+			var client HttpRequestDoer
 			if config.Features.Environment != "development" {
 				return clients.ClientProxyProductionUseErr
 			}
 			client, err := clients.NewProxyDoer(ctx, config.ImageBuilder.Proxy.URL)
 			if err != nil {
 				return fmt.Errorf("cannot create proxy doer: %w", err)
+			}
+			if config.RestEndpoints.TraceData {
+				client = clients.NewLoggingDoer(ctx, client)
 			}
 			c.Client = client
 		}
