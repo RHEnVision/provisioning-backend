@@ -27,9 +27,13 @@ func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 			if config.Features.Environment != "development" {
 				return clients.ClientProxyProductionUseErr
 			}
+			var client HttpRequestDoer
 			client, err := clients.NewProxyDoer(ctx, config.Sources.Proxy.URL)
 			if err != nil {
 				return fmt.Errorf("cannot create proxy doer: %w", err)
+			}
+			if config.RestEndpoints.TraceData {
+				client = clients.NewLoggingDoer(ctx, client)
 			}
 			c.Client = client
 		}

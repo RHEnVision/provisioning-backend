@@ -73,6 +73,7 @@ var config struct {
 			Password string
 			Proxy    proxy
 		}
+		TraceData bool
 	}
 	Worker struct {
 		Queue        string
@@ -89,6 +90,7 @@ var Logging = &config.Logging
 var Cloudwatch = &config.Cloudwatch
 var AWS = &config.AWS
 var Features = &config.FeatureFlags
+var RestEndpoints = &config.RestEndpoints
 var ImageBuilder = &config.RestEndpoints.ImageBuilder
 var Sources = &config.RestEndpoints.Sources
 var Worker = &config.Worker
@@ -148,5 +150,7 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.AWS.Key = replacement
 	configCopy.AWS.Secret = replacement
 	configCopy.AWS.Session = replacement
+	configCopy.RestEndpoints.Sources.Password = replacement
+	configCopy.RestEndpoints.ImageBuilder.Password = replacement
 	logger.Info().Msgf("Configuration: %+v", configCopy)
 }
