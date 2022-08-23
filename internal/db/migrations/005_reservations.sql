@@ -22,7 +22,7 @@ CREATE TABLE aws_reservation_details
   reservation_id BIGINT NOT NULL,
   provider INTEGER NOT NULL DEFAULT provider_type_aws(),
   pubkey_id BIGINT NOT NULL REFERENCES pubkeys(id),
-  source_id INTEGER NOT NULL,
+  source_id TEXT NOT NULL,
   instance_type TEXT NOT NULL,
   amount INTEGER NOT NULL,
   image_id TEXT NOT NULL,

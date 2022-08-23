@@ -22,7 +22,7 @@ type PubkeyResource struct {
 	Provider ProviderType `db:"provider" json:"provider"`
 
 	// Required.
-	SourceID int64 `db:"source_id" json:"source_id"`
+	SourceID string `db:"source_id" json:"source_id"`
 
 	// Resource handle (id). Format is provider-dependant. Required.
 	Handle string `db:"handle" json:"handle"`
