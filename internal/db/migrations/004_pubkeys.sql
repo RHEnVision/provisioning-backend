@@ -16,7 +16,7 @@ CREATE TABLE pubkey_resources
   tag TEXT NOT NULL DEFAULT '',
   pubkey_id BIGINT NOT NULL REFERENCES pubkeys(id),
   provider INTEGER NOT NULL CHECK (valid_provider(provider)),
-  source_id INTEGER NOT NULL,
+  source_id TEXT NOT NULL,
   handle TEXT NOT NULL
 );
 

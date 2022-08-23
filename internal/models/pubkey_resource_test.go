@@ -15,7 +15,7 @@ func TestTagFormat(t *testing.T) {
 		ID:       12,
 		Tag:      "ctNLLGsipCJYjeoGXdWy17",
 		PubkeyID: 25,
-		SourceID: 1,
+		SourceID: "1",
 		Provider: 1,
 		Handle:   "aws-handle",
 	}

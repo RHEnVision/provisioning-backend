@@ -17,7 +17,7 @@ type PubkeyUploadAWSTaskArgs struct {
 	AccountID     int64  `json:"account_id"`
 	ReservationID int64  `json:"reservation_id"`
 	PubkeyID      int64  `json:"pubkey_id"`
-	SourceID      int64  `json:"source_id"`
+	SourceID      string `json:"source_id"`
 	ARN           string `json:"arn"`
 }
 

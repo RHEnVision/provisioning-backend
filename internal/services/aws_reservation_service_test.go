@@ -32,7 +32,7 @@ func TestCreateAWSReservationHandler(t *testing.T) {
 	assert.Nil(t, err, fmt.Sprintf("Error GeneratePubkey: %v", err))
 
 	values := map[string]interface{}{
-		"source_id":     1,
+		"source_id":     "1",
 		"image_id":      "2bc640f6-927a-404a-9594-5b2da7e06608",
 		"amount":        1,
 		"instance_type": "t1.micro",
