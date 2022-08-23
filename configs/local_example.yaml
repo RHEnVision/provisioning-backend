@@ -42,6 +42,8 @@ cloudwatch:
   stream: stream
 
 restEndpoints:
+  # complete request and response logging (do not use in production)
+  traceData: false
   imageBuilder:
     url: https://xxx.stage.redhat.com/api/image-builder/v1
     # basic auth and proxy is only useful for development against stage
