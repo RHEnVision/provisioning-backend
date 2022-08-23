@@ -224,8 +224,7 @@ components:
           format: int64
           type: integer
         source_id:
-          format: int64
-          type: integer
+          type: string
       type: object
     v1.AWSReservationResponse:
       properties:
@@ -245,8 +244,7 @@ components:
           format: int64
           type: integer
         source_id:
-          format: int64
-          type: integer
+          type: string
       type: object
     v1.InstanceTypeResponse:
       properties:

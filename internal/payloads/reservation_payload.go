@@ -37,7 +37,7 @@ type AWSReservationResponsePayload struct {
 	PubkeyID int64 `json:"pubkey_id"`
 
 	// Source ID.
-	SourceID int64 `json:"source_id"`
+	SourceID string `json:"source_id"`
 
 	//AWS Instance type.
 	InstanceType string `json:"instance_type"`
@@ -61,7 +61,7 @@ type AWSReservationRequestPayload struct {
 	PubkeyID int64 `json:"pubkey_id"`
 
 	// Source ID.
-	SourceID int64 `json:"source_id"`
+	SourceID string `json:"source_id"`
 
 	// AWS Instance type.
 	InstanceType string `json:"instance_type"`

@@ -42,7 +42,7 @@ type AWSReservation struct {
 	PubkeyID int64 `db:"pubkey_id" json:"pubkey_id"`
 
 	// Source ID.
-	SourceID int64 `db:"source_id" json:"source_id"`
+	SourceID string `db:"source_id" json:"source_id"`
 
 	//AWS Instance type.
 	InstanceType string `db:"instance_type" json:"instance_type"`

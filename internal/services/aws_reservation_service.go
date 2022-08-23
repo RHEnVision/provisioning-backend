@@ -3,7 +3,6 @@ package services
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
@@ -81,7 +80,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch arn from Sources
-	arn, err := sourcesClient.GetArn(r.Context(), strconv.Itoa(int(payload.SourceID)))
+	arn, err := sourcesClient.GetArn(r.Context(), payload.SourceID)
 	if err != nil {
 		if errors.Is(err, sources.ApplicationNotFoundErr) {
 			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: application not found", err, 404))
@@ -122,7 +121,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.ClientError(r.Context(), "Image Builder", "can't get ami from image builder", err, 500))
 	}
 
-	logger.Debug().Msgf("Enqueuing launch instance job for source %d", reservation.SourceID)
+	logger.Debug().Msgf("Enqueuing launch instance job for source %s", reservation.SourceID)
 	launchJob := dejq.PendingJob{
 		Type: queue.TypeLaunchInstanceAws,
 		Body: &jobs.LaunchInstanceAWSTaskArgs{
