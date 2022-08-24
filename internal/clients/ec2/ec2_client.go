@@ -2,6 +2,7 @@ package ec2
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -121,14 +122,27 @@ func (c *Client) ListInstanceTypes() ([]types.InstanceTypeInfo, error) {
 	return resp.InstanceTypes, nil
 }
 
-func (c *Client) RunInstances(ctx context.Context, amount int32, instanceType types.InstanceType, AMI string, keyName string) ([]*string, *string, error) {
+func (c *Client) RunInstances(ctx context.Context, name string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
 	log.Trace().Msg("Run AWS EC2 instance")
+	encodedUserData := base64.StdEncoding.EncodeToString(userData)
 	input := &ec2.RunInstancesInput{
 		MaxCount:     aws.Int32(amount),
 		MinCount:     aws.Int32(amount),
 		InstanceType: instanceType,
 		ImageId:      aws.String(AMI),
 		KeyName:      &keyName,
+		UserData:     &encodedUserData,
+	}
+	input.TagSpecifications = []types.TagSpecification{
+		{
+			ResourceType: types.ResourceTypeInstance,
+			Tags: []types.Tag{
+				{
+					Key:   aws.String("Name"),
+					Value: aws.String(name),
+				},
+			},
+		},
 	}
 	resp, err := c.ec2.RunInstances(ctx, input)
 	if err != nil {

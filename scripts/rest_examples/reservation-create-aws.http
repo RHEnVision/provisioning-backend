@@ -4,10 +4,11 @@ Content-Type: application/json
 X-Rh-Identity: {{identity}}
 
 {
-
+  "name": "amz-linux-us-east-1",
   "source_id": "1",
-  "image_id": "2bc640f6-927a-404a-9594-5b2da7e06608",
+  "image_id": "ami-05fa00d4c63e32376",
   "amount": 1,
   "instance_type": "t1.micro",
-  "pubkey_id": 1
+  "pubkey_id": 1,
+  "poweroff": true
 }

@@ -1,0 +1,10 @@
+#cloud-config
+{{- /* Do not remove the line above. Intent with two spaces. */ -}}
+
+{{ if .PowerOff }}
+power_state:
+  mode: poweroff
+  delay: "+{{ .PowerOffDelayMin }}"
+  message: "{{ .PowerOffMessage }}"
+  timeout: 60
+{{- end }}
