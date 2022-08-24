@@ -25,6 +25,9 @@ func init() {
 	viper.SetDefault("worker.concurrency", 8)
 	viper.SetDefault("worker.heartbeatSec", 30)
 	viper.SetDefault("worker.maxBeats", 10)
+	viper.SetDefault("aws.region", "us-east-1")
+	viper.SetDefault("aws.key", "")
+	viper.SetDefault("aws.secret", "")
 
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
