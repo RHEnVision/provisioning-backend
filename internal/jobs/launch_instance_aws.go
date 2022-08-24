@@ -9,6 +9,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/lzap/dejq"
 )
@@ -17,10 +18,14 @@ type LaunchInstanceAWSTaskArgs struct {
 	AccountID     int64 `json:"account_id"`
 	PubkeyID      int64 `json:"pubkey_id"`
 	ReservationID int64 `json:"reservation_id"`
+	// Optional name, can be blank
+	Name string `json:"name"`
 	// AWS AMI
 	AMI string `json:"ami"`
 	// Amount of instances to launch
 	Amount int32 `json:"amount"`
+	// Immediately power off the system
+	PowerOff bool `json:"poweroff"`
 	// Amazon EC2 Instance Type
 	InstanceType string `json:"instance_type"`
 	// The ARN fetched from Sources which is linked to a specific source
@@ -68,8 +73,18 @@ func HandleLaunchInstanceAWS(ctx context.Context, job dejq.Job) error {
 		return fmt.Errorf("cannot get pubkey by id: %w", err)
 	}
 
+	// Generate user data
+	userDataInput := userdata.UserData{
+		PowerOff: args.PowerOff,
+	}
+	userData, err := userdata.GenerateUserData(&userDataInput)
+	if err != nil {
+		return fmt.Errorf("cannot generate user data: %w", err)
+	}
+	logger.Trace().Bool("userdata", true).Msg(string(userData))
+
 	logger.Info().Msg("Starting running instances on AWS")
-	instances, awsReservationId, err := newEC2Client.RunInstances(ctx, args.Amount, types.InstanceType(args.InstanceType), args.AMI, pk.Name)
+	instances, awsReservationId, err := newEC2Client.RunInstances(ctx, args.Name, args.Amount, types.InstanceType(args.InstanceType), args.AMI, pk.Name, userData)
 	if err != nil {
 		return fmt.Errorf("cannot run instances: %w", err)
 	}

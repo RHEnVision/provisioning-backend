@@ -63,14 +63,20 @@ type AWSReservationRequestPayload struct {
 	// Source ID.
 	SourceID string `json:"source_id"`
 
+	// Optional name of the instance(s).
+	Name string `json:"name"`
+
 	// AWS Instance type.
 	InstanceType string `json:"instance_type"`
 
 	// Amount of instances to provision of type: Instance type.
 	Amount int32 ` json:"amount"`
 
-	// The ID of the image from which the instance is created.
+	// Image Builder UUID of the image that should be launched. AMI is also supported.
 	ImageID string `json:"image_id"`
+
+	// Immediately power off the system after initialization
+	PowerOff bool `json:"poweroff"`
 }
 
 func (p *GenericReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {

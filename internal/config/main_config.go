@@ -48,10 +48,11 @@ var config struct {
 		Stream  string
 	}
 	AWS struct {
-		Region  string
-		Key     string
-		Secret  string
-		Session string
+		Region         string
+		Key            string
+		Secret         string
+		Session        string
+		InstancePrefix string
 	}
 	Prometheus struct {
 		Port int

@@ -3,10 +3,12 @@ package services
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
@@ -42,9 +44,11 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	reservation := &models.AWSReservation{
 		PubkeyID:     payload.PubkeyID,
 		SourceID:     payload.SourceID,
+		Name:         config.AWS.InstancePrefix + payload.Name,
 		InstanceType: payload.InstanceType,
 		Amount:       payload.Amount,
 		ImageID:      payload.ImageID,
+		PowerOff:     payload.PowerOff,
 	}
 	reservation.AccountID = accountId
 	reservation.Status = "Created"
@@ -107,18 +111,24 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	// Get Image builder client
-	IBClient, err := clients.GetImageBuilderClient(r.Context())
-	logger.Trace().Msg("Creating IB client")
-	if err != nil {
-		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "image builder client", err))
-		return
-	}
+	var ami string
+	if strings.HasPrefix(reservation.ImageID, "ami-") {
+		// Direct AMI ID was provided, no need to call image builder
+		ami = reservation.ImageID
+	} else {
+		// Get Image builder client
+		IBClient, ibErr := clients.GetImageBuilderClient(r.Context())
+		logger.Trace().Msg("Creating IB client")
+		if ibErr != nil {
+			renderError(w, r, payloads.NewClientInitializationError(r.Context(), "image builder client", ibErr))
+			return
+		}
 
-	// Get AMI
-	ami, err := IBClient.GetAWSAmi(r.Context(), reservation.ImageID)
-	if err != nil {
-		renderError(w, r, payloads.ClientError(r.Context(), "Image Builder", "can't get ami from image builder", err, 500))
+		// Get AMI
+		ami, ibErr = IBClient.GetAWSAmi(r.Context(), reservation.ImageID)
+		if ibErr != nil {
+			renderError(w, r, payloads.ClientError(r.Context(), "Image Builder", "can't get ami from image builder", ibErr, 500))
+		}
 	}
 
 	logger.Debug().Msgf("Enqueuing launch instance job for source %s", reservation.SourceID)
@@ -128,10 +138,12 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			PubkeyID:      pk.ID,
+			Name:          reservation.Name,
 			AMI:           ami,
 			ARN:           arn,
 			Amount:        reservation.Amount,
 			InstanceType:  reservation.InstanceType,
+			PowerOff:      reservation.PowerOff,
 		},
 	}
 
