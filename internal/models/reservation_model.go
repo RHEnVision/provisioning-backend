@@ -44,7 +44,10 @@ type AWSReservation struct {
 	// Source ID.
 	SourceID string `db:"source_id" json:"source_id"`
 
-	//AWS Instance type.
+	// Optional instance name
+	Name string `db:"name" json:"name"`
+
+	// AWS Instance type.
 	InstanceType string `db:"instance_type" json:"instance_type"`
 
 	// Amount of instances to provision of type: Instance type.
@@ -52,6 +55,9 @@ type AWSReservation struct {
 
 	// The ID of the image from which the instance is created.
 	ImageID string `db:"image_id" json:"image_id"`
+
+	// Immediately power off the system after initialization
+	PowerOff bool `db:"poweroff" json:"poweroff"`
 
 	// The ID of the aws reservation which was created.
 	AWSReservationID string `db:"aws_reservation_id" json:"aws_reservation_id"`

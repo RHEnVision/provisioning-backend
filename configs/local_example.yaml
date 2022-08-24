@@ -30,6 +30,8 @@ aws:
   key:
   secret:
   session:
+  # instance name prefix for all VMs created via the app
+  #instancePrefix:
 
 # AWS CloudWatch logger
 cloudwatch:
