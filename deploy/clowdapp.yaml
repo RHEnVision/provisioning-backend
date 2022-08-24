@@ -63,6 +63,18 @@ objects:
                 value: ${ENABLE_CLOUDWATCH_LOGGING}
               - name: OPENAPIFILEPATH
                 value: ${OPEN_API_FILEPATH}
+              - name: AWS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-aws-acc
+                    key: key
+                    optional: false
+              - name: AWS_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-aws-acc
+                    key: secret
+                    optional: false
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}
