@@ -12,9 +12,15 @@ import (
 var awsSupported = make(map[string]interface{})
 var ErrArchitectureNotSupported = errors.New("architecture is not supported")
 
-const x86_64 = "x86_64"
-const arm64 = "arm64"
-const i386 = "i386"
+type ArchitectureType string
+
+const (
+	ArchitectureTypeI386       ArchitectureType = "i386"
+	ArchitectureTypeX8664      ArchitectureType = "x86_64"
+	ArchitectureTypeArm64      ArchitectureType = "arm64"
+	ArchitectureTypeAppleX8664 ArchitectureType = "apple-x86_64"
+	ArchitectureTypeAppleArm64 ArchitectureType = "apple-arm64"
+)
 
 type supportedInstanceTypes struct {
 	Aws []string `yaml:"aws"`
@@ -39,14 +45,18 @@ func init() {
 	}
 }
 
-func MapArchitectures(_ context.Context, arch string) (string, error) {
+func MapArchitectures(_ context.Context, arch string) (ArchitectureType, error) {
 	switch {
+	case strings.Contains(arch, "86") && strings.Contains(arch, "mac"):
+		return ArchitectureTypeAppleX8664, nil
+	case strings.Contains(arch, "arm") && strings.Contains(arch, "mac"):
+		return ArchitectureTypeAppleArm64, nil
 	case strings.Contains(arch, "i386"):
-		return i386, nil
+		return ArchitectureTypeI386, nil
 	case strings.Contains(arch, "86"):
-		return x86_64, nil
+		return ArchitectureTypeX8664, nil
 	case strings.Contains(arch, "arm"):
-		return arm64, nil
+		return ArchitectureTypeArm64, nil
 	}
 	return "", ErrArchitectureNotSupported
 }
