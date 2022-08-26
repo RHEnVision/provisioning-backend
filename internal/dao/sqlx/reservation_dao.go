@@ -2,6 +2,8 @@ package sqlx
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -10,13 +12,15 @@ import (
 )
 
 const (
-	createReservation         = `INSERT INTO reservations (provider, account_id, status) VALUES ($1, $2, $3) RETURNING *`
-	createAwsDetail           = `INSERT INTO aws_reservation_details (reservation_id, pubkey_id, source_id, instance_type, amount, image_id, poweroff, name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
-	updateReservationStatus   = `UPDATE reservations SET status = $2 WHERE id = $1 RETURNING *`
+	createReservation         = `INSERT INTO reservations (provider, account_id, steps, status) VALUES ($1, $2, $3, $4) RETURNING *`
+	createAwsDetail           = `INSERT INTO aws_reservation_details (reservation_id, pubkey_id, source_id, image_id, detail) VALUES ($1, $2, $3, $4, $5)`
+	updateReservationStatus   = `UPDATE reservations SET status = $2, step = step + $3 WHERE id = $1 RETURNING *`
 	updateReservationIDForAWS = `UPDATE aws_reservation_details SET aws_reservation_id = $2 WHERE reservation_id = $1 RETURNING *`
-	finishReservationStatus   = `UPDATE reservations SET status = $2, success = $3, finished_at = now() WHERE id = $1 RETURNING *`
+	finishReservationSuccess  = `UPDATE reservations SET success = true, finished_at = now() WHERE id = $1 RETURNING *`
+	finishReservationError    = `UPDATE reservations SET success = false, error = $2, finished_at = now() WHERE id = $1 RETURNING *`
 	deleteReservationById     = `DELETE FROM reservations WHERE id = $1`
-	listReservations          = `SELECT * FROM reservations ORDER BY id LIMIT $1 OFFSET $2`
+	getReservationById        = `SELECT * FROM reservations WHERE account_id = $1 AND id = $2 LIMIT 1`
+	listReservations          = `SELECT * FROM reservations WHERE account_id = $1 ORDER BY id LIMIT $2 OFFSET $3`
 	createInstance            = `INSERT INTO reservation_instances (reservation_id, instance_id) VALUES ($1, $2)`
 	listInstanceReservations  = `SELECT * FROM reservation_instances ORDER BY reservation_id LIMIT $1 OFFSET $2`
 )
@@ -24,9 +28,11 @@ const (
 type reservationDaoSqlx struct {
 	name                      string
 	create                    *sqlx.Stmt
+	getById                   *sqlx.Stmt
 	createAwsDetail           *sqlx.Stmt
 	updateStatus              *sqlx.Stmt
-	finishStatus              *sqlx.Stmt
+	finishSuccess             *sqlx.Stmt
+	finishError               *sqlx.Stmt
 	deleteById                *sqlx.Stmt
 	list                      *sqlx.Stmt
 	createInstance            *sqlx.Stmt
@@ -43,6 +49,10 @@ func getReservationDao(ctx context.Context) (dao.ReservationDao, error) {
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, createReservation, err)
 	}
+	daoImpl.getById, err = db.DB.PreparexContext(ctx, getReservationById)
+	if err != nil {
+		return nil, NewPrepareStatementError(ctx, &daoImpl, getReservationById, err)
+	}
 	daoImpl.createAwsDetail, err = db.DB.PreparexContext(ctx, createAwsDetail)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, createAwsDetail, err)
@@ -51,9 +61,13 @@ func getReservationDao(ctx context.Context) (dao.ReservationDao, error) {
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, updateReservationStatus, err)
 	}
-	daoImpl.finishStatus, err = db.DB.PreparexContext(ctx, finishReservationStatus)
+	daoImpl.finishSuccess, err = db.DB.PreparexContext(ctx, finishReservationSuccess)
 	if err != nil {
-		return nil, NewPrepareStatementError(ctx, &daoImpl, finishReservationStatus, err)
+		return nil, NewPrepareStatementError(ctx, &daoImpl, finishReservationSuccess, err)
+	}
+	daoImpl.finishError, err = db.DB.PreparexContext(ctx, finishReservationError)
+	if err != nil {
+		return nil, NewPrepareStatementError(ctx, &daoImpl, finishReservationError, err)
 	}
 	daoImpl.list, err = db.DB.PreparexContext(ctx, listReservations)
 	if err != nil {
@@ -90,7 +104,11 @@ func (di *reservationDaoSqlx) CreateNoop(ctx context.Context, reservation *model
 	query := createReservation
 	stmt := di.create
 
-	err := stmt.GetContext(ctx, reservation, reservation.Provider, reservation.AccountID, reservation.Status)
+	err := stmt.GetContext(ctx, reservation,
+		reservation.Provider,
+		reservation.AccountID,
+		reservation.Steps,
+		reservation.Status)
 	if err != nil {
 		return NewGetError(ctx, di, query, err)
 	}
@@ -101,7 +119,11 @@ func (di *reservationDaoSqlx) CreateAWS(ctx context.Context, reservation *models
 	err := dao.WithTransaction(ctx, func(tx *sqlx.Tx) error {
 		query := createReservation
 		stmt := di.create
-		err := stmt.GetContext(ctx, reservation, reservation.Provider, reservation.AccountID, reservation.Status)
+		err := stmt.GetContext(ctx, reservation,
+			reservation.Provider,
+			reservation.AccountID,
+			reservation.Steps,
+			reservation.Status)
 		if err != nil {
 			return NewGetError(ctx, di, query, err)
 		}
@@ -112,11 +134,8 @@ func (di *reservationDaoSqlx) CreateAWS(ctx context.Context, reservation *models
 			reservation.ID,
 			reservation.PubkeyID,
 			reservation.SourceID,
-			reservation.InstanceType,
-			reservation.Amount,
 			reservation.ImageID,
-			reservation.PowerOff,
-			reservation.Name)
+			reservation.Detail)
 		if err != nil {
 			return NewExecUpdateError(ctx, di, query, err)
 		}
@@ -150,12 +169,28 @@ func (di *reservationDaoSqlx) CreateInstance(ctx context.Context, reservation *m
 	return nil
 }
 
+func (di *reservationDaoSqlx) GetById(ctx context.Context, id int64) (*models.Reservation, error) {
+	query := getReservationById
+	stmt := di.getById
+	result := &models.Reservation{}
+
+	err := stmt.GetContext(ctx, result, ctxAccountId(ctx), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, NewNoRowsError(ctx, di, query, err)
+		} else {
+			return nil, NewGetError(ctx, di, query, err)
+		}
+	}
+	return result, nil
+}
+
 func (di *reservationDaoSqlx) List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error) {
 	query := listReservations
 	stmt := di.list
 	var result []*models.Reservation
 
-	err := stmt.SelectContext(ctx, &result, limit, offset)
+	err := stmt.SelectContext(ctx, &result, ctxAccountId(ctx), limit, offset)
 	if err != nil {
 		return nil, NewSelectError(ctx, di, query, err)
 	}
@@ -174,11 +209,11 @@ func (di *reservationDaoSqlx) ListInstances(ctx context.Context, limit, offset i
 	return result, nil
 }
 
-func (di *reservationDaoSqlx) UpdateStatus(ctx context.Context, id int64, status string) error {
+func (di *reservationDaoSqlx) UpdateStatus(ctx context.Context, id int64, status string, addSteps int32) error {
 	query := updateReservationStatus
 	stmt := di.updateStatus
 
-	res, err := stmt.ExecContext(ctx, id, status)
+	res, err := stmt.ExecContext(ctx, id, status, addSteps)
 	if err != nil {
 		return NewExecUpdateError(ctx, di, query, err)
 	}
@@ -204,11 +239,26 @@ func (di *reservationDaoSqlx) UpdateReservationIDForAWS(ctx context.Context, id 
 	return nil
 }
 
-func (di *reservationDaoSqlx) Finish(ctx context.Context, id int64, success bool, status string) error {
-	query := finishReservationStatus
-	stmt := di.finishStatus
+func (di *reservationDaoSqlx) FinishWithSuccess(ctx context.Context, id int64) error {
+	query := finishReservationSuccess
+	stmt := di.finishSuccess
 
-	res, err := stmt.ExecContext(ctx, id, status, success)
+	res, err := stmt.ExecContext(ctx, id)
+	if err != nil {
+		return NewExecUpdateError(ctx, di, query, err)
+	}
+	if rows, _ := res.RowsAffected(); rows != 1 {
+		return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
+
+	}
+	return nil
+}
+
+func (di *reservationDaoSqlx) FinishWithError(ctx context.Context, id int64, errorString string) error {
+	query := finishReservationError
+	stmt := di.finishError
+
+	res, err := stmt.ExecContext(ctx, id, errorString)
 	if err != nil {
 		return NewExecUpdateError(ctx, di, query, err)
 	}

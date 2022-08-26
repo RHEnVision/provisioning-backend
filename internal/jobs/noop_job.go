@@ -2,10 +2,8 @@ package jobs
 
 import (
 	"context"
-	"fmt"
+	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/lzap/dejq"
 )
 
@@ -14,28 +12,29 @@ type NoopJobArgs struct {
 	ReservationID int64 `json:"reservation_id"`
 }
 
+// Unmarshall arguments and handle error
 func HandleNoop(ctx context.Context, job dejq.Job) error {
-	ctxLogger := ctxval.Logger(ctx)
-	ctxLogger.Debug().Msg("Started no operation job")
-
 	args := NoopJobArgs{}
-	err := job.Decode(&args)
+	err := decodeJob(ctx, job, &args)
 	if err != nil {
-		ctxLogger.Error().Err(err).Msg("unable to decode arguments")
-		return fmt.Errorf("unable to decode args: %w", err)
+		return err
 	}
-	logger := ctxLogger.With().Int64("reservation", args.ReservationID).Logger()
-	logger.Info().Interface("args", args).Msg("Processing no operation job")
+	ctx = contextLogger(ctx, job.Type(), args, args.AccountID, args.ReservationID)
 
-	// do nothing and update status
-	rDao, err := dao.GetReservationDao(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot get reservation DAO: %w", err)
-	}
-	err = rDao.Finish(ctx, args.ReservationID, true, "Finished")
-	if err != nil {
-		return fmt.Errorf("cannot update reservation status: %w", err)
-	}
+	jobErr := handleNoop(ctx, &args)
+
+	finishJob(ctx, args.ReservationID, jobErr)
+	return jobErr
+}
+
+// Job logic, when error is returned the job status is updated accordingly
+func handleNoop(ctx context.Context, args *NoopJobArgs) error {
+	// status updates before and after the code logic
+	updateStatusBefore(ctx, args.ReservationID, "No operation started")
+	defer updateStatusAfter(ctx, args.ReservationID, "No operation finished", 1)
+
+	// do nothing and return no error
+	time.Sleep(5 * time.Second)
 
 	return nil
 }

@@ -2,6 +2,7 @@ package ctxval
 
 import (
 	"context"
+	"errors"
 
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog"
@@ -16,6 +17,8 @@ const (
 	requestNumCtxKey commonKeyId = iota
 	accountIdCtxKey  commonKeyId = iota
 )
+
+var MissingAccountInContextError = errors.New("operation requires account_id in context")
 
 // Identity returns identity header struct or nil when not set.
 func Identity(ctx context.Context) identity.XRHID {
@@ -56,9 +59,13 @@ func WithRequestNumber(ctx context.Context, num uint64) context.Context {
 	return context.WithValue(ctx, requestNumCtxKey, num)
 }
 
-// Account returns current account model or nil when not set.
+// Account returns current account model or panics when not set
 func AccountId(ctx context.Context) int64 {
-	return ctx.Value(accountIdCtxKey).(int64)
+	value := ctx.Value(accountIdCtxKey)
+	if value == nil {
+		panic(MissingAccountInContextError)
+	}
+	return value.(int64)
 }
 
 func WithAccountId(ctx context.Context, accountId int64) context.Context {
