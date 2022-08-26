@@ -12,6 +12,7 @@ import (
 	// HTTP client implementations
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/config/parser"
 
 	// Job queue implementation
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
@@ -51,6 +52,12 @@ func main() {
 	defer clsFunc()
 	log.Logger = logger
 	logging.DumpConfigForDevelopment()
+
+	// report unknown environmental variables (see ./internal/config/parser/known.go)
+	unknown := parser.UnknownEnvVariables()
+	if len(unknown) > 0 {
+		logger.Warn().Msgf("Unknown ENV variables, add them in the codebase: %+v", unknown)
+	}
 
 	// initialize the rest
 	err = db.Initialize("public")

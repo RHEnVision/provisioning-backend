@@ -1,3 +1,6 @@
+SRC_GO := $(shell find . -name \*.go -print)
+SRC_SQL := $(shell find . -name \*.sql -print)
+SRC_YAML := $(shell find . -name \*.yaml -print)
 TEST_TAGS?=test
 CONTAINER_BUILD_OPTS ?= --build-arg=quay_expiration=2d
 CONTAINER_IMAGE ?= provisioning-backend
@@ -5,18 +8,15 @@ PACKAGE_BASE = github.com/RHEnVision/provisioning-backend/internal
 LDFLAGS = "-X $(PACKAGE_BASE)/version.BuildCommit=$(shell git rev-parse --short HEAD) -X $(PACKAGE_BASE)/version.BuildTime=$(shell date +'%Y-%m-%d_%T')"
 
 .PHONY: build
-build: build-pbapi build-pbmigrate build-pbworker
+build: pbapi pbmigrate pbworker
 
-.PHONY: build-pbapi
-build-pbapi:
+pbapi: $(SRC_GO) $(SRC_SQL) $(SRC_YAML)
 	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -o pbapi ./cmd/pbapi
 
-.PHONY: build-pbworker
-build-pbworker:
+pbworker: $(SRC_GO) $(SRC_SQL) $(SRC_YAML)
 	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -o pbworker ./cmd/pbworker
 
-.PHONY: build-pbmigrate
-build-pbmigrate:
+pbmigrate: $(SRC_GO) $(SRC_SQL) $(SRC_YAML)
 	CGO_ENABLED=0 go build -o pbmigrate ./cmd/pbmigrate
 
 .PHONY: strip
