@@ -1,5 +1,5 @@
-//go:build test && !integration
-// +build test,!integration
+//go:build integration && !test
+// +build integration,!test
 
 package config
 

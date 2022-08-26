@@ -59,9 +59,9 @@ objects:
             env:
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
-              - name: ENABLE_CLOUDWATCH_LOGGING
-                value: ${ENABLE_CLOUDWATCH_LOGGING}
-              - name: OPENAPIFILEPATH
+              - name: CLOUDWATCH_ENABLED
+                value: ${CLOUDWATCH_ENABLED}
+              - name: OPEN_API_FILEPATH
                 value: ${OPEN_API_FILEPATH}
               - name: AWS_KEY
                 valueFrom:
@@ -75,6 +75,16 @@ objects:
                     name: provisioning-aws-acc
                     key: secret
                     optional: false
+              - name: AWS_INSTANCE_PREFIX
+                value: ${AWS_INSTANCE_PREFIX}
+              - name: WORKER_QUEUE
+                value: ${WORKER_QUEUE}
+              - name: WORKER_CONCURRENCY
+                value: ${WORKER_CONCURRENCY}
+              - name: WORKER_HEARTBEAT_SEC
+                value: ${WORKER_HEARTBEAT_SEC}
+              - name: WORKER_MAX_BEATS
+                value: ${WORKER_MAX_BEATS}
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}
@@ -109,8 +119,23 @@ parameters:
   - description: Determines Clowder deployment
     name: CLOWDER_ENABLED
     value: "true"
-  - description: Determines if Cloud Watch logging is enabled
-    name: ENABLE_CLOUDWATCH_LOGGING
+  - description: AWS CloudWatch logging integration
+    name: CLOUDWATCH_ENABLED
     value: "false"
+  - description: AWS instance prefix adds string to all instance names, leave blank for production
+    name: AWS_INSTANCE_PREFIX
+    value: ""
+  - description: Internal queue type (memory/sqs/postgres).
+    name: WORKER_QUEUE
+    value: "memory"
+  - description: Internal queue concurrency, how many goroutines to run in parallel.
+    name: WORKER_CONCURRENCY
+    value: "100"
+  - description: Internal queue heartbeat interval. How often to update job liveness information.
+    name: WORKER_HEARTBEAT_SEC
+    value: "30"
+  - description: Internal queue beat threshold. Now many times the beat can be updated until job is cancelled.
+    name: WORKER_MAX_BEATS
+    value: "10"
   - name: OPEN_API_FILEPATH
     value: /var/tmp/openapi.json

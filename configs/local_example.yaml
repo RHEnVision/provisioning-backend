@@ -73,7 +73,7 @@ worker:
   # amount of goroutines for processing (CPU cores or more)
   concurrency: 50
   # heartbeat update rate (seconds)
-  hearbeatSec: 30
+  heartbeatSec: 30
   # maximum amount of heartbeat updates
   maxBeats: 10
   # run workers as part of API backend (not for production)

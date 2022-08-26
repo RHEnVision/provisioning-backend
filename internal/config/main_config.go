@@ -6,14 +6,17 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config/parser"
 	"github.com/rs/zerolog"
-	"github.com/spf13/viper"
 )
 
 type proxy struct {
 	URL string
 }
 
+// config is the main configuration structure. Values are automatically loaded by
+// viper library from local.yaml, however, environmental variables must be defined
+// in internal/config/parser/known.go.
 var config struct {
 	App struct {
 		Name    string
@@ -98,7 +101,7 @@ var Sources = &config.RestEndpoints.Sources
 var Worker = &config.Worker
 
 func Initialize() {
-	err := viper.Unmarshal(&config)
+	err := parser.Viper.Unmarshal(&config)
 	if err != nil {
 		panic(err)
 	}
