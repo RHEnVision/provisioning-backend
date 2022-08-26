@@ -41,18 +41,25 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reservation := &models.AWSReservation{
-		PubkeyID:     payload.PubkeyID,
-		SourceID:     payload.SourceID,
-		Name:         config.AWS.InstancePrefix + payload.Name,
+	detail := &models.AWSDetail{
 		InstanceType: payload.InstanceType,
 		Amount:       payload.Amount,
-		ImageID:      payload.ImageID,
 		PowerOff:     payload.PowerOff,
+	}
+	reservation := &models.AWSReservation{
+		PubkeyID: payload.PubkeyID,
+		SourceID: payload.SourceID,
+		ImageID:  payload.ImageID,
+		Detail:   detail,
 	}
 	reservation.AccountID = accountId
 	reservation.Status = "Created"
 	reservation.Provider = models.ProviderTypeAWS
+	reservation.Steps = 2
+	if payload.Name != nil {
+		newName := config.AWS.InstancePrefix + *payload.Name
+		reservation.Detail.Name = &newName
+	}
 
 	// validate pubkey
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
@@ -138,17 +145,16 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			PubkeyID:      pk.ID,
-			Name:          reservation.Name,
+			Detail:        reservation.Detail,
 			AMI:           ami,
 			ARN:           arn,
-			Amount:        reservation.Amount,
-			InstanceType:  reservation.InstanceType,
-			PowerOff:      reservation.PowerOff,
 		},
 	}
 
+	startJobs := []dejq.PendingJob{uploadPubkeyJob, launchJob}
+
 	// Enqueue all jobs
-	err = queue.GetEnqueuer().Enqueue(r.Context(), uploadPubkeyJob, launchJob)
+	err = queue.GetEnqueuer().Enqueue(r.Context(), startJobs...)
 	if err != nil {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "AWS reservation", err))
 		return

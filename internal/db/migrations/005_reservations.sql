@@ -4,7 +4,10 @@ CREATE TABLE reservations
   provider INTEGER NOT NULL CHECK (valid_provider(provider)),
   account_id BIGINT NOT NULL REFERENCES accounts(id),
   created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+  steps SMALLINT NOT NULL,
+  step SMALLINT NOT NULL DEFAULT 0,
   status TEXT NOT NULL CHECK (NOT empty(status)),
+  error TEXT NOT NULL DEFAULT '',
   finished_at TIMESTAMP,
   success BOOLEAN,
 
@@ -23,12 +26,9 @@ CREATE TABLE aws_reservation_details
   provider INTEGER NOT NULL DEFAULT provider_type_aws(),
   pubkey_id BIGINT NOT NULL REFERENCES pubkeys(id),
   source_id TEXT NOT NULL,
-  name TEXT NOT NULL DEFAULT '',
-  instance_type TEXT NOT NULL,
-  amount INTEGER NOT NULL,
   image_id TEXT NOT NULL,
-  poweroff BOOLEAN NOT NULL DEFAULT false,
   aws_reservation_id TEXT,
+  detail JSONB,
 
   FOREIGN KEY (reservation_id, provider) REFERENCES reservations(id, provider) ON DELETE CASCADE,
   CHECK (provider = provider_type_aws())

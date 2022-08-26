@@ -118,7 +118,7 @@ func (c *Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, err
 	return res, nil
 }
 
-func (c *Client) RunInstances(ctx context.Context, name string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
+func (c *Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
 	log.Trace().Msg("Run AWS EC2 instance")
 	encodedUserData := base64.StdEncoding.EncodeToString(userData)
 	input := &ec2.RunInstancesInput{
@@ -129,16 +129,18 @@ func (c *Client) RunInstances(ctx context.Context, name string, amount int32, in
 		KeyName:      &keyName,
 		UserData:     &encodedUserData,
 	}
-	input.TagSpecifications = []types.TagSpecification{
-		{
-			ResourceType: types.ResourceTypeInstance,
-			Tags: []types.Tag{
-				{
-					Key:   aws.String("Name"),
-					Value: aws.String(name),
+	if name != nil {
+		input.TagSpecifications = []types.TagSpecification{
+			{
+				ResourceType: types.ResourceTypeInstance,
+				Tags: []types.Tag{
+					{
+						Key:   aws.String("Name"),
+						Value: aws.String(*name),
+					},
 				},
 			},
-		},
+		}
 	}
 	resp, err := c.ec2.RunInstances(ctx, input)
 	if err != nil {

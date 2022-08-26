@@ -21,20 +21,33 @@ type PubkeyUploadAWSTaskArgs struct {
 	ARN           string `json:"arn"`
 }
 
+// Unmarshall arguments and handle error
 func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
+	args := PubkeyUploadAWSTaskArgs{}
+	err := decodeJob(ctx, job, &args)
+	if err != nil {
+		return err
+	}
+	ctx = contextLogger(ctx, job.Type(), args, args.AccountID, args.ReservationID)
+
+	jobErr := handlePubkeyUploadAWS(ctx, &args)
+
+	finishJob(ctx, args.ReservationID, jobErr)
+	return jobErr
+}
+
+// Job logic, when error is returned the job status is updated accordingly
+func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) error {
 	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started pubkey upload AWS job")
-
-	args := PubkeyUploadAWSTaskArgs{}
-	err := job.Decode(&args)
-	if err != nil {
-		ctxLogger.Error().Err(err).Msg("unable to decode arguments")
-		return fmt.Errorf("unable to decode args: %w", err)
-	}
 
 	ctx = ctxval.WithAccountId(ctx, args.AccountID)
 	logger := ctxLogger.With().Int64("reservation", args.ReservationID).Logger()
 	logger.Info().Interface("args", args).Msg("Processing pubkey upload AWS job")
+
+	// status updates before and after the code logic
+	updateStatusBefore(ctx, args.ReservationID, "Uploading public key")
+	defer updateStatusAfter(ctx, args.ReservationID, "Uploaded public key", 1)
 
 	pkDao, err := dao.GetPubkeyDao(ctx)
 	if err != nil {
@@ -106,16 +119,6 @@ func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
 	err = pkrDao.Create(ctx, &pkr)
 	if err != nil {
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
-	}
-
-	// mark the reservation as finished
-	rDao, err := dao.GetReservationDao(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot get reservation DAO: %w", err)
-	}
-	err = rDao.UpdateStatus(ctx, args.ReservationID, "Finished")
-	if err != nil {
-		return fmt.Errorf("cannot update reservation status: %w", err)
 	}
 
 	return nil

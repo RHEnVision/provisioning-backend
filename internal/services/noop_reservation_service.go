@@ -29,6 +29,7 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 			Provider:  models.ProviderTypeNoop,
 			AccountID: accountId,
 			Status:    "Created",
+			Steps:     1,
 		},
 	}
 

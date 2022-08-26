@@ -242,6 +242,10 @@ components:
           type: string
         instance_type:
           type: string
+        name:
+          type: string
+        poweroff:
+          type: boolean
         pubkey_id:
           format: int64
           type: integer
@@ -307,6 +311,8 @@ components:
         created_at:
           format: date-time
           type: string
+        error:
+          type: string
         finished_at:
           format: date-time
           type: string
@@ -317,6 +323,12 @@ components:
           type: integer
         status:
           type: string
+        step:
+          format: int32
+          type: integer
+        steps:
+          format: int32
+          type: integer
         success:
           type: boolean
       type: object
