@@ -192,7 +192,7 @@ func TestUpdateStatusReservation(t *testing.T) {
 		return
 	}
 
-	err = reservationDao.UpdateStatus(ctx, reservationsBefore[0].ID, "Edited")
+	err = reservationDao.UpdateStatus(ctx, reservationsBefore[0].ID, "Edited", 0)
 	if err != nil {
 		t.Errorf("update status failed %s", err)
 		return
@@ -204,6 +204,36 @@ func TestUpdateStatusReservation(t *testing.T) {
 		return
 	}
 	assert.Equal(t, "Edited", reservationsAfter[0].Status, "Update status reservation error: status does not match.")
+	assert.Equal(t, reservationsBefore[0].Step, reservationsAfter[0].Step)
+}
+
+func TestUpdateStepReservation(t *testing.T) {
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
+	err := reservationDao.CreateNoop(ctx, createNoopReservation())
+	if err != nil {
+		t.Errorf("createNoop failed. %s", err)
+		return
+	}
+
+	reservationsBefore, err := reservationDao.List(ctx, 10, 0)
+	if err != nil {
+		t.Errorf("list failed %s", err)
+		return
+	}
+
+	err = reservationDao.UpdateStatus(ctx, reservationsBefore[0].ID, "Edited", 42)
+	if err != nil {
+		t.Errorf("update status failed %s", err)
+		return
+	}
+
+	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
+	if err != nil {
+		t.Errorf("second list failed %s", err)
+		return
+	}
+	assert.Equal(t, reservationsBefore[0].Step+42, reservationsAfter[0].Step)
 }
 
 func TestDeleteReservation(t *testing.T) {
@@ -249,7 +279,7 @@ func TestFinishReservation(t *testing.T) {
 		return
 	}
 
-	err = reservationDao.Finish(ctx, reservationsBefore[0].ID, true, "Finished")
+	err = reservationDao.FinishWithSuccess(ctx, reservationsBefore[0].ID)
 	if err != nil {
 		t.Errorf("finish failed: %v", err)
 		return
@@ -263,5 +293,35 @@ func TestFinishReservation(t *testing.T) {
 
 	assert.Equal(t, reservationsBefore[0].ID, reservationsAfter[0].ID, "Finish reservation error.")
 	assert.Equal(t, true, reservationsAfter[0].Success.Bool, "Finish reservation error: success value does not match.")
-	assert.Equal(t, "Finished", reservationsAfter[0].Status, "Finish reservation error: status does not match.")
+}
+
+func TestFinishWithErrorReservation(t *testing.T) {
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
+	err := reservationDao.CreateNoop(ctx, createNoopReservation())
+	if err != nil {
+		t.Errorf("createNoop failed: %v", err)
+		return
+	}
+
+	reservationsBefore, err := reservationDao.List(ctx, 10, 0)
+	if err != nil {
+		t.Errorf("list failed: %v", err)
+		return
+	}
+
+	err = reservationDao.FinishWithError(ctx, reservationsBefore[0].ID, "An error")
+	if err != nil {
+		t.Errorf("finish failed: %v", err)
+		return
+	}
+
+	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
+	if err != nil {
+		t.Errorf("second list failed: %v", err)
+		return
+	}
+
+	assert.Equal(t, "An error", reservationsAfter[0].Error)
+	assert.Equal(t, false, reservationsAfter[0].Success.Bool)
 }

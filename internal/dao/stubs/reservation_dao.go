@@ -47,6 +47,10 @@ func (stub *reservationDaoStub) CreateInstance(ctx context.Context, reservation 
 	return nil
 }
 
+func (stub *reservationDaoStub) GetById(ctx context.Context, id int64) (*models.Reservation, error) {
+	return nil, nil
+}
+
 func (stub *reservationDaoStub) List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error) {
 	return nil, nil
 }
@@ -55,7 +59,7 @@ func (stub *reservationDaoStub) ListInstances(ctx context.Context, limit, offset
 	return nil, nil
 }
 
-func (stub *reservationDaoStub) UpdateStatus(ctx context.Context, id int64, status string) error {
+func (stub *reservationDaoStub) UpdateStatus(ctx context.Context, id int64, status string, addSteps int32) error {
 	return nil
 }
 
@@ -63,7 +67,11 @@ func (stub *reservationDaoStub) UpdateReservationIDForAWS(ctx context.Context, i
 	return nil
 }
 
-func (stub *reservationDaoStub) Finish(ctx context.Context, id int64, success bool, status string) error {
+func (stub *reservationDaoStub) FinishWithSuccess(ctx context.Context, id int64) error {
+	return nil
+}
+
+func (stub *reservationDaoStub) FinishWithError(ctx context.Context, id int64, errorString string) error {
 	return nil
 }
 

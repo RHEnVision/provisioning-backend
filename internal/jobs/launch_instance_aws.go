@@ -15,37 +15,52 @@ import (
 )
 
 type LaunchInstanceAWSTaskArgs struct {
-	AccountID     int64 `json:"account_id"`
-	PubkeyID      int64 `json:"pubkey_id"`
+	// Associated reservation
 	ReservationID int64 `json:"reservation_id"`
-	// Optional name, can be blank
-	Name string `json:"name"`
-	// AWS AMI
+
+	// Associated account
+	AccountID int64 `json:"account_id"`
+
+	// Associated public key
+	PubkeyID int64 `json:"pubkey_id"`
+
+	// Detail information
+	Detail *models.AWSDetail `json:"detail"`
+
+	// AWS AMI as fetched from image builder
 	AMI string `json:"ami"`
-	// Amount of instances to launch
-	Amount int32 `json:"amount"`
-	// Immediately power off the system
-	PowerOff bool `json:"poweroff"`
-	// Amazon EC2 Instance Type
-	InstanceType string `json:"instance_type"`
+
 	// The ARN fetched from Sources which is linked to a specific source
 	ARN string `json:"arn"`
 }
 
+// Unmarshall arguments and handle error
 func HandleLaunchInstanceAWS(ctx context.Context, job dejq.Job) error {
+	args := LaunchInstanceAWSTaskArgs{}
+	err := decodeJob(ctx, job, &args)
+	if err != nil {
+		return err
+	}
+	ctx = contextLogger(ctx, job.Type(), args, args.AccountID, args.ReservationID)
+
+	jobErr := handleLaunchInstanceAWS(ctx, &args)
+
+	finishJob(ctx, args.ReservationID, jobErr)
+	return jobErr
+}
+
+// Job logic, when error is returned the job status is updated accordingly
+func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
 	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started launch instance AWS job")
-
-	args := LaunchInstanceAWSTaskArgs{}
-	err := job.Decode(&args)
-	if err != nil {
-		ctxLogger.Error().Err(err).Msg("unable to decode arguments")
-		return fmt.Errorf("unable to decode args: %w", err)
-	}
 
 	ctx = ctxval.WithAccountId(ctx, args.AccountID)
 	logger := ctxLogger.With().Int64("reservation", args.ReservationID).Logger()
 	logger.Info().Interface("args", args).Msg("Processing launch instance AWS job")
+
+	// status updates before and after the code logic
+	updateStatusBefore(ctx, args.ReservationID, "Launching instance(s)")
+	defer updateStatusAfter(ctx, args.ReservationID, "Launched instance(s)", 1)
 
 	client := ec2.NewEC2Client(ctx)
 	stsClient, err := sts.NewSTSClient(ctx)
@@ -75,7 +90,7 @@ func HandleLaunchInstanceAWS(ctx context.Context, job dejq.Job) error {
 
 	// Generate user data
 	userDataInput := userdata.UserData{
-		PowerOff: args.PowerOff,
+		PowerOff: args.Detail.PowerOff,
 	}
 	userData, err := userdata.GenerateUserData(&userDataInput)
 	if err != nil {
@@ -83,8 +98,8 @@ func HandleLaunchInstanceAWS(ctx context.Context, job dejq.Job) error {
 	}
 	logger.Trace().Bool("userdata", true).Msg(string(userData))
 
-	logger.Info().Msg("Starting running instances on AWS")
-	instances, awsReservationId, err := newEC2Client.RunInstances(ctx, args.Name, args.Amount, types.InstanceType(args.InstanceType), args.AMI, pk.Name, userData)
+	logger.Trace().Msg("Executing RunInstances")
+	instances, awsReservationId, err := newEC2Client.RunInstances(ctx, args.Detail.Name, args.Detail.Amount, types.InstanceType(args.Detail.InstanceType), args.AMI, pk.Name, userData)
 	if err != nil {
 		return fmt.Errorf("cannot run instances: %w", err)
 	}
@@ -111,16 +126,6 @@ func HandleLaunchInstanceAWS(ctx context.Context, job dejq.Job) error {
 	err = resD.UpdateReservationIDForAWS(ctx, args.ReservationID, *awsReservationId)
 	if err != nil {
 		return fmt.Errorf("cannot UpdateReservationIDForAWS: %w", err)
-	}
-
-	// mark the reservation as finished
-	rDao, err := dao.GetReservationDao(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot get reservation DAO: %w", err)
-	}
-	err = rDao.UpdateStatus(ctx, args.ReservationID, "Finished")
-	if err != nil {
-		return fmt.Errorf("cannot update reservation status: %w", err)
 	}
 
 	return nil
