@@ -29,7 +29,10 @@ type InstanceType struct {
 	Cores *int32 `json:"cores,omitempty"`
 
 	// The size of the memory, in MiB.
-	MemoryMiB int64 `json:"memory,omitempty"`
+	MemoryMiB int64 `json:"memory_mib,omitempty"`
+
+	// The total size of the disks, in GB or 0 if EBS only.
+	StorageGB int64 `json:"storage_gb"`
 
 	// Does the instance type supports RHEL
 	Supported bool `json:"supported,omitempty"`
