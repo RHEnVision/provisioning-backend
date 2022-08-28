@@ -116,7 +116,7 @@ func (c *Client) ListInstanceTypes() ([]types.InstanceTypeInfo, error) {
 
 	log.Debug().Msgf("Number of AWS EC2 instance types: %d", len(resp.InstanceTypes))
 	if len(resp.InstanceTypes) == 100 {
-		return nil, MoreThan100InstanceTypes
+		log.Warn().Msg("There are more instance types to be fetched")
 	}
 
 	return resp.InstanceTypes, nil
