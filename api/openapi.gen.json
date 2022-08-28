@@ -227,42 +227,6 @@
   },
   "openapi": "3.0.0",
   "paths": {
-    "/instance_types/{source_id}": {
-      "get": {
-        "description": "Return a list of instance types",
-        "operationId": "getInstanceTypeList",
-        "parameters": [
-          {
-            "description": "Source ID from Sources Database.",
-            "in": "path",
-            "name": "source_id",
-            "required": true,
-            "schema": {
-              "format": "int64",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/v1.InstanceTypeResponse"
-                }
-              }
-            },
-            "description": "Return on success."
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalError"
-          }
-        }
-      }
-    },
     "/pubkeys": {
       "get": {
         "description": "A pubkey represents an SSH public portion of a key pair with name and body. This operation returns list of all pubkeys for particular account.\n",
@@ -476,6 +440,42 @@
               }
             },
             "description": "Returned on success."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/sources/{ID}/instance_types": {
+      "get": {
+        "description": "Return a list of instance types",
+        "operationId": "getInstanceTypeList",
+        "parameters": [
+          {
+            "description": "Source ID from Sources Database",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.InstanceTypeResponse"
+                }
+              }
+            },
+            "description": "Return on success."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           },
           "500": {
             "$ref": "#/components/responses/InternalError"

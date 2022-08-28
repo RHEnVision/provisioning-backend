@@ -14,7 +14,7 @@ import (
 )
 
 func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
-	sourceId := chi.URLParam(r, "source_id")
+	sourceId := chi.URLParam(r, "ID")
 	ec2Client := ec2.NewEC2Client(r.Context())
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
