@@ -8,6 +8,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
 	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/sts"
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -16,6 +17,7 @@ import (
 func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "ID")
 	ec2Client := ec2.NewEC2Client(r.Context())
+	logger := ctxval.Logger(r.Context())
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
@@ -55,13 +57,15 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := newEC2Client.ListInstanceTypes()
+	res, err := newEC2Client.ListInstanceTypesWithPaginator()
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "can't list EC2 instance types", err))
 		return
 	}
 
+	numBefore := len(res)
 	instances, err := ec2.NewInstanceTypes(r.Context(), res)
+	logger.Trace().Msgf("Number of AWS EC2 instance types %d, Number after filtering: %d", numBefore, len(*instances))
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "can't convertAWSTypes", err))
 		return
