@@ -45,6 +45,9 @@ func apiRouter() http.Handler {
 
 		r.Route("/sources", func(r chi.Router) {
 			r.Get("/", s.ListSources)
+			r.Route("/{ID}", func(r chi.Router) {
+				r.Get("/instance_types", s.ListInstanceTypes)
+			})
 		})
 
 		r.Route("/pubkeys", func(r chi.Router) {
@@ -60,12 +63,6 @@ func apiRouter() http.Handler {
 			r.Get("/", s.ListReservations)
 			r.Route("/{type}", func(r chi.Router) {
 				r.Post("/", s.CreateReservation)
-			})
-		})
-
-		r.Route("/instance_types", func(r chi.Router) {
-			r.Route("/{source_id}", func(r chi.Router) {
-				r.Get("/", s.ListInstanceTypes)
 			})
 		})
 	})

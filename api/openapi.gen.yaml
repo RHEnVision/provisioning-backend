@@ -114,18 +114,18 @@ paths:
                   $ref: '#/components/schemas/v1.SourceResponse'
         '500':
           $ref: "#/components/responses/InternalError"
-  /instance_types/{source_id}:
+  /sources/{ID}/instance_types:
       get:
         description: 'Return a list of instance types'
         operationId: getInstanceTypeList
         parameters:
-          - name: source_id
-            in: path
-            required: true
-            description: 'Source ID from Sources Database.'
-            schema:
-              type: integer
-              format: int64
+        - in: path
+          name: ID
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: 'Source ID from Sources Database'
         responses:
           '200':
             description: Return on success.
