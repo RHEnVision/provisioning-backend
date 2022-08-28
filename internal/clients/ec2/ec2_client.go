@@ -103,23 +103,19 @@ func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, 
 	return newClient, nil
 }
 
-func (c *Client) ListInstanceTypes() ([]types.InstanceTypeInfo, error) {
-	log.Trace().Msg("Listing AWS EC2 instance types")
-	input := &ec2.DescribeInstanceTypesInput{
-		MaxResults: aws.Int32(100),
-	}
+func (c *Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, error) {
+	input := &ec2.DescribeInstanceTypesInput{MaxResults: aws.Int32(100)}
+	pag := ec2.NewDescribeInstanceTypesPaginator(c.ec2, input)
 
-	resp, err := c.ec2.DescribeInstanceTypes(c.context, input)
-	if err != nil {
-		return nil, fmt.Errorf("cannot list instance types: %w", err)
+	res := make([]types.InstanceTypeInfo, 0, 128)
+	for pag.HasMorePages() {
+		resp, err := pag.NextPage(c.context)
+		if err != nil {
+			return nil, fmt.Errorf("cannot list instance types: %w", err)
+		}
+		res = append(res, resp.InstanceTypes...)
 	}
-
-	log.Debug().Msgf("Number of AWS EC2 instance types: %d", len(resp.InstanceTypes))
-	if len(resp.InstanceTypes) == 100 {
-		log.Warn().Msg("There are more instance types to be fetched")
-	}
-
-	return resp.InstanceTypes, nil
+	return res, nil
 }
 
 func (c *Client) RunInstances(ctx context.Context, name string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
