@@ -65,7 +65,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 
 	numBefore := len(res)
 	instances, err := ec2.NewInstanceTypes(r.Context(), res)
-	logger.Trace().Msgf("Number of AWS EC2 instance types %d, Number after filtering: %d", numBefore, len(*instances))
+	logger.Trace().Msgf("Total AWS EC2 instance types: %d (%d after breakdown)", numBefore, len(*instances))
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "can't convertAWSTypes", err))
 		return
