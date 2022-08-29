@@ -258,11 +258,14 @@ components:
         cores:
           format: int32
           type: integer
-        memory:
+        memory_mib:
           format: int64
           type: integer
         name:
           type: string
+        storage_gb:
+          format: int64
+          type: integer
         supported:
           type: boolean
         vcpus:
