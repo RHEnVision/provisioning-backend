@@ -17,14 +17,19 @@ func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) (*[]c
 			if err != nil {
 				return nil, payloads.ClientError(ctx, "Instance type", "", err, 500)
 			}
-			list = append(list, clients.InstanceType{
+
+			it := clients.InstanceType{
 				Name:         string(types[i].InstanceType),
 				VCPUs:        types[i].VCpuInfo.DefaultVCpus,
 				Cores:        types[i].VCpuInfo.DefaultCores,
 				MemoryMiB:    *types[i].MemoryInfo.SizeInMiB,
 				Architecture: string(arch),
 				Supported:    clients.IsSupported(string(types[i].InstanceType)),
-			})
+			}
+			if types[i].InstanceStorageInfo != nil {
+				it.StorageGB = *types[i].InstanceStorageInfo.TotalSizeInGB
+			}
+			list = append(list, it)
 		}
 	}
 	return &list, nil
