@@ -9,7 +9,7 @@ import (
 
 var DuplicatePubkeyErr = errors.New("pubkey already exists")
 var OperationNotPermittedErr = errors.New("operation not permitted")
-var MoreThan100InstanceTypes = errors.New("there are more then 100 instance types")
+var RegionNotFoundErr = errors.New("region was not found")
 
 func IsOperationError(err error, substr string) bool {
 	if err != nil {
