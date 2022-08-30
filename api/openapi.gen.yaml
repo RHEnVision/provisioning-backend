@@ -126,6 +126,12 @@ paths:
             format: int64
           required: true
           description: 'Source ID from Sources Database'
+        - in: query
+          name: region
+          schema:
+            type: string
+          required: true
+          description: List instance types of the specified region
         responses:
           '200':
             description: Return on success.

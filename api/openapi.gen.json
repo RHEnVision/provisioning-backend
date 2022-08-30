@@ -465,6 +465,15 @@
               "format": "int64",
               "type": "integer"
             }
+          },
+          {
+            "description": "List instance types of the specified region",
+            "in": "query",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
