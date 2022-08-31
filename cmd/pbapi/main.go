@@ -10,7 +10,6 @@ import (
 	"syscall"
 
 	// HTTP client implementations
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/config/parser"
@@ -28,6 +27,7 @@ import (
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
 	"github.com/RHEnVision/provisioning-backend/internal/routes"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
@@ -84,7 +84,24 @@ func main() {
 	r.Use(m.RequestNum)
 	r.Use(m.MetricsMiddleware)
 	r.Use(m.LoggerMiddleware(&log.Logger))
+
+	// Set Content-Type to JSON for chi renderer. Warning: Non-chi routes
+	// MUST set Content-Type header on their own!
 	r.Use(render.SetContentType(render.ContentTypeJSON))
+
+	// Setup optional compressor, chi uses sync.Pool so this is cheap.
+	// This setup only uses the default gzip which is widely supported
+	// across the globe, including HTTP proxies which do have problems with
+	// modern algorithms like brotli or zstd to this day.
+	// This middleware must be inserted after Content-Type header is set.
+	if config.Application.Compression {
+		compressor := middleware.NewCompressor(5,
+			"application/json",
+			"application/x-yaml",
+			"text/plain")
+		r.Use(compressor.Handler)
+	}
+
 	// Unauthenticated routes
 	r.Get("/", statusOk)
 	// Main routes
