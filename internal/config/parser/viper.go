@@ -5,7 +5,6 @@
 // viper is initialized with custom StringReplacer.
 //
 // https://github.com/spf13/viper/pull/870
-//
 package parser
 
 import "github.com/spf13/viper"

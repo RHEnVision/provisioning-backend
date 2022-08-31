@@ -10,7 +10,6 @@ package parser
 //
 // APP_NAME (implicit from APP.NAME)
 // AWS_INSTANCE_PREFIX (explicitly set)
-//
 var known = [][]string{
 	{"APP", ""},
 	{"APP.NAME", ""},
