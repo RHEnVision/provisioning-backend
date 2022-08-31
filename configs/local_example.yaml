@@ -24,6 +24,10 @@ logging:
   # to disable.
   maxField: 0
 
+app:
+  # HTTP transparent gzip compression
+  compression: false
+
 # AWS service account credentials
 aws:
   key:

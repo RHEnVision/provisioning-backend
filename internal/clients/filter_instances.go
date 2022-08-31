@@ -37,9 +37,9 @@ func init() {
 
 func MapArchitectures(_ context.Context, arch string) (ArchitectureType, error) {
 	switch {
-	case arch == "86_64_mac":
+	case arch == "x86_64_mac":
 		return ArchitectureTypeAppleX8664, nil
-	case arch == "arm_mac":
+	case arch == "arm64_mac":
 		return ArchitectureTypeAppleArm64, nil
 	case arch == "i386":
 		return ArchitectureTypeI386, nil
