@@ -20,9 +20,10 @@ type proxy struct {
 // in internal/config/parser/known.go.
 var config struct {
 	App struct {
-		Name    string
-		Port    int
-		Version string
+		Name        string
+		Port        int
+		Version     string
+		Compression bool
 	}
 	Database struct {
 		Host        string

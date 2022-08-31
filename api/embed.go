@@ -9,10 +9,9 @@ import (
 //go:embed openapi.gen.json
 var embeddedJSONSpec []byte
 
-func ServeOpenAPISpec(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+func ServeOpenAPISpec(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	w.WriteHeader(http.StatusCreated)
 	_, err := w.Write(embeddedJSONSpec)
 	if err != nil {
 		w.WriteHeader(508)

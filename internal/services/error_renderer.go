@@ -13,7 +13,7 @@ func writeBasicError(w http.ResponseWriter, r *http.Request, err error) {
 	if logger := ctxval.Logger(r.Context()); logger != nil {
 		logger.Error().Msgf("unable to render error %v", err)
 	}
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(508)
 	_, _ = w.Write([]byte(fmt.Sprintf(`{"msg": "%s"}`, err.Error())))
 }
