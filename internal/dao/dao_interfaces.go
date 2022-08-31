@@ -8,7 +8,6 @@
 // Functions marked as UNSCOPED can be safely used from contexts where there is
 // exactly zero function arguments coming from an user (e.g. ID was retrieved via
 // another DAO call that was scoped).
-//
 package dao
 
 import (

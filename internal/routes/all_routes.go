@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/RHEnVision/provisioning-backend/api"
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
@@ -19,19 +21,34 @@ func redocMiddleware(handler http.Handler) http.Handler {
 	return redoc.Redoc(opt, handler)
 }
 
+func logETags() {
+	logger := log.Logger
+	for _, etag := range middleware.AllETags() {
+		logger.Debug().Msgf("Calculated '%s' etag '%s' in %dms", etag.Name, etag.Value, etag.HashTime.Milliseconds())
+	}
+}
+
 func SetupRoutes(r *chi.Mux) {
 	r.Get("/ping", s.StatusService)
 	r.Route("/docs", func(r chi.Router) {
 		r.Use(redocMiddleware)
-		r.Get("/openapi.json", api.ServeOpenAPISpec)
+		r.Route("/openapi.json", func(r chi.Router) {
+			r.Use(middleware.ETagMiddleware(api.ETagValue))
+			r.Get("/", api.ServeOpenAPISpec)
+		})
 	})
 	r.Mount(PathPrefix(), apiRouter())
+
+	logETags()
 }
 
 func apiRouter() http.Handler {
 	r := chi.NewRouter()
 
-	r.Get("/openapi.json", api.ServeOpenAPISpec)
+	r.Route("/openapi.json", func(r chi.Router) {
+		r.Use(middleware.ETagMiddleware(api.ETagValue))
+		r.Get("/", api.ServeOpenAPISpec)
+	})
 	r.Group(func(r chi.Router) {
 		r.Use(identity.EnforceIdentity)
 		r.Use(middleware.AccountMiddleware)
