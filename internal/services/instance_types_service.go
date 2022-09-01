@@ -21,7 +21,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 	if region == "" {
 		renderError(w, r, payloads.NewNotFoundError(r.Context(), ec2.RegionNotFoundErr))
 	}
-	ec2Client := ec2.NewEC2Client(r.Context(), region)
+	ec2Client := ec2.NewEC2ClientWithRegion(r.Context(), region)
 	logger := ctxval.Logger(r.Context())
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
