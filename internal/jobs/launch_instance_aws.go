@@ -4,8 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/ec2"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/sts"
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -62,8 +61,8 @@ func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArg
 	updateStatusBefore(ctx, args.ReservationID, "Launching instance(s)")
 	defer updateStatusAfter(ctx, args.ReservationID, "Launched instance(s)", 1)
 
-	client := ec2.NewEC2Client(ctx)
-	stsClient, err := sts.NewSTSClient(ctx)
+	client, _ := clients.GetEC2Client(ctx)
+	stsClient, err := clients.GetSTSClient(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot initialize sts client: %w", err)
 	}

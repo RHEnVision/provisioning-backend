@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -14,14 +15,18 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type Client struct {
+type STSClient struct {
 	sts *sts.Client
 	ctx context.Context
 	log zerolog.Logger
 }
 
-func NewSTSClient(ctx context.Context) (*Client, error) {
-	c := Client{
+func init() {
+	clients.GetSTSClient = NewSTSClient
+}
+
+func NewSTSClient(ctx context.Context) (clients.STS, error) {
+	c := STSClient{
 		ctx: ctx,
 		log: ctxval.Logger(ctx).With().Str("client", "sts").Logger(),
 	}
@@ -37,7 +42,7 @@ func NewSTSClient(ctx context.Context) (*Client, error) {
 	return &c, nil
 }
 
-func (c *Client) AssumeRole(arn string) (*types.Credentials, error) {
+func (c *STSClient) AssumeRole(arn string) (*types.Credentials, error) {
 	output, err := c.sts.AssumeRole(c.ctx, &sts.AssumeRoleInput{
 		RoleArn:         aws.String(arn),
 		RoleSessionName: aws.String("name"),

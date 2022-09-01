@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/aws/smithy-go/ptr"
 )
 

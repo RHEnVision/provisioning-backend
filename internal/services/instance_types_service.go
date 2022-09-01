@@ -5,9 +5,8 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/ec2"
-	sources "github.com/RHEnVision/provisioning-backend/internal/clients/impl/sources"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/sts"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
+	sources "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
@@ -21,7 +20,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 	if region == "" {
 		renderError(w, r, payloads.NewNotFoundError(r.Context(), ec2.RegionNotFoundErr))
 	}
-	ec2Client := ec2.NewEC2ClientWithRegion(r.Context(), region)
+	ec2Client, _ := clients.GetEC2ClientWithRegion(r.Context(), region)
 	logger := ctxval.Logger(r.Context())
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
@@ -44,7 +43,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stsClient, err := sts.NewSTSClient(r.Context())
+	stsClient, err := clients.GetSTSClient(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sts client", err))
 		return

@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -18,18 +19,24 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type Client struct {
+type EC2Client struct {
 	ec2     *ec2.Client
 	context context.Context
 	log     zerolog.Logger
 }
 
-func NewEC2Client(ctx context.Context) *Client {
-	return NewEC2ClientWithRegion(ctx, config.AWS.Region)
+func init() {
+	clients.GetEC2Client = NewEC2Client
+	clients.GetEC2ClientWithRegion = NewEC2ClientWithRegion
 }
 
-func NewEC2ClientWithRegion(ctx context.Context, region string) *Client {
-	c := Client{
+func NewEC2Client(ctx context.Context) (clients.EC2, error) {
+	c, _ := NewEC2ClientWithRegion(ctx, config.AWS.Region)
+	return c, nil
+}
+
+func NewEC2ClientWithRegion(ctx context.Context, region string) (clients.EC2, error) {
+	c := &EC2Client{
 		context: ctx,
 		log:     ctxval.Logger(ctx).With().Str("client", "ec2").Logger(),
 	}
@@ -43,11 +50,11 @@ func NewEC2ClientWithRegion(ctx context.Context, region string) *Client {
 		Credentials: cache,
 	})
 
-	return &c
+	return c, nil
 }
 
 // ImportPubkey imports a key and returns AWS ID
-func (c *Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
+func (c *EC2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
 	log.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
 	input := &ec2.ImportKeyPairInput{}
 	input.KeyName = aws.String(key.Name)
@@ -76,7 +83,7 @@ func (c *Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
 	return aws.ToString(output.KeyPairId), nil
 }
 
-func (c *Client) DeleteSSHKey(handle string) error {
+func (c *EC2Client) DeleteSSHKey(handle string) error {
 	log.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
 	input := &ec2.DeleteKeyPairInput{}
 	input.KeyPairId = aws.String(handle)
@@ -89,7 +96,7 @@ func (c *Client) DeleteSSHKey(handle string) error {
 	return nil
 }
 
-func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, error) {
+func (c *EC2Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (clients.EC2, error) {
 	newCfg, err := cfg.LoadDefaultConfig(c.context, cfg.WithRegion(config.AWS.Region), cfg.WithCredentialsProvider(
 		credentials.NewStaticCredentialsProvider(*crd.AccessKeyId, *crd.SecretAccessKey, *crd.SessionToken),
 	))
@@ -98,7 +105,7 @@ func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, 
 		return nil, fmt.Errorf("cannot create a new ec2 config: %w", err)
 	}
 
-	newClient := &Client{
+	newClient := &EC2Client{
 		ec2:     ec2.NewFromConfig(newCfg),
 		context: c.context,
 		log:     ctxval.Logger(c.context).With().Str("client", "ec2").Logger(),
@@ -107,7 +114,7 @@ func (c *Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (*Client, 
 	return newClient, nil
 }
 
-func (c *Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, error) {
+func (c *EC2Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, error) {
 	input := &ec2.DescribeInstanceTypesInput{MaxResults: aws.Int32(100)}
 	pag := ec2.NewDescribeInstanceTypesPaginator(c.ec2, input)
 
@@ -122,7 +129,7 @@ func (c *Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, err
 	return res, nil
 }
 
-func (c *Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
+func (c *EC2Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
 	log.Trace().Msg("Run AWS EC2 instance")
 	encodedUserData := base64.StdEncoding.EncodeToString(userData)
 	input := &ec2.RunInstancesInput{
@@ -157,7 +164,7 @@ func (c *Client) RunInstances(ctx context.Context, name *string, amount int32, i
 	return instances, resp.ReservationId, nil
 }
 
-func (c *Client) parseRunInstancesResponse(respAWS *ec2.RunInstancesOutput) []*string {
+func (c *EC2Client) parseRunInstancesResponse(respAWS *ec2.RunInstancesOutput) []*string {
 	instances := respAWS.Instances
 	list := make([]*string, 0, len(instances))
 	for _, instance := range instances {
