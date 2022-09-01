@@ -6,8 +6,7 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/logging/testing"
 
 	// HTTP client stub implementations
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder/stubs"
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/sources/stubs"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
 
 	// DAO stub implementation
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/stubs"

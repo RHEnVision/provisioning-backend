@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/sources"
 	"github.com/aws/smithy-go/ptr"
 )
 
@@ -24,12 +24,6 @@ func init() {
 	clients.GetSourcesClient = getSourcesClientStub
 }
 
-type contextReadError struct{}
-
-func (m *contextReadError) Error() string {
-	return "failed to find or convert dao stored in testing context"
-}
-
 // SourcesClient
 func WithSourcesClient(parent context.Context) context.Context {
 	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesClientStub{})
@@ -44,7 +38,7 @@ func getSourcesClientStub(ctx context.Context) (si clients.Sources, err error) {
 	return si, err
 }
 
-func (_ *SourcesClientStub) Ready(ctx context.Context) error {
+func (*SourcesClientStub) Ready(ctx context.Context) error {
 	return nil
 }
 

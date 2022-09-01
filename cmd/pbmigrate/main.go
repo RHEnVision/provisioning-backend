@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/cloudwatchlogs"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
