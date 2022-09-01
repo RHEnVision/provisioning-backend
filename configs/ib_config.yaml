@@ -3,4 +3,4 @@ package: image_builder
 generate:
   models: true
   client: true
-output: ./internal/clients/image_builder/client.gen.go
+output: ./internal/clients/http/image_builder/client.gen.go

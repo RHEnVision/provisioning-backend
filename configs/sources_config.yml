@@ -3,7 +3,7 @@ package: sources
 generate:
   models: true
   client: true
-output: ./internal/clients/sources/client.gen.go
+output: ./internal/clients/http/sources/client.gen.go
 compatibility:
   old-enum-conflicts: true # generator issue: redeclaration of EndpointAvailabilityStatus
 output-options:
