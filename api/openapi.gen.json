@@ -257,7 +257,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/v1.PubkeyResponse"
+                  "items": {
+                    "$ref": "#/components/schemas/v1.PubkeyResponse"
+                  },
+                  "type": "array"
                 }
               }
             },
@@ -498,7 +501,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/v1.InstanceTypeResponse"
+                  "items": {
+                    "$ref": "#/components/schemas/v1.InstanceTypeResponse"
+                  },
+                  "type": "array"
                 }
               }
             },
