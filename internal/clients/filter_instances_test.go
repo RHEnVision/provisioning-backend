@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 
 	"github.com/aws/smithy-go/ptr"

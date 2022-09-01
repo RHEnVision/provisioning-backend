@@ -10,8 +10,8 @@ import (
 
 	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/sources"
-	clientStub "github.com/RHEnVision/provisioning-backend/internal/clients/sources/stubs"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/sources"
+	clientStub "github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"

@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
-	sources "github.com/RHEnVision/provisioning-backend/internal/clients/sources"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/sts"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/ec2"
+	sources "github.com/RHEnVision/provisioning-backend/internal/clients/impl/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/sts"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
