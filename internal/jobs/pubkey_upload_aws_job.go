@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/ec2"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/sts"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sts"
+
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -90,8 +92,8 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	pkr.RandomizeTag()
 
 	// upload to cloud with a tag
-	client := ec2.NewEC2Client(ctx)
-	stsClient, err := sts.NewSTSClient(ctx)
+	client, _ := clients.GetEC2Client(ctx)
+	stsClient, err := clients.GetSTSClient(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot initialize sts client: %w", err)
 	}

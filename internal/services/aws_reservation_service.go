@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/impl/image_builder"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/sources"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"

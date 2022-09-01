@@ -9,7 +9,7 @@ import (
 	// Job queue implementation
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/cloudwatchlogs"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 
 	// Performs initialization of DAO implementation, must be initialized before any database packages.
