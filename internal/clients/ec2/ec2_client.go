@@ -24,7 +24,11 @@ type Client struct {
 	log     zerolog.Logger
 }
 
-func NewEC2Client(ctx context.Context, params ...string) *Client {
+func NewEC2Client(ctx context.Context) *Client {
+	return NewEC2ClientWithRegion(ctx, config.AWS.Region)
+}
+
+func NewEC2ClientWithRegion(ctx context.Context, region string) *Client {
 	c := Client{
 		context: ctx,
 		log:     ctxval.Logger(ctx).With().Str("client", "ec2").Logger(),
@@ -33,11 +37,6 @@ func NewEC2Client(ctx context.Context, params ...string) *Client {
 	log.Trace().Msg("Creating new EC2 client")
 	cache := aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(
 		config.AWS.Key, config.AWS.Secret, config.AWS.Session))
-
-	region := params[0]
-	if region == "" {
-		region = config.AWS.Region
-	}
 
 	c.ec2 = ec2.New(ec2.Options{
 		Region:      region,
