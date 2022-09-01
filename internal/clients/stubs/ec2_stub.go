@@ -6,7 +6,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
-	stsTypes "github.com/aws/aws-sdk-go-v2/service/sts/types"
 	"github.com/aws/smithy-go/ptr"
 )
 
@@ -17,7 +16,7 @@ var ec2CtxKey ec2CtxKeyType = "ec2-interface"
 type EC2ClientStub struct{}
 
 func init() {
-	clients.GetEC2Client = getEC2ClientStub
+	clients.GetCustomerEC2ClientWithRegion = getEC2ClientStubWithRegion
 }
 
 // EC2Client
@@ -26,7 +25,7 @@ func WithEC2Client(parent context.Context) context.Context {
 	return ctx
 }
 
-func getEC2ClientStub(ctx context.Context) (si clients.EC2, err error) {
+func getEC2ClientStubWithRegion(ctx context.Context, _ string, _ string) (si clients.EC2, err error) {
 	var ok bool
 	if si, ok = ctx.Value(ec2CtxKey).(*EC2ClientStub); !ok {
 		err = &contextReadError{}
@@ -40,10 +39,6 @@ func (mock *EC2ClientStub) ImportPubkey(key *models.Pubkey, tag string) (string,
 
 func (mock *EC2ClientStub) DeleteSSHKey(handle string) error {
 	return nil
-}
-
-func (mock *EC2ClientStub) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (clients.EC2, error) {
-	return nil, nil
 }
 
 func (mock *EC2ClientStub) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, error) {

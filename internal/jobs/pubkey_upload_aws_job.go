@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sts"
-
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -92,23 +90,12 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	pkr.RandomizeTag()
 
 	// upload to cloud with a tag
-	client, _ := clients.GetEC2Client(ctx)
-	stsClient, err := clients.GetSTSClient(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot initialize sts client: %w", err)
-	}
-
-	crd, err := stsClient.AssumeRole(args.ARN)
-	if err != nil {
-		return fmt.Errorf("cannot assume role: %w", err)
-	}
-
-	newEC2Client, err := client.CreateEC2ClientFromConfig(crd)
+	ec2Client, err := clients.GetCustomerEC2Client(ctx, args.ARN)
 	if err != nil {
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
 
-	pkr.Handle, err = newEC2Client.ImportPubkey(pubkey, pkr.FormattedTag())
+	pkr.Handle, err = ec2Client.ImportPubkey(pubkey, pkr.FormattedTag())
 	if err != nil {
 		if errors.Is(err, ec2.DuplicatePubkeyErr) {
 			logger.Warn().Msgf("Pubkey '%s' already present, skipping", pubkey.Name)

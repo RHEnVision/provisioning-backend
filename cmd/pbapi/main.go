@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	// HTTP client implementations
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/config/parser"
