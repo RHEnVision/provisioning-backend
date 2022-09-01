@@ -14,14 +14,13 @@ import (
 )
 
 func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
-	sourceId := chi.URLParam(r, "ID")
+	logger := ctxval.Logger(r.Context())
 
+	sourceId := chi.URLParam(r, "ID")
 	region := r.URL.Query().Get("region")
 	if region == "" {
 		renderError(w, r, payloads.NewNotFoundError(r.Context(), ec2.RegionNotFoundErr))
 	}
-	ec2Client, _ := clients.GetEC2ClientWithRegion(r.Context(), region)
-	logger := ctxval.Logger(r.Context())
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
@@ -43,25 +42,13 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stsClient, err := clients.GetSTSClient(r.Context())
+	ec2Client, err := clients.GetCustomerEC2ClientWithRegion(r.Context(), arn, region)
 	if err != nil {
-		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sts client", err))
+		renderError(w, r, payloads.NewAWSError(r.Context(), "failed to establish ec2 connection", err))
 		return
 	}
 
-	crd, err := stsClient.AssumeRole(arn)
-	if err != nil {
-		renderError(w, r, payloads.NewAWSError(r.Context(), "assume role sts", err))
-		return
-	}
-
-	newEC2Client, err := ec2Client.CreateEC2ClientFromConfig(crd)
-	if err != nil {
-		renderError(w, r, payloads.NewAWSError(r.Context(), "can't create new ec2 client", err))
-		return
-	}
-
-	res, err := newEC2Client.ListInstanceTypesWithPaginator()
+	res, err := ec2Client.ListInstanceTypesWithPaginator()
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "can't list EC2 instance types", err))
 		return

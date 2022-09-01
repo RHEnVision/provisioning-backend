@@ -10,10 +10,11 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	cfg "github.com/aws/aws-sdk-go-v2/config"
+	awsCfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	stsTypes "github.com/aws/aws-sdk-go-v2/service/sts/types"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -26,31 +27,57 @@ type EC2Client struct {
 }
 
 func init() {
-	clients.GetEC2Client = NewEC2Client
-	clients.GetEC2ClientWithRegion = NewEC2ClientWithRegion
+	clients.GetCustomerEC2ClientWithRegion = newAssumedEC2ClientWithRegion
 }
 
-func NewEC2Client(ctx context.Context) (clients.EC2, error) {
-	c, _ := NewEC2ClientWithRegion(ctx, config.AWS.Region)
-	return c, nil
-}
+func newAssumedEC2ClientWithRegion(ctx context.Context, arn string, region string) (clients.EC2, error) {
+	logger := ctxval.Logger(ctx)
 
-func NewEC2ClientWithRegion(ctx context.Context, region string) (clients.EC2, error) {
-	c := &EC2Client{
-		context: ctx,
-		log:     ctxval.Logger(ctx).With().Str("client", "ec2").Logger(),
+	creds, err := getStsAssumedCredentials(ctx, arn)
+	if err != nil {
+		return nil, err
 	}
 
-	log.Trace().Msg("Creating new EC2 client")
-	cache := aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(
-		config.AWS.Key, config.AWS.Secret, config.AWS.Session))
+	newCfg, err := awsCfg.LoadDefaultConfig(ctx, awsCfg.WithRegion(region), awsCfg.WithCredentialsProvider(
+		credentials.NewStaticCredentialsProvider(*creds.AccessKeyId, *creds.SecretAccessKey, *creds.SessionToken),
+	))
+	if err != nil {
+		return nil, fmt.Errorf("cannot create a new ec2 config: %w", err)
+	}
 
-	c.ec2 = ec2.New(ec2.Options{
-		Region:      region,
-		Credentials: cache,
+	return &EC2Client{
+		ec2:     ec2.NewFromConfig(newCfg),
+		context: ctx,
+		log:     logger.With().Str("client", "ec2").Logger(),
+	}, nil
+}
+
+func getStsAssumedCredentials(ctx context.Context, arn string) (*stsTypes.Credentials, error) {
+	logger := ctxval.Logger(ctx)
+
+	cfg, err := awsCfg.LoadDefaultConfig(ctx, awsCfg.WithRegion(config.AWS.Region),
+		awsCfg.WithCredentialsProvider(
+			credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
+	if err != nil {
+		logger.Error().Err(err).Msgf("Cannot create an sts client %s", err)
+		return nil, fmt.Errorf("cannot create an sts client %w", err)
+	}
+	stsClient := sts.NewFromConfig(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("cannot create an sts client %w", err)
+	}
+
+	output, err := stsClient.AssumeRole(ctx, &sts.AssumeRoleInput{
+		RoleArn:         aws.String(arn),
+		RoleSessionName: aws.String("name"),
 	})
 
-	return c, nil
+	if err != nil {
+		logger.Error().Err(err).Msgf("cannot assume role %s", err)
+		return nil, fmt.Errorf("cannot assume role %w", err)
+	}
+
+	return output.Credentials, nil
 }
 
 // ImportPubkey imports a key and returns AWS ID
@@ -94,24 +121,6 @@ func (c *EC2Client) DeleteSSHKey(handle string) error {
 	}
 
 	return nil
-}
-
-func (c *EC2Client) CreateEC2ClientFromConfig(crd *stsTypes.Credentials) (clients.EC2, error) {
-	newCfg, err := cfg.LoadDefaultConfig(c.context, cfg.WithRegion(config.AWS.Region), cfg.WithCredentialsProvider(
-		credentials.NewStaticCredentialsProvider(*crd.AccessKeyId, *crd.SecretAccessKey, *crd.SessionToken),
-	))
-
-	if err != nil {
-		return nil, fmt.Errorf("cannot create a new ec2 config: %w", err)
-	}
-
-	newClient := &EC2Client{
-		ec2:     ec2.NewFromConfig(newCfg),
-		context: c.context,
-		log:     ctxval.Logger(c.context).With().Str("client", "ec2").Logger(),
-	}
-
-	return newClient, nil
 }
 
 func (c *EC2Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, error) {

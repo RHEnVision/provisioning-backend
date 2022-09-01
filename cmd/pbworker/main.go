@@ -12,6 +12,9 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 
+	// HTTP client implementations
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
+
 	// Performs initialization of DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
 

@@ -61,22 +61,6 @@ func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArg
 	updateStatusBefore(ctx, args.ReservationID, "Launching instance(s)")
 	defer updateStatusAfter(ctx, args.ReservationID, "Launched instance(s)", 1)
 
-	client, _ := clients.GetEC2Client(ctx)
-	stsClient, err := clients.GetSTSClient(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot initialize sts client: %w", err)
-	}
-
-	crd, err := stsClient.AssumeRole(args.ARN)
-	if err != nil {
-		return fmt.Errorf("cannot assume role: %w", err)
-	}
-
-	newEC2Client, err := client.CreateEC2ClientFromConfig(crd)
-	if err != nil {
-		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
-	}
-
 	pkD, err := dao.GetPubkeyDao(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot get pubkey dao: %w", err)
@@ -97,8 +81,13 @@ func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArg
 	}
 	logger.Trace().Bool("userdata", true).Msg(string(userData))
 
+	ec2Client, err := clients.GetCustomerEC2Client(ctx, args.ARN)
+	if err != nil {
+		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
+	}
+
 	logger.Trace().Msg("Executing RunInstances")
-	instances, awsReservationId, err := newEC2Client.RunInstances(ctx, args.Detail.Name, args.Detail.Amount, types.InstanceType(args.Detail.InstanceType), args.AMI, pk.Name, userData)
+	instances, awsReservationId, err := ec2Client.RunInstances(ctx, args.Detail.Name, args.Detail.Amount, types.InstanceType(args.Detail.InstanceType), args.AMI, pk.Name, userData)
 	if err != nil {
 		return fmt.Errorf("cannot run instances: %w", err)
 	}
