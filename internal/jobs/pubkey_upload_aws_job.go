@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/ec2"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/sts"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/ec2"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/impl/sts"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"

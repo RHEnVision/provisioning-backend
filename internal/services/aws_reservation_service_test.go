@@ -9,8 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	ibClientStub "github.com/RHEnVision/provisioning-backend/internal/clients/image_builder/stubs"
-	sourcesClientStub "github.com/RHEnVision/provisioning-backend/internal/clients/sources/stubs"
+	Clientstubs "github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
@@ -23,8 +22,8 @@ func TestCreateAWSReservationHandler(t *testing.T) {
 	var json_data []byte
 	ctx := stubs.WithAccountDaoOne(context.Background())
 	ctx = identity.WithTenant(t, ctx)
-	ctx = sourcesClientStub.WithSourcesClient(ctx)
-	ctx = ibClientStub.WithImageBuilderClient(ctx)
+	ctx = Clientstubs.WithSourcesClient(ctx)
+	ctx = Clientstubs.WithImageBuilderClient(ctx)
 	ctx = stubs.WithReservationDao(ctx)
 	ctx = stubs.WithPubkeyDao(ctx)
 	pk := models.Pubkey{Name: "new", Body: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8w6DONv1qn3IdgxSpkYOClq7oe7davWFqKVHPbLoS6+dFInru7gdEO5byhTih6+PwRhHv/b1I+Mtt5MDZ8Sv7XFYpX/3P/u5zQiy1PkMSFSz0brRRUfEQxhXLW97FJa7l+bej2HJDt7f9Gvcj+d/fNWC9Z58/GX11kWk4SIXaKotkN+kWn54xGGS7Zvtm86fP59Srt6wlklSsG8mZBF7jVUjyhAgm/V5gDFb2/6jfiwSb2HyJ9/NbhLkWNdwrvpdGZqQlYhnwTfEZdpwizW/Mj3MxP5O31HN45aE0wog0UeWY4gvTl4Ogb6kescizAM6pCff3RBslbFxLdOO7cR17 lzap+rsakey@redhat.com"}
