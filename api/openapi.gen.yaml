@@ -96,7 +96,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1.PubkeyResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/v1.PubkeyResponse'
         "500":
           $ref: '#/components/responses/InternalError'
   /sources:
@@ -138,7 +140,9 @@ paths:
             content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/v1.InstanceTypeResponse'
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/v1.InstanceTypeResponse'
           '404':
             $ref: "#/components/responses/NotFound"
           '500':
