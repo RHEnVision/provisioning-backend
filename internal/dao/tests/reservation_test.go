@@ -61,11 +61,10 @@ func TestCreateNoop(t *testing.T) {
 	defer teardownReservation(t)
 	err := reservationDao.CreateNoop(ctx, createNoopReservation())
 	require.NoError(t, err)
-
 	reservations, err := reservationDao.List(ctx, 10, 0)
 	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(reservations), "CreateNoop error:.")
+	assert.Equal(t, 1, len(reservations))
 }
 
 func TestCreateAWS(t *testing.T) {
@@ -73,48 +72,44 @@ func TestCreateAWS(t *testing.T) {
 	defer teardownReservation(t)
 	err := reservationDao.CreateAWS(ctx, createAWSReservation())
 	require.NoError(t, err)
-
 	reservations, err := reservationDao.List(ctx, 10, 0)
 	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(reservations), "Create AWS reservation error.")
+	assert.Equal(t, 1, len(reservations))
 }
 
 func TestCreateInstance(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-
 	reservation := createAWSReservation()
 	err := reservationDao.CreateAWS(ctx, reservation)
 	require.NoError(t, err)
-
 	err = reservationDao.CreateInstance(ctx, createInstancesReservation(reservation.ID))
 	require.NoError(t, err)
-
 	reservations, err := reservationDao.ListInstances(ctx, 10, 0)
 	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(reservations), "Create Instances reservation error.")
+	assert.Equal(t, 1, len(reservations))
 }
 
 func TestListReservation(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	err := reservationDao.CreateAWS(ctx, createAWSReservation())
+	awsReservation := createAWSReservation()
+	err := reservationDao.CreateAWS(ctx, awsReservation)
 	require.NoError(t, err)
-	err = reservationDao.CreateNoop(ctx, createNoopReservation())
+	noopReservation := createNoopReservation()
+	err = reservationDao.CreateNoop(ctx, noopReservation)
 	require.NoError(t, err)
-
 	reservations, err := reservationDao.List(ctx, 10, 0)
 	require.NoError(t, err)
 
-	assert.Equal(t, 2, len(reservations), "List reservation error.")
+	assert.Equal(t, 2, len(reservations))
 }
 
 func TestUpdateReservationIDForAWS(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-
 	reservation := createAWSReservation()
 	err := reservationDao.CreateAWS(ctx, reservation)
 	require.NoError(t, err)
@@ -122,15 +117,16 @@ func TestUpdateReservationIDForAWS(t *testing.T) {
 
 	err = db.DB.Get(&count, "SELECT COUNT(*) FROM aws_reservation_details")
 	require.NoError(t, err)
-	assert.Equal(t, 1, count, "Number of aws reservations mismatch.")
+
+	assert.Equal(t, 1, count)
 
 	err = reservationDao.UpdateReservationIDForAWS(ctx, reservation.ID, "2")
 	require.NoError(t, err)
-
 	var awsReservationId string
 	err = db.DB.Get(&awsReservationId, "SELECT aws_reservation_id FROM aws_reservation_details WHERE reservation_id = $1", reservation.ID)
 	require.NoError(t, err)
-	assert.Equal(t, "2", awsReservationId, "Update reservation id  error: aws reservation id does not match.")
+
+	assert.Equal(t, "2", awsReservationId)
 
 }
 
@@ -139,7 +135,6 @@ func TestUpdateStatusReservation(t *testing.T) {
 	defer teardownReservation(t)
 	err := reservationDao.CreateNoop(ctx, createNoopReservation())
 	require.NoError(t, err)
-
 	reservationsBefore, err := reservationDao.List(ctx, 10, 0)
 	require.NoError(t, err)
 
@@ -148,7 +143,7 @@ func TestUpdateStatusReservation(t *testing.T) {
 
 	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
 	require.NoError(t, err)
-	assert.Equal(t, "Edited", reservationsAfter[0].Status, "Update status reservation error: status does not match.")
+	assert.Equal(t, "Edited", reservationsAfter[0].Status)
 	assert.Equal(t, reservationsBefore[0].Step, reservationsAfter[0].Step)
 }
 
@@ -172,7 +167,8 @@ func TestUpdateStepReservation(t *testing.T) {
 func TestDeleteReservation(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	err := reservationDao.CreateNoop(ctx, createNoopReservation())
+	noopReservation := createNoopReservation()
+	err := reservationDao.CreateNoop(ctx, noopReservation)
 	require.NoError(t, err)
 
 	reservationsBefore, err := reservationDao.List(ctx, 10, 0)
@@ -182,7 +178,7 @@ func TestDeleteReservation(t *testing.T) {
 	require.NoError(t, err)
 	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
 	require.NoError(t, err)
-	assert.Equal(t, len(reservationsBefore)-1, len(reservationsAfter), "Delete reservation error.")
+	assert.Equal(t, len(reservationsBefore)-1, len(reservationsAfter))
 }
 
 func TestFinishReservation(t *testing.T) {
@@ -200,8 +196,8 @@ func TestFinishReservation(t *testing.T) {
 	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
 	require.NoError(t, err)
 
-	assert.Equal(t, reservationsBefore[0].ID, reservationsAfter[0].ID, "Finish reservation error.")
-	assert.Equal(t, true, reservationsAfter[0].Success.Bool, "Finish reservation error: success value does not match.")
+	assert.Equal(t, reservationsBefore[0].ID, reservationsAfter[0].ID)
+	assert.Equal(t, true, reservationsAfter[0].Success.Bool)
 }
 
 func TestFinishWithErrorReservation(t *testing.T) {

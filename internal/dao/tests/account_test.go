@@ -49,13 +49,10 @@ func TestCreateAccount(t *testing.T) {
 	acc := createAccount()
 	err := accDao.Create(ctx, acc)
 	require.NoError(t, err)
-
 	account, err := accDao.GetById(ctx, 2)
 	require.NoError(t, err)
 
-	assert.Equal(t, acc.OrgID, account.OrgID)
-	assert.Equal(t, acc.AccountNumber.String, account.AccountNumber.String)
-	assert.Equal(t, acc.AccountNumber.Valid, account.AccountNumber.Valid)
+	assert.Equal(t, acc, account)
 }
 
 func TestCreateAccountWithNullAccountNumber(t *testing.T) {
@@ -64,22 +61,22 @@ func TestCreateAccountWithNullAccountNumber(t *testing.T) {
 	acc := createAccountWithNullAccountNumber()
 	err := accDao.Create(ctx, acc)
 	require.NoError(t, err)
-
 	account, err := accDao.GetById(ctx, 2)
 	require.NoError(t, err)
 
-	assert.Equal(t, acc.OrgID, account.OrgID)
-	assert.Equal(t, acc.AccountNumber.String, account.AccountNumber.String)
-	assert.Equal(t, acc.AccountNumber.Valid, account.AccountNumber.Valid)
+	assert.Equal(t, acc, account)
 }
 
 func TestListAccount(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
+	acc := createAccount()
+	err := accDao.Create(ctx, acc)
 	accounts, err := accDao.List(ctx, 100, 0)
 	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(accounts))
+	assert.Equal(t, 2, len(accounts))
+	require.Contains(t, accounts, acc)
 }
 
 func TestGetByIdAccount(t *testing.T) {
