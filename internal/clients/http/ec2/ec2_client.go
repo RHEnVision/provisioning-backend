@@ -100,11 +100,12 @@ func (c *EC2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error)
 	output, err := c.ec2.ImportKeyPair(c.context, input)
 
 	if err != nil {
-		if IsOperationError(err, "InvalidKeyPair.Duplicate") {
-			return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, DuplicatePubkeyErr)
-		} else {
-			return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
+		if isAWSUnauthorizedError(err) {
+			err = clients.UnauthorizedErr
+		} else if isAWSOperationError(err, "InvalidKeyPair.Duplicate") {
+			err = clients.DuplicatePubkeyErr
 		}
+		return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
 	}
 
 	return aws.ToString(output.KeyPairId), nil
@@ -117,6 +118,9 @@ func (c *EC2Client) DeleteSSHKey(handle string) error {
 	_, err := c.ec2.DeleteKeyPair(c.context, input)
 
 	if err != nil {
+		if isAWSUnauthorizedError(err) {
+			err = clients.UnauthorizedErr
+		}
 		return fmt.Errorf("cannot delete SSH key %v: %w", input.KeyPairId, err)
 	}
 
@@ -131,6 +135,9 @@ func (c *EC2Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, 
 	for pag.HasMorePages() {
 		resp, err := pag.NextPage(c.context)
 		if err != nil {
+			if isAWSUnauthorizedError(err) {
+				err = clients.UnauthorizedErr
+			}
 			return nil, fmt.Errorf("cannot list instance types: %w", err)
 		}
 		res = append(res, resp.InstanceTypes...)
@@ -164,6 +171,9 @@ func (c *EC2Client) RunInstances(ctx context.Context, name *string, amount int32
 	}
 	resp, err := c.ec2.RunInstances(ctx, input)
 	if err != nil {
+		if isAWSUnauthorizedError(err) {
+			err = clients.UnauthorizedErr
+		}
 		return nil, nil, fmt.Errorf("cannot run instances: %w", err)
 	}
 	instances := c.parseRunInstancesResponse(resp)

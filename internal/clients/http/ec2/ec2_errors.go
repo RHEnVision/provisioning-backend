@@ -7,16 +7,14 @@ import (
 	"github.com/aws/smithy-go"
 )
 
-var DuplicatePubkeyErr = errors.New("pubkey already exists")
-var OperationNotPermittedErr = errors.New("operation not permitted")
-var RegionNotFoundErr = errors.New("region was not found")
+func isAWSUnauthorizedError(err error) bool {
+	return isAWSOperationError(err, "api error UnauthorizedOperation")
+}
 
-func IsOperationError(err error, substr string) bool {
-	if err != nil {
-		var oe *smithy.OperationError
-		if errors.As(err, &oe) && strings.Contains(oe.Unwrap().Error(), substr) {
-			return true
-		}
+func isAWSOperationError(err error, substr string) bool {
+	var oe *smithy.OperationError
+	if errors.As(err, &oe) {
+		return strings.Contains(oe.Unwrap().Error(), substr)
 	}
 	return false
 }
