@@ -46,6 +46,8 @@ type NoopReservation struct {
 }
 
 type AWSDetail struct {
+	Region string `json:"region"`
+
 	// Optional instance name
 	Name *string `json:"name"`
 

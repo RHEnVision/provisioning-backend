@@ -20,6 +20,9 @@ type LaunchInstanceAWSTaskArgs struct {
 	// Associated account
 	AccountID int64 `json:"account_id"`
 
+	// Region to provision the instances into
+	Region string `json:"region"`
+
 	// Associated public key
 	PubkeyID int64 `json:"pubkey_id"`
 
@@ -81,7 +84,7 @@ func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArg
 	}
 	logger.Trace().Bool("userdata", true).Msg(string(userData))
 
-	ec2Client, err := clients.GetCustomerEC2Client(ctx, args.ARN)
+	ec2Client, err := clients.GetCustomerEC2Client(ctx, args.ARN, args.Region)
 	if err != nil {
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}

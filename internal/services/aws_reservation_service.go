@@ -42,6 +42,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	detail := &models.AWSDetail{
+		Region:       payload.Region,
 		InstanceType: payload.InstanceType,
 		Amount:       payload.Amount,
 		PowerOff:     payload.PowerOff,
@@ -112,6 +113,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		Body: &jobs.PubkeyUploadAWSTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
+			Region:        reservation.Detail.Region,
 			PubkeyID:      pk.ID,
 			ARN:           arn,
 			SourceID:      reservation.SourceID,
@@ -144,6 +146,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		Body: &jobs.LaunchInstanceAWSTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
+			Region:        reservation.Detail.Region,
 			PubkeyID:      pk.ID,
 			Detail:        reservation.Detail,
 			AMI:           ami,

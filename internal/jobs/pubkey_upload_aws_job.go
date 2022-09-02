@@ -16,6 +16,7 @@ import (
 type PubkeyUploadAWSTaskArgs struct {
 	AccountID     int64  `json:"account_id"`
 	ReservationID int64  `json:"reservation_id"`
+	Region        string `json:"region"`
 	PubkeyID      int64  `json:"pubkey_id"`
 	SourceID      string `json:"source_id"`
 	ARN           string `json:"arn"`
@@ -90,7 +91,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	pkr.RandomizeTag()
 
 	// upload to cloud with a tag
-	ec2Client, err := clients.GetCustomerEC2Client(ctx, args.ARN)
+	ec2Client, err := clients.GetCustomerEC2Client(ctx, args.ARN, args.Region)
 	if err != nil {
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
