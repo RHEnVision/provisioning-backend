@@ -30,7 +30,7 @@ clean:
 .PHONY: build-podman
 build-podman:
 	# remote podman build has problem with -f option, so we link the file as workaround
-	ln -f build/Dockerfile Containerfile
+	ln -sf build/Dockerfile Containerfile
 	podman build $(CONTAINER_BUILD_OPTS) -t $(CONTAINER_IMAGE) .
 
 .PHONY: prep

@@ -2,7 +2,7 @@
 
 Provisioning backend service for cloud.redhat.com.
 
-Requirements: Go 1.16+
+Requirements: Go 1.18+
 
 ## Components
 

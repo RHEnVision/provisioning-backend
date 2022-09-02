@@ -1,7 +1,7 @@
 ---
 # https://golangci-lint.run/usage/configuration/
 run:
-  go: '1.16'
+  go: '1.18'
   timeout: 5m
 linters:
   presets:
