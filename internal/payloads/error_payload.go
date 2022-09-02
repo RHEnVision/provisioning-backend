@@ -10,6 +10,14 @@ import (
 	"github.com/go-chi/render"
 )
 
+type ParamMissingError struct {
+	ParamName string
+}
+
+func (e ParamMissingError) Error() string {
+	return fmt.Sprintf("parameter %s was not provided in the request", e.ParamName)
+}
+
 // ResponseError implements Go standard error interface as well as Wrapper and Renderer
 type ResponseError struct {
 	// HTTP status code

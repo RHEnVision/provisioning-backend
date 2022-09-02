@@ -19,7 +19,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "ID")
 	region := r.URL.Query().Get("region")
 	if region == "" {
-		renderError(w, r, payloads.NewNotFoundError(r.Context(), ec2.RegionNotFoundErr))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), payloads.ParamMissingError{ParamName: "region"}))
 	}
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
