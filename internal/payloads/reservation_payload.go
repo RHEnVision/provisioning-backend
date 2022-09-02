@@ -48,7 +48,10 @@ type AWSReservationResponsePayload struct {
 	// Source ID.
 	SourceID string `json:"source_id"`
 
-	//AWS Instance type.
+	// AWS region.
+	Region string `json:"region"`
+
+	// AWS Instance type.
 	InstanceType string `json:"instance_type"`
 
 	// Amount of instances to provision of type: Instance type.
@@ -77,6 +80,9 @@ type AWSReservationRequestPayload struct {
 
 	// Source ID.
 	SourceID string `json:"source_id"`
+
+	// AWS region.
+	Region string `json:"region"`
 
 	// Optional name of the instance(s).
 	Name *string `json:"name"`
@@ -114,6 +120,7 @@ func NewAWSReservationResponse(reservation *models.AWSReservation) render.Render
 	response := AWSReservationResponsePayload{
 		ImageID:          reservation.ImageID,
 		SourceID:         reservation.SourceID,
+		Region:           reservation.Detail.Region,
 		Amount:           reservation.Detail.Amount,
 		InstanceType:     reservation.Detail.InstanceType,
 		AWSReservationID: reservation.AWSReservationID,

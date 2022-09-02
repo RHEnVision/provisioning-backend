@@ -26,7 +26,6 @@ logging:
 
 # AWS provisioning account (EC2, STS...)
 aws:
-  region: us-east-1
   key:
   secret:
   session:

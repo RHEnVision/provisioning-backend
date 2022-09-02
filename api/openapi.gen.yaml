@@ -238,6 +238,8 @@ components:
         pubkey_id:
           format: int64
           type: integer
+        region:
+          type: string
         source_id:
           type: string
       type: object
@@ -259,6 +261,8 @@ components:
         pubkey_id:
           format: int64
           type: integer
+        region:
+          type: string
         reservation_id:
           format: int64
           type: integer

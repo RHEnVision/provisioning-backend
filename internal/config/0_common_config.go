@@ -48,7 +48,6 @@ func init() {
 	parser.Viper.SetDefault("worker.maxBeats", 10)
 
 	// AWS
-	parser.Viper.SetDefault("aws.region", "us-east-1")
 	parser.Viper.SetDefault("aws.key", "")
 	parser.Viper.SetDefault("aws.secret", "")
 	parser.Viper.SetDefault("aws.session", "")
