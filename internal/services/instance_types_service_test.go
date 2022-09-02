@@ -45,7 +45,7 @@ func TestListInstanceTypes(t *testing.T) {
 
 		assert.Equal(t, 3, len(result), "expected three result in response json")
 		for _, it := range result {
-			names = append(names, it.Name)
+			names = append(names, it.Name.String())
 		}
 		assert.Contains(t, names, "a1.2xlarge", "expected result to contain a1.2xlarge instance type")
 		assert.Contains(t, names, "c5.xlarge", "expected result to contain c5.xlarge instance type")

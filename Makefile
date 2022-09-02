@@ -114,3 +114,7 @@ update-test-deps: update-deps test
 .PHONY: integration-test
 integration-test:
 	go test --count=1 -v -tags=integration ./internal/dao/tests
+
+.PHONY: generate-azure-types
+generate-azure-types:
+	go run cmd/types_azure/main.go -generate

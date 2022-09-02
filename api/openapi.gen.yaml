@@ -273,6 +273,13 @@ components:
       properties:
         architecture:
           type: string
+        azure:
+          properties:
+            gen_v1:
+              type: boolean
+            gen_v2:
+              type: boolean
+          type: object
         cores:
           format: int32
           type: integer
