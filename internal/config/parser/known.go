@@ -16,6 +16,7 @@ var known = [][]string{
 	{"APP.NAME", ""},
 	{"APP.PORT", ""},
 	{"APP.VERSION", ""},
+	{"APP.COMPRESSION", ""},
 	{"AWS", ""},
 	{"AWS.INSTANCEPREFIX", "AWS_INSTANCE_PREFIX"},
 	{"AWS.KEY", ""},
