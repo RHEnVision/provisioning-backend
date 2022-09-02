@@ -12,6 +12,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func createAccount() *models.Account {
@@ -47,13 +48,10 @@ func TestCreateAccount(t *testing.T) {
 	defer teardownAccount(t)
 	acc := createAccount()
 	err := accDao.Create(ctx, acc)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
+
 	account, err := accDao.GetById(ctx, 2)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, acc.OrgID, account.OrgID)
 	assert.Equal(t, acc.AccountNumber.String, account.AccountNumber.String)
@@ -65,13 +63,10 @@ func TestCreateAccountWithNullAccountNumber(t *testing.T) {
 	defer teardownAccount(t)
 	acc := createAccountWithNullAccountNumber()
 	err := accDao.Create(ctx, acc)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
+
 	account, err := accDao.GetById(ctx, 2)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, acc.OrgID, account.OrgID)
 	assert.Equal(t, acc.AccountNumber.String, account.AccountNumber.String)
@@ -82,9 +77,7 @@ func TestListAccount(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
 	accounts, err := accDao.List(ctx, 100, 0)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, 1, len(accounts))
 }
@@ -93,9 +86,7 @@ func TestGetByIdAccount(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
 	account, err := accDao.GetById(ctx, 1)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, "1", account.OrgID)
 	assert.Equal(t, "1", account.AccountNumber.String)
@@ -105,9 +96,7 @@ func TestGetByAccountNumber(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
 	account, err := accDao.GetByAccountNumber(ctx, "1")
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, "1", account.OrgID)
 }
@@ -116,9 +105,7 @@ func TestGetByOrgId(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
 	account, err := accDao.GetByOrgId(ctx, "1")
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, int64(1), account.ID)
 	assert.Equal(t, "1", account.AccountNumber.String)
@@ -128,9 +115,7 @@ func TestGetOrCreateByIdentityGet(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
 	account, err := accDao.GetOrCreateByIdentity(ctx, "1", "1")
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, "1", account.OrgID)
 	assert.Equal(t, "1", account.AccountNumber.String)
@@ -140,21 +125,13 @@ func TestGetOrCreateByIdentityAccountCreate(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
 	accountsBefore, err := accDao.List(ctx, 100, 0)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 	_, err = accDao.GetOrCreateByIdentity(ctx, "2", "100")
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 	accountsAfter, err := accDao.List(ctx, 100, 0)
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 	account, err := accDao.GetByOrgId(ctx, "2")
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, len(accountsBefore)+1, len(accountsAfter))
 	assert.Equal(t, "2", account.OrgID)

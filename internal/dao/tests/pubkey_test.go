@@ -11,6 +11,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func createLukas2021Key() *models.Pubkey {
@@ -48,16 +49,10 @@ func TestCreatePubkey(t *testing.T) {
 	defer teardownPubkey(t)
 	pk := createLukas2013Key()
 	err := pkDao.Create(ctx, pk)
-	if err != nil {
-		t.Errorf("Create pubkey test had failed: %v", err)
-		return
-	}
+	require.NoError(t, err)
 
 	pk2, err := pkDao.GetById(ctx, pk.ID)
-	if err != nil {
-		t.Errorf("Create pubkey test had failed: %v", err)
-		return
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, pk.Name, pk2.Name, "Create pubkey test had failed.")
 }
@@ -67,10 +62,7 @@ func TestCreatePubkeyFingerprintSuccess(t *testing.T) {
 	defer teardownPubkey(t)
 	pk := createLukas2013Key()
 	err := pkDao.Create(ctx, pk)
-	if err != nil {
-		t.Errorf("Create pubkey test had failed: %v", err)
-		return
-	}
+	require.NoError(t, err)
 
 	assert.Equal(t, "SHA256:ENShRe/0uDLSw9c+7tc9PxkD/p4blyB/DTgBSIyTAJY", pk.Fingerprint)
 }
@@ -88,10 +80,7 @@ func TestListPubkey(t *testing.T) {
 	defer teardownPubkey(t)
 	err := pkDao.Create(ctx, createLukas2013Key())
 	pubkeys, err := pkDao.List(ctx, 100, 0)
-	if err != nil {
-		t.Errorf("List pubkey test had failed: %v", err)
-		return
-	}
+	require.NoError(t, err)
 	assert.Equal(t, 2, len(pubkeys), "List Pubkey error.")
 }
 
@@ -105,21 +94,12 @@ func TestUpdatePubkey(t *testing.T) {
 	pkDao, ctx := setupPubkey(t)
 	defer teardownPubkey(t)
 	err := pkDao.Create(ctx, createLukas2013Key())
-	if err != nil {
-		t.Errorf("Create pubkey test failed. %s", err)
-		return
-	}
+	require.NoError(t, err)
 	err = pkDao.Update(ctx, updatePk)
-	if err != nil {
-		t.Errorf("Update pubkey test failed. %s", err)
-		return
-	}
+	require.NoError(t, err)
 
 	pubkeys, err := pkDao.List(ctx, 10, 0)
-	if err != nil {
-		t.Errorf("Update pubkey test failed. %s", err)
-		return
-	}
+	require.NoError(t, err)
 	assert.Equal(t, updatePk.Name, pubkeys[0].Name, "Update pubkey test had failed.")
 }
 
@@ -127,15 +107,9 @@ func TestGetPubkeyById(t *testing.T) {
 	pkDao, ctx := setupPubkey(t)
 	defer teardownPubkey(t)
 	err := pkDao.Create(ctx, createLukas2013Key())
-	if err != nil {
-		t.Errorf("Delete pubkey test had failed. %s", err)
-		return
-	}
+	require.NoError(t, err)
 	pubkey, err := pkDao.GetById(ctx, 1)
-	if err != nil {
-		t.Errorf("Get pubkey test had failed.")
-		return
-	}
+	require.NoError(t, err)
 	assert.Equal(t, "lzap-ed25519-2021", pubkey.Name, "Get Pubkey error: pubkey name does not match.")
 	assert.Equal(t, "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap", pubkey.Body, "Get Pubkey error: pubkey body does not match.")
 
@@ -145,24 +119,12 @@ func TestDeletePubkeyById(t *testing.T) {
 	pkDao, ctx := setupPubkey(t)
 	defer teardownPubkey(t)
 	err := pkDao.Create(ctx, createLukas2013Key())
-	if err != nil {
-		t.Errorf("Delete pubkey test had failed. %s", err)
-		return
-	}
+	require.NoError(t, err)
 	pubkeys, err := pkDao.List(ctx, 10, 0)
-	if err != nil {
-		t.Errorf("Delete pubkey test had failed")
-		return
-	}
+	require.NoError(t, err)
 	err = pkDao.Delete(ctx, 1)
-	if err != nil {
-		t.Errorf("Delete pubkey test had failed")
-		return
-	}
+	require.NoError(t, err)
 	pubkeysAfter, err := pkDao.List(ctx, 10, 0)
-	if err != nil {
-		t.Errorf("Delete pubkey test had failed")
-		return
-	}
+	require.NoError(t, err)
 	assert.Equal(t, len(pubkeys)-1, len(pubkeysAfter), "Delete Pubkey error.")
 }
