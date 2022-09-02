@@ -57,6 +57,12 @@ var config struct {
 		Session        string
 		InstancePrefix string
 	}
+	Azure struct {
+		TenantID       string
+		SubscriptionID string
+		ClientID       string
+		ClientSecret   string
+	}
 	Prometheus struct {
 		Port int
 		Path string
@@ -94,6 +100,7 @@ var Prometheus = &config.Prometheus
 var Logging = &config.Logging
 var Cloudwatch = &config.Cloudwatch
 var AWS = &config.AWS
+var Azure = &config.Azure
 var Features = &config.FeatureFlags
 var RestEndpoints = &config.RestEndpoints
 var ImageBuilder = &config.RestEndpoints.ImageBuilder

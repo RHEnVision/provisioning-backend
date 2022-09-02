@@ -24,13 +24,24 @@ logging:
   # to disable.
   maxField: 0
 
-# AWS provisioning account (EC2, STS...)
+# AWS service account credentials
 aws:
   key:
   secret:
   session:
   # instance name prefix for all VMs created via the app
   #instancePrefix:
+
+# Azure service account credentials
+azure:
+  # Tenant or Organization ID
+  tenantId: 00000000-0000-0000-0000-000000000000
+  # Subscription ID
+  subscriptionId: 00000000-0000-0000-0000-000000000000
+  # Application (Client) ID
+  clientId: 00000000-0000-0000-0000-000000000000
+  # Secret value
+  clientSecret:
 
 # AWS CloudWatch logger
 cloudwatch:

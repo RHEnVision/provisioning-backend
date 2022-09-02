@@ -19,15 +19,15 @@ func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) (*[]c
 			}
 
 			it := clients.InstanceType{
-				Name:         string(types[i].InstanceType),
-				VCPUs:        types[i].VCpuInfo.DefaultVCpus,
-				Cores:        types[i].VCpuInfo.DefaultCores,
+				Name:         clients.InstanceTypeName(types[i].InstanceType),
+				VCPUs:        *types[i].VCpuInfo.DefaultVCpus,
+				Cores:        *types[i].VCpuInfo.DefaultCores,
 				MemoryMiB:    *types[i].MemoryInfo.SizeInMiB,
-				Architecture: string(arch),
+				Architecture: arch,
 				Supported:    clients.IsSupported(string(types[i].InstanceType)),
 			}
 			if types[i].InstanceStorageInfo != nil {
-				it.StorageGB = *types[i].InstanceStorageInfo.TotalSizeInGB
+				it.EphemeralStorageGB = *types[i].InstanceStorageInfo.TotalSizeInGB
 			}
 			list = append(list, it)
 		}
