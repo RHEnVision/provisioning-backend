@@ -3,7 +3,6 @@ package clients
 import (
 	"context"
 
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
@@ -30,11 +29,7 @@ type ImageBuilder interface {
 	Ready(ctx context.Context) error
 }
 
-var GetCustomerEC2ClientWithRegion func(ctx context.Context, arn string, region string) (EC2, error)
-
-func GetCustomerEC2Client(ctx context.Context, arn string) (EC2, error) {
-	return GetCustomerEC2ClientWithRegion(ctx, arn, config.AWS.Region)
-}
+var GetCustomerEC2Client func(ctx context.Context, arn string, region string) (EC2, error)
 
 type EC2 interface {
 	ImportPubkey(key *models.Pubkey, tag string) (string, error)

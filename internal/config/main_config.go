@@ -51,7 +51,6 @@ var config struct {
 		Stream  string
 	}
 	AWS struct {
-		Region         string
 		Key            string
 		Secret         string
 		Session        string

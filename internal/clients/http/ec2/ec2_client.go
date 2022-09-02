@@ -27,13 +27,18 @@ type EC2Client struct {
 }
 
 func init() {
-	clients.GetCustomerEC2ClientWithRegion = newAssumedEC2ClientWithRegion
+	clients.GetCustomerEC2Client = newAssumedEC2ClientWithRegion
 }
 
 func newAssumedEC2ClientWithRegion(ctx context.Context, arn string, region string) (clients.EC2, error) {
 	logger := ctxval.Logger(ctx)
 
-	creds, err := getStsAssumedCredentials(ctx, arn)
+	if region == "" {
+		logger.Warn().Msg("No region passed, using us-east-1")
+		region = "us-east-1"
+	}
+
+	creds, err := getStsAssumedCredentials(ctx, arn, region)
 	if err != nil {
 		return nil, err
 	}
@@ -52,10 +57,11 @@ func newAssumedEC2ClientWithRegion(ctx context.Context, arn string, region strin
 	}, nil
 }
 
-func getStsAssumedCredentials(ctx context.Context, arn string) (*stsTypes.Credentials, error) {
+func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*stsTypes.Credentials, error) {
 	logger := ctxval.Logger(ctx)
 
-	cfg, err := awsCfg.LoadDefaultConfig(ctx, awsCfg.WithRegion(config.AWS.Region),
+	// TODO: role assume should be region agnostic
+	cfg, err := awsCfg.LoadDefaultConfig(ctx, awsCfg.WithRegion(region),
 		awsCfg.WithCredentialsProvider(
 			credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
 	if err != nil {

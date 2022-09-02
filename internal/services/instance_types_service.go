@@ -42,7 +42,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ec2Client, err := clients.GetCustomerEC2ClientWithRegion(r.Context(), arn, region)
+	ec2Client, err := clients.GetCustomerEC2Client(r.Context(), arn, region)
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "failed to establish ec2 connection", err))
 		return
