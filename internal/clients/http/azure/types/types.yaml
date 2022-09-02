@@ -1,0 +1,7832 @@
+Basic_A0:
+    name: Basic_A0
+    vcpus: 1
+    cores: 1
+    memory_mib: 750
+    storage_gb: 20
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Basic_A1:
+    name: Basic_A1
+    vcpus: 1
+    cores: 1
+    memory_mib: 1750
+    storage_gb: 40
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Basic_A2:
+    name: Basic_A2
+    vcpus: 2
+    cores: 2
+    memory_mib: 3500
+    storage_gb: 61
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Basic_A3:
+    name: Basic_A3
+    vcpus: 4
+    cores: 4
+    memory_mib: 7000
+    storage_gb: 122
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Basic_A4:
+    name: Basic_A4
+    vcpus: 8
+    cores: 8
+    memory_mib: 14000
+    storage_gb: 245
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A0:
+    name: Standard_A0
+    vcpus: 1
+    cores: 1
+    memory_mib: 750
+    storage_gb: 20
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A1:
+    name: Standard_A1
+    vcpus: 1
+    cores: 1
+    memory_mib: 1750
+    storage_gb: 71
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A1_v2:
+    name: Standard_A1_v2
+    vcpus: 1
+    cores: 1
+    memory_mib: 2000
+    storage_gb: 10
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A2:
+    name: Standard_A2
+    vcpus: 2
+    cores: 2
+    memory_mib: 3500
+    storage_gb: 138
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A2m_v2:
+    name: Standard_A2m_v2
+    vcpus: 2
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 20
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A2_v2:
+    name: Standard_A2_v2
+    vcpus: 2
+    cores: 2
+    memory_mib: 4000
+    storage_gb: 20
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A3:
+    name: Standard_A3
+    vcpus: 4
+    cores: 4
+    memory_mib: 7000
+    storage_gb: 291
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A4:
+    name: Standard_A4
+    vcpus: 8
+    cores: 8
+    memory_mib: 14000
+    storage_gb: 619
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A4m_v2:
+    name: Standard_A4m_v2
+    vcpus: 4
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 40
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A4_v2:
+    name: Standard_A4_v2
+    vcpus: 4
+    cores: 4
+    memory_mib: 8000
+    storage_gb: 40
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A5:
+    name: Standard_A5
+    vcpus: 2
+    cores: 2
+    memory_mib: 14000
+    storage_gb: 138
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A6:
+    name: Standard_A6
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 291
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A7:
+    name: Standard_A7
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 619
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A8m_v2:
+    name: Standard_A8m_v2
+    vcpus: 8
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 81
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_A8_v2:
+    name: Standard_A8_v2
+    vcpus: 8
+    cores: 8
+    memory_mib: 16000
+    storage_gb: 81
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_B1ls:
+    name: Standard_B1ls
+    vcpus: 1
+    cores: 1
+    memory_mib: 500
+    storage_gb: 4
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_B1ms:
+    name: Standard_B1ms
+    vcpus: 1
+    cores: 1
+    memory_mib: 2000
+    storage_gb: 4
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_B1s:
+    name: Standard_B1s
+    vcpus: 1
+    cores: 1
+    memory_mib: 1000
+    storage_gb: 4
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_B2ms:
+    name: Standard_B2ms
+    vcpus: 2
+    cores: 2
+    memory_mib: 8000
+    storage_gb: 16
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_B2s:
+    name: Standard_B2s
+    vcpus: 2
+    cores: 2
+    memory_mib: 4000
+    storage_gb: 8
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_B4ms:
+    name: Standard_B4ms
+    vcpus: 4
+    cores: 4
+    memory_mib: 16000
+    storage_gb: 32
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_B8ms:
+    name: Standard_B8ms
+    vcpus: 8
+    cores: 8
+    memory_mib: 32000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_B12ms:
+    name: Standard_B12ms
+    vcpus: 12
+    cores: 12
+    memory_mib: 48000
+    storage_gb: 98
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_B16ms:
+    name: Standard_B16ms
+    vcpus: 16
+    cores: 16
+    memory_mib: 64000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_B20ms:
+    name: Standard_B20ms
+    vcpus: 20
+    cores: 20
+    memory_mib: 80000
+    storage_gb: 163
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D1:
+    name: Standard_D1
+    vcpus: 1
+    cores: 1
+    memory_mib: 3500
+    storage_gb: 51
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D1_v2:
+    name: Standard_D1_v2
+    vcpus: 1
+    cores: 1
+    memory_mib: 3500
+    storage_gb: 51
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D2:
+    name: Standard_D2
+    vcpus: 2
+    cores: 2
+    memory_mib: 7000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D2a_v4:
+    name: Standard_D2a_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 51
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2ads_v5:
+    name: Standard_D2ads_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2as_v4:
+    name: Standard_D2as_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 16
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2as_v5:
+    name: Standard_D2as_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2d_v4:
+    name: Standard_D2d_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2d_v5:
+    name: Standard_D2d_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2ds_v4:
+    name: Standard_D2ds_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2ds_v5:
+    name: Standard_D2ds_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2pds_v5:
+    name: Standard_D2pds_v5
+    vcpus: 2
+    cores: 2
+    memory_mib: 8000
+    storage_gb: 76
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D2plds_v5:
+    name: Standard_D2plds_v5
+    vcpus: 2
+    cores: 2
+    memory_mib: 4000
+    storage_gb: 76
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D2pls_v5:
+    name: Standard_D2pls_v5
+    vcpus: 2
+    cores: 2
+    memory_mib: 4000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D2ps_v5:
+    name: Standard_D2ps_v5
+    vcpus: 2
+    cores: 2
+    memory_mib: 8000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D2s_v3:
+    name: Standard_D2s_v3
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 16
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2s_v4:
+    name: Standard_D2s_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2s_v5:
+    name: Standard_D2s_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2_v2:
+    name: Standard_D2_v2
+    vcpus: 2
+    cores: 2
+    memory_mib: 7000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D2_v2_Promo:
+    name: Standard_D2_v2_Promo
+    vcpus: 2
+    cores: 2
+    memory_mib: 7000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D2_v3:
+    name: Standard_D2_v3
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 51
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D2_v4:
+    name: Standard_D2_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D2_v5:
+    name: Standard_D2_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D3:
+    name: Standard_D3
+    vcpus: 4
+    cores: 4
+    memory_mib: 14000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D3_v2:
+    name: Standard_D3_v2
+    vcpus: 4
+    cores: 4
+    memory_mib: 14000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D3_v2_Promo:
+    name: Standard_D3_v2_Promo
+    vcpus: 4
+    cores: 4
+    memory_mib: 14000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D4:
+    name: Standard_D4
+    vcpus: 8
+    cores: 8
+    memory_mib: 28000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D4a_v4:
+    name: Standard_D4a_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4ads_v5:
+    name: Standard_D4ads_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4as_v4:
+    name: Standard_D4as_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 32
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4as_v5:
+    name: Standard_D4as_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4d_v4:
+    name: Standard_D4d_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4d_v5:
+    name: Standard_D4d_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4ds_v4:
+    name: Standard_D4ds_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4ds_v5:
+    name: Standard_D4ds_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4pds_v5:
+    name: Standard_D4pds_v5
+    vcpus: 4
+    cores: 4
+    memory_mib: 16000
+    storage_gb: 153
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D4plds_v5:
+    name: Standard_D4plds_v5
+    vcpus: 4
+    cores: 4
+    memory_mib: 8000
+    storage_gb: 153
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D4pls_v5:
+    name: Standard_D4pls_v5
+    vcpus: 4
+    cores: 4
+    memory_mib: 8000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D4ps_v5:
+    name: Standard_D4ps_v5
+    vcpus: 4
+    cores: 4
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D4s_v3:
+    name: Standard_D4s_v3
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 32
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4s_v4:
+    name: Standard_D4s_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4s_v5:
+    name: Standard_D4s_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4_v2:
+    name: Standard_D4_v2
+    vcpus: 8
+    cores: 8
+    memory_mib: 28000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D4_v2_Promo:
+    name: Standard_D4_v2_Promo
+    vcpus: 8
+    cores: 8
+    memory_mib: 28000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D4_v3:
+    name: Standard_D4_v3
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D4_v4:
+    name: Standard_D4_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D4_v5:
+    name: Standard_D4_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D5_v2:
+    name: Standard_D5_v2
+    vcpus: 16
+    cores: 16
+    memory_mib: 56000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D5_v2_Promo:
+    name: Standard_D5_v2_Promo
+    vcpus: 16
+    cores: 16
+    memory_mib: 56000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D8a_v4:
+    name: Standard_D8a_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D8ads_v5:
+    name: Standard_D8ads_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8as_v4:
+    name: Standard_D8as_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8as_v5:
+    name: Standard_D8as_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8d_v4:
+    name: Standard_D8d_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8d_v5:
+    name: Standard_D8d_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8ds_v4:
+    name: Standard_D8ds_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8ds_v5:
+    name: Standard_D8ds_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8pds_v5:
+    name: Standard_D8pds_v5
+    vcpus: 8
+    cores: 8
+    memory_mib: 32000
+    storage_gb: 307
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D8plds_v5:
+    name: Standard_D8plds_v5
+    vcpus: 8
+    cores: 8
+    memory_mib: 16000
+    storage_gb: 307
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D8pls_v5:
+    name: Standard_D8pls_v5
+    vcpus: 8
+    cores: 8
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D8ps_v5:
+    name: Standard_D8ps_v5
+    vcpus: 8
+    cores: 8
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D8s_v3:
+    name: Standard_D8s_v3
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8s_v4:
+    name: Standard_D8s_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8s_v5:
+    name: Standard_D8s_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8_v3:
+    name: Standard_D8_v3
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D8_v4:
+    name: Standard_D8_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D8_v5:
+    name: Standard_D8_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D11:
+    name: Standard_D11
+    vcpus: 2
+    cores: 2
+    memory_mib: 14000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D11_v2:
+    name: Standard_D11_v2
+    vcpus: 2
+    cores: 2
+    memory_mib: 14000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D11_v2_Promo:
+    name: Standard_D11_v2_Promo
+    vcpus: 2
+    cores: 2
+    memory_mib: 14000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D12:
+    name: Standard_D12
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D12_v2:
+    name: Standard_D12_v2
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D12_v2_Promo:
+    name: Standard_D12_v2_Promo
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D13:
+    name: Standard_D13
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D13_v2:
+    name: Standard_D13_v2
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D13_v2_Promo:
+    name: Standard_D13_v2_Promo
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D14:
+    name: Standard_D14
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D14_v2:
+    name: Standard_D14_v2
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D14_v2_Promo:
+    name: Standard_D14_v2_Promo
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D15_v2:
+    name: Standard_D15_v2
+    vcpus: 20
+    cores: 20
+    memory_mib: 140000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D16a_v4:
+    name: Standard_D16a_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16ads_v5:
+    name: Standard_D16ads_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16as_v4:
+    name: Standard_D16as_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16as_v5:
+    name: Standard_D16as_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16d_v4:
+    name: Standard_D16d_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16d_v5:
+    name: Standard_D16d_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16ds_v4:
+    name: Standard_D16ds_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16ds_v5:
+    name: Standard_D16ds_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16pds_v5:
+    name: Standard_D16pds_v5
+    vcpus: 16
+    cores: 16
+    memory_mib: 64000
+    storage_gb: 614
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D16plds_v5:
+    name: Standard_D16plds_v5
+    vcpus: 16
+    cores: 16
+    memory_mib: 32000
+    storage_gb: 614
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D16pls_v5:
+    name: Standard_D16pls_v5
+    vcpus: 16
+    cores: 16
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D16ps_v5:
+    name: Standard_D16ps_v5
+    vcpus: 16
+    cores: 16
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D16s_v3:
+    name: Standard_D16s_v3
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16s_v4:
+    name: Standard_D16s_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16s_v5:
+    name: Standard_D16s_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16_v3:
+    name: Standard_D16_v3
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D16_v4:
+    name: Standard_D16_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D16_v5:
+    name: Standard_D16_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32a_v4:
+    name: Standard_D32a_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32ads_v5:
+    name: Standard_D32ads_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32as_v4:
+    name: Standard_D32as_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32as_v5:
+    name: Standard_D32as_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32d_v4:
+    name: Standard_D32d_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32d_v5:
+    name: Standard_D32d_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32ds_v4:
+    name: Standard_D32ds_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32ds_v5:
+    name: Standard_D32ds_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32pds_v5:
+    name: Standard_D32pds_v5
+    vcpus: 32
+    cores: 32
+    memory_mib: 128000
+    storage_gb: 1228
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D32plds_v5:
+    name: Standard_D32plds_v5
+    vcpus: 32
+    cores: 32
+    memory_mib: 64000
+    storage_gb: 1228
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D32pls_v5:
+    name: Standard_D32pls_v5
+    vcpus: 32
+    cores: 32
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D32ps_v5:
+    name: Standard_D32ps_v5
+    vcpus: 32
+    cores: 32
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D32s_v3:
+    name: Standard_D32s_v3
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32s_v4:
+    name: Standard_D32s_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32s_v5:
+    name: Standard_D32s_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32_v3:
+    name: Standard_D32_v3
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D32_v4:
+    name: Standard_D32_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D32_v5:
+    name: Standard_D32_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48a_v4:
+    name: Standard_D48a_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48ads_v5:
+    name: Standard_D48ads_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48as_v4:
+    name: Standard_D48as_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 393
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48as_v5:
+    name: Standard_D48as_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48d_v4:
+    name: Standard_D48d_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48d_v5:
+    name: Standard_D48d_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48ds_v4:
+    name: Standard_D48ds_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48ds_v5:
+    name: Standard_D48ds_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48pds_v5:
+    name: Standard_D48pds_v5
+    vcpus: 48
+    cores: 48
+    memory_mib: 192000
+    storage_gb: 1843
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D48plds_v5:
+    name: Standard_D48plds_v5
+    vcpus: 48
+    cores: 48
+    memory_mib: 96000
+    storage_gb: 1843
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D48pls_v5:
+    name: Standard_D48pls_v5
+    vcpus: 48
+    cores: 48
+    memory_mib: 96000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D48ps_v5:
+    name: Standard_D48ps_v5
+    vcpus: 48
+    cores: 48
+    memory_mib: 192000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D48s_v3:
+    name: Standard_D48s_v3
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 393
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48s_v4:
+    name: Standard_D48s_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48s_v5:
+    name: Standard_D48s_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48_v3:
+    name: Standard_D48_v3
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D48_v4:
+    name: Standard_D48_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D48_v5:
+    name: Standard_D48_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64a_v4:
+    name: Standard_D64a_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 1638
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64ads_v5:
+    name: Standard_D64ads_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64as_v4:
+    name: Standard_D64as_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 524
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64as_v5:
+    name: Standard_D64as_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64d_v4:
+    name: Standard_D64d_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64d_v5:
+    name: Standard_D64d_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64ds_v4:
+    name: Standard_D64ds_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64ds_v5:
+    name: Standard_D64ds_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64pds_v5:
+    name: Standard_D64pds_v5
+    vcpus: 64
+    cores: 64
+    memory_mib: 208000
+    storage_gb: 2457
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D64plds_v5:
+    name: Standard_D64plds_v5
+    vcpus: 64
+    cores: 64
+    memory_mib: 128000
+    storage_gb: 2457
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D64pls_v5:
+    name: Standard_D64pls_v5
+    vcpus: 64
+    cores: 64
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D64ps_v5:
+    name: Standard_D64ps_v5
+    vcpus: 64
+    cores: 64
+    memory_mib: 208000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_D64s_v3:
+    name: Standard_D64s_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 524
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64s_v4:
+    name: Standard_D64s_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64s_v5:
+    name: Standard_D64s_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64_v3:
+    name: Standard_D64_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 1638
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_D64_v4:
+    name: Standard_D64_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D64_v5:
+    name: Standard_D64_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D96a_v4:
+    name: Standard_D96a_v4
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D96ads_v5:
+    name: Standard_D96ads_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D96as_v4:
+    name: Standard_D96as_v4
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 786
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D96as_v5:
+    name: Standard_D96as_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D96d_v5:
+    name: Standard_D96d_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 3686
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D96ds_v5:
+    name: Standard_D96ds_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 3686
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D96s_v5:
+    name: Standard_D96s_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_D96_v5:
+    name: Standard_D96_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC1ds_v3:
+    name: Standard_DC1ds_v3
+    vcpus: 1
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC1s_v2:
+    name: Standard_DC1s_v2
+    vcpus: 1
+    cores: 0
+    memory_mib: 4000
+    storage_gb: 51
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC1s_v3:
+    name: Standard_DC1s_v3
+    vcpus: 1
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC2ads_v5:
+    name: Standard_DC2ads_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC2as_v5:
+    name: Standard_DC2as_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC2ds_v3:
+    name: Standard_DC2ds_v3
+    vcpus: 2
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC2s:
+    name: Standard_DC2s
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC2s_v2:
+    name: Standard_DC2s_v2
+    vcpus: 2
+    cores: 1
+    memory_mib: 8000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC2s_v3:
+    name: Standard_DC2s_v3
+    vcpus: 2
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC4ads_v5:
+    name: Standard_DC4ads_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC4as_v5:
+    name: Standard_DC4as_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC4ds_v3:
+    name: Standard_DC4ds_v3
+    vcpus: 4
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC4s:
+    name: Standard_DC4s
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC4s_v2:
+    name: Standard_DC4s_v2
+    vcpus: 4
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC4s_v3:
+    name: Standard_DC4s_v3
+    vcpus: 4
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC8ads_v5:
+    name: Standard_DC8ads_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC8as_v5:
+    name: Standard_DC8as_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC8ds_v3:
+    name: Standard_DC8ds_v3
+    vcpus: 8
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC8s_v3:
+    name: Standard_DC8s_v3
+    vcpus: 8
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC8_v2:
+    name: Standard_DC8_v2
+    vcpus: 8
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC16ads_v5:
+    name: Standard_DC16ads_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC16as_v5:
+    name: Standard_DC16as_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC16ds_v3:
+    name: Standard_DC16ds_v3
+    vcpus: 16
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC16s_v3:
+    name: Standard_DC16s_v3
+    vcpus: 16
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC24ds_v3:
+    name: Standard_DC24ds_v3
+    vcpus: 24
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC24s_v3:
+    name: Standard_DC24s_v3
+    vcpus: 24
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC32ads_v5:
+    name: Standard_DC32ads_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC32as_v5:
+    name: Standard_DC32as_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC32ds_v3:
+    name: Standard_DC32ds_v3
+    vcpus: 32
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC32s_v3:
+    name: Standard_DC32s_v3
+    vcpus: 32
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC48ads_v5:
+    name: Standard_DC48ads_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC48as_v5:
+    name: Standard_DC48as_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 192000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC48ds_v3:
+    name: Standard_DC48ds_v3
+    vcpus: 48
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC48s_v3:
+    name: Standard_DC48s_v3
+    vcpus: 48
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_DC64ads_v5:
+    name: Standard_DC64ads_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC64as_v5:
+    name: Standard_DC64as_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC96ads_v5:
+    name: Standard_DC96ads_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DC96as_v5:
+    name: Standard_DC96as_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS1:
+    name: Standard_DS1
+    vcpus: 1
+    cores: 1
+    memory_mib: 3500
+    storage_gb: 7
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS1_v2:
+    name: Standard_DS1_v2
+    vcpus: 1
+    cores: 1
+    memory_mib: 3500
+    storage_gb: 7
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS2:
+    name: Standard_DS2
+    vcpus: 2
+    cores: 2
+    memory_mib: 7000
+    storage_gb: 14
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS2_v2:
+    name: Standard_DS2_v2
+    vcpus: 2
+    cores: 2
+    memory_mib: 7000
+    storage_gb: 14
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS2_v2_Promo:
+    name: Standard_DS2_v2_Promo
+    vcpus: 2
+    cores: 2
+    memory_mib: 7000
+    storage_gb: 14
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS3:
+    name: Standard_DS3
+    vcpus: 4
+    cores: 4
+    memory_mib: 14000
+    storage_gb: 28
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS3_v2:
+    name: Standard_DS3_v2
+    vcpus: 4
+    cores: 4
+    memory_mib: 14000
+    storage_gb: 28
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS3_v2_Promo:
+    name: Standard_DS3_v2_Promo
+    vcpus: 4
+    cores: 4
+    memory_mib: 14000
+    storage_gb: 28
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS4:
+    name: Standard_DS4
+    vcpus: 8
+    cores: 8
+    memory_mib: 28000
+    storage_gb: 57
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS4_v2:
+    name: Standard_DS4_v2
+    vcpus: 8
+    cores: 8
+    memory_mib: 28000
+    storage_gb: 57
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS4_v2_Promo:
+    name: Standard_DS4_v2_Promo
+    vcpus: 8
+    cores: 8
+    memory_mib: 28000
+    storage_gb: 57
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS5_v2:
+    name: Standard_DS5_v2
+    vcpus: 16
+    cores: 16
+    memory_mib: 56000
+    storage_gb: 114
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS5_v2_Promo:
+    name: Standard_DS5_v2_Promo
+    vcpus: 16
+    cores: 16
+    memory_mib: 56000
+    storage_gb: 114
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS11:
+    name: Standard_DS11
+    vcpus: 2
+    cores: 2
+    memory_mib: 14000
+    storage_gb: 28
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS11-1_v2:
+    name: Standard_DS11-1_v2
+    vcpus: 2
+    cores: 2
+    memory_mib: 14000
+    storage_gb: 28
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS11_v2:
+    name: Standard_DS11_v2
+    vcpus: 2
+    cores: 2
+    memory_mib: 14000
+    storage_gb: 28
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS11_v2_Promo:
+    name: Standard_DS11_v2_Promo
+    vcpus: 2
+    cores: 2
+    memory_mib: 14000
+    storage_gb: 28
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS12:
+    name: Standard_DS12
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 57
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS12-1_v2:
+    name: Standard_DS12-1_v2
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 57
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS12-2_v2:
+    name: Standard_DS12-2_v2
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 57
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS12_v2:
+    name: Standard_DS12_v2
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 57
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS12_v2_Promo:
+    name: Standard_DS12_v2_Promo
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 57
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS13:
+    name: Standard_DS13
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 114
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS13-2_v2:
+    name: Standard_DS13-2_v2
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 114
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS13-4_v2:
+    name: Standard_DS13-4_v2
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 114
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS13_v2:
+    name: Standard_DS13_v2
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 114
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS13_v2_Promo:
+    name: Standard_DS13_v2_Promo
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 114
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS14:
+    name: Standard_DS14
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 229
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS14-4_v2:
+    name: Standard_DS14-4_v2
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 229
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS14-8_v2:
+    name: Standard_DS14-8_v2
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 229
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS14_v2:
+    name: Standard_DS14_v2
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 229
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS14_v2_Promo:
+    name: Standard_DS14_v2_Promo
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 229
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_DS15_v2:
+    name: Standard_DS15_v2
+    vcpus: 20
+    cores: 20
+    memory_mib: 140000
+    storage_gb: 286
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2a_v4:
+    name: Standard_E2a_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 51
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2ads_v5:
+    name: Standard_E2ads_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2as_v4:
+    name: Standard_E2as_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 32
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2as_v5:
+    name: Standard_E2as_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2bds_v5:
+    name: Standard_E2bds_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2bs_v5:
+    name: Standard_E2bs_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2d_v4:
+    name: Standard_E2d_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2d_v5:
+    name: Standard_E2d_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2ds_v4:
+    name: Standard_E2ds_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2ds_v5:
+    name: Standard_E2ds_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2pds_v5:
+    name: Standard_E2pds_v5
+    vcpus: 2
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 76
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E2ps_v5:
+    name: Standard_E2ps_v5
+    vcpus: 2
+    cores: 2
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E2s_v3:
+    name: Standard_E2s_v3
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 32
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2s_v4:
+    name: Standard_E2s_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2s_v5:
+    name: Standard_E2s_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2_v3:
+    name: Standard_E2_v3
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 51
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_E2_v4:
+    name: Standard_E2_v4
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E2_v5:
+    name: Standard_E2_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4a_v4:
+    name: Standard_E4a_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4ads_v5:
+    name: Standard_E4ads_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4as_v4:
+    name: Standard_E4as_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4as_v5:
+    name: Standard_E4as_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4bds_v5:
+    name: Standard_E4bds_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4bs_v5:
+    name: Standard_E4bs_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4d_v4:
+    name: Standard_E4d_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4d_v5:
+    name: Standard_E4d_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4ds_v4:
+    name: Standard_E4ds_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4ds_v5:
+    name: Standard_E4ds_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4pds_v5:
+    name: Standard_E4pds_v5
+    vcpus: 4
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E4ps_v5:
+    name: Standard_E4ps_v5
+    vcpus: 4
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E4s_v3:
+    name: Standard_E4s_v3
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4s_v4:
+    name: Standard_E4s_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4s_v5:
+    name: Standard_E4s_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4-2ads_v5:
+    name: Standard_E4-2ads_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4-2as_v4:
+    name: Standard_E4-2as_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4-2as_v5:
+    name: Standard_E4-2as_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4-2ds_v4:
+    name: Standard_E4-2ds_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4-2ds_v5:
+    name: Standard_E4-2ds_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4-2s_v3:
+    name: Standard_E4-2s_v3
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4-2s_v4:
+    name: Standard_E4-2s_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4-2s_v5:
+    name: Standard_E4-2s_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4_v3:
+    name: Standard_E4_v3
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 102
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_E4_v4:
+    name: Standard_E4_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E4_v5:
+    name: Standard_E4_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8a_v4:
+    name: Standard_E8a_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8ads_v5:
+    name: Standard_E8ads_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8as_v4:
+    name: Standard_E8as_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8as_v5:
+    name: Standard_E8as_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8bds_v5:
+    name: Standard_E8bds_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8bs_v5:
+    name: Standard_E8bs_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8d_v4:
+    name: Standard_E8d_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8d_v5:
+    name: Standard_E8d_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8ds_v4:
+    name: Standard_E8ds_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8ds_v5:
+    name: Standard_E8ds_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8pds_v5:
+    name: Standard_E8pds_v5
+    vcpus: 8
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E8ps_v5:
+    name: Standard_E8ps_v5
+    vcpus: 8
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E8s_v3:
+    name: Standard_E8s_v3
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8s_v4:
+    name: Standard_E8s_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8s_v5:
+    name: Standard_E8s_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-2ads_v5:
+    name: Standard_E8-2ads_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-2as_v4:
+    name: Standard_E8-2as_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-2as_v5:
+    name: Standard_E8-2as_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-2ds_v4:
+    name: Standard_E8-2ds_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-2ds_v5:
+    name: Standard_E8-2ds_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-2s_v3:
+    name: Standard_E8-2s_v3
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-2s_v4:
+    name: Standard_E8-2s_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-2s_v5:
+    name: Standard_E8-2s_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-4ads_v5:
+    name: Standard_E8-4ads_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-4as_v4:
+    name: Standard_E8-4as_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-4as_v5:
+    name: Standard_E8-4as_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-4ds_v4:
+    name: Standard_E8-4ds_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-4ds_v5:
+    name: Standard_E8-4ds_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-4s_v3:
+    name: Standard_E8-4s_v3
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-4s_v4:
+    name: Standard_E8-4s_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8-4s_v5:
+    name: Standard_E8-4s_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8_v3:
+    name: Standard_E8_v3
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 204
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_E8_v4:
+    name: Standard_E8_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E8_v5:
+    name: Standard_E8_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16a_v4:
+    name: Standard_E16a_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16ads_v5:
+    name: Standard_E16ads_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16as_v4:
+    name: Standard_E16as_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16as_v5:
+    name: Standard_E16as_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16bds_v5:
+    name: Standard_E16bds_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16bs_v5:
+    name: Standard_E16bs_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16d_v4:
+    name: Standard_E16d_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16d_v5:
+    name: Standard_E16d_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16ds_v4:
+    name: Standard_E16ds_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16ds_v5:
+    name: Standard_E16ds_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16pds_v5:
+    name: Standard_E16pds_v5
+    vcpus: 16
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E16ps_v5:
+    name: Standard_E16ps_v5
+    vcpus: 16
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E16s_v3:
+    name: Standard_E16s_v3
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16s_v4:
+    name: Standard_E16s_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16s_v5:
+    name: Standard_E16s_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-4ads_v5:
+    name: Standard_E16-4ads_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-4as_v4:
+    name: Standard_E16-4as_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-4as_v5:
+    name: Standard_E16-4as_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-4ds_v4:
+    name: Standard_E16-4ds_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-4ds_v5:
+    name: Standard_E16-4ds_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-4s_v3:
+    name: Standard_E16-4s_v3
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-4s_v4:
+    name: Standard_E16-4s_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-4s_v5:
+    name: Standard_E16-4s_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-8ads_v5:
+    name: Standard_E16-8ads_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-8as_v4:
+    name: Standard_E16-8as_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-8as_v5:
+    name: Standard_E16-8as_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-8ds_v4:
+    name: Standard_E16-8ds_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-8ds_v5:
+    name: Standard_E16-8ds_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-8s_v3:
+    name: Standard_E16-8s_v3
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-8s_v4:
+    name: Standard_E16-8s_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16-8s_v5:
+    name: Standard_E16-8s_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16_v3:
+    name: Standard_E16_v3
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 409
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_E16_v4:
+    name: Standard_E16_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E16_v5:
+    name: Standard_E16_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20a_v4:
+    name: Standard_E20a_v4
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 512
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20ads_v5:
+    name: Standard_E20ads_v5
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 768
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20as_v4:
+    name: Standard_E20as_v4
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 327
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20as_v5:
+    name: Standard_E20as_v5
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20d_v4:
+    name: Standard_E20d_v4
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 768
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20d_v5:
+    name: Standard_E20d_v5
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 768
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20ds_v4:
+    name: Standard_E20ds_v4
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 768
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20ds_v5:
+    name: Standard_E20ds_v5
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 768
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20pds_v5:
+    name: Standard_E20pds_v5
+    vcpus: 20
+    cores: 20
+    memory_mib: 160000
+    storage_gb: 768
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E20ps_v5:
+    name: Standard_E20ps_v5
+    vcpus: 20
+    cores: 20
+    memory_mib: 160000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E20s_v3:
+    name: Standard_E20s_v3
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 327
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20s_v4:
+    name: Standard_E20s_v4
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20s_v5:
+    name: Standard_E20s_v5
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20_v3:
+    name: Standard_E20_v3
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 512
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_E20_v4:
+    name: Standard_E20_v4
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E20_v5:
+    name: Standard_E20_v5
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32a_v4:
+    name: Standard_E32a_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32ads_v5:
+    name: Standard_E32ads_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32as_v4:
+    name: Standard_E32as_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 524
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32as_v5:
+    name: Standard_E32as_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32bds_v5:
+    name: Standard_E32bds_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32bs_v5:
+    name: Standard_E32bs_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32d_v4:
+    name: Standard_E32d_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32d_v5:
+    name: Standard_E32d_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32ds_v4:
+    name: Standard_E32ds_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32ds_v5:
+    name: Standard_E32ds_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32pds_v5:
+    name: Standard_E32pds_v5
+    vcpus: 32
+    cores: 32
+    memory_mib: 208000
+    storage_gb: 1228
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E32ps_v5:
+    name: Standard_E32ps_v5
+    vcpus: 32
+    cores: 32
+    memory_mib: 208000
+    storage_gb: 0
+    supported: false
+    arch: arm64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_E32s_v3:
+    name: Standard_E32s_v3
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 524
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32s_v4:
+    name: Standard_E32s_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32s_v5:
+    name: Standard_E32s_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-8ads_v5:
+    name: Standard_E32-8ads_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-8as_v4:
+    name: Standard_E32-8as_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 524
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-8as_v5:
+    name: Standard_E32-8as_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-8ds_v4:
+    name: Standard_E32-8ds_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-8ds_v5:
+    name: Standard_E32-8ds_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-8s_v3:
+    name: Standard_E32-8s_v3
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 524
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-8s_v4:
+    name: Standard_E32-8s_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-8s_v5:
+    name: Standard_E32-8s_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-16ads_v5:
+    name: Standard_E32-16ads_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-16as_v4:
+    name: Standard_E32-16as_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 524
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-16as_v5:
+    name: Standard_E32-16as_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-16ds_v4:
+    name: Standard_E32-16ds_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-16ds_v5:
+    name: Standard_E32-16ds_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-16s_v3:
+    name: Standard_E32-16s_v3
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 524
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-16s_v4:
+    name: Standard_E32-16s_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32-16s_v5:
+    name: Standard_E32-16s_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32_v3:
+    name: Standard_E32_v3
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_E32_v4:
+    name: Standard_E32_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E32_v5:
+    name: Standard_E32_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48a_v4:
+    name: Standard_E48a_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48ads_v5:
+    name: Standard_E48ads_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48as_v4:
+    name: Standard_E48as_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 786
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48as_v5:
+    name: Standard_E48as_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48bds_v5:
+    name: Standard_E48bds_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48bs_v5:
+    name: Standard_E48bs_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48d_v4:
+    name: Standard_E48d_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48d_v5:
+    name: Standard_E48d_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48ds_v4:
+    name: Standard_E48ds_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48ds_v5:
+    name: Standard_E48ds_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48s_v3:
+    name: Standard_E48s_v3
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 786
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48s_v4:
+    name: Standard_E48s_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48s_v5:
+    name: Standard_E48s_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48_v3:
+    name: Standard_E48_v3
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_E48_v4:
+    name: Standard_E48_v4
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E48_v5:
+    name: Standard_E48_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64a_v4:
+    name: Standard_E64a_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 1638
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64ads_v5:
+    name: Standard_E64ads_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64as_v4:
+    name: Standard_E64as_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 884
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64as_v5:
+    name: Standard_E64as_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64bds_v5:
+    name: Standard_E64bds_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64bs_v5:
+    name: Standard_E64bs_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64d_v4:
+    name: Standard_E64d_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 504000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64d_v5:
+    name: Standard_E64d_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64ds_v4:
+    name: Standard_E64ds_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 504000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64ds_v5:
+    name: Standard_E64ds_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64i_v3:
+    name: Standard_E64i_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 432000
+    storage_gb: 1638
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_E64is_v3:
+    name: Standard_E64is_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 432000
+    storage_gb: 884
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64s_v3:
+    name: Standard_E64s_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 432000
+    storage_gb: 884
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64s_v4:
+    name: Standard_E64s_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 504000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64s_v5:
+    name: Standard_E64s_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-16ads_v5:
+    name: Standard_E64-16ads_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-16as_v4:
+    name: Standard_E64-16as_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 884
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-16as_v5:
+    name: Standard_E64-16as_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-16ds_v4:
+    name: Standard_E64-16ds_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 504000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-16ds_v5:
+    name: Standard_E64-16ds_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-16s_v3:
+    name: Standard_E64-16s_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 432000
+    storage_gb: 884
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-16s_v4:
+    name: Standard_E64-16s_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 504000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-16s_v5:
+    name: Standard_E64-16s_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-32ads_v5:
+    name: Standard_E64-32ads_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-32as_v4:
+    name: Standard_E64-32as_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 884
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-32as_v5:
+    name: Standard_E64-32as_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-32ds_v4:
+    name: Standard_E64-32ds_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 504000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-32ds_v5:
+    name: Standard_E64-32ds_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-32s_v3:
+    name: Standard_E64-32s_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 432000
+    storage_gb: 884
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-32s_v4:
+    name: Standard_E64-32s_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 504000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64-32s_v5:
+    name: Standard_E64-32s_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64_v3:
+    name: Standard_E64_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 432000
+    storage_gb: 1638
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_E64_v4:
+    name: Standard_E64_v4
+    vcpus: 64
+    cores: 32
+    memory_mib: 504000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E64_v5:
+    name: Standard_E64_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E80ids_v4:
+    name: Standard_E80ids_v4
+    vcpus: 80
+    cores: 40
+    memory_mib: 504000
+    storage_gb: 4362
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E80is_v4:
+    name: Standard_E80is_v4
+    vcpus: 80
+    cores: 40
+    memory_mib: 504000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96a_v4:
+    name: Standard_E96a_v4
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96ads_v5:
+    name: Standard_E96ads_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 3686
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96as_v4:
+    name: Standard_E96as_v4
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96as_v5:
+    name: Standard_E96as_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96d_v5:
+    name: Standard_E96d_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 3686
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96ds_v5:
+    name: Standard_E96ds_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 3686
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96ias_v4:
+    name: Standard_E96ias_v4
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96s_v5:
+    name: Standard_E96s_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-24ads_v5:
+    name: Standard_E96-24ads_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-24as_v4:
+    name: Standard_E96-24as_v4
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-24as_v5:
+    name: Standard_E96-24as_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-24ds_v5:
+    name: Standard_E96-24ds_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-24s_v5:
+    name: Standard_E96-24s_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-48ads_v5:
+    name: Standard_E96-48ads_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-48as_v4:
+    name: Standard_E96-48as_v4
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-48as_v5:
+    name: Standard_E96-48as_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-48ds_v5:
+    name: Standard_E96-48ds_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96-48s_v5:
+    name: Standard_E96-48s_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96_v5:
+    name: Standard_E96_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E104i_v5:
+    name: Standard_E104i_v5
+    vcpus: 104
+    cores: 52
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E104id_v5:
+    name: Standard_E104id_v5
+    vcpus: 104
+    cores: 52
+    memory_mib: 672000
+    storage_gb: 3891
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E104ids_v5:
+    name: Standard_E104ids_v5
+    vcpus: 104
+    cores: 52
+    memory_mib: 672000
+    storage_gb: 3891
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E104is_v5:
+    name: Standard_E104is_v5
+    vcpus: 104
+    cores: 52
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E112iads_v5:
+    name: Standard_E112iads_v5
+    vcpus: 112
+    cores: 56
+    memory_mib: 672000
+    storage_gb: 3891
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E112ias_v5:
+    name: Standard_E112ias_v5
+    vcpus: 112
+    cores: 56
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC2ads_v5:
+    name: Standard_EC2ads_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 76
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC2as_v5:
+    name: Standard_EC2as_v5
+    vcpus: 2
+    cores: 1
+    memory_mib: 16000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC4ads_v5:
+    name: Standard_EC4ads_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 153
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC4as_v5:
+    name: Standard_EC4as_v5
+    vcpus: 4
+    cores: 2
+    memory_mib: 32000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC8ads_v5:
+    name: Standard_EC8ads_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 307
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC8as_v5:
+    name: Standard_EC8as_v5
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC16ads_v5:
+    name: Standard_EC16ads_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 614
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC16as_v5:
+    name: Standard_EC16as_v5
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC20ads_v5:
+    name: Standard_EC20ads_v5
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 768
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC20as_v5:
+    name: Standard_EC20as_v5
+    vcpus: 20
+    cores: 10
+    memory_mib: 160000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC32ads_v5:
+    name: Standard_EC32ads_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 192000
+    storage_gb: 1228
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC32as_v5:
+    name: Standard_EC32as_v5
+    vcpus: 32
+    cores: 16
+    memory_mib: 192000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC48ads_v5:
+    name: Standard_EC48ads_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 1843
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC48as_v5:
+    name: Standard_EC48as_v5
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC64ads_v5:
+    name: Standard_EC64ads_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC64as_v5:
+    name: Standard_EC64as_v5
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC96ads_v5:
+    name: Standard_EC96ads_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC96as_v5:
+    name: Standard_EC96as_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC96iads_v5:
+    name: Standard_EC96iads_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 2457
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_EC96ias_v5:
+    name: Standard_EC96ias_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F1:
+    name: Standard_F1
+    vcpus: 1
+    cores: 1
+    memory_mib: 2000
+    storage_gb: 16
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_F1s:
+    name: Standard_F1s
+    vcpus: 1
+    cores: 1
+    memory_mib: 2000
+    storage_gb: 4
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F2:
+    name: Standard_F2
+    vcpus: 2
+    cores: 2
+    memory_mib: 4000
+    storage_gb: 32
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_F2s:
+    name: Standard_F2s
+    vcpus: 2
+    cores: 2
+    memory_mib: 4000
+    storage_gb: 8
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F2s_v2:
+    name: Standard_F2s_v2
+    vcpus: 2
+    cores: 1
+    memory_mib: 4000
+    storage_gb: 16
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F4:
+    name: Standard_F4
+    vcpus: 4
+    cores: 4
+    memory_mib: 8000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_F4s:
+    name: Standard_F4s
+    vcpus: 4
+    cores: 4
+    memory_mib: 8000
+    storage_gb: 16
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F4s_v2:
+    name: Standard_F4s_v2
+    vcpus: 4
+    cores: 2
+    memory_mib: 8000
+    storage_gb: 32
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F8:
+    name: Standard_F8
+    vcpus: 8
+    cores: 8
+    memory_mib: 16000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_F8s:
+    name: Standard_F8s
+    vcpus: 8
+    cores: 8
+    memory_mib: 16000
+    storage_gb: 32
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F8s_v2:
+    name: Standard_F8s_v2
+    vcpus: 8
+    cores: 4
+    memory_mib: 16000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F16:
+    name: Standard_F16
+    vcpus: 16
+    cores: 16
+    memory_mib: 32000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_F16s:
+    name: Standard_F16s
+    vcpus: 16
+    cores: 16
+    memory_mib: 32000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F16s_v2:
+    name: Standard_F16s_v2
+    vcpus: 16
+    cores: 8
+    memory_mib: 32000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F32s_v2:
+    name: Standard_F32s_v2
+    vcpus: 32
+    cores: 16
+    memory_mib: 64000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F48s_v2:
+    name: Standard_F48s_v2
+    vcpus: 48
+    cores: 24
+    memory_mib: 96000
+    storage_gb: 393
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F64s_v2:
+    name: Standard_F64s_v2
+    vcpus: 64
+    cores: 32
+    memory_mib: 128000
+    storage_gb: 524
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_F72s_v2:
+    name: Standard_F72s_v2
+    vcpus: 72
+    cores: 36
+    memory_mib: 144000
+    storage_gb: 589
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_FX4mds:
+    name: Standard_FX4mds
+    vcpus: 4
+    cores: 2
+    memory_mib: 84000
+    storage_gb: 172
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_FX12mds:
+    name: Standard_FX12mds
+    vcpus: 12
+    cores: 6
+    memory_mib: 252000
+    storage_gb: 516
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_FX24mds:
+    name: Standard_FX24mds
+    vcpus: 24
+    cores: 12
+    memory_mib: 504000
+    storage_gb: 1032
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_FX36mds:
+    name: Standard_FX36mds
+    vcpus: 36
+    cores: 18
+    memory_mib: 756000
+    storage_gb: 1548
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_FX48mds:
+    name: Standard_FX48mds
+    vcpus: 48
+    cores: 24
+    memory_mib: 1008000
+    storage_gb: 2064
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_G1:
+    name: Standard_G1
+    vcpus: 2
+    cores: 2
+    memory_mib: 28000
+    storage_gb: 393
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_G2:
+    name: Standard_G2
+    vcpus: 4
+    cores: 4
+    memory_mib: 56000
+    storage_gb: 786
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_G3:
+    name: Standard_G3
+    vcpus: 8
+    cores: 8
+    memory_mib: 112000
+    storage_gb: 1572
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_G4:
+    name: Standard_G4
+    vcpus: 16
+    cores: 16
+    memory_mib: 224000
+    storage_gb: 3145
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_G5:
+    name: Standard_G5
+    vcpus: 32
+    cores: 32
+    memory_mib: 448000
+    storage_gb: 6291
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_GS1:
+    name: Standard_GS1
+    vcpus: 2
+    cores: 2
+    memory_mib: 28000
+    storage_gb: 57
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_GS2:
+    name: Standard_GS2
+    vcpus: 4
+    cores: 4
+    memory_mib: 56000
+    storage_gb: 114
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_GS3:
+    name: Standard_GS3
+    vcpus: 8
+    cores: 8
+    memory_mib: 112000
+    storage_gb: 229
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_GS4:
+    name: Standard_GS4
+    vcpus: 16
+    cores: 16
+    memory_mib: 224000
+    storage_gb: 458
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_GS4-4:
+    name: Standard_GS4-4
+    vcpus: 16
+    cores: 16
+    memory_mib: 224000
+    storage_gb: 458
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_GS4-8:
+    name: Standard_GS4-8
+    vcpus: 16
+    cores: 16
+    memory_mib: 224000
+    storage_gb: 458
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_GS5:
+    name: Standard_GS5
+    vcpus: 32
+    cores: 32
+    memory_mib: 448000
+    storage_gb: 917
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_GS5-8:
+    name: Standard_GS5-8
+    vcpus: 32
+    cores: 32
+    memory_mib: 448000
+    storage_gb: 917
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_GS5-16:
+    name: Standard_GS5-16
+    vcpus: 32
+    cores: 32
+    memory_mib: 448000
+    storage_gb: 917
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_H8:
+    name: Standard_H8
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H8m:
+    name: Standard_H8m
+    vcpus: 8
+    cores: 8
+    memory_mib: 112000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H8m_Promo:
+    name: Standard_H8m_Promo
+    vcpus: 8
+    cores: 8
+    memory_mib: 112000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H8_Promo:
+    name: Standard_H8_Promo
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H16:
+    name: Standard_H16
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H16m:
+    name: Standard_H16m
+    vcpus: 16
+    cores: 16
+    memory_mib: 224000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H16m_Promo:
+    name: Standard_H16m_Promo
+    vcpus: 16
+    cores: 16
+    memory_mib: 224000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H16mr:
+    name: Standard_H16mr
+    vcpus: 16
+    cores: 16
+    memory_mib: 224000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H16mr_Promo:
+    name: Standard_H16mr_Promo
+    vcpus: 16
+    cores: 16
+    memory_mib: 224000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H16r:
+    name: Standard_H16r
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H16r_Promo:
+    name: Standard_H16r_Promo
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_H16_Promo:
+    name: Standard_H16_Promo
+    vcpus: 16
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_HB60rs:
+    name: Standard_HB60rs
+    vcpus: 60
+    cores: 60
+    memory_mib: 228000
+    storage_gb: 716
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB60-15rs:
+    name: Standard_HB60-15rs
+    vcpus: 60
+    cores: 60
+    memory_mib: 228000
+    storage_gb: 716
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB60-30rs:
+    name: Standard_HB60-30rs
+    vcpus: 60
+    cores: 60
+    memory_mib: 228000
+    storage_gb: 716
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB60-45rs:
+    name: Standard_HB60-45rs
+    vcpus: 60
+    cores: 60
+    memory_mib: 228000
+    storage_gb: 716
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120rs_v2:
+    name: Standard_HB120rs_v2
+    vcpus: 120
+    cores: 120
+    memory_mib: 456000
+    storage_gb: 491
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120rs_v3:
+    name: Standard_HB120rs_v3
+    vcpus: 120
+    cores: 120
+    memory_mib: 448000
+    storage_gb: 491
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120-16rs_v2:
+    name: Standard_HB120-16rs_v2
+    vcpus: 120
+    cores: 120
+    memory_mib: 445310
+    storage_gb: 960
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120-16rs_v3:
+    name: Standard_HB120-16rs_v3
+    vcpus: 120
+    cores: 120
+    memory_mib: 448000
+    storage_gb: 491
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120-32rs_v2:
+    name: Standard_HB120-32rs_v2
+    vcpus: 120
+    cores: 120
+    memory_mib: 445310
+    storage_gb: 960
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120-32rs_v3:
+    name: Standard_HB120-32rs_v3
+    vcpus: 120
+    cores: 120
+    memory_mib: 448000
+    storage_gb: 491
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120-64rs_v2:
+    name: Standard_HB120-64rs_v2
+    vcpus: 120
+    cores: 120
+    memory_mib: 445310
+    storage_gb: 960
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120-64rs_v3:
+    name: Standard_HB120-64rs_v3
+    vcpus: 120
+    cores: 120
+    memory_mib: 448000
+    storage_gb: 491
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120-96rs_v2:
+    name: Standard_HB120-96rs_v2
+    vcpus: 120
+    cores: 120
+    memory_mib: 445310
+    storage_gb: 960
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HB120-96rs_v3:
+    name: Standard_HB120-96rs_v3
+    vcpus: 120
+    cores: 120
+    memory_mib: 448000
+    storage_gb: 491
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HC44rs:
+    name: Standard_HC44rs
+    vcpus: 44
+    cores: 44
+    memory_mib: 352000
+    storage_gb: 716
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HC44-16rs:
+    name: Standard_HC44-16rs
+    vcpus: 44
+    cores: 44
+    memory_mib: 352000
+    storage_gb: 716
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_HC44-32rs:
+    name: Standard_HC44-32rs
+    vcpus: 44
+    cores: 44
+    memory_mib: 352000
+    storage_gb: 716
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L4s:
+    name: Standard_L4s
+    vcpus: 4
+    cores: 4
+    memory_mib: 32000
+    storage_gb: 694
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L8as_v3:
+    name: Standard_L8as_v3
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 81
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L8s:
+    name: Standard_L8s
+    vcpus: 8
+    cores: 8
+    memory_mib: 64000
+    storage_gb: 1421
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L8s_v2:
+    name: Standard_L8s_v2
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 81
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L8s_v3:
+    name: Standard_L8s_v3
+    vcpus: 8
+    cores: 4
+    memory_mib: 64000
+    storage_gb: 81
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L16as_v3:
+    name: Standard_L16as_v3
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 163
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L16s:
+    name: Standard_L16s
+    vcpus: 16
+    cores: 16
+    memory_mib: 128000
+    storage_gb: 2874
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L16s_v2:
+    name: Standard_L16s_v2
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 163
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L16s_v3:
+    name: Standard_L16s_v3
+    vcpus: 16
+    cores: 8
+    memory_mib: 128000
+    storage_gb: 163
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L32as_v3:
+    name: Standard_L32as_v3
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 327
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L32s:
+    name: Standard_L32s
+    vcpus: 32
+    cores: 32
+    memory_mib: 256000
+    storage_gb: 5765
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L32s_v2:
+    name: Standard_L32s_v2
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 327
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L32s_v3:
+    name: Standard_L32s_v3
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 327
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L48as_v3:
+    name: Standard_L48as_v3
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 491
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L48s_v2:
+    name: Standard_L48s_v2
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 491
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L48s_v3:
+    name: Standard_L48s_v3
+    vcpus: 48
+    cores: 24
+    memory_mib: 384000
+    storage_gb: 491
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L64as_v3:
+    name: Standard_L64as_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 655
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L64s_v2:
+    name: Standard_L64s_v2
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 655
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L64s_v3:
+    name: Standard_L64s_v3
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 655
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L80as_v3:
+    name: Standard_L80as_v3
+    vcpus: 80
+    cores: 40
+    memory_mib: 640000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L80s_v2:
+    name: Standard_L80s_v2
+    vcpus: 80
+    cores: 40
+    memory_mib: 640000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_L80s_v3:
+    name: Standard_L80s_v3
+    vcpus: 80
+    cores: 40
+    memory_mib: 640000
+    storage_gb: 819
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M8ms:
+    name: Standard_M8ms
+    vcpus: 8
+    cores: 4
+    memory_mib: 218750
+    storage_gb: 256
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M8-2ms:
+    name: Standard_M8-2ms
+    vcpus: 8
+    cores: 4
+    memory_mib: 218750
+    storage_gb: 256
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M8-4ms:
+    name: Standard_M8-4ms
+    vcpus: 8
+    cores: 4
+    memory_mib: 218750
+    storage_gb: 256
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M16ms:
+    name: Standard_M16ms
+    vcpus: 16
+    cores: 8
+    memory_mib: 437500
+    storage_gb: 512
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M16-4ms:
+    name: Standard_M16-4ms
+    vcpus: 16
+    cores: 8
+    memory_mib: 437500
+    storage_gb: 512
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M16-8ms:
+    name: Standard_M16-8ms
+    vcpus: 16
+    cores: 8
+    memory_mib: 437500
+    storage_gb: 512
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M32dms_v2:
+    name: Standard_M32dms_v2
+    vcpus: 32
+    cores: 16
+    memory_mib: 875000
+    storage_gb: 1048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M32ls:
+    name: Standard_M32ls
+    vcpus: 32
+    cores: 16
+    memory_mib: 256000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M32ms:
+    name: Standard_M32ms
+    vcpus: 32
+    cores: 16
+    memory_mib: 875000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M32ms_v2:
+    name: Standard_M32ms_v2
+    vcpus: 32
+    cores: 16
+    memory_mib: 875000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M32ts:
+    name: Standard_M32ts
+    vcpus: 32
+    cores: 16
+    memory_mib: 192000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M32-8ms:
+    name: Standard_M32-8ms
+    vcpus: 32
+    cores: 16
+    memory_mib: 875000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M32-16ms:
+    name: Standard_M32-16ms
+    vcpus: 32
+    cores: 16
+    memory_mib: 875000
+    storage_gb: 1024
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M64:
+    name: Standard_M64
+    vcpus: 64
+    cores: 32
+    memory_mib: 1000000
+    storage_gb: 8192
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M64dms_v2:
+    name: Standard_M64dms_v2
+    vcpus: 64
+    cores: 32
+    memory_mib: 1792000
+    storage_gb: 2097
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M64ds_v2:
+    name: Standard_M64ds_v2
+    vcpus: 64
+    cores: 32
+    memory_mib: 1024000
+    storage_gb: 2097
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M64ls:
+    name: Standard_M64ls
+    vcpus: 64
+    cores: 32
+    memory_mib: 512000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M64m:
+    name: Standard_M64m
+    vcpus: 64
+    cores: 32
+    memory_mib: 1750000
+    storage_gb: 8192
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M64ms:
+    name: Standard_M64ms
+    vcpus: 64
+    cores: 32
+    memory_mib: 1750000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M64ms_v2:
+    name: Standard_M64ms_v2
+    vcpus: 64
+    cores: 32
+    memory_mib: 1792000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M64s:
+    name: Standard_M64s
+    vcpus: 64
+    cores: 32
+    memory_mib: 1000000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M64s_v2:
+    name: Standard_M64s_v2
+    vcpus: 64
+    cores: 32
+    memory_mib: 1024000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M64-16ms:
+    name: Standard_M64-16ms
+    vcpus: 64
+    cores: 32
+    memory_mib: 1750000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M64-32ms:
+    name: Standard_M64-32ms
+    vcpus: 64
+    cores: 32
+    memory_mib: 1750000
+    storage_gb: 2048
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M128:
+    name: Standard_M128
+    vcpus: 128
+    cores: 64
+    memory_mib: 2000000
+    storage_gb: 16384
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M128dms_v2:
+    name: Standard_M128dms_v2
+    vcpus: 128
+    cores: 64
+    memory_mib: 3892000
+    storage_gb: 4194
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M128ds_v2:
+    name: Standard_M128ds_v2
+    vcpus: 128
+    cores: 64
+    memory_mib: 2048000
+    storage_gb: 4194
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M128m:
+    name: Standard_M128m
+    vcpus: 128
+    cores: 64
+    memory_mib: 3800000
+    storage_gb: 16384
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M128ms:
+    name: Standard_M128ms
+    vcpus: 128
+    cores: 64
+    memory_mib: 3800000
+    storage_gb: 4096
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M128ms_v2:
+    name: Standard_M128ms_v2
+    vcpus: 128
+    cores: 64
+    memory_mib: 3892000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M128s:
+    name: Standard_M128s
+    vcpus: 128
+    cores: 64
+    memory_mib: 2000000
+    storage_gb: 4096
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M128s_v2:
+    name: Standard_M128s_v2
+    vcpus: 128
+    cores: 64
+    memory_mib: 2048000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M128-32ms:
+    name: Standard_M128-32ms
+    vcpus: 128
+    cores: 64
+    memory_mib: 3800000
+    storage_gb: 4096
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M128-64ms:
+    name: Standard_M128-64ms
+    vcpus: 128
+    cores: 64
+    memory_mib: 3800000
+    storage_gb: 4096
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_M192idms_v2:
+    name: Standard_M192idms_v2
+    vcpus: 192
+    cores: 96
+    memory_mib: 4096000
+    storage_gb: 4194
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M192ids_v2:
+    name: Standard_M192ids_v2
+    vcpus: 192
+    cores: 96
+    memory_mib: 2048000
+    storage_gb: 4194
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M192ims_v2:
+    name: Standard_M192ims_v2
+    vcpus: 192
+    cores: 96
+    memory_mib: 4096000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M192is_v2:
+    name: Standard_M192is_v2
+    vcpus: 192
+    cores: 96
+    memory_mib: 2048000
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M208ms_v2:
+    name: Standard_M208ms_v2
+    vcpus: 208
+    cores: 208
+    memory_mib: 5700000
+    storage_gb: 4194
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M208s_v2:
+    name: Standard_M208s_v2
+    vcpus: 208
+    cores: 208
+    memory_mib: 2850000
+    storage_gb: 4194
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M416ms_v2:
+    name: Standard_M416ms_v2
+    vcpus: 416
+    cores: 416
+    memory_mib: 11400000
+    storage_gb: 8388
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M416s_v2:
+    name: Standard_M416s_v2
+    vcpus: 416
+    cores: 416
+    memory_mib: 5700000
+    storage_gb: 8388
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M416-208ms_v2:
+    name: Standard_M416-208ms_v2
+    vcpus: 416
+    cores: 208
+    memory_mib: 11400000
+    storage_gb: 8388
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M416-208s_v2:
+    name: Standard_M416-208s_v2
+    vcpus: 416
+    cores: 208
+    memory_mib: 5700000
+    storage_gb: 8388
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_NC4as_T4_v3:
+    name: Standard_NC4as_T4_v3
+    vcpus: 4
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 180
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC6:
+    name: Standard_NC6
+    vcpus: 6
+    cores: 6
+    memory_mib: 56000
+    storage_gb: 389
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NC6s_v2:
+    name: Standard_NC6s_v2
+    vcpus: 6
+    cores: 6
+    memory_mib: 112000
+    storage_gb: 344
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC6s_v3:
+    name: Standard_NC6s_v3
+    vcpus: 6
+    cores: 6
+    memory_mib: 112000
+    storage_gb: 344
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC6_Promo:
+    name: Standard_NC6_Promo
+    vcpus: 6
+    cores: 6
+    memory_mib: 56000
+    storage_gb: 389
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NC8ads_A10_v4:
+    name: Standard_NC8ads_A10_v4
+    vcpus: 8
+    cores: 8
+    memory_mib: 100000
+    storage_gb: 737
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC8as_T4_v3:
+    name: Standard_NC8as_T4_v3
+    vcpus: 8
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 360
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC12:
+    name: Standard_NC12
+    vcpus: 12
+    cores: 12
+    memory_mib: 112000
+    storage_gb: 696
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NC12s_v2:
+    name: Standard_NC12s_v2
+    vcpus: 12
+    cores: 12
+    memory_mib: 224000
+    storage_gb: 688
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC12s_v3:
+    name: Standard_NC12s_v3
+    vcpus: 12
+    cores: 12
+    memory_mib: 224000
+    storage_gb: 688
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC12_Promo:
+    name: Standard_NC12_Promo
+    vcpus: 12
+    cores: 12
+    memory_mib: 112000
+    storage_gb: 696
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NC16ads_A10_v4:
+    name: Standard_NC16ads_A10_v4
+    vcpus: 16
+    cores: 16
+    memory_mib: 200000
+    storage_gb: 1474
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC16as_T4_v3:
+    name: Standard_NC16as_T4_v3
+    vcpus: 16
+    cores: 16
+    memory_mib: 110000
+    storage_gb: 360
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC24:
+    name: Standard_NC24
+    vcpus: 24
+    cores: 24
+    memory_mib: 224000
+    storage_gb: 1474
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NC24ads_A100_v4:
+    name: Standard_NC24ads_A100_v4
+    vcpus: 24
+    cores: 24
+    memory_mib: 220000
+    storage_gb: 65
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_NC24r:
+    name: Standard_NC24r
+    vcpus: 24
+    cores: 24
+    memory_mib: 224000
+    storage_gb: 1474
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NC24r_Promo:
+    name: Standard_NC24r_Promo
+    vcpus: 24
+    cores: 24
+    memory_mib: 224000
+    storage_gb: 1474
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NC24rs_v2:
+    name: Standard_NC24rs_v2
+    vcpus: 24
+    cores: 24
+    memory_mib: 448000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC24rs_v3:
+    name: Standard_NC24rs_v3
+    vcpus: 24
+    cores: 24
+    memory_mib: 448000
+    storage_gb: 3018
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC24s_v2:
+    name: Standard_NC24s_v2
+    vcpus: 24
+    cores: 24
+    memory_mib: 448000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC24s_v3:
+    name: Standard_NC24s_v3
+    vcpus: 24
+    cores: 24
+    memory_mib: 448000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC24_Promo:
+    name: Standard_NC24_Promo
+    vcpus: 24
+    cores: 24
+    memory_mib: 224000
+    storage_gb: 1474
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NC32ads_A10_v4:
+    name: Standard_NC32ads_A10_v4
+    vcpus: 32
+    cores: 32
+    memory_mib: 400000
+    storage_gb: 2949
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC48ads_A100_v4:
+    name: Standard_NC48ads_A100_v4
+    vcpus: 48
+    cores: 48
+    memory_mib: 440000
+    storage_gb: 131
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_NC64as_T4_v3:
+    name: Standard_NC64as_T4_v3
+    vcpus: 64
+    cores: 64
+    memory_mib: 440000
+    storage_gb: 2883
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NC96ads_A100_v4:
+    name: Standard_NC96ads_A100_v4
+    vcpus: 96
+    cores: 96
+    memory_mib: 880000
+    storage_gb: 262
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_ND6s:
+    name: Standard_ND6s
+    vcpus: 6
+    cores: 6
+    memory_mib: 112000
+    storage_gb: 344
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_ND12s:
+    name: Standard_ND12s
+    vcpus: 12
+    cores: 12
+    memory_mib: 224000
+    storage_gb: 688
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_ND24rs:
+    name: Standard_ND24rs
+    vcpus: 24
+    cores: 24
+    memory_mib: 448000
+    storage_gb: 3018
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_ND24s:
+    name: Standard_ND24s
+    vcpus: 24
+    cores: 24
+    memory_mib: 448000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_ND40rs_v2:
+    name: Standard_ND40rs_v2
+    vcpus: 40
+    cores: 40
+    memory_mib: 672000
+    storage_gb: 2969
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_ND40s_v3:
+    name: Standard_ND40s_v3
+    vcpus: 40
+    cores: 40
+    memory_mib: 672000
+    storage_gb: 39630
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_ND96amsr_A100_v4:
+    name: Standard_ND96amsr_A100_v4
+    vcpus: 96
+    cores: 96
+    memory_mib: 1924000
+    storage_gb: 2969
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_ND96asr_v4:
+    name: Standard_ND96asr_v4
+    vcpus: 96
+    cores: 96
+    memory_mib: 900000
+    storage_gb: 2969
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_NP10s:
+    name: Standard_NP10s
+    vcpus: 10
+    cores: 10
+    memory_mib: 168000
+    storage_gb: 753
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NP20s:
+    name: Standard_NP20s
+    vcpus: 20
+    cores: 20
+    memory_mib: 336000
+    storage_gb: 1509
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NP40s:
+    name: Standard_NP40s
+    vcpus: 40
+    cores: 40
+    memory_mib: 672000
+    storage_gb: 3018
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV4as_v4:
+    name: Standard_NV4as_v4
+    vcpus: 4
+    cores: 2
+    memory_mib: 14000
+    storage_gb: 90
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV6:
+    name: Standard_NV6
+    vcpus: 6
+    cores: 6
+    memory_mib: 56000
+    storage_gb: 389
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NV6ads_A10_v5:
+    name: Standard_NV6ads_A10_v5
+    vcpus: 6
+    cores: 3
+    memory_mib: 55000
+    storage_gb: 184
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV6s_v2:
+    name: Standard_NV6s_v2
+    vcpus: 6
+    cores: 6
+    memory_mib: 112000
+    storage_gb: 344
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV6_Promo:
+    name: Standard_NV6_Promo
+    vcpus: 6
+    cores: 6
+    memory_mib: 56000
+    storage_gb: 389
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NV8as_v4:
+    name: Standard_NV8as_v4
+    vcpus: 8
+    cores: 4
+    memory_mib: 28000
+    storage_gb: 180
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV12:
+    name: Standard_NV12
+    vcpus: 12
+    cores: 12
+    memory_mib: 112000
+    storage_gb: 696
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NV12ads_A10_v5:
+    name: Standard_NV12ads_A10_v5
+    vcpus: 12
+    cores: 6
+    memory_mib: 110000
+    storage_gb: 368
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV12s_v2:
+    name: Standard_NV12s_v2
+    vcpus: 12
+    cores: 12
+    memory_mib: 224000
+    storage_gb: 688
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV12s_v3:
+    name: Standard_NV12s_v3
+    vcpus: 12
+    cores: 6
+    memory_mib: 112000
+    storage_gb: 344
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV12_Promo:
+    name: Standard_NV12_Promo
+    vcpus: 12
+    cores: 12
+    memory_mib: 112000
+    storage_gb: 696
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NV16as_v4:
+    name: Standard_NV16as_v4
+    vcpus: 16
+    cores: 8
+    memory_mib: 56000
+    storage_gb: 360
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV18ads_A10_v5:
+    name: Standard_NV18ads_A10_v5
+    vcpus: 18
+    cores: 9
+    memory_mib: 220000
+    storage_gb: 737
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV24:
+    name: Standard_NV24
+    vcpus: 24
+    cores: 24
+    memory_mib: 224000
+    storage_gb: 1474
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NV24s_v2:
+    name: Standard_NV24s_v2
+    vcpus: 24
+    cores: 24
+    memory_mib: 448000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV24s_v3:
+    name: Standard_NV24s_v3
+    vcpus: 24
+    cores: 12
+    memory_mib: 224000
+    storage_gb: 688
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV24_Promo:
+    name: Standard_NV24_Promo
+    vcpus: 24
+    cores: 24
+    memory_mib: 224000
+    storage_gb: 1474
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: false
+Standard_NV32as_v4:
+    name: Standard_NV32as_v4
+    vcpus: 32
+    cores: 16
+    memory_mib: 112000
+    storage_gb: 720
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV36adms_A10_v5:
+    name: Standard_NV36adms_A10_v5
+    vcpus: 36
+    cores: 18
+    memory_mib: 880000
+    storage_gb: 2936
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV36ads_A10_v5:
+    name: Standard_NV36ads_A10_v5
+    vcpus: 36
+    cores: 18
+    memory_mib: 440000
+    storage_gb: 1468
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV48s_v3:
+    name: Standard_NV48s_v3
+    vcpus: 48
+    cores: 24
+    memory_mib: 448000
+    storage_gb: 1376
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_NV72ads_A10_v5:
+    name: Standard_NV72ads_A10_v5
+    vcpus: 72
+    cores: 36
+    memory_mib: 880000
+    storage_gb: 2949
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_PB6s:
+    name: Standard_PB6s
+    vcpus: 6
+    cores: 6
+    memory_mib: 112000
+    storage_gb: 344
+    supported: false
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true

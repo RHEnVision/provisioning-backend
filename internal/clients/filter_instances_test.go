@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMapArchitectures(t *testing.T) {
+func TestEC2MapArchitectures(t *testing.T) {
 	result, err := clients.MapArchitectures(context.Background(), "x86-64")
 	assert.Nil(t, err)
 	assert.Equal(t, clients.ArchitectureTypeX8664, result)
@@ -28,8 +28,17 @@ func TestMapArchitectures(t *testing.T) {
 	result, err = clients.MapArchitectures(context.Background(), "arm_mac")
 	assert.Nil(t, err)
 	assert.Equal(t, clients.ArchitectureTypeAppleArm64, result)
-	_, err = clients.MapArchitectures(context.Background(), "ios")
+	_, err = clients.MapArchitectures(context.Background(), "ppc64")
 	assert.NotNil(t, err)
+}
+
+func TestAzureMapArchitectures(t *testing.T) {
+	result, err := clients.MapArchitectures(context.Background(), "x64")
+	assert.Nil(t, err)
+	assert.Equal(t, clients.ArchitectureTypeX8664, result)
+	result, err = clients.MapArchitectures(context.Background(), "arm64")
+	assert.Nil(t, err)
+	assert.Equal(t, clients.ArchitectureTypeArm64, result)
 }
 
 func TestNewInstanceTypes(t *testing.T) {
@@ -65,10 +74,9 @@ func TestNewInstanceTypes(t *testing.T) {
 	assert.Nil(t, err)
 	// Check that two instance types were created, one per architecture
 	assert.Equal(t, len(*res), 3)
-	assert.Equal(t, (*res)[0].Name, "a1.2xlarge")
-	assert.Equal(t, (*res)[1].Name, "a1.2xlarge")
-
-	assert.Equal(t, (*res)[2].Name, "c5.xlarge")
+	assert.Equal(t, clients.InstanceTypeName("a1.2xlarge"), (*res)[0].Name)
+	assert.Equal(t, clients.InstanceTypeName("a1.2xlarge"), (*res)[1].Name)
+	assert.Equal(t, clients.InstanceTypeName("c5.xlarge"), (*res)[2].Name)
 	// Check that instance types which does not appear in supported_instance_yml are marked as unsupported
 	assert.Equal(t, (*res)[0].Supported, false)
 	assert.Equal(t, (*res)[1].Supported, false)
