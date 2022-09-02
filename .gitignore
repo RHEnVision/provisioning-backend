@@ -8,10 +8,10 @@ TAGS
 /pbworker
 /vendor/
 /configs/local.yaml
+/configs/local.*.yaml
 /deploy/bonfire.yaml
 /Containerfile
 /tern.conf
-/cmd/dao_tests/local.yaml
 /scripts/sources-*/
 /scripts/sources.local.conf
 /scripts/rest_examples/*.local.http

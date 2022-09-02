@@ -3,7 +3,7 @@
 
 // To override application configuration for integration tests, copy local.yaml into this directory.
 
-package main
+package tests
 
 import (
 	"fmt"
