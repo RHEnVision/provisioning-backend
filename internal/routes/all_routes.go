@@ -72,9 +72,8 @@ func apiRouter() http.Handler {
 
 		r.Route("/reservations", func(r chi.Router) {
 			r.Get("/", s.ListReservations)
-			r.Route("/{type}", func(r chi.Router) {
-				r.Post("/", s.CreateReservation)
-			})
+			r.Get("/{ID}", s.GetReservation)
+			r.Post("/{type}", s.CreateReservation)
 		})
 
 		// Unsupported routes are not published through OpenAPI, they are documented
