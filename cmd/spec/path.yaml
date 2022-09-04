@@ -164,6 +164,29 @@ paths:
                   $ref: '#/components/schemas/v1.ReservationResponse'
         "500":
           $ref: '#/components/responses/InternalError'
+  /reservations/{ID}:
+    get:
+      description: 'Return a reservation by id'
+      operationId: getReservationByID
+      parameters:
+      - in: path
+        name: ID
+        schema:
+          type: integer
+          format: int64
+        required: true
+        description: 'Reservation ID'
+      responses:
+        "200":
+          description: 'Returned on success.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.ReservationResponse'
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: '#/components/responses/InternalError'
   /reservations/aws:
     post:
       operationId: createAwsReservation

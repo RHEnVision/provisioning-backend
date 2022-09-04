@@ -52,3 +52,32 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func GetReservation(w http.ResponseWriter, r *http.Request) {
+	id, err := ParseInt64(r, "ID")
+	if err != nil {
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
+		return
+	}
+
+	rDao, err := dao.GetReservationDao(r.Context())
+	if err != nil {
+		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "reservation DAO", err))
+		return
+	}
+
+	reservation, err := rDao.GetById(r.Context(), id)
+	if err != nil {
+		var e dao.NoRowsError
+		if errors.As(err, &e) {
+			renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
+		} else {
+			renderError(w, r, payloads.NewDAOError(r.Context(), "get reservation by id", err))
+		}
+		return
+	}
+
+	if err := render.Render(w, r, payloads.NewReservationResponse(reservation)); err != nil {
+		renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+	}
+}

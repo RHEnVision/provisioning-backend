@@ -116,6 +116,10 @@ func (p *NoopReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.R
 	return nil
 }
 
+func NewReservationResponse(reservation *models.Reservation) render.Renderer {
+	return reservationResponseMapper(reservation)
+}
+
 func NewAWSReservationResponse(reservation *models.AWSReservation) render.Renderer {
 	response := AWSReservationResponsePayload{
 		ImageID:          reservation.ImageID,
@@ -140,25 +144,29 @@ func NewNoopReservationResponse(reservation *models.NoopReservation) render.Rend
 func NewReservationListResponse(reservations []*models.Reservation) []render.Renderer {
 	list := make([]render.Renderer, len(reservations))
 	for i, reservation := range reservations {
-		var finishedAt *time.Time
-		if reservation.FinishedAt.Valid {
-			finishedAt = &reservation.FinishedAt.Time
-		}
-		var success *bool
-		if reservation.Success.Valid {
-			success = &reservation.Success.Bool
-		}
-		list[i] = &GenericReservationResponsePayload{
-			ID:         reservation.ID,
-			Provider:   int(reservation.Provider),
-			CreatedAt:  reservation.CreatedAt,
-			FinishedAt: finishedAt,
-			Status:     reservation.Status,
-			Success:    success,
-			Steps:      reservation.Steps,
-			Step:       reservation.Step,
-			Error:      reservation.Error,
-		}
+		list[i] = reservationResponseMapper(reservation)
 	}
 	return list
+}
+
+func reservationResponseMapper(reservation *models.Reservation) *GenericReservationResponsePayload {
+	var finishedAt *time.Time
+	if reservation.FinishedAt.Valid {
+		finishedAt = &reservation.FinishedAt.Time
+	}
+	var success *bool
+	if reservation.Success.Valid {
+		success = &reservation.Success.Bool
+	}
+	return &GenericReservationResponsePayload{
+		ID:         reservation.ID,
+		Provider:   int(reservation.Provider),
+		CreatedAt:  reservation.CreatedAt,
+		FinishedAt: finishedAt,
+		Status:     reservation.Status,
+		Success:    success,
+		Steps:      reservation.Steps,
+		Step:       reservation.Step,
+		Error:      reservation.Error,
+	}
 }
