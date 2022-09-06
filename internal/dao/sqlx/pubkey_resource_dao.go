@@ -59,7 +59,7 @@ func init() {
 	dao.GetPubkeyResourceDao = getPubkeyResourceDao
 }
 
-func (di *pubkeyResourceDaoSqlx) GetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error) {
+func (di *pubkeyResourceDaoSqlx) UnscopedGetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error) {
 	query := getPubkeyResourceByProviderType
 	stmt := di.getByProviderType
 	result := &models.PubkeyResource{}
@@ -75,7 +75,7 @@ func (di *pubkeyResourceDaoSqlx) GetResourceByProviderType(ctx context.Context, 
 	return result, nil
 }
 
-func (di *pubkeyResourceDaoSqlx) Create(ctx context.Context, pkr *models.PubkeyResource) error {
+func (di *pubkeyResourceDaoSqlx) UnscopedCreate(ctx context.Context, pkr *models.PubkeyResource) error {
 	query := createPubkeyResource
 	stmt := di.create
 
@@ -86,7 +86,7 @@ func (di *pubkeyResourceDaoSqlx) Create(ctx context.Context, pkr *models.PubkeyR
 	return nil
 }
 
-func (di *pubkeyResourceDaoSqlx) Delete(ctx context.Context, id int64) error {
+func (di *pubkeyResourceDaoSqlx) UnscopedDelete(ctx context.Context, id int64) error {
 	query := deletePubkeyResourceById
 	stmt := di.deleteById
 
@@ -101,7 +101,7 @@ func (di *pubkeyResourceDaoSqlx) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (di *pubkeyResourceDaoSqlx) ListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error) {
+func (di *pubkeyResourceDaoSqlx) UnscopedListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error) {
 	query := listByPubkeyId
 	stmt := di.listByPubkeyId
 	var result []*models.PubkeyResource

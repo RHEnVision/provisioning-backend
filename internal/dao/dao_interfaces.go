@@ -41,12 +41,15 @@ type PubkeyDao interface {
 
 var GetPubkeyResourceDao func(ctx context.Context) (PubkeyResourceDao, error)
 
-// PubkeyResourceDao TODO
+// PubkeyResourceDao interface for manipulating data of Pubkey deployed into cloud provider.
+// Allows to track the key in the cloud provider and manage it.
+// All methods are unscoped by Account and thus should not get user input as input directly,
+// input should first be validated by PubkeyDao.GetById
 type PubkeyResourceDao interface {
-	GetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error)
-	ListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error)
-	Create(ctx context.Context, pkr *models.PubkeyResource) error
-	Delete(ctx context.Context, id int64) error
+	UnscopedGetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error)
+	UnscopedListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error)
+	UnscopedCreate(ctx context.Context, pkr *models.PubkeyResource) error
+	UnscopedDelete(ctx context.Context, id int64) error
 }
 
 var GetReservationDao func(ctx context.Context) (ReservationDao, error)
