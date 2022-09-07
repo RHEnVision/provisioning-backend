@@ -48,7 +48,7 @@ type InstanceType struct {
 	EphemeralStorageGB int64 `json:"storage_gb" yaml:"storage_gb"`
 
 	// Does the instance type supports RHEL
-	Supported bool `json:"supported,omitempty" yaml:"supported"`
+	Supported bool `json:"supported" yaml:"supported"`
 
 	// Instance type's Architecture: i386, arm64, x86_64
 	Architecture ArchitectureType `json:"architecture,omitempty" yaml:"arch"`
@@ -134,6 +134,10 @@ func (rit *RegisteredInstanceTypes) Register(it InstanceType) {
 	rit.types[it.Name] = &it
 }
 
+func (rit *RegisteredInstanceTypes) Get(name InstanceTypeName) *InstanceType {
+	return rit.types[name]
+}
+
 func (rit *RegisteredInstanceTypes) Load(buffer []byte) error {
 	err := yaml.Unmarshal(buffer, &rit.types)
 	if err != nil {
@@ -197,6 +201,16 @@ func NewRegionalInstanceTypes() *RegionalTypeAvailability {
 	return &RegionalTypeAvailability{
 		types: make(map[string][]InstanceTypeName),
 	}
+}
+
+var UnknownRegionZoneCombinationErr error = errors.New("unknown region and zone combination")
+
+func (rit *RegionalTypeAvailability) NamesForZone(region, zone string) ([]InstanceTypeName, error) {
+	result, ok := rit.types[region+regionSeparator+zone]
+	if !ok {
+		return nil, UnknownRegionZoneCombinationErr
+	}
+	return result, nil
 }
 
 func (rit *RegionalTypeAvailability) Add(region, zone string, it InstanceType) {
@@ -278,6 +292,27 @@ func (rit *RegionalTypeAvailability) Print(fRegion, fZone string) {
 			fmt.Println("")
 		}
 	}
+}
+
+type InstanceTypeInfo struct {
+	RegisteredTypes      RegisteredInstanceTypes
+	RegionalAvailability RegionalTypeAvailability
+}
+
+func (iii *InstanceTypeInfo) InstanceTypesForZone(region, zone string, supported *bool) ([]*InstanceType, error) {
+	result := make([]*InstanceType, 0, 64)
+	names, err := iii.RegionalAvailability.NamesForZone(region, zone)
+	if err != nil {
+		return nil, err
+	}
+	for _, name := range names {
+		rt := iii.RegisteredTypes.Get(name)
+		if supported != nil && *supported != rt.Supported {
+			continue
+		}
+		result = append(result, rt)
+	}
+	return result, nil
 }
 
 func compareAndMarshal(filename string, obj any) error {

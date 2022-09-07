@@ -19,7 +19,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "ID")
 	region := r.URL.Query().Get("region")
 	if region == "" {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), payloads.ParamMissingError{ParamName: "region"}))
+		renderError(w, r, payloads.NewMissingRequestParameterError(r.Context(), "region"))
 	}
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
@@ -56,7 +56,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 
 	numBefore := len(res)
 	instances, err := ec2.NewInstanceTypes(r.Context(), res)
-	logger.Trace().Msgf("Total AWS EC2 instance types: %d (%d after architecture breakdown)", numBefore, len(*instances))
+	logger.Trace().Msgf("Total AWS EC2 instance types: %d (%d after architecture breakdown)", numBefore, len(instances))
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "can't convertAWSTypes", err))
 		return

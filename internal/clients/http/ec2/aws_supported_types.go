@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
-func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) (*[]clients.InstanceType, error) {
-	list := make([]clients.InstanceType, 0, len(types))
+func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) ([]*clients.InstanceType, error) {
+	list := make([]*clients.InstanceType, 0, len(types))
 	for i := range types {
 		architectures := types[i].ProcessorInfo.SupportedArchitectures
 		for _, arch := range architectures {
@@ -29,8 +29,8 @@ func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) (*[]c
 			if types[i].InstanceStorageInfo != nil {
 				it.EphemeralStorageGB = *types[i].InstanceStorageInfo.TotalSizeInGB
 			}
-			list = append(list, it)
+			list = append(list, &it)
 		}
 	}
-	return &list, nil
+	return list, nil
 }

@@ -10,14 +10,6 @@ import (
 	"github.com/go-chi/render"
 )
 
-type ParamMissingError struct {
-	ParamName string
-}
-
-func (e ParamMissingError) Error() string {
-	return fmt.Sprintf("parameter %s was not provided in the request", e.ParamName)
-}
-
 // ResponseError implements Go standard error interface as well as Wrapper and Renderer
 type ResponseError struct {
 	// HTTP status code
@@ -52,7 +44,7 @@ func (e *ResponseError) Unwrap() error {
 func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	msg := fmt.Sprintf("invalid request: %v", err)
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Warn().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 400,
@@ -63,10 +55,23 @@ func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	}
 }
 
+func NewMissingRequestParameterError(ctx context.Context, param string) *ResponseError {
+	msg := fmt.Sprintf("missing parameter: %s", param)
+	if logger := ctxval.Logger(ctx); logger != nil {
+		logger.Warn().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 400,
+		Message:        msg,
+		RequestId:      ctxval.RequestId(ctx),
+		Context:        ctx,
+	}
+}
+
 func PubkeyAlreadyExistsError(ctx context.Context, err error) *ResponseError {
 	msg := "pubkey with such name or fingerprint already exists for this account"
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Warn().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 422,
@@ -178,7 +183,7 @@ func NewRenderError(ctx context.Context, message string, err error) *ResponseErr
 func NewURLParsingError(ctx context.Context, paramName string, err error) *ResponseError {
 	msg := fmt.Sprintf("URL parsing error for param '%s': %v", paramName, err)
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Warn().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 400,
