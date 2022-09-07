@@ -117,4 +117,4 @@ integration-test:
 
 .PHONY: generate-azure-types
 generate-azure-types:
-	go run cmd/types_azure/main.go -generate
+	go run cmd/typesctl/main.go -provider azure -generate
