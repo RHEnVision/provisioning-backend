@@ -10,7 +10,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	clientStub "github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
-	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
@@ -63,7 +62,7 @@ func TestListInstanceTypesHandler(t *testing.T) {
 
 		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
 
-		assert.Error(t, payloads.ParamMissingError{})
+		assert.Contains(t, rr.Body.String(), "missing parameter")
 	})
 
 }
