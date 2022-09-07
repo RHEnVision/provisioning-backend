@@ -63,6 +63,8 @@ objects:
                 value: ${CLOUDWATCH_ENABLED}
               - name: OPEN_API_FILEPATH
                 value: ${OPEN_API_FILEPATH}
+              - name: APP_COMPRESSION
+                value: ${APP_COMPRESSION}
               - name: AWS_KEY
                 valueFrom:
                   secretKeyRef:
@@ -116,6 +118,9 @@ parameters:
   - description: Image name
     name: IMAGE
     value: quay.io/cloudservices/provisioning-backend
+  - description: Enable compression of the API responses
+    name: APP_COMPRESSION
+    value: "true"
   - description: Determines Clowder deployment
     name: CLOWDER_ENABLED
     value: "true"
