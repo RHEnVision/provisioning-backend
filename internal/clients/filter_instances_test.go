@@ -73,13 +73,13 @@ func TestNewInstanceTypes(t *testing.T) {
 	res, err := ec2.NewInstanceTypes(context.Background(), AWSInstanceTypes)
 	assert.Nil(t, err)
 	// Check that two instance types were created, one per architecture
-	assert.Equal(t, len(*res), 3)
-	assert.Equal(t, clients.InstanceTypeName("a1.2xlarge"), (*res)[0].Name)
-	assert.Equal(t, clients.InstanceTypeName("a1.2xlarge"), (*res)[1].Name)
-	assert.Equal(t, clients.InstanceTypeName("c5.xlarge"), (*res)[2].Name)
+	assert.Equal(t, len(res), 3)
+	assert.Equal(t, clients.InstanceTypeName("a1.2xlarge"), (res)[0].Name)
+	assert.Equal(t, clients.InstanceTypeName("a1.2xlarge"), (res)[1].Name)
+	assert.Equal(t, clients.InstanceTypeName("c5.xlarge"), (res)[2].Name)
 	// Check that instance types which does not appear in supported_instance_yml are marked as unsupported
-	assert.Equal(t, (*res)[0].Supported, false)
-	assert.Equal(t, (*res)[1].Supported, false)
+	assert.Equal(t, (res)[0].Supported, false)
+	assert.Equal(t, (res)[1].Supported, false)
 	// Check that instance types which appear in supported_instance_yml are marked as supported
-	assert.Equal(t, (*res)[2].Supported, true)
+	assert.Equal(t, (res)[2].Supported, true)
 }

@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/rs/zerolog/log"
-
 	"github.com/RHEnVision/provisioning-backend/api"
+	azure_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure/types"
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
 	redoc "github.com/go-openapi/runtime/middleware"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
+	"github.com/rs/zerolog/log"
 )
 
 func redocMiddleware(handler http.Handler) http.Handler {
@@ -24,7 +24,7 @@ func redocMiddleware(handler http.Handler) http.Handler {
 func logETags() {
 	logger := log.Logger
 	for _, etag := range middleware.AllETags() {
-		logger.Debug().Msgf("Calculated '%s' etag '%s' in %dms", etag.Name, etag.Value, etag.HashTime.Milliseconds())
+		logger.Trace().Msgf("Calculated '%s' etag '%s' in %dms", etag.Name, etag.Value, etag.HashTime.Milliseconds())
 	}
 }
 
@@ -53,13 +53,7 @@ func apiRouter() http.Handler {
 		r.Use(identity.EnforceIdentity)
 		r.Use(middleware.AccountMiddleware)
 
-		r.Route("/ready", func(r chi.Router) {
-			r.Get("/", s.ReadyService)
-			r.Route("/{SRV}", func(r chi.Router) {
-				r.Get("/", s.ReadyBackendService)
-			})
-		})
-
+		// OpenAPI documented and supported routes
 		r.Route("/sources", func(r chi.Router) {
 			r.Get("/", s.ListSources)
 			r.Route("/{ID}", func(r chi.Router) {
@@ -80,6 +74,31 @@ func apiRouter() http.Handler {
 			r.Get("/", s.ListReservations)
 			r.Route("/{type}", func(r chi.Router) {
 				r.Post("/", s.CreateReservation)
+			})
+		})
+
+		// Unsupported routes are not published through OpenAPI, they are documented
+		// here. These can be either work-in-progress features, infrastructure or
+		// development related.
+
+		// Readiness of the service.
+		r.Route("/ready", func(r chi.Router) {
+			// Returns immediately, no database connection is made
+			r.Get("/", s.ReadyService)
+
+			// Connects to a remote service via HTTP client.
+			r.Route("/{SRV}", func(r chi.Router) {
+				r.Get("/", s.ReadyBackendService)
+			})
+		})
+
+		// All embedded instance types which are compiled in the application. Allows
+		// filtering by provider, region and availability zone. Uses ETag caching for
+		// improved UI experience.
+		r.Route("/instance_types", func(r chi.Router) {
+			r.Route("/azure", func(r chi.Router) {
+				r.Use(middleware.ETagMiddleware(azure_types.ETagValue))
+				r.Get("/", s.ListAzureBuiltinInstanceTypes)
 			})
 		})
 	})
