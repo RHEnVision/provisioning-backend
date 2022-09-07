@@ -1,4 +1,4 @@
-package services
+package services_test
 
 import (
 	"context"
@@ -25,6 +25,6 @@ func TestEnqueueNoopJob(t *testing.T) {
 	}
 }
 
-func TestCreateNoopReservation(t *testing.T) {
+func TestCreateNoopReservationHandler(t *testing.T) {
 	// TODO full service test
 }

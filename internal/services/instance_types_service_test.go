@@ -3,7 +3,6 @@ package services_test
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,9 +14,10 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestListInstanceTypes(t *testing.T) {
+func TestListInstanceTypesHandler(t *testing.T) {
 
 	t.Run("with region", func(t *testing.T) {
 		var names []string
@@ -27,21 +27,18 @@ func TestListInstanceTypes(t *testing.T) {
 		ctx = clientStub.WithEC2Client(ctx)
 
 		req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources/1/instance_types?region=us-east-1", nil)
-		assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+		require.NoError(t, err, "failed to create request")
 
 		rr := httptest.NewRecorder()
 		handler := http.HandlerFunc(services.ListInstanceTypes)
 		handler.ServeHTTP(rr, req)
 
-		if status := rr.Code; status != http.StatusOK {
-			t.Errorf("Handler returned wrong status code. Expected: %d. Got: %d.", http.StatusOK, status)
-		}
+		require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
 		var result []clients.InstanceType
 
-		if err := json.NewDecoder(rr.Body).Decode(&result); err != nil {
-			t.Errorf("Error decoding response body: %v", err)
-		}
+		err = json.NewDecoder(rr.Body).Decode(&result)
+		require.NoError(t, err, "failed to decode response body")
 
 		assert.Equal(t, 3, len(result), "expected three result in response json")
 		for _, it := range result {
@@ -58,11 +55,13 @@ func TestListInstanceTypes(t *testing.T) {
 		ctx = clientStub.WithEC2Client(ctx)
 
 		req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources/1/instance_types", nil)
-		assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+		require.NoError(t, err, "failed to create request")
 
 		rr := httptest.NewRecorder()
 		handler := http.HandlerFunc(services.ListInstanceTypes)
 		handler.ServeHTTP(rr, req)
+
+		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
 
 		assert.Error(t, payloads.ParamMissingError{})
 	})

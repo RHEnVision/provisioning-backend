@@ -1,15 +1,16 @@
-package services
+package services_test
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/RHEnVision/provisioning-backend/internal/services"
 	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
+	"github.com/stretchr/testify/require"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -26,36 +27,26 @@ func TestListPubkeysHandler(t *testing.T) {
 		Name: factories.GetSequenceName("pubkey"),
 		Body: factories.GenerateRSAPubKey(t),
 	})
-	if err != nil {
-		t.Fatalf("failed to add stubbed key: %v", err)
-	}
+	require.NoError(t, err, "failed to add stubbed key")
 	err = stubs.AddPubkey(ctx, &models.Pubkey{
 		Name: factories.GetSequenceName("pubkey"),
 		Body: factories.GenerateRSAPubKey(t),
 	})
-	if err != nil {
-		t.Fatalf("failed to add stubbed key: %v", err)
-	}
+	require.NoError(t, err, "failed to add stubbed key")
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/pubkeys", nil)
-	if err != nil {
-		t.Fatalf("Error creating a new request: %v", err)
-	}
-	assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+	require.NoError(t, err, "failed to create request")
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(ListPubkeys)
+	handler := http.HandlerFunc(services.ListPubkeys)
 	handler.ServeHTTP(rr, req)
 
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("Handler returned wrong status code. Expected: %d. Got: %d.", http.StatusOK, status)
-	}
+	require.Equal(t, http.StatusOK, rr.Code, "Wrong status code")
 
 	var pubkeys []models.Pubkey
 
-	if err := json.NewDecoder(rr.Body).Decode(&pubkeys); err != nil {
-		t.Errorf("Error decoding response body: %v", err)
-	}
+	err = json.NewDecoder(rr.Body).Decode(&pubkeys)
+	require.NoError(t, err, "failed to decode response body")
 
 	assert.Equal(t, 2, len(pubkeys), "expected two pubkeys in response json")
 }
@@ -77,16 +68,16 @@ func TestCreatePubkeyHandler(t *testing.T) {
 		t.Fatal("unable to marshal values to json")
 	}
 	req, err := http.NewRequestWithContext(ctx, "POST", "/api/provisioning/pubkeys", bytes.NewBuffer(json_data))
-	assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+	require.NoError(t, err, "failed to create request")
 	req.Header.Add("Content-Type", "application/json")
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(CreatePubkey)
+	handler := http.HandlerFunc(services.CreatePubkey)
 	handler.ServeHTTP(rr, req)
 
-	assert.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
+	require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-	storecnt, err := stubs.PubkeyStubCount(ctx)
-	assert.Nil(t, err, fmt.Sprintf("Error reading stub count: %v", err))
-	assert.Equal(t, 1, storecnt, "Pubkey has not been Created through DAO")
+	stubCount, err := stubs.PubkeyStubCount(ctx)
+	require.NoError(t, err, "failed to read count from stubbed store")
+	assert.Equal(t, 1, stubCount, "Pubkey has not been Created through DAO")
 }

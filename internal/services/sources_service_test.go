@@ -3,12 +3,12 @@ package services
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
+	"github.com/stretchr/testify/require"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	clientStub "github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
@@ -23,21 +23,18 @@ func TestListSourcesHandler(t *testing.T) {
 	ctx = clientStub.WithSourcesClient(ctx)
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources", nil)
-	assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+	require.NoError(t, err, "failed to create request")
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(ListSources)
 	handler.ServeHTTP(rr, req)
 
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("Handler returned wrong status code. Expected: %d. Got: %d.", http.StatusOK, status)
-	}
+	require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
 	var result []sources.Source
 
-	if err := json.NewDecoder(rr.Body).Decode(&result); err != nil {
-		t.Errorf("Error decoding response body: %v", err)
-	}
+	err = json.NewDecoder(rr.Body).Decode(&result)
+	require.NoError(t, err, "failed to decode response body")
 
 	assert.Equal(t, 2, len(result), "expected two result in response json")
 }
