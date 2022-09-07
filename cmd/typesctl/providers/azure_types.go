@@ -1,8 +1,8 @@
-package main
+package providers
 
 import (
 	"context"
-	"flag"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -13,27 +13,44 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 )
 
-func generateTypes() {
-	instanceTypes := clients.NewRegisteredInstanceTypes()
-	available := clients.NewRegionalInstanceTypes()
+func init() {
+	provider := TypeProvider{
+		PrintRegisteredTypes:      printRegisteredTypesAzure,
+		PrintRegionalAvailability: printRegionalAvailabilityAzure,
+		GenerateTypes:             generateTypesAzure,
+	}
+	TypeProviders["azure"] = provider
+}
+
+func printRegisteredTypesAzure(name string) {
+	types.PrintRegisteredTypes(name)
+}
+
+func printRegionalAvailabilityAzure(region, zone string) {
+	types.PrintRegionalAvailability(region, zone)
+}
+
+func generateTypesAzure() error {
+	azureInstanceTypes := clients.NewRegisteredInstanceTypes()
+	azureRegionalTypes := clients.NewRegionalInstanceTypes()
 	restricted := make(map[armcompute.ResourceSKURestrictionsReasonCode]int, 0)
 
 	opts := azidentity.ClientSecretCredentialOptions{}
 	identityClient, err := azidentity.NewClientSecretCredential(config.Azure.TenantID, config.Azure.ClientID, config.Azure.ClientSecret, &opts)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("unable to generate types: %w", err)
 	}
 	ctx := context.Background()
 
 	skuClient, err := armcompute.NewResourceSKUsClient(config.Azure.SubscriptionID, identityClient, nil)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("unable to generate types: %w", err)
 	}
 	skuPager := skuClient.NewListPager(nil)
 	for skuPager.More() {
 		nextResult, pageErr := skuPager.NextPage(ctx)
 		if pageErr != nil {
-			panic(pageErr)
+			return fmt.Errorf("unable to generate types: %w", pageErr)
 		}
 		for _, v := range nextResult.Value {
 			if *v.ResourceType != "virtualMachines" {
@@ -48,27 +65,27 @@ func generateTypes() {
 				if *c.Name == "CpuArchitectureType" {
 					instanceType.Architecture, pageErr = clients.MapArchitectures(ctx, *c.Value)
 					if pageErr != nil {
-						panic(pageErr)
+						return fmt.Errorf("unable to generate types: %w", pageErr)
 					}
 				}
 				if *c.Name == "vCPUs" {
 					vcpus, vcpuErr := strconv.ParseInt(*c.Value, 10, 32)
 					if vcpuErr != nil {
-						panic(vcpuErr)
+						return fmt.Errorf("unable to generate types: %w", vcpuErr)
 					}
 					instanceType.VCPUs = int32(vcpus)
 				}
 				if *c.Name == "vCPUsPerCore" {
 					value, vcpupcErr := strconv.ParseInt(*c.Value, 10, 32)
 					if vcpupcErr != nil {
-						panic(vcpupcErr)
+						return fmt.Errorf("unable to generate types: %w", vcpupcErr)
 					}
 					vcpusPerCore = int32(value)
 				}
 				if *c.Name == "MaxResourceVolumeMB" {
 					mbs, volErr := strconv.Atoi(*c.Value)
 					if volErr != nil {
-						panic(volErr)
+						return fmt.Errorf("unable to generate types: %w", volErr)
 					}
 					instanceType.SetEphemeralStorageFromMB(int64(mbs))
 				}
@@ -76,7 +93,7 @@ func generateTypes() {
 				if *c.Name == "MemoryGB" {
 					memoryGB, memErr := strconv.ParseFloat(*c.Value, 64)
 					if memErr != nil {
-						panic(memErr)
+						return fmt.Errorf("unable to generate types: %w", memErr)
 					}
 					instanceType.MemoryMiB = int64(memoryGB * 1000)
 				}
@@ -100,13 +117,13 @@ func generateTypes() {
 			}
 
 			// Register instance type
-			instanceTypes.Register(instanceType)
+			azureInstanceTypes.Register(instanceType)
 
 			if v.Restrictions == nil || len(v.Restrictions) == 0 {
 				// Unrestricted type
 				for _, location := range v.LocationInfo {
 					for _, zone := range location.Zones {
-						available.Add(strings.ToLower(*location.Location), strings.ToLower(*zone), instanceType)
+						azureRegionalTypes.Add(strings.ToLower(*location.Location), strings.ToLower(*zone), instanceType)
 					}
 				}
 			} else {
@@ -124,14 +141,14 @@ func generateTypes() {
 		}
 	}
 
-	err = instanceTypes.Save("internal/clients/http/azure/types/types.yaml")
+	err = azureInstanceTypes.Save("internal/clients/http/azure/types/types.yaml")
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("unable to generate types: %w", err)
 	}
 
-	err = available.Save("internal/clients/http/azure/types/availability")
+	err = azureRegionalTypes.Save("internal/clients/http/azure/types/availability")
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("unable to generate types: %w", err)
 	}
 
 	for key, value := range restricted {
@@ -141,32 +158,6 @@ func generateTypes() {
 			println("to avoid instance types being restricted from the SKU list.")
 		}
 	}
-}
 
-func main() {
-	config.Initialize()
-	var printAllFlag = flag.Bool("all", false, "print everything (long output)")
-	var printTypeFlag = flag.String("type", "", "print specific instance type detail (or 'all')")
-	var printRegionFlag = flag.String("region", "", "print instance type names for a region (or 'all')")
-	var printZoneFlag = flag.String("zone", "", "print instance type names for a zone (region is needed too)")
-	var generateFlag = flag.Bool("generate", false, "generate new type information")
-
-	flag.Parse()
-
-	if *printAllFlag {
-		types.PrintRegisteredTypes("")
-		types.PrintRegionalAvailability("", "")
-	} else if *printTypeFlag == "all" {
-		types.PrintRegisteredTypes("")
-	} else if *printTypeFlag != "" {
-		types.PrintRegisteredTypes(*printTypeFlag)
-	} else if (*printRegionFlag != "" && *printZoneFlag != "") ||
-		(*printRegionFlag != "" && *printZoneFlag == "") ||
-		(*printRegionFlag == "all" && *printZoneFlag == "") {
-		types.PrintRegionalAvailability(*printRegionFlag, *printZoneFlag)
-	} else if *generateFlag {
-		generateTypes()
-	} else {
-		flag.Usage()
-	}
+	return nil
 }

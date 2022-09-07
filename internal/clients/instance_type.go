@@ -181,7 +181,7 @@ func (rit *RegisteredInstanceTypes) Print(typeName string) {
 		for _, v := range rit.types {
 			fmt.Println(v.String())
 		}
-		fmt.Printf("Total: %d", len(rit.types))
+		fmt.Printf("Total: %d\n", len(rit.types))
 	}
 }
 
