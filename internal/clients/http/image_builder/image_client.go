@@ -15,15 +15,17 @@ import (
 
 type ibClient struct {
 	client *ClientWithResponses
-	logger zerolog.Logger
 }
 
 func init() {
 	clients.GetImageBuilderClient = newImageBuilderClient
 }
 
+func logger(ctx context.Context) zerolog.Logger {
+	return ctxval.Logger(ctx).With().Str("client", "ib").Logger()
+}
+
 func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
-	logger := ctxval.Logger(ctx).With().Str("client", "ib").Logger()
 	c, err := NewClientWithResponses(config.ImageBuilder.URL, func(c *Client) error {
 		if config.ImageBuilder.Proxy.URL != "" {
 			var client HttpRequestDoer
@@ -44,13 +46,14 @@ func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &ibClient{client: c, logger: logger}, nil
+	return &ibClient{client: c}, nil
 }
 
 func (c *ibClient) Ready(ctx context.Context) error {
+	logger := logger(ctx)
 	resp, err := c.client.GetReadiness(ctx, headers.AddImageBuilderIdentityHeader)
 	if err != nil {
-		c.logger.Error().Err(err).Msgf("Readiness request failed for image builder: %s", err.Error())
+		logger.Error().Err(err).Msgf("Readiness request failed for image builder: %s", err.Error())
 		return err
 	}
 	defer resp.Body.Close()
@@ -63,14 +66,15 @@ func (c *ibClient) Ready(ctx context.Context) error {
 }
 
 func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
-	c.logger.Trace().Msgf("Getting AMI of image %v", composeID)
+	logger := logger(ctx)
+	logger.Trace().Msgf("Getting AMI of image %v", composeID)
 
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)
 	if err != nil {
 		return "", err
 	}
 
-	c.logger.Trace().Msgf("Verifying AWS type")
+	logger.Trace().Msgf("Verifying AWS type")
 	if imageStatus.Type != UploadTypesAws {
 		return "", fmt.Errorf("%w: expected image type AWS", http.UnknownImageTypeErr)
 	}
@@ -82,14 +86,15 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, err
 }
 
 func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (string, error) {
-	c.logger.Trace().Msgf("Getting Name of image %v", composeID)
+	logger := logger(ctx)
+	logger.Trace().Msgf("Getting Name of image %v", composeID)
 
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)
 	if err != nil {
 		return "", err
 	}
 
-	c.logger.Trace().Msg("Verifying GCP type")
+	logger.Trace().Msg("Verifying GCP type")
 	if imageStatus.Type != UploadTypesGcp {
 		return "", fmt.Errorf("%w: expected image type GCP", http.UnknownImageTypeErr)
 	}
@@ -107,11 +112,12 @@ func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (strin
 }
 
 func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
-	c.logger.Trace().Msgf("Fetching image status %v", composeID)
+	logger := logger(ctx)
+	logger.Trace().Msgf("Fetching image status %v", composeID)
 
 	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader)
 	if err != nil {
-		c.logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
+		logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
 	}
 
@@ -124,7 +130,7 @@ func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*Upl
 	}
 
 	if resp.JSON200.ImageStatus.Status != ImageStatusStatusSuccess {
-		c.logger.Warn().Msg("Image status in not ready")
+		logger.Warn().Msg("Image status in not ready")
 		return nil, http.ImageStatusErr
 	}
 	return resp.JSON200.ImageStatus.UploadStatus, nil

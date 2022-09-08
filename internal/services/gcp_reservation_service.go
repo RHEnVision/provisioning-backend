@@ -21,11 +21,14 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	var accountId int64 = ctxval.AccountId(r.Context())
 
+	// TODO fetch authentication from sources
+	auth := clients.NewAuthentication("citric-expanse-361512", models.ProviderTypeAWS)
+
 	// TODO: meanwhile these values are hardcoded until we will have instance types, sources, ssh endpoints,
 	payload := &payloads.GCPReservationRequestPayload{
 		PubkeyID: 2,
 		// TODO: The project id change to source id from sources
-		SourceID:    "citric-expanse-361512",
+		SourceID:    auth.Payload,
 		Zone:        "us-central1-a",
 		MachineType: "n1-standard-1",
 		ImageID:     "bc97177c-9d07-4db9-ad59-8b2c0bf4174e",
@@ -120,7 +123,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 			PubkeyID:      reservation.PubkeyID,
 			Detail:        reservation.Detail,
 			ImageName:     name,
-			ProjectID:     reservation.SourceID,
+			ProjectID:     auth,
 		},
 	}
 

@@ -18,13 +18,13 @@ func (iii *InstanceTypeInfo) InstanceTypesForZone(region, zone string, supported
 	if err != nil {
 		return nil, err
 	}
-	result := make([]*InstanceType, len(names))
-	for i, name := range names {
+	result := make([]*InstanceType, 0, len(names))
+	for _, name := range names {
 		rt := iii.RegisteredTypes.Get(name)
 		if supported != nil && *supported != rt.Supported {
 			continue
 		}
-		result[i] = rt
+		result = append(result, rt)
 	}
 	return result, nil
 }

@@ -21,25 +21,27 @@ import (
 )
 
 type ec2Client struct {
-	ec2     *ec2.Client
-	context context.Context
-	logger  zerolog.Logger
+	ec2 *ec2.Client
 }
 
 func init() {
 	clients.GetCustomerEC2Client = newAssumedEC2ClientWithRegion
 }
 
-func newAssumedEC2ClientWithRegion(ctx context.Context, arn string, region string) (clients.EC2, error) {
-	logger := ctxval.Logger(ctx).With().Str("client", "ec2").Logger()
+func logger(ctx context.Context) zerolog.Logger {
+	return ctxval.Logger(ctx).With().Str("client", "ec2").Logger()
+}
 
-	if region == "" {
-		// TODO: use DefaultRegion from config
-		logger.Warn().Msg("No region passed, using us-east-1")
-		region = "us-east-1"
+func newAssumedEC2ClientWithRegion(ctx context.Context, auth *clients.Authentication, region string) (clients.EC2, error) {
+	if typeErr := auth.MustBe(models.ProviderTypeAWS); typeErr != nil {
+		return nil, fmt.Errorf("unexpected authentication: %w", typeErr)
 	}
 
-	creds, err := getStsAssumedCredentials(ctx, logger, arn, region)
+	if region == "" {
+		region = config.AWS.DefaultRegion
+	}
+
+	creds, err := getStsAssumedCredentials(ctx, auth.Payload, region)
 	if err != nil {
 		return nil, err
 	}
@@ -52,13 +54,18 @@ func newAssumedEC2ClientWithRegion(ctx context.Context, arn string, region strin
 	}
 
 	return &ec2Client{
-		ec2:     ec2.NewFromConfig(newCfg),
-		context: ctx,
-		logger:  logger,
+		ec2: ec2.NewFromConfig(newCfg),
 	}, nil
 }
 
-func getStsAssumedCredentials(ctx context.Context, logger zerolog.Logger, arn string, region string) (*stsTypes.Credentials, error) {
+func (c *ec2Client) Status(ctx context.Context) error {
+	_, err := c.ListAllRegions(ctx)
+	return err
+}
+
+func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*stsTypes.Credentials, error) {
+	logger := logger(ctx)
+
 	// TODO: role assume should be region agnostic
 	cfg, err := awsCfg.LoadDefaultConfig(ctx, awsCfg.WithRegion(region),
 		awsCfg.WithCredentialsProvider(
@@ -85,8 +92,10 @@ func getStsAssumedCredentials(ctx context.Context, logger zerolog.Logger, arn st
 }
 
 // ImportPubkey imports a key and returns AWS ID
-func (c *ec2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
-	c.logger.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
+func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
+	logger := logger(ctx)
+	logger.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
+
 	input := &ec2.ImportKeyPairInput{}
 	input.KeyName = ptr.To(key.Name)
 	input.PublicKeyMaterial = []byte(key.Body)
@@ -101,7 +110,7 @@ func (c *ec2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error)
 			},
 		},
 	}
-	output, err := c.ec2.ImportKeyPair(c.context, input)
+	output, err := c.ec2.ImportKeyPair(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
 			err = clients.UnauthorizedErr
@@ -114,11 +123,13 @@ func (c *ec2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error)
 	return ptr.From(output.KeyPairId), nil
 }
 
-func (c *ec2Client) DeleteSSHKey(handle string) error {
-	c.logger.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
+func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
+	logger := logger(ctx)
+	logger.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
+
 	input := &ec2.DeleteKeyPairInput{}
 	input.KeyPairId = ptr.To(handle)
-	_, err := c.ec2.DeleteKeyPair(c.context, input)
+	_, err := c.ec2.DeleteKeyPair(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
 			err = clients.UnauthorizedErr
@@ -129,13 +140,66 @@ func (c *ec2Client) DeleteSSHKey(handle string) error {
 	return nil
 }
 
-func (c *ec2Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, error) {
+func (c *ec2Client) ListAllRegions(ctx context.Context) ([]clients.Region, error) {
+	logger := logger(ctx)
+	input := &ec2.DescribeRegionsInput{
+		AllRegions: ptr.To(true),
+	}
+
+	output, err := c.ec2.DescribeRegions(ctx, input)
+	if err != nil {
+		if isAWSUnauthorizedError(err) {
+			err = clients.UnauthorizedErr
+		}
+		return nil, fmt.Errorf("cannot list regions: %w", err)
+	}
+
+	logger.Trace().Msgf("Listed %d regions from AWS", len(output.Regions))
+	result := make([]clients.Region, 0, len(output.Regions))
+	for _, region := range output.Regions {
+		result = append(result, clients.Region(*region.RegionName))
+	}
+
+	return result, nil
+}
+
+func (c *ec2Client) ListAllZones(ctx context.Context, region clients.Region) ([]clients.Zone, error) {
+	logger := logger(ctx)
+
+	input := &ec2.DescribeAvailabilityZonesInput{
+		AllAvailabilityZones: ptr.To(true),
+		Filters: []types.Filter{
+			{
+				Name:   ptr.To("region-name"),
+				Values: []string{region.String()},
+			},
+		},
+	}
+
+	output, err := c.ec2.DescribeAvailabilityZones(ctx, input)
+	if err != nil {
+		if isAWSUnauthorizedError(err) {
+			err = clients.UnauthorizedErr
+		}
+		return nil, fmt.Errorf("cannot list zones: %w", err)
+	}
+
+	logger.Trace().Msgf("Listed %d zones from AWS", len(output.AvailabilityZones))
+	result := make([]clients.Zone, 0, len(output.AvailabilityZones))
+	for _, zone := range output.AvailabilityZones {
+		result = append(result, clients.Zone(*zone.ZoneName))
+	}
+
+	return result, nil
+}
+
+func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]types.InstanceTypeInfo, error) {
 	input := &ec2.DescribeInstanceTypesInput{MaxResults: ptr.ToInt32(100)}
 	pag := ec2.NewDescribeInstanceTypesPaginator(c.ec2, input)
 
 	res := make([]types.InstanceTypeInfo, 0, 128)
 	for pag.HasMorePages() {
-		resp, err := pag.NextPage(c.context)
+		resp, err := pag.NextPage(ctx)
 		if err != nil {
 			if isAWSUnauthorizedError(err) {
 				err = clients.UnauthorizedErr
@@ -148,7 +212,9 @@ func (c *ec2Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, 
 }
 
 func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
-	c.logger.Trace().Msg("Run AWS EC2 instance")
+	logger := logger(ctx)
+	logger.Trace().Msg("Run AWS EC2 instance")
+
 	encodedUserData := base64.StdEncoding.EncodeToString(userData)
 	input := &ec2.RunInstancesInput{
 		MaxCount:     ptr.To(amount),

@@ -44,6 +44,7 @@ func (e *ResponseError) Unwrap() error {
 func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	msg := fmt.Sprintf("invalid request: %v", err)
 	if logger := ctxval.Logger(ctx); logger != nil {
+		// TODO we should also call .Err(err) to log error
 		logger.Warn().Msg(msg)
 	}
 	return &ResponseError{
@@ -194,8 +195,50 @@ func NewURLParsingError(ctx context.Context, paramName string, err error) *Respo
 	}
 }
 
+func NewStatusError(ctx context.Context, err error) *ResponseError {
+	msg := fmt.Sprintf("status check error: %v", err)
+	if logger := ctxval.Logger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
+		RequestId:      ctxval.RequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
 func NewAWSError(ctx context.Context, message string, err error) *ResponseError {
 	msg := fmt.Sprintf("AWS error: %s: %v", message, err)
+	if logger := ctxval.Logger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
+		RequestId:      ctxval.RequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
+func NewAzureError(ctx context.Context, message string, err error) *ResponseError {
+	msg := fmt.Sprintf("Azure error: %s: %v", message, err)
+	if logger := ctxval.Logger(ctx); logger != nil {
+		logger.Error().Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 500,
+		Message:        msg,
+		RequestId:      ctxval.RequestId(ctx),
+		Err:            err,
+		Context:        ctx,
+	}
+}
+
+func NewGCPError(ctx context.Context, message string, err error) *ResponseError {
+	msg := fmt.Sprintf("GCP error: %s: %v", message, err)
 	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Error().Msg(msg)
 	}

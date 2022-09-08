@@ -5,11 +5,11 @@ package parser
 // library.
 //
 // The second column is optional. When not set, environment variable is the same,
-// except "." are replaced with "_". Otherwise, the value from the second column
+// except "." are replaced with "_". Otherwise the value from the second column
 // is used. Examples:
 //
 // APP_NAME (implicit from APP.NAME)
-// AWS_INSTANCE_PREFIX (explicitly set)
+// APP_INSTANCE_PREFIX (explicitly set)
 //
 // This is not great solution, but the alternative would be to remove viper dependency.
 var known = [][]string{
@@ -23,12 +23,23 @@ var known = [][]string{
 	{"APP.PORT", ""},
 	{"APP.VERSION", ""},
 	{"APP.COMPRESSION", ""},
+	{"APP.INSTANCEPREFIX", "APP_INSTANCE_PREFIX"},
 	{"AWS", ""},
 	{"AWS.INSTANCEPREFIX", "AWS_INSTANCE_PREFIX"},
 	{"AWS.KEY", ""},
 	{"AWS.REGION", ""},
 	{"AWS.SECRET", ""},
 	{"AWS.SESSION", ""},
+	{"AWS.DEFAULTREGION", "AWS_DEFAULT_REGION"},
+	{"AZURE", ""},
+	{"AZURE.TENANTID", "AZURE_TENANT_ID"},
+	{"AZURE.SUBSCRIPTIONID", "AZURE_SUBSCRIPTION_ID"},
+	{"AZURE.CLIENTID", "AZURE_CLIENT_ID"},
+	{"AZURE.CLIENTSECRET", "AZURE_CLIENT_SECRET"},
+	{"AZURE.DEFAULTREGION", "AZURE_DEFAULT_REGION"},
+	{"GCP", ""},
+	{"GCP.JSON", ""},
+	{"GCP.DEFAULTZONE", "GCP_DEFAULT_ZONE"},
 	{"CLOUDWATCH", ""},
 	{"CLOUDWATCH.ENABLED", ""},
 	{"CLOUDWATCH.GROUP", ""},
