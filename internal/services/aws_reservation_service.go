@@ -57,7 +57,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.Provider = models.ProviderTypeAWS
 	reservation.Steps = 2
 	if payload.Name != nil {
-		newName := config.AWS.InstancePrefix + *payload.Name
+		newName := config.Application.InstancePrefix + *payload.Name
 		reservation.Detail.Name = &newName
 	}
 
@@ -91,13 +91,18 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch arn from Sources
-	arn, err := sourcesClient.GetArn(r.Context(), payload.SourceID)
+	authentication, err := sourcesClient.GetAuthentication(r.Context(), payload.SourceID)
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
 			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 404))
 			return
 		}
 		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 500))
+		return
+	}
+
+	if typeErr := authentication.MustBe(models.ProviderTypeAWS); typeErr != nil {
+		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "unexpected source type", typeErr, 500))
 		return
 	}
 
@@ -110,7 +115,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 			ReservationID: reservation.ID,
 			Region:        reservation.Detail.Region,
 			PubkeyID:      pk.ID,
-			ARN:           arn,
+			ARN:           authentication,
 			SourceID:      reservation.SourceID,
 		},
 	}
@@ -145,7 +150,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 			PubkeyID:      pk.ID,
 			Detail:        reservation.Detail,
 			AMI:           ami,
-			ARN:           arn,
+			ARN:           authentication,
 		},
 	}
 

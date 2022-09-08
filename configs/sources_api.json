@@ -2604,6 +2604,7 @@
           },
           "authtype": {
             "description": "The type of the authentication",
+            "type": "string",
             "enum": [
               "access_key_secret_key",
               "api_token_account_id",

@@ -22,6 +22,6 @@ func TestCamelCaseReplacerApp(t *testing.T) {
 }
 
 func TestCamelCaseReplacerFromMap(t *testing.T) {
-	result := customReplacer{}.Replace("AWS.INSTANCEPREFIX")
-	assert.Equal(t, "AWS_INSTANCE_PREFIX", result)
+	result := customReplacer{}.Replace("APP.INSTANCEPREFIX")
+	assert.Equal(t, "APP_INSTANCE_PREFIX", result)
 }

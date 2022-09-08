@@ -6,6 +6,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 )
 
@@ -42,8 +43,8 @@ func (*SourcesClientStub) Ready(ctx context.Context) error {
 	return nil
 }
 
-func (mock *SourcesClientStub) GetArn(ctx context.Context, sourceId sources.ID) (string, error) {
-	return "arn:aws:iam::230214684733:role/Test", nil
+func (mock *SourcesClientStub) GetAuthentication(ctx context.Context, sourceId sources.ID) (*clients.Authentication, error) {
+	return clients.NewAuthentication("arn:aws:iam::230214684733:role/Test", models.ProviderTypeAWS), nil
 }
 
 func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (string, error) {

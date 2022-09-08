@@ -14,12 +14,12 @@ import (
 )
 
 type PubkeyUploadAWSTaskArgs struct {
-	AccountID     int64  `json:"account_id"`
-	ReservationID int64  `json:"reservation_id"`
-	Region        string `json:"region"`
-	PubkeyID      int64  `json:"pubkey_id"`
-	SourceID      string `json:"source_id"`
-	ARN           string `json:"arn"`
+	AccountID     int64                   `json:"account_id"`
+	ReservationID int64                   `json:"reservation_id"`
+	Region        string                  `json:"region"`
+	PubkeyID      int64                   `json:"pubkey_id"`
+	SourceID      string                  `json:"source_id"`
+	ARN           *clients.Authentication `json:"arn"`
 }
 
 // Unmarshall arguments and handle error
@@ -96,7 +96,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
 
-	pkr.Handle, err = ec2Client.ImportPubkey(pubkey, pkr.FormattedTag())
+	pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
 	if err != nil {
 		if errors.Is(err, http.DuplicatePubkeyErr) {
 			logger.Warn().Msgf("Pubkey '%s' already present, skipping", pubkey.Name)

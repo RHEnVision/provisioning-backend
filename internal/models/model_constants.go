@@ -35,3 +35,20 @@ func ProviderTypeFromString(str string) ProviderType {
 		return ProviderTypeUnknown
 	}
 }
+
+func (pt ProviderType) String() string {
+	switch pt {
+	case ProviderTypeNoop:
+		return "noop"
+	case ProviderTypeAWS:
+		return "aws"
+	case ProviderTypeAzure:
+		return "azure"
+	case ProviderTypeGCP:
+		return "gcp"
+	case ProviderTypeUnknown:
+	default:
+		return ""
+	}
+	return ""
+}

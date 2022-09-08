@@ -36,14 +36,16 @@ app:
     # Individual application cache features
     typeAppId: true
     account: true
+  # Instance name prefix for all providers (useful only for testing)
+  instancePrefix:
 
 # AWS service account credentials
 aws:
   key:
   secret:
   session:
-  # instance name prefix for all VMs created via the app
-  #instancePrefix:
+  # default region for non-regional requests
+  defaultRegion: us-east-1
 
 # Azure service account credentials
 azure:
@@ -55,6 +57,15 @@ azure:
   clientId: 00000000-0000-0000-0000-000000000000
   # Secret value
   clientSecret:
+  # default region for non-regional requests
+  defaultRegion: eastus
+
+# GCP service account credentials
+gcp:
+  # Base64-encoded credentials JSON file (defaults to empty JSON)
+  json:
+  # default region for non-regional requests
+  defaultZone: us-east1-b
 
 # AWS CloudWatch logger
 cloudwatch:

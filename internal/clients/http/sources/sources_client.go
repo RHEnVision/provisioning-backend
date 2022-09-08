@@ -17,15 +17,17 @@ import (
 
 type sourcesClient struct {
 	client *ClientWithResponses
-	logger zerolog.Logger
 }
 
 func init() {
 	clients.GetSourcesClient = newSourcesClient
 }
 
+func logger(ctx context.Context) zerolog.Logger {
+	return ctxval.Logger(ctx).With().Str("client", "sources").Logger()
+}
+
 func newSourcesClient(ctx context.Context) (clients.Sources, error) {
-	logger := ctxval.Logger(ctx).With().Str("client", "sources").Logger()
 	c, err := NewClientWithResponses(config.Sources.URL, func(c *Client) error {
 		if config.Sources.Proxy.URL != "" {
 			if config.Features.Environment != "development" {
@@ -46,7 +48,7 @@ func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &sourcesClient{client: c, logger: logger}, nil
+	return &sourcesClient{client: c}, nil
 }
 
 type appType struct {
@@ -60,9 +62,10 @@ type dataElement struct {
 }
 
 func (c *sourcesClient) Ready(ctx context.Context) error {
+	logger := logger(ctx)
 	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
-		c.logger.Error().Err(err).Msgf("Readiness request failed for sources: %s", err.Error())
+		logger.Error().Err(err).Msgf("Readiness request failed for sources: %s", err.Error())
 		return err
 	}
 	defer resp.Body.Close()
@@ -75,17 +78,18 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 }
 
 func (c *sourcesClient) ListProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
-	c.logger.Trace().Msg("Listing provisioning sources")
+	logger := logger(ctx)
+	logger.Trace().Msg("Listing provisioning sources")
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
 	if err != nil {
-		c.logger.Warn().Err(err).Msg("Failed to get provisioning type id")
+		logger.Warn().Err(err).Msg("Failed to get provisioning type id")
 		return nil, fmt.Errorf("failed to get provisioning app type: %w", err)
 	}
 
 	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
-		c.logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
+		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return nil, fmt.Errorf("failed to get ApplicationTypes: %w", err)
 	}
 
@@ -110,55 +114,58 @@ func (c *sourcesClient) ListProvisioningSources(ctx context.Context) ([]*clients
 	return result, nil
 }
 
-func (c *sourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string, error) {
-	c.logger.Trace().Msgf("Getting ARN of source %v", sourceId)
+func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.ID) (*clients.Authentication, error) {
+	logger := logger(ctx)
+	logger.Trace().Msgf("Getting authentication from source %s", sourceId)
 
 	// Get all the authentications linked to a specific source
 	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
-		return "", fmt.Errorf("cannot list source authentication: %w", err)
+		return nil, fmt.Errorf("cannot list source authentication: %w", err)
 	}
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return "", fmt.Errorf("get source ARN call: %w", http.AuthenticationForSourcesNotFoundErr)
+			return nil, fmt.Errorf("get source ARN call: %w", http.AuthenticationForSourcesNotFoundErr)
 		}
-		return "", fmt.Errorf("get source ARN call: %w", err)
+		return nil, fmt.Errorf("get source ARN call: %w", err)
 	}
 
 	// Filter authentications to include only auth where resource_type == "Application". We do this because
 	// Sources API currently does not provide a good server-side filtering.
 	auth, err := filterSourceAuthentications(resp.JSON200.Data)
 	if err != nil {
-		c.logger.Warn().Msgf("Sources replied with more then one authenticatios for source: %vs", sourceId)
-		return "", err
+		logger.Warn().Msgf("Sources replied with more then one authentications for source: %s", sourceId)
+		return nil, err
 	}
 
 	// Get the resource_id which equals to application_id
 	// and check that application_type_id in /applications/<app_id> equals to provisioning id
 	res, err := c.client.ShowApplicationWithResponse(ctx, *auth.ResourceId, headers.AddSourcesIdentityHeader)
 	if err != nil {
-		return "", fmt.Errorf("cannot list source authentication: %w", err)
+		return nil, fmt.Errorf("cannot list source authentication: %w", err)
 	}
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return "", fmt.Errorf("get source ARN call: %w", http.ApplicationNotFoundErr)
+			return nil, fmt.Errorf("get source ARN call: %w", http.ApplicationNotFoundErr)
 		}
-		return "", fmt.Errorf("get source ARN call: %w", err)
+		return nil, fmt.Errorf("get source ARN call: %w", err)
 	}
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
 	if err != nil {
-		return "", fmt.Errorf("cannot get provisioning app type: %w", err)
+		return nil, fmt.Errorf("cannot get provisioning app type: %w", err)
 	}
 
 	if *res.JSON200.ApplicationTypeId != appTypeId {
-		return "", fmt.Errorf("%w for source id %s", http.AuthenticationSourceAssociationErr, sourceId)
+		return nil, fmt.Errorf("%w for source id %s", http.AuthenticationSourceAssociationErr, sourceId)
 	}
-	return *auth.Username, nil
+
+	authentication := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, string(*auth.Authtype))
+	return authentication, nil
 }
 
 func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
@@ -174,11 +181,12 @@ func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, erro
 }
 
 func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
-	c.logger.Trace().Msg("Fetching the Application Type ID of Provisioning for Sources")
+	logger := logger(ctx)
+	logger.Trace().Msg("Fetching the Application Type ID of Provisioning for Sources")
 
 	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
-		c.logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
+		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return "", fmt.Errorf("failed to fetch ApplicationTypes: %w", err)
 	}
 	defer resp.Body.Close()
@@ -197,7 +205,7 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 	}
 	for _, t := range appTypesData.Data {
 		if t.Name == "/insights/platform/provisioning" {
-			c.logger.Trace().Msgf("The Application Type ID found: '%s' and it got cached", t.Id)
+			logger.Trace().Msgf("The Application Type ID found: '%s' and it got cached", t.Id)
 			return t.Id, nil
 		}
 	}

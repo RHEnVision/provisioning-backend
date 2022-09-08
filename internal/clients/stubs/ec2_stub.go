@@ -25,7 +25,7 @@ func WithEC2Client(parent context.Context) context.Context {
 	return ctx
 }
 
-func getEC2ClientStubWithRegion(ctx context.Context, _ string, _ string) (si clients.EC2, err error) {
+func getEC2ClientStubWithRegion(ctx context.Context, _ *clients.Authentication, _ string) (si clients.EC2, err error) {
 	var ok bool
 	if si, ok = ctx.Value(ec2CtxKey).(*EC2ClientStub); !ok {
 		err = &contextReadError{}
@@ -33,15 +33,37 @@ func getEC2ClientStubWithRegion(ctx context.Context, _ string, _ string) (si cli
 	return si, err
 }
 
-func (mock *EC2ClientStub) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
-	return "", nil
-}
-
-func (mock *EC2ClientStub) DeleteSSHKey(handle string) error {
+func (mock *EC2ClientStub) Status(ctx context.Context) error {
 	return nil
 }
 
-func (mock *EC2ClientStub) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, error) {
+func (mock *EC2ClientStub) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
+	return "", nil
+}
+
+func (mock *EC2ClientStub) DeleteSSHKey(ctx context.Context, handle string) error {
+	return nil
+}
+
+func (mock *EC2ClientStub) ListAllRegions(ctx context.Context) ([]clients.Region, error) {
+	return []clients.Region{
+		"us-east-1",
+		"eu-central-1",
+	}, nil
+}
+
+func (mock *EC2ClientStub) ListAllZones(ctx context.Context, region clients.Region) ([]clients.Zone, error) {
+	return []clients.Zone{
+		"us-east-1a",
+		"us-east-1b",
+		"us-east-1c",
+		"eu-central-1a",
+		"eu-central-1b",
+		"eu-central-1c",
+	}, nil
+}
+
+func (mock *EC2ClientStub) ListInstanceTypesWithPaginator(ctx context.Context) ([]types.InstanceTypeInfo, error) {
 	return []types.InstanceTypeInfo{
 		{
 			InstanceType: types.InstanceTypeA12xlarge,

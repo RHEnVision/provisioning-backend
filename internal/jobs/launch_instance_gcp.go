@@ -34,7 +34,7 @@ type LaunchInstanceGCPTaskArgs struct {
 	ImageName string `json:"image_name"`
 
 	// The project id from Sources which is linked to a specific source
-	ProjectID string `json:"project_id"`
+	ProjectID *clients.Authentication `json:"project_id"`
 }
 
 // Unmarshall arguments and handle error
@@ -76,14 +76,12 @@ func handleLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArg
 		return fmt.Errorf("cannot get pubkey by id: %w", err)
 	}
 
-	gcpClient, err := clients.GetGCPClient(ctx)
+	gcpClient, err := clients.GetGCPClient(ctx, args.ProjectID)
 	if err != nil {
 		return fmt.Errorf("cannot get gcp client: %w", err)
 	}
 
-	defer gcpClient.Close()
-
-	opName, err := gcpClient.RunInstances(ctx, args.ProjectID, ptr.To("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
+	opName, err := gcpClient.RunInstances(ctx, ptr.To("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
 	if err != nil {
 		return fmt.Errorf("cannot run instances for gcp client: %w", err)
 	}
