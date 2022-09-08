@@ -9,6 +9,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
+
 	// HTTP client implementations
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"

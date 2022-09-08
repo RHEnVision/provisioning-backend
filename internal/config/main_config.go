@@ -1,6 +1,8 @@
 package config
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -20,11 +22,12 @@ type proxy struct {
 // in internal/config/parser/known.go.
 var config struct {
 	App struct {
-		Name        string
-		Port        int
-		Version     string
-		Compression bool
-		Cache       struct {
+		Name           string
+		Port           int
+		Version        string
+		Compression    bool
+		InstancePrefix string
+		Cache          struct {
 			Expiration      time.Duration
 			CleanupInterval time.Duration
 			AppTypeId       bool
@@ -59,16 +62,21 @@ var config struct {
 		Stream  string
 	}
 	AWS struct {
-		Key            string
-		Secret         string
-		Session        string
-		InstancePrefix string
+		Key           string
+		Secret        string
+		Session       string
+		DefaultRegion string
 	}
 	Azure struct {
 		TenantID       string
 		SubscriptionID string
 		ClientID       string
 		ClientSecret   string
+		DefaultRegion  string
+	}
+	GCP struct {
+		JSON        string
+		DefaultZone string
 	}
 	Prometheus struct {
 		Port int
@@ -101,6 +109,7 @@ var config struct {
 	}
 }
 
+// Config shortcuts
 var (
 	Application   = &config.App
 	Database      = &config.Database
@@ -109,11 +118,19 @@ var (
 	Cloudwatch    = &config.Cloudwatch
 	AWS           = &config.AWS
 	Azure         = &config.Azure
+	GCP           = &config.GCP
 	Features      = &config.FeatureFlags
 	RestEndpoints = &config.RestEndpoints
 	ImageBuilder  = &config.RestEndpoints.ImageBuilder
 	Sources       = &config.RestEndpoints.Sources
 	Worker        = &config.Worker
+)
+
+// Errors
+var (
+	validateMissingSecretError      = errors.New("config error: Cloudwatch enabled but Region and Key and Secret are not provided")
+	validateGroupStreamError        = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
+	validateInvalidEnvironmentError = errors.New("config error: Environment must be production or development")
 )
 
 func Initialize() {
@@ -142,12 +159,6 @@ func Initialize() {
 	}
 }
 
-var (
-	validateMissingSecretError      = errors.New("config error: Cloudwatch enabled but Region and Key and Secret are not provided")
-	validateGroupStreamError        = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
-	validateInvalidEnvironmentError = errors.New("config error: Environment must be production or development")
-)
-
 func validate() error {
 	if envMatch, _ := regexp.MatchString(`^(production|development|test)$`, Features.Environment); !envMatch {
 		return fmt.Errorf("%w: %s", validateInvalidEnvironmentError, Features.Environment)
@@ -160,6 +171,18 @@ func validate() error {
 		if Cloudwatch.Group == "" || Cloudwatch.Stream == "" {
 			return validateGroupStreamError
 		}
+	}
+
+	slice, err := base64.StdEncoding.DecodeString(config.GCP.JSON)
+	config.GCP.JSON = string(slice)
+	if err != nil {
+		return fmt.Errorf("unable to base64-decode GCP JSON config: %w", err)
+	}
+
+	var data json.RawMessage
+	err = json.Unmarshal(slice, &data)
+	if err != nil {
+		return fmt.Errorf("unable to parse GCP JSON config: %w", err)
 	}
 
 	return nil
@@ -190,5 +213,8 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.AWS.Session = replacement
 	configCopy.RestEndpoints.Sources.Password = replacement
 	configCopy.RestEndpoints.ImageBuilder.Password = replacement
+	configCopy.Azure.ClientID = replacement
+	configCopy.Azure.ClientSecret = replacement
+	configCopy.GCP.JSON = replacement
 	logger.Info().Msgf("Configuration: %+v", configCopy)
 }

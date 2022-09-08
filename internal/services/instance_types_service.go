@@ -27,7 +27,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	arn, err := sourcesClient.GetArn(r.Context(), sourceId)
+	authentication, err := sourcesClient.GetAuthentication(r.Context(), sourceId)
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
 			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 404))
@@ -37,13 +37,13 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ec2Client, err := clients.GetCustomerEC2Client(r.Context(), arn, region)
+	ec2Client, err := clients.GetCustomerEC2Client(r.Context(), authentication, region)
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "failed to establish ec2 connection", err))
 		return
 	}
 
-	res, err := ec2Client.ListInstanceTypesWithPaginator()
+	res, err := ec2Client.ListInstanceTypesWithPaginator(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "can't list EC2 instance types", err))
 		return

@@ -17,7 +17,7 @@ type Sources interface {
 	ListProvisioningSources(ctx context.Context) ([]*Source, error)
 
 	// GetArn returns ARN associated with provisioning app for given sourceId
-	GetArn(ctx context.Context, sourceId ID) (string, error)
+	GetAuthentication(ctx context.Context, sourceId ID) (*Authentication, error)
 
 	// GetProvisioningTypeId returns provisioning type ID
 	GetProvisioningTypeId(ctx context.Context) (string, error)
@@ -42,32 +42,55 @@ type ImageBuilder interface {
 	Ready(ctx context.Context) error
 }
 
-// GetCustomerEC2Client returns EC2 interface implementation. There are currently
-// two implementations available: HTTP and stub
-var GetCustomerEC2Client func(ctx context.Context, arn string, region string) (EC2, error)
+// ClientStatuser provides a function to test client connection. Since most clouds do not
+// provide any "ping" or "status" call, it is usually implemented via some "cheap" operation
+// which is fast and returns minimum amount of data (e.g. list regions or ssh-keys).
+type ClientStatuser interface {
+	Status(ctx context.Context) error
+}
 
-// Sources interface provides access to the AWS EC2 API
+// GetCustomerEC2Client returns an EC2 facade interface. There are currently
+// two implementations available: HTTP and stub
+var GetCustomerEC2Client func(ctx context.Context, auth *Authentication, region string) (EC2, error)
+
 type EC2 interface {
+	ClientStatuser
+
+	// ListAllRegions returns list of all EC2 regions
+	ListAllRegions(ctx context.Context) ([]Region, error)
+
+	// ListAllZones returns list of all EC2 zones within a Region
+	ListAllZones(ctx context.Context, region Region) ([]Zone, error)
+
 	// ImportPubkey imports new ssh key-pair with given tag returning its AWS ID
-	ImportPubkey(key *models.Pubkey, tag string) (string, error)
+	ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error)
 
 	// DeleteSSHKey deletes a given ssh key-pair found by AWS ID
-	DeleteSSHKey(handle string) error
-
-	// ListInstanceTypesWithPaginator lists available instance types
-	ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, error)
+	DeleteSSHKey(ctx context.Context, handle string) error
+	ListInstanceTypesWithPaginator(ctx context.Context) ([]types.InstanceTypeInfo, error)
 
 	// RunInstances launches one or more instances
 	RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error)
 }
 
-// Caller is responsible for closing the client using Close() call
-var GetGCPClient func(ctx context.Context) (GCP, error)
+// GetAzureClient returns an Azure facade interface. There are currently
+// two implementations available: HTTP and stub
+var GetAzureClient func(ctx context.Context, auth *Authentication) (Azure, error)
+
+type Azure interface {
+	ClientStatuser
+}
+
+// GetGCPClient returns a GCP facade interface. There are currently
+// two implementations available: HTTP and stub
+var GetGCPClient func(ctx context.Context, auth *Authentication) (GCP, error)
 
 type GCP interface {
-	// Close performs close on the gRPC client
-	Close()
+	ClientStatuser
+
+	// ListAllRegionsAndZones returns list of all GCP regions
+	ListAllRegionsAndZones(ctx context.Context) ([]Region, []Zone, error)
 
 	// RunInstances launches one or more instances
-	RunInstances(ctx context.Context, projectID string, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error)
+	RunInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error)
 }

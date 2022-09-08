@@ -77,8 +77,8 @@ objects:
                     name: provisioning-aws-acc
                     key: aws_secret_access_key
                     optional: false
-              - name: AWS_INSTANCE_PREFIX
-                value: ${AWS_INSTANCE_PREFIX}
+              - name: APP_INSTANCE_PREFIX
+                value: ${APP_INSTANCE_PREFIX}
               - name: WORKER_QUEUE
                 value: ${WORKER_QUEUE}
               - name: WORKER_CONCURRENCY
@@ -133,8 +133,8 @@ parameters:
   - description: AWS CloudWatch logging integration
     name: CLOUDWATCH_ENABLED
     value: "false"
-  - description: AWS instance prefix adds string to all instance names, leave blank for production
-    name: AWS_INSTANCE_PREFIX
+  - description: Instance prefix adds string to all instance names, leave blank for production
+    name: APP_INSTANCE_PREFIX
     value: ""
   - description: Internal queue type (memory/sqs/postgres).
     name: WORKER_QUEUE

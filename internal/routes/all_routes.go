@@ -57,6 +57,9 @@ func apiRouter() http.Handler {
 		r.Route("/sources", func(r chi.Router) {
 			r.Get("/", s.ListSources)
 			r.Route("/{ID}", func(r chi.Router) {
+				r.Get("/status", s.SourcesStatus)
+
+				// TODO move this to outside of /sources (see below)
 				r.Get("/instance_types", s.ListInstanceTypes)
 			})
 		})

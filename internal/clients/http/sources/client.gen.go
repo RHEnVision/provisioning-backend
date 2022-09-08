@@ -49,6 +49,27 @@ const (
 	AuthenticationCreateResourceTypeSource         AuthenticationCreateResourceType = "Source"
 )
 
+// Defines values for AuthenticationReadAuthtype.
+const (
+	AuthenticationReadAuthtypeAccessKeySecretKey           AuthenticationReadAuthtype = "access_key_secret_key"
+	AuthenticationReadAuthtypeApiTokenAccountId            AuthenticationReadAuthtype = "api_token_account_id"
+	AuthenticationReadAuthtypeArn                          AuthenticationReadAuthtype = "arn"
+	AuthenticationReadAuthtypeBitbucketAppPassword         AuthenticationReadAuthtype = "bitbucket-app-password"
+	AuthenticationReadAuthtypeCloudMeterArn                AuthenticationReadAuthtype = "cloud-meter-arn"
+	AuthenticationReadAuthtypeDockerAccessToken            AuthenticationReadAuthtype = "docker-access-token"
+	AuthenticationReadAuthtypeGithubPersonalAccessToken    AuthenticationReadAuthtype = "github-personal-access-token"
+	AuthenticationReadAuthtypeGitlabPersonalAccessToken    AuthenticationReadAuthtype = "gitlab-personal-access-token"
+	AuthenticationReadAuthtypeLighthouseSubscriptionId     AuthenticationReadAuthtype = "lighthouse_subscription_id"
+	AuthenticationReadAuthtypeMarketplaceToken             AuthenticationReadAuthtype = "marketplace-token"
+	AuthenticationReadAuthtypeOcid                         AuthenticationReadAuthtype = "ocid"
+	AuthenticationReadAuthtypeProjectIdServiceAccountJson  AuthenticationReadAuthtype = "project_id_service_account_json"
+	AuthenticationReadAuthtypeQuayEncryptedPassword        AuthenticationReadAuthtype = "quay-encrypted-password"
+	AuthenticationReadAuthtypeReceptorNode                 AuthenticationReadAuthtype = "receptor_node"
+	AuthenticationReadAuthtypeTenantIdClientIdClientSecret AuthenticationReadAuthtype = "tenant_id_client_id_client_secret"
+	AuthenticationReadAuthtypeToken                        AuthenticationReadAuthtype = "token"
+	AuthenticationReadAuthtypeUsernamePassword             AuthenticationReadAuthtype = "username_password"
+)
+
 // Defines values for AuthenticationReadResourceType.
 const (
 	AuthenticationReadResourceTypeApplication    AuthenticationReadResourceType = "Application"
@@ -334,7 +355,7 @@ type AuthenticationCreateResourceType string
 // Authentication object
 type AuthenticationRead struct {
 	// The type of the authentication
-	Authtype *interface{} `json:"authtype,omitempty"`
+	Authtype *AuthenticationReadAuthtype `json:"authtype,omitempty"`
 
 	// The availability status of the authentication
 	AvailabilityStatus *interface{} `json:"availability_status,omitempty"`
@@ -373,6 +394,9 @@ type AuthenticationRead struct {
 	// The username for the authentication
 	Username *string `json:"username,omitempty"`
 }
+
+// The type of the authentication
+type AuthenticationReadAuthtype string
 
 // The type of the resource this authentication belongs to
 type AuthenticationReadResourceType string

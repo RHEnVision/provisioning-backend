@@ -2,8 +2,12 @@ package gcp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 	computepb "google.golang.org/genproto/googleapis/cloud/compute/v1"
 
 	compute "cloud.google.com/go/compute/apiv1"
@@ -14,37 +18,101 @@ import (
 )
 
 type gcpClient struct {
-	instancesClient *compute.InstancesClient
-	context         context.Context
-	logger          zerolog.Logger
+	auth    *clients.Authentication
+	options []option.ClientOption
 }
 
 func init() {
 	clients.GetGCPClient = newGCPClient
 }
 
-func newGCPClient(ctx context.Context) (clients.GCP, error) {
-	logger := ctxval.Logger(ctx).With().Str("client", "gcp").Logger()
+func logger(ctx context.Context) zerolog.Logger {
+	return ctxval.Logger(ctx).With().Str("client", "gcp").Logger()
+}
 
-	instancesClient, err := compute.NewInstancesRESTClient(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("cannot create new instances REST client: %w", err)
+// GCP SDK does not provide a single client, so only configuration can be shared and
+// clients need to be created and closed in each function.
+func newGCPClient(ctx context.Context, auth *clients.Authentication) (clients.GCP, error) {
+	options := []option.ClientOption{
+		option.WithCredentialsJSON([]byte(config.GCP.JSON)),
+		option.WithQuotaProject(auth.Payload),
+		option.WithRequestReason(ctxval.RequestId(ctx)),
 	}
-
 	return &gcpClient{
-		instancesClient: instancesClient,
-		context:         ctx,
-		logger:          logger,
+		auth:    auth,
+		options: options,
 	}, nil
 }
 
-func (c *gcpClient) Close() {
-	c.instancesClient.Close()
+func (c *gcpClient) Status(ctx context.Context) error {
+	_, _, err := c.ListAllRegionsAndZones(ctx)
+	return err
 }
 
-func (c *gcpClient) RunInstances(ctx context.Context, projectID string, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error) {
+func (c *gcpClient) newInstancesClient(ctx context.Context) (*compute.InstancesClient, error) {
+	client, err := compute.NewInstancesRESTClient(ctx, c.options...)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create GCP regions client: %w", err)
+	}
+	return client, nil
+}
+
+func (c *gcpClient) newRegionsClient(ctx context.Context) (*compute.RegionsClient, error) {
+	client, err := compute.NewRegionsRESTClient(ctx, c.options...)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create GCP regions client: %w", err)
+	}
+	return client, nil
+}
+
+func (c *gcpClient) ListAllRegionsAndZones(ctx context.Context) ([]clients.Region, []clients.Zone, error) {
+	client, err := c.newRegionsClient(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("unable to list regions and zones: %w", err)
+	}
+	defer client.Close()
+
+	// This request returns approx. 6kB response (gzipped). Although REST API allows allow-list
+	// of fields via the 'fields' URL param ("items.name,items.zones"), gRPC does not allow that.
+	// Therefore, we must download all the information only to extract region and zone names.
+	req := &computepb.ListRegionsRequest{
+		Project: c.auth.Payload,
+	}
+	iter := client.List(ctx, req)
+	regions := make([]clients.Region, 0, 32)
+	zones := make([]clients.Zone, 0, 64)
+	for {
+		region, err := iter.Next()
+		if errors.Is(err, iterator.Done) {
+			break
+		}
+		if err != nil {
+			return nil, nil, fmt.Errorf("iterator error: %w", err)
+		}
+		regions = append(regions, clients.Region(*region.Name))
+		for _, zone := range region.Zones {
+			zones = append(zones, clients.Zone(zone))
+		}
+	}
+	return regions, zones, nil
+}
+
+func (c *gcpClient) RunInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error) {
+	log := logger(ctx)
+	log.Trace().Msgf("Executing bulk insert for name: %s", *namePattern)
+
+	client, err := c.newInstancesClient(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("unable to bulk insert instances: %w", err)
+	}
+	defer client.Close()
+
+	if zone == "" {
+		zone = config.GCP.DefaultZone
+	}
+
 	req := &computepb.BulkInsertInstanceRequest{
-		Project: projectID,
+		Project: c.auth.Payload,
 		Zone:    zone,
 		BulkInsertInstanceResourceResource: &computepb.BulkInsertInstanceResource{
 			NamePattern: namePattern,
@@ -79,8 +147,7 @@ func (c *gcpClient) RunInstances(ctx context.Context, projectID string, namePatt
 		},
 	}
 
-	c.logger.Trace().Msg("Executing Insert")
-	op, err := c.instancesClient.BulkInsert(ctx, req)
+	op, err := client.BulkInsert(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("cannot bulk insert instances: %w", err)
 	}

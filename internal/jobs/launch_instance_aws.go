@@ -33,7 +33,7 @@ type LaunchInstanceAWSTaskArgs struct {
 	AMI string `json:"ami"`
 
 	// The ARN fetched from Sources which is linked to a specific source
-	ARN string `json:"arn"`
+	ARN *clients.Authentication `json:"arn"`
 }
 
 // Unmarshall arguments and handle error
