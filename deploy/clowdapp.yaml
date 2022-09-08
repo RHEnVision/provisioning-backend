@@ -20,7 +20,7 @@ objects:
     spec:
       envName: ${ENV_NAME}
       testing:
-        iqePlugin: hms-provisioning
+        iqePlugin: provisioning
       deployments:
         - name: service
           minReplicas: ${{MIN_REPLICAS}}
