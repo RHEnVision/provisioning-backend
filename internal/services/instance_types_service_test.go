@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -17,7 +18,6 @@ import (
 )
 
 func TestListInstanceTypesHandler(t *testing.T) {
-
 	t.Run("with region", func(t *testing.T) {
 		var names []string
 		ctx := stubs.WithAccountDaoOne(context.Background())
@@ -64,5 +64,24 @@ func TestListInstanceTypesHandler(t *testing.T) {
 
 		assert.Contains(t, rr.Body.String(), "missing parameter")
 	})
+}
 
+func TestListAzureBuiltinInstanceTypesHandler(t *testing.T) {
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/v1/instance_types/azure", nil)
+	require.NoError(t, err, "failed to create request")
+	req.URL.RawQuery = url.Values{"region": {"westus2"}, "zone": {"1"}}.Encode()
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(services.ListAzureBuiltinInstanceTypes)
+	handler.ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
+
+	var result []clients.InstanceType
+	err = json.NewDecoder(rr.Body).Decode(&result)
+	require.NoError(t, err, "failed to decode response body")
+
+	assert.Less(t, 1, len(result), "the instance types response is empty")
 }
