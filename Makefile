@@ -1,120 +1,22 @@
-SRC_GO := $(shell find . -name \*.go -print)
-SRC_SQL := $(shell find . -name \*.sql -print)
-SRC_YAML := $(shell find . -name \*.yaml -print)
-TEST_TAGS?=test
-CONTAINER_BUILD_OPTS ?= --build-arg=quay_expiration=2d
-CONTAINER_IMAGE ?= provisioning-backend
-PACKAGE_BASE = github.com/RHEnVision/provisioning-backend/internal
-LDFLAGS = "-X $(PACKAGE_BASE)/version.BuildCommit=$(shell git rev-parse --short HEAD) -X $(PACKAGE_BASE)/version.BuildTime=$(shell date +'%Y-%m-%d_%T')"
+#
+# Entrypoint for the Makefile
+#
+# It is composed at mk/includes.mk by including
+# small make files which provides all the necessary
+# rules.
+#
+# Some considerations:
+#
+# - By default the 'help' rule is executed.
+# - No parallel jobs are executed from the main Makefile,
+#   so that multiple rules from the command line will be
+#   executed in serial.
+# - Create 'mk/private.mk' for custom targets.
+#
 
-.PHONY: build
-build: pbapi pbmigrate pbworker
+include mk/*.mk
 
-pbapi: $(SRC_GO) $(SRC_SQL) $(SRC_YAML)
-	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -o pbapi ./cmd/pbapi
+.NOT_PARALLEL:
 
-pbworker: $(SRC_GO) $(SRC_SQL) $(SRC_YAML)
-	CGO_ENABLED=0 go build -ldflags $(LDFLAGS) -o pbworker ./cmd/pbworker
-
-pbmigrate: $(SRC_GO) $(SRC_SQL) $(SRC_YAML)
-	CGO_ENABLED=0 go build -o pbmigrate ./cmd/pbmigrate
-
-.PHONY: strip
-strip: build
-	strip pbapi pbmigrate
-
-.PHONY: clean
-clean:
-	rm pbapi pbmigrate pbworker
-
-.PHONY: build-podman
-build-podman:
-	# remote podman build has problem with -f option, so we link the file as workaround
-	ln -sf build/Dockerfile Containerfile
-	podman build $(CONTAINER_BUILD_OPTS) -t $(CONTAINER_IMAGE) .
-
-.PHONY: prep
-prep:
-	go mod download
-
-.PHONY: run
-run:
-	go run ./cmd/pbapi
-
-.PHONY: update-clients
-update-clients:
-	wget -O ./configs/ib_api.yaml -qN https://raw.githubusercontent.com/osbuild/image-builder/main/internal/v1/api.yaml
-	wget -O ./configs/sources_api.json -qN https://raw.githubusercontent.com/RedHatInsights/sources-api-go/main/public/openapi-3-v3.1.json
-
-generate-clients: internal/clients/http/image_builder/client.gen.go internal/clients/http/sources/client.gen.go
-
-internal/clients/http/sources/client.gen.go: configs/sources_config.yml configs/sources_api.json
-	oapi-codegen -config ./configs/sources_config.yml ./configs/sources_api.json
-
-internal/clients/http/image_builder/client.gen.go: configs/ib_config.yaml configs/ib_api.yaml
-	oapi-codegen -config ./configs/ib_config.yaml ./configs/ib_api.yaml
-
-.PHONY: validate-clients
-validate-clients: generate-clients
-	git diff --exit-code internal/clients/*/client.gen.go
-
-.PHONY: install-tools
-install-tools:
-	go install golang.org/x/tools/cmd/goimports@latest
-	# pin for a bug: https://github.com/golangci/golangci-lint/issues/2851
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2
-	go install github.com/jackc/tern@latest
-	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
-
-.PHONY: fmt
-fmt:
-	go fmt ./...
-	goimports -w .
-
-.PHONY: lint
-lint:
-	golangci-lint run
-
-.PHONY: migrate
-migrate:
-	go run ./cmd/pbmigrate
-
-.PHONY: purgedb
-purgedb:
-	go run ./cmd/pbmigrate purgedb
-
-.PHONY: test
-test:
-	go test -tags=$(TEST_TAGS) ./...
-
-.PHONY: generate-migration
-MIGRATION_NAME?=unnamed
-generate-migration:
-	migrate create -ext sql -dir internal/db/migrations -seq -digits 3 $(MIGRATION_NAME)
-
-.PHONY: generate-spec
-generate-spec:
-	go run ./cmd/spec
-
-.PHONY: validate-spec
-validate-spec: generate-spec
-	git diff --exit-code api/openapi.gen.json
-
-.PHONY: validate
-validate: validate-spec validate-clients
-
-.PHONY: update-deps
-update-deps:
-	go get -u all
-	go mod tidy
-
-.PHONY: update-test-deps
-update-test-deps: update-deps test
-
-.PHONY: integration-test
-integration-test:
-	go test --count=1 -v -tags=integration ./internal/dao/tests
-
-.PHONY: generate-azure-types
-generate-azure-types:
-	go run cmd/typesctl/main.go -provider azure -generate
+# Set the default rule
+.DEFAULT_GOAL := help
