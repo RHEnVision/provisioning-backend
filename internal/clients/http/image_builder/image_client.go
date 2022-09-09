@@ -94,7 +94,7 @@ func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID str
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return nil, ComposeNotFoundErr
+			return nil, fmt.Errorf("fetch image status call: %w", ComposeNotFoundErr)
 		}
 		return nil, fmt.Errorf("fetch image status call: %w", err)
 	}
