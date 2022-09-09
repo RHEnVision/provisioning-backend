@@ -15,8 +15,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// TODO This should have been not exported
-type SourcesClient struct {
+type sourcesClient struct {
 	client *ClientWithResponses
 	logger zerolog.Logger
 }
@@ -47,7 +46,7 @@ func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &SourcesClient{client: c, logger: logger}, nil
+	return &sourcesClient{client: c, logger: logger}, nil
 }
 
 func copySource(src Source) clients.Source {
@@ -69,7 +68,7 @@ type dataElement struct {
 	Data []appType `json:"data"`
 }
 
-func (c *SourcesClient) Ready(ctx context.Context) error {
+func (c *sourcesClient) Ready(ctx context.Context) error {
 	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
 		c.logger.Error().Err(err).Msgf("Readiness request failed for sources: %s", err.Error())
@@ -84,7 +83,7 @@ func (c *SourcesClient) Ready(ctx context.Context) error {
 	return nil
 }
 
-func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
+func (c *sourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
 	c.logger.Trace().Msg("Listing provisioning sources")
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
@@ -114,7 +113,7 @@ func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients
 	return &result, nil
 }
 
-func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string, error) {
+func (c *sourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string, error) {
 	c.logger.Trace().Msgf("Getting ARN of source %v", sourceId)
 
 	// Get all the authentications linked to a specific source
@@ -165,7 +164,7 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 	return *auth.Username, nil
 }
 
-func (c *SourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
+func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
 	if appTypeId, ok := cache.AppTypeId(); ok {
 		return appTypeId, nil
 	}
@@ -177,7 +176,7 @@ func (c *SourcesClient) GetProvisioningTypeId(ctx context.Context) (string, erro
 	return appTypeId, nil
 }
 
-func (c *SourcesClient) loadAppId(ctx context.Context) (string, error) {
+func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 	c.logger.Trace().Msg("Fetching the Application Type ID of Provisioning for Sources")
 
 	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
