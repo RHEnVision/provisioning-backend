@@ -107,7 +107,7 @@ func (c *EC2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error)
 		if isAWSUnauthorizedError(err) {
 			err = clients.UnauthorizedErr
 		} else if isAWSOperationError(err, "InvalidKeyPair.Duplicate") {
-			err = clients.DuplicatePubkeyErr
+			err = DuplicatePubkeyErr
 		}
 		return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
 	}

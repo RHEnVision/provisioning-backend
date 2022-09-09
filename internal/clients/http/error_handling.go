@@ -28,7 +28,7 @@ func IsHTTPForbidden(status int) bool {
 // or nil when the response was 2xx (200-299 range).
 func HandleHTTPResponses(ctx context.Context, statusCode int) error {
 	if IsHTTPNotFound(statusCode) {
-		return clients.NotFoundError
+		return clients.NotFoundErr
 	}
 	if IsHTTPUnauthorized(statusCode) {
 		return clients.UnauthorizedErr
@@ -38,7 +38,7 @@ func HandleHTTPResponses(ctx context.Context, statusCode int) error {
 	}
 	if !IsHTTPStatus2xx(statusCode) {
 		ctxval.Logger(ctx).Warn().Msgf("Non-200 HTTP response seen: %v", statusCode)
-		return clients.Non200ResponseErr
+		return clients.Non2xxResponseErr
 	}
 	return nil
 }
