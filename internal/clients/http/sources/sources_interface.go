@@ -4,6 +4,7 @@ import (
 	"context"
 )
 
+// TODO this function and the APIClient interface seems to be unused.
 var GetSourcesAPIClient func(ctx context.Context) (APIClient, error)
 
 type APIClient interface {
