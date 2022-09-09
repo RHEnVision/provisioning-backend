@@ -102,7 +102,7 @@ func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return nil, SourceNotFoundErr
+			return nil, fmt.Errorf("list provisioning sources call: %w", SourceNotFoundErr)
 		}
 		return nil, fmt.Errorf("list provisioning sources call: %w", err)
 	}
@@ -126,7 +126,7 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return "", SourceNotFoundErr
+			return "", fmt.Errorf("get source ARN call: %w", SourceNotFoundErr)
 		}
 		return "", fmt.Errorf("get source ARN call: %w", err)
 	}
@@ -149,7 +149,7 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return "", ApplicationNotFoundErr
+			return "", fmt.Errorf("get source ARN call: %w", ApplicationNotFoundErr)
 		}
 		return "", fmt.Errorf("get source ARN call: %w", err)
 	}
@@ -190,7 +190,7 @@ func (c *SourcesClient) loadAppId(ctx context.Context) (string, error) {
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return "", ApplicationTypeNotFoundErr
+			return "", fmt.Errorf("load app ID call: %w", ApplicationTypeNotFoundErr)
 		}
 		return "", fmt.Errorf("load app ID call: %w", err)
 	}
