@@ -13,8 +13,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// TODO This should have been not exported
-type ImageBuilderClient struct {
+type ibClient struct {
 	client *ClientWithResponses
 	logger zerolog.Logger
 }
@@ -45,10 +44,10 @@ func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &ImageBuilderClient{client: c, logger: logger}, nil
+	return &ibClient{client: c, logger: logger}, nil
 }
 
-func (c *ImageBuilderClient) Ready(ctx context.Context) error {
+func (c *ibClient) Ready(ctx context.Context) error {
 	resp, err := c.client.GetReadiness(ctx, headers.AddImageBuilderIdentityHeader)
 	if err != nil {
 		c.logger.Error().Err(err).Msgf("Readiness request failed for image builder: %s", err.Error())
@@ -63,7 +62,7 @@ func (c *ImageBuilderClient) Ready(ctx context.Context) error {
 	return nil
 }
 
-func (c *ImageBuilderClient) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
+func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
 	c.logger.Trace().Msgf("Getting AMI of image %v", composeID)
 
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)
@@ -82,7 +81,7 @@ func (c *ImageBuilderClient) GetAWSAmi(ctx context.Context, composeID string) (s
 	return ami.(string), nil
 }
 
-func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
+func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
 	c.logger.Trace().Msgf("Fetching image status %v", composeID)
 
 	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader)
