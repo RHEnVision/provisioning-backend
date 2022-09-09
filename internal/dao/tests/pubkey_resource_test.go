@@ -21,6 +21,7 @@ func createPubkeyResourceNoop() *models.PubkeyResource {
 		PubkeyID: 1,
 		Provider: models.ProviderTypeNoop,
 		Handle:   factories.GetSequenceName("handle"),
+		Region:   "us-west-1",
 	}
 }
 
@@ -30,6 +31,7 @@ func createPubkeyResourceAzure() *models.PubkeyResource {
 		PubkeyID: 1,
 		Provider: models.ProviderTypeAzure,
 		Handle:   factories.GetSequenceName("handle"),
+		Region:   "us-east-1",
 	}
 }
 

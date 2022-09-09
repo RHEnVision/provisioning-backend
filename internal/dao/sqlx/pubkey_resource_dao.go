@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	createPubkeyResource            = `INSERT INTO pubkey_resources (pubkey_id, provider, source_id, handle, tag) VALUES ($1, $2, $3, $4, $5) RETURNING id, tag`
+	createPubkeyResource            = `INSERT INTO pubkey_resources (pubkey_id, provider, source_id, handle, tag, region) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, tag`
 	deletePubkeyResourceById        = `DELETE FROM pubkey_resources WHERE id = $1`
 	listByPubkeyId                  = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1`
 	getPubkeyResourceByProviderType = `SELECT * FROM pubkey_resources WHERE pubkey_id = $1 AND provider = $2`
@@ -79,7 +79,7 @@ func (di *pubkeyResourceDaoSqlx) UnscopedCreate(ctx context.Context, pkr *models
 	query := createPubkeyResource
 	stmt := di.create
 
-	err := stmt.GetContext(ctx, pkr, pkr.PubkeyID, pkr.Provider, pkr.SourceID, pkr.Handle, pkr.Tag)
+	err := stmt.GetContext(ctx, pkr, pkr.PubkeyID, pkr.Provider, pkr.SourceID, pkr.Handle, pkr.Tag, pkr.Region)
 	if err != nil {
 		return NewGetError(ctx, di, query, err)
 	}
