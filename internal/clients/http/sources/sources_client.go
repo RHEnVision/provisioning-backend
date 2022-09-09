@@ -126,7 +126,7 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return "", fmt.Errorf("get source ARN call: %w", SourceNotFoundErr)
+			return "", fmt.Errorf("get source ARN call: %w", AuthenticationForSourcesNotFoundErr)
 		}
 		return "", fmt.Errorf("get source ARN call: %w", err)
 	}

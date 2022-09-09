@@ -7,7 +7,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -94,12 +93,8 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	// Fetch arn from Sources
 	arn, err := sourcesClient.GetArn(r.Context(), payload.SourceID)
 	if err != nil {
-		if errors.Is(err, sources.ApplicationNotFoundErr) {
-			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: application not found", err, 404))
-			return
-		}
-		if errors.Is(err, sources.AuthenticationForSourcesNotFoundErr) {
-			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: authentication not found", err, 404))
+		if errors.Is(err, clients.NotFoundErr) {
+			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 404))
 			return
 		}
 		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 500))
