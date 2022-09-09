@@ -30,15 +30,15 @@ func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	c, err := NewClientWithResponses(config.Sources.URL, func(c *Client) error {
 		if config.Sources.Proxy.URL != "" {
 			if config.Features.Environment != "development" {
-				return clients.ClientProxyProductionUseErr
+				return http.ClientProxyProductionUseErr
 			}
 			var client HttpRequestDoer
-			client, err := clients.NewProxyDoer(ctx, config.Sources.Proxy.URL)
+			client, err := http.NewProxyDoer(ctx, config.Sources.Proxy.URL)
 			if err != nil {
 				return fmt.Errorf("cannot create proxy doer: %w", err)
 			}
 			if config.RestEndpoints.TraceData {
-				client = clients.NewLoggingDoer(ctx, client)
+				client = http.NewLoggingDoer(ctx, client)
 			}
 			c.Client = client
 		}
