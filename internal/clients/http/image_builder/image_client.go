@@ -73,11 +73,11 @@ func (c *ImageBuilderClient) GetAWSAmi(ctx context.Context, composeID string) (s
 
 	c.logger.Trace().Msgf("Verifying AWS type")
 	if imageStatus.Type != UploadTypesAws {
-		return "", fmt.Errorf("%w: expected image type AWS", UnknownImageTypeErr)
+		return "", fmt.Errorf("%w: expected image type AWS", http.UnknownImageTypeErr)
 	}
 	ami, ok := imageStatus.Options.(map[string]interface{})["ami"]
 	if !ok {
-		return "", AmiNotFoundInStatusErr
+		return "", http.AmiNotFoundInStatusErr
 	}
 	return ami.(string), nil
 }
@@ -94,14 +94,14 @@ func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID str
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return nil, fmt.Errorf("fetch image status call: %w", ComposeNotFoundErr)
+			return nil, fmt.Errorf("fetch image status call: %w", http.ComposeNotFoundErr)
 		}
 		return nil, fmt.Errorf("fetch image status call: %w", err)
 	}
 
 	if resp.JSON200.ImageStatus.Status != ImageStatusStatusSuccess {
 		c.logger.Warn().Msg("Image status in not ready")
-		return nil, ImageStatusErr
+		return nil, http.ImageStatusErr
 	}
 	return resp.JSON200.ImageStatus.UploadStatus, nil
 }

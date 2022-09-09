@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -108,7 +109,7 @@ func (c *EC2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error)
 		if isAWSUnauthorizedError(err) {
 			err = clients.UnauthorizedErr
 		} else if isAWSOperationError(err, "InvalidKeyPair.Duplicate") {
-			err = DuplicatePubkeyErr
+			err = http.DuplicatePubkeyErr
 		}
 		return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
 	}
