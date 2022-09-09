@@ -12,11 +12,13 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
+	"github.com/rs/zerolog"
 )
 
 // TODO This should have been not exported
 type SourcesClient struct {
 	client *ClientWithResponses
+	logger zerolog.Logger
 }
 
 func init() {
@@ -24,6 +26,7 @@ func init() {
 }
 
 func newSourcesClient(ctx context.Context) (clients.Sources, error) {
+	logger := ctxval.Logger(ctx).With().Str("client", "sources").Logger()
 	c, err := NewClientWithResponses(config.Sources.URL, func(c *Client) error {
 		if config.Sources.Proxy.URL != "" {
 			if config.Features.Environment != "development" {
@@ -44,7 +47,7 @@ func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &SourcesClient{client: c}, nil
+	return &SourcesClient{client: c, logger: logger}, nil
 }
 
 func copySource(src Source) clients.Source {
@@ -67,11 +70,9 @@ type dataElement struct {
 }
 
 func (c *SourcesClient) Ready(ctx context.Context) error {
-	logger := ctxval.Logger(ctx)
-
 	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
-		logger.Error().Err(err).Msgf("Readiness request failed for sources: %s", err.Error())
+		c.logger.Error().Err(err).Msgf("Readiness request failed for sources: %s", err.Error())
 		return err
 	}
 	defer resp.Body.Close()
@@ -84,18 +85,17 @@ func (c *SourcesClient) Ready(ctx context.Context) error {
 }
 
 func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
-	logger := ctxval.Logger(ctx)
-	logger.Trace().Msg("Listing provisioning sources")
+	c.logger.Trace().Msg("Listing provisioning sources")
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
 	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to get provisioning type id")
+		c.logger.Warn().Err(err).Msg("Failed to get provisioning type id")
 		return nil, fmt.Errorf("failed to get provisioning app type: %w", err)
 	}
 
 	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
+		c.logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return nil, fmt.Errorf("failed to get ApplicationTypes: %w", err)
 	}
 
@@ -115,8 +115,7 @@ func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients
 }
 
 func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string, error) {
-	logger := ctxval.Logger(ctx)
-	logger.Trace().Msgf("Getting ARN of source %v", sourceId)
+	c.logger.Trace().Msgf("Getting ARN of source %v", sourceId)
 
 	// Get all the authentications linked to a specific source
 	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader)
@@ -136,7 +135,7 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 	// Sources API currently does not provide a good server-side filtering.
 	auth, err := filterSourceAuthentications(resp.JSON200.Data)
 	if err != nil {
-		logger.Warn().Msgf("Sources replied with more then one authenticatios for source: %vs", sourceId)
+		c.logger.Warn().Msgf("Sources replied with more then one authenticatios for source: %vs", sourceId)
 		return "", err
 	}
 
@@ -179,12 +178,11 @@ func (c *SourcesClient) GetProvisioningTypeId(ctx context.Context) (string, erro
 }
 
 func (c *SourcesClient) loadAppId(ctx context.Context) (string, error) {
-	logger := ctxval.Logger(ctx)
-	logger.Trace().Msg("Fetching the Application Type ID of Provisioning for Sources")
+	c.logger.Trace().Msg("Fetching the Application Type ID of Provisioning for Sources")
 
 	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
+		c.logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return "", fmt.Errorf("failed to fetch ApplicationTypes: %w", err)
 	}
 	defer resp.Body.Close()
@@ -203,7 +201,7 @@ func (c *SourcesClient) loadAppId(ctx context.Context) (string, error) {
 	}
 	for _, t := range appTypesData.Data {
 		if t.Name == "/insights/platform/provisioning" {
-			logger.Trace().Msgf("The Application Type ID found: '%s' and it got cached", t.Id)
+			c.logger.Trace().Msgf("The Application Type ID found: '%s' and it got cached", t.Id)
 			return t.Id, nil
 		}
 	}
