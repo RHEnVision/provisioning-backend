@@ -7,8 +7,6 @@ import (
 	"github.com/aws/smithy-go"
 )
 
-var DuplicatePubkeyErr = errors.New("pubkey already exists in the target account")
-
 func isAWSUnauthorizedError(err error) bool {
 	return isAWSOperationError(err, "api error UnauthorizedOperation")
 }

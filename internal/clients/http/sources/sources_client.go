@@ -102,7 +102,7 @@ func (c *SourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return nil, fmt.Errorf("list provisioning sources call: %w", SourceNotFoundErr)
+			return nil, fmt.Errorf("list provisioning sources call: %w", http.SourceNotFoundErr)
 		}
 		return nil, fmt.Errorf("list provisioning sources call: %w", err)
 	}
@@ -126,7 +126,7 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return "", fmt.Errorf("get source ARN call: %w", AuthenticationForSourcesNotFoundErr)
+			return "", fmt.Errorf("get source ARN call: %w", http.AuthenticationForSourcesNotFoundErr)
 		}
 		return "", fmt.Errorf("get source ARN call: %w", err)
 	}
@@ -149,7 +149,7 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return "", fmt.Errorf("get source ARN call: %w", ApplicationNotFoundErr)
+			return "", fmt.Errorf("get source ARN call: %w", http.ApplicationNotFoundErr)
 		}
 		return "", fmt.Errorf("get source ARN call: %w", err)
 	}
@@ -160,7 +160,7 @@ func (c *SourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 	}
 
 	if *res.JSON200.ApplicationTypeId != appTypeId {
-		return "", fmt.Errorf("%w for source id %s", AuthenticationSourceAssociationErr, sourceId)
+		return "", fmt.Errorf("%w for source id %s", http.AuthenticationSourceAssociationErr, sourceId)
 	}
 	return *auth.Username, nil
 }
@@ -190,7 +190,7 @@ func (c *SourcesClient) loadAppId(ctx context.Context) (string, error) {
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return "", fmt.Errorf("load app ID call: %w", ApplicationTypeNotFoundErr)
+			return "", fmt.Errorf("load app ID call: %w", http.ApplicationTypeNotFoundErr)
 		}
 		return "", fmt.Errorf("load app ID call: %w", err)
 	}
@@ -205,7 +205,7 @@ func (c *SourcesClient) loadAppId(ctx context.Context) (string, error) {
 			return t.Id, nil
 		}
 	}
-	return "", ApplicationTypeNotFoundErr
+	return "", http.ApplicationTypeNotFoundErr
 }
 
 func filterSourceAuthentications(authentications *[]AuthenticationRead) (AuthenticationRead, error) {
@@ -218,7 +218,7 @@ func filterSourceAuthentications(authentications *[]AuthenticationRead) (Authent
 	}
 	// Assumption: each source has one authentication linked to it
 	if len(list) > 1 {
-		return AuthenticationRead{}, MoreThenOneAuthenticationForSourceErr
+		return AuthenticationRead{}, http.MoreThenOneAuthenticationForSourceErr
 	}
 	return list[0], nil
 }
