@@ -10,10 +10,13 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
+	"github.com/rs/zerolog"
 )
 
+// TODO This should have been not exported
 type ImageBuilderClient struct {
 	client *ClientWithResponses
+	logger zerolog.Logger
 }
 
 func init() {
@@ -21,6 +24,7 @@ func init() {
 }
 
 func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
+	logger := ctxval.Logger(ctx).With().Str("client", "ib").Logger()
 	c, err := NewClientWithResponses(config.ImageBuilder.URL, func(c *Client) error {
 		if config.ImageBuilder.Proxy.URL != "" {
 			var client HttpRequestDoer
@@ -41,15 +45,13 @@ func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &ImageBuilderClient{client: c}, nil
+	return &ImageBuilderClient{client: c, logger: logger}, nil
 }
 
 func (c *ImageBuilderClient) Ready(ctx context.Context) error {
-	logger := ctxval.Logger(ctx)
-
 	resp, err := c.client.GetReadiness(ctx, headers.AddImageBuilderIdentityHeader)
 	if err != nil {
-		logger.Error().Err(err).Msgf("Readiness request failed for image builder: %s", err.Error())
+		c.logger.Error().Err(err).Msgf("Readiness request failed for image builder: %s", err.Error())
 		return err
 	}
 	defer resp.Body.Close()
@@ -62,15 +64,14 @@ func (c *ImageBuilderClient) Ready(ctx context.Context) error {
 }
 
 func (c *ImageBuilderClient) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
-	logger := ctxval.Logger(ctx)
-	logger.Trace().Msgf("Getting AMI of image %v", composeID)
+	c.logger.Trace().Msgf("Getting AMI of image %v", composeID)
 
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)
 	if err != nil {
 		return "", err
 	}
 
-	logger.Trace().Msgf("Verifying AWS type")
+	c.logger.Trace().Msgf("Verifying AWS type")
 	if imageStatus.Type != UploadTypesAws {
 		return "", fmt.Errorf("%w: expected image type AWS", UnknownImageTypeErr)
 	}
@@ -82,12 +83,11 @@ func (c *ImageBuilderClient) GetAWSAmi(ctx context.Context, composeID string) (s
 }
 
 func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
-	logger := ctxval.Logger(ctx)
-	logger.Trace().Msgf("Fetching image status %v", composeID)
+	c.logger.Trace().Msgf("Fetching image status %v", composeID)
 
 	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader)
 	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
+		c.logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
 	}
 
@@ -100,7 +100,7 @@ func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID str
 	}
 
 	if resp.JSON200.ImageStatus.Status != ImageStatusStatusSuccess {
-		logger.Warn().Msg("Image status in not ready")
+		c.logger.Warn().Msg("Image status in not ready")
 		return nil, ImageStatusErr
 	}
 	return resp.JSON200.ImageStatus.UploadStatus, nil
