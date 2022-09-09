@@ -29,14 +29,14 @@ func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 		if config.ImageBuilder.Proxy.URL != "" {
 			var client HttpRequestDoer
 			if config.Features.Environment != "development" {
-				return clients.ClientProxyProductionUseErr
+				return http.ClientProxyProductionUseErr
 			}
-			client, err := clients.NewProxyDoer(ctx, config.ImageBuilder.Proxy.URL)
+			client, err := http.NewProxyDoer(ctx, config.ImageBuilder.Proxy.URL)
 			if err != nil {
 				return fmt.Errorf("cannot create proxy doer: %w", err)
 			}
 			if config.RestEndpoints.TraceData {
-				client = clients.NewLoggingDoer(ctx, client)
+				client = http.NewLoggingDoer(ctx, client)
 			}
 			c.Client = client
 		}
