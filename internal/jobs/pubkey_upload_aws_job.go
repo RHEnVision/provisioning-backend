@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -97,7 +98,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 
 	pkr.Handle, err = ec2Client.ImportPubkey(pubkey, pkr.FormattedTag())
 	if err != nil {
-		if errors.Is(err, clients.DuplicatePubkeyErr) {
+		if errors.Is(err, ec2.DuplicatePubkeyErr) {
 			logger.Warn().Msgf("Pubkey '%s' already present, skipping", pubkey.Name)
 		} else {
 			return fmt.Errorf("cannot upload aws pubkey: %w", err)
