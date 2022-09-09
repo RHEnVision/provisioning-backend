@@ -2,6 +2,7 @@ package image_builder
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -44,66 +45,63 @@ func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 }
 
 func (c *ImageBuilderClient) Ready(ctx context.Context) error {
+	logger := ctxval.Logger(ctx)
+
 	resp, err := c.client.GetReadiness(ctx, headers.AddImageBuilderIdentityHeader)
 	if err != nil {
-		ctxval.Logger(ctx).Error().Err(err).Msgf("Readiness request failed for image builder: %s", err.Error())
+		logger.Error().Err(err).Msgf("Readiness request failed for image builder: %s", err.Error())
 		return err
 	}
 	defer resp.Body.Close()
-	if !http.IsHTTPStatus2xx(resp.StatusCode) {
-		ctxval.Logger(ctx).Warn().Msgf("Readiness response from image builder: %d", resp.StatusCode)
-		return ClientErr
+
+	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
+	if err != nil {
+		return fmt.Errorf("ready call: %w", err)
 	}
 	return nil
 }
 
 func (c *ImageBuilderClient) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
-	ctxval.Logger(ctx).Info().Msgf("Getting AMI of image %v", composeID)
+	logger := ctxval.Logger(ctx)
+	logger.Trace().Msgf("Getting AMI of image %v", composeID)
+
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)
 	if err != nil {
 		return "", err
 	}
-	ctxval.Logger(ctx).Debug().Msgf("Verifying AWS type")
+
+	logger.Trace().Msgf("Verifying AWS type")
 	if imageStatus.Type != UploadTypesAws {
-		ctxval.Logger(ctx).Warn().Err(err).Msg("Image is not AWS type")
-		return "", BadImageTypeErr
+		return "", fmt.Errorf("%w: expected image type AWS", UnknownImageTypeErr)
 	}
-	awsStatus, ok := imageStatus.Options.(map[string]interface{})
+	ami, ok := imageStatus.Options.(map[string]interface{})["ami"]
 	if !ok {
-		return "", BadImageTypeErr
+		return "", AmiNotFoundInStatusErr
 	}
-	return awsStatus["ami"].(string), nil
+	return ami.(string), nil
 }
 
 func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
-	ctxval.Logger(ctx).Info().Msgf("Fetching image status %v", composeID)
+	logger := ctxval.Logger(ctx)
+	logger.Trace().Msgf("Fetching image status %v", composeID)
+
 	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader)
 	if err != nil {
-		ctxval.Logger(ctx).Warn().Err(err).Msg("Failed to fetch image status from image builder")
+		logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
 	}
-	statusCode := resp.StatusCode()
-	if http.IsHTTPNotFound(statusCode) {
-		return nil, ComposeNotFoundErr
-	}
-	if !http.IsHTTPStatus2xx(statusCode) {
-		ctxval.Logger(ctx).Warn().Msgf("Image builder replied with unexpected status while fetching image status: %v", statusCode)
-		return nil, ClientErr
+
+	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
+	if err != nil {
+		if errors.Is(err, clients.NotFoundError) {
+			return nil, ComposeNotFoundErr
+		}
+		return nil, fmt.Errorf("fetch image status call: %w", err)
 	}
 
-	err = verifyImage(ctx, resp.JSON200)
-	if err != nil {
-		ctxval.Logger(ctx).Warn().Err(err).Msg("Image status in not ready")
-		return nil, err
+	if resp.JSON200.ImageStatus.Status != ImageStatusStatusSuccess {
+		logger.Warn().Msg("Image status in not ready")
+		return nil, ImageStatusErr
 	}
 	return resp.JSON200.ImageStatus.UploadStatus, nil
-
-}
-
-func verifyImage(ctx context.Context, compose *ComposeStatus) error {
-	ctxval.Logger(ctx).Debug().Msgf("Verifying image is ready to use")
-	if compose.ImageStatus.Status != ImageStatusStatusSuccess {
-		return ImageStatusErr
-	}
-	return nil
 }
