@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
-	"github.com/RHEnVision/provisioning-backend/internal/parsing"
 )
 
 type ImageBuilderClient struct {
@@ -50,7 +50,7 @@ func (c *ImageBuilderClient) Ready(ctx context.Context) error {
 		return err
 	}
 	defer resp.Body.Close()
-	if !parsing.IsHTTPStatus2xx(resp.StatusCode) {
+	if !http.IsHTTPStatus2xx(resp.StatusCode) {
 		ctxval.Logger(ctx).Warn().Msgf("Readiness response from image builder: %d", resp.StatusCode)
 		return ClientErr
 	}
@@ -83,10 +83,10 @@ func (c *ImageBuilderClient) fetchImageStatus(ctx context.Context, composeID str
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
 	}
 	statusCode := resp.StatusCode()
-	if parsing.IsHTTPNotFound(statusCode) {
+	if http.IsHTTPNotFound(statusCode) {
 		return nil, ComposeNotFoundErr
 	}
-	if !parsing.IsHTTPStatus2xx(statusCode) {
+	if !http.IsHTTPStatus2xx(statusCode) {
 		ctxval.Logger(ctx).Warn().Msgf("Image builder replied with unexpected status while fetching image status: %v", statusCode)
 		return nil, ClientErr
 	}
