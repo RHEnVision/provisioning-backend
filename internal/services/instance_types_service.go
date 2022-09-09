@@ -6,7 +6,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
-	sources "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
@@ -30,12 +29,8 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 
 	arn, err := sourcesClient.GetArn(r.Context(), sourceId)
 	if err != nil {
-		if errors.Is(err, sources.ApplicationNotFoundErr) {
-			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: application not found", err, 404))
-			return
-		}
-		if errors.Is(err, sources.AuthenticationForSourcesNotFoundErr) {
-			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: authentication not found", err, 404))
+		if errors.Is(err, clients.NotFoundErr) {
+			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 404))
 			return
 		}
 		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 500))
