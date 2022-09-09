@@ -14,15 +14,6 @@ import (
 )
 
 type InstanceTypeName string
-type ArchitectureType string
-
-const (
-	ArchitectureTypeI386       ArchitectureType = "i386"
-	ArchitectureTypeX8664      ArchitectureType = "x86_64"
-	ArchitectureTypeArm64      ArchitectureType = "arm64"
-	ArchitectureTypeAppleX8664 ArchitectureType = "apple-x86_64"
-	ArchitectureTypeAppleArm64 ArchitectureType = "apple-arm64"
-)
 
 const (
 	_ = 1 << (10 * iota)
@@ -65,10 +56,6 @@ type InstanceTypeDetailAzure struct {
 
 func (it *InstanceTypeName) String() string {
 	return string(*it)
-}
-
-func (at *ArchitectureType) String() string {
-	return string(*at)
 }
 
 func (it *InstanceType) String() string {
