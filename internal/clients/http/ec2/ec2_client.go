@@ -17,7 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	stsTypes "github.com/aws/aws-sdk-go-v2/service/sts/types"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
 type EC2Client struct {
@@ -31,14 +30,15 @@ func init() {
 }
 
 func newAssumedEC2ClientWithRegion(ctx context.Context, arn string, region string) (clients.EC2, error) {
-	logger := ctxval.Logger(ctx)
+	logger := ctxval.Logger(ctx).With().Str("client", "ec2").Logger()
 
 	if region == "" {
+		// TODO: use DefaultRegion from config
 		logger.Warn().Msg("No region passed, using us-east-1")
 		region = "us-east-1"
 	}
 
-	creds, err := getStsAssumedCredentials(ctx, arn, region)
+	creds, err := getStsAssumedCredentials(ctx, logger, arn, region)
 	if err != nil {
 		return nil, err
 	}
@@ -53,13 +53,11 @@ func newAssumedEC2ClientWithRegion(ctx context.Context, arn string, region strin
 	return &EC2Client{
 		ec2:     ec2.NewFromConfig(newCfg),
 		context: ctx,
-		log:     logger.With().Str("client", "ec2").Logger(),
+		log:     logger,
 	}, nil
 }
 
-func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*stsTypes.Credentials, error) {
-	logger := ctxval.Logger(ctx)
-
+func getStsAssumedCredentials(ctx context.Context, logger zerolog.Logger, arn string, region string) (*stsTypes.Credentials, error) {
 	// TODO: role assume should be region agnostic
 	cfg, err := awsCfg.LoadDefaultConfig(ctx, awsCfg.WithRegion(region),
 		awsCfg.WithCredentialsProvider(
@@ -88,7 +86,7 @@ func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*
 
 // ImportPubkey imports a key and returns AWS ID
 func (c *EC2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
-	log.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
+	c.log.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
 	input := &ec2.ImportKeyPairInput{}
 	input.KeyName = aws.String(key.Name)
 	input.PublicKeyMaterial = []byte(key.Body)
@@ -118,7 +116,7 @@ func (c *EC2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error)
 }
 
 func (c *EC2Client) DeleteSSHKey(handle string) error {
-	log.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
+	c.log.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
 	input := &ec2.DeleteKeyPairInput{}
 	input.KeyPairId = aws.String(handle)
 	_, err := c.ec2.DeleteKeyPair(c.context, input)
@@ -152,7 +150,7 @@ func (c *EC2Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, 
 }
 
 func (c *EC2Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
-	log.Trace().Msg("Run AWS EC2 instance")
+	c.log.Trace().Msg("Run AWS EC2 instance")
 	encodedUserData := base64.StdEncoding.EncodeToString(userData)
 	input := &ec2.RunInstancesInput{
 		MaxCount:     aws.Int32(amount),
