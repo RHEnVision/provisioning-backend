@@ -19,10 +19,11 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// TODO This should have been not exported
 type EC2Client struct {
 	ec2     *ec2.Client
 	context context.Context
-	log     zerolog.Logger
+	logger  zerolog.Logger
 }
 
 func init() {
@@ -53,7 +54,7 @@ func newAssumedEC2ClientWithRegion(ctx context.Context, arn string, region strin
 	return &EC2Client{
 		ec2:     ec2.NewFromConfig(newCfg),
 		context: ctx,
-		log:     logger,
+		logger:  logger,
 	}, nil
 }
 
@@ -86,7 +87,7 @@ func getStsAssumedCredentials(ctx context.Context, logger zerolog.Logger, arn st
 
 // ImportPubkey imports a key and returns AWS ID
 func (c *EC2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
-	c.log.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
+	c.logger.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
 	input := &ec2.ImportKeyPairInput{}
 	input.KeyName = aws.String(key.Name)
 	input.PublicKeyMaterial = []byte(key.Body)
@@ -116,7 +117,7 @@ func (c *EC2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error)
 }
 
 func (c *EC2Client) DeleteSSHKey(handle string) error {
-	c.log.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
+	c.logger.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
 	input := &ec2.DeleteKeyPairInput{}
 	input.KeyPairId = aws.String(handle)
 	_, err := c.ec2.DeleteKeyPair(c.context, input)
@@ -150,7 +151,7 @@ func (c *EC2Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, 
 }
 
 func (c *EC2Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
-	c.log.Trace().Msg("Run AWS EC2 instance")
+	c.logger.Trace().Msg("Run AWS EC2 instance")
 	encodedUserData := base64.StdEncoding.EncodeToString(userData)
 	input := &ec2.RunInstancesInput{
 		MaxCount:     aws.Int32(amount),
