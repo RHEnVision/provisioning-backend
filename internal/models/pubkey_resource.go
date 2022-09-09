@@ -26,6 +26,9 @@ type PubkeyResource struct {
 
 	// Resource handle (id). Format is provider-dependant. Required.
 	Handle string `db:"handle" json:"handle"`
+
+	// Region name. This is provider-dependant. Required for providers which don't have global public keys.
+	Region string `db:"region" json:"region"`
 }
 
 // FormattedTag returns Tag concatenated in a safe way for clouds. That means
