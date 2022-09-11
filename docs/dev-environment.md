@@ -75,7 +75,7 @@ The application integrates with multiple backend services which are required to 
 
 ## Sources
 
-[Sources](https://github.com/RedHatInsights/sources-api-go) is an authentication inventory. Since it only requires Go, Redis and Postgres, we created a shell script that automatically checks out sources from git, compiles it, installs and creates postgres database, seeds data and starts the sources application.
+[Sources](https://github.com/RedHatInsights/sources-api-go) is an authentication inventory. Since it only requires Go, Redis and Postgres, we created a shell script that automatically checks out sources from git, compiles it, installs and creates postgres database, seeds data and starts the Sources application.
 
 Follow [instructions](../scripts/README.sources) to perform the setup. Note that configuration via `sources.local.conf` is **required** before the setup procedure. This has been written and tested for Fedora Linux, in other operating systems perform all the commands manually.
 
