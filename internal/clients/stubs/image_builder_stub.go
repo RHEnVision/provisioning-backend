@@ -42,3 +42,7 @@ func (*ImageBuilderClientStub) Ready(ctx context.Context) error {
 func (mock *ImageBuilderClientStub) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
 	return "ami-0c830793775595d4b-test", nil
 }
+
+func (mock *ImageBuilderClientStub) GetGCPImageName(ctx context.Context, composeID string) (string, error) {
+	return "projects/red-hat-image-builder/global/images/composer-api-871fa36d-0b5b-4001-8c95-a11f751a4d66-test", nil
+}

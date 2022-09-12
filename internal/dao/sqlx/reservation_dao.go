@@ -14,6 +14,7 @@ import (
 const (
 	createReservation         = `INSERT INTO reservations (provider, account_id, steps, status) VALUES ($1, $2, $3, $4) RETURNING *`
 	createAwsDetail           = `INSERT INTO aws_reservation_details (reservation_id, pubkey_id, source_id, image_id, detail) VALUES ($1, $2, $3, $4, $5)`
+	createGcpDetail           = `INSERT INTO gcp_reservation_details (reservation_id, pubkey_id, source_id, image_id, detail) VALUES ($1, $2, $3, $4, $5)`
 	updateReservationStatus   = `UPDATE reservations SET status = $2, step = step + $3 WHERE id = $1 RETURNING *`
 	updateReservationIDForAWS = `UPDATE aws_reservation_details SET aws_reservation_id = $2 WHERE reservation_id = $1 RETURNING *`
 	finishReservationSuccess  = `UPDATE reservations SET success = true, finished_at = now() WHERE id = $1 RETURNING *`
@@ -30,6 +31,7 @@ type reservationDaoSqlx struct {
 	create                    *sqlx.Stmt
 	getById                   *sqlx.Stmt
 	createAwsDetail           *sqlx.Stmt
+	createGcpDetail           *sqlx.Stmt
 	updateStatus              *sqlx.Stmt
 	finishSuccess             *sqlx.Stmt
 	finishError               *sqlx.Stmt
@@ -56,6 +58,10 @@ func getReservationDao(ctx context.Context) (dao.ReservationDao, error) {
 	daoImpl.createAwsDetail, err = db.DB.PreparexContext(ctx, createAwsDetail)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, createAwsDetail, err)
+	}
+	daoImpl.createGcpDetail, err = db.DB.PreparexContext(ctx, createGcpDetail)
+	if err != nil {
+		return nil, NewPrepareStatementError(ctx, &daoImpl, createGcpDetail, err)
 	}
 	daoImpl.updateStatus, err = db.DB.PreparexContext(ctx, updateReservationStatus)
 	if err != nil {
@@ -130,6 +136,41 @@ func (di *reservationDaoSqlx) CreateAWS(ctx context.Context, reservation *models
 
 		query = createAwsDetail
 		stmt = di.createAwsDetail
+		res, err := stmt.ExecContext(ctx,
+			reservation.ID,
+			reservation.PubkeyID,
+			reservation.SourceID,
+			reservation.ImageID,
+			reservation.Detail)
+		if err != nil {
+			return NewExecUpdateError(ctx, di, query, err)
+		}
+		if rows, _ := res.RowsAffected(); rows != 1 {
+			return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
+		}
+		return nil
+	})
+	if err != nil {
+		return NewTransactionError(ctx, err)
+	}
+	return nil
+}
+
+func (di *reservationDaoSqlx) CreateGCP(ctx context.Context, reservation *models.GCPReservation) error {
+	err := dao.WithTransaction(ctx, func(tx *sqlx.Tx) error {
+		query := createReservation
+		stmt := di.create
+		err := stmt.GetContext(ctx, reservation,
+			reservation.Provider,
+			reservation.AccountID,
+			reservation.Steps,
+			reservation.Status)
+		if err != nil {
+			return NewGetError(ctx, di, query, err)
+		}
+
+		query = createGcpDetail
+		stmt = di.createGcpDetail
 		res, err := stmt.ExecContext(ctx,
 			reservation.ID,
 			reservation.PubkeyID,

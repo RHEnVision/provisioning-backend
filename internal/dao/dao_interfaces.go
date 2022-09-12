@@ -64,6 +64,9 @@ type ReservationDao interface {
 	// CreateAWS creates AWS reservation with details in a single transaction.
 	CreateAWS(ctx context.Context, reservation *models.AWSReservation) error
 
+	// CreateGCP creates GCP reservation with details in a single transaction.
+	CreateGCP(ctx context.Context, reservation *models.GCPReservation) error
+
 	// CreateInstance inserts instance associated to a reservation.
 	CreateInstance(ctx context.Context, reservation *models.ReservationInstance) error
 

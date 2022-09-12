@@ -35,6 +35,9 @@ type ImageBuilder interface {
 	// GetAWSAmi returns related AWS image AMI identifier
 	GetAWSAmi(ctx context.Context, composeID string) (string, error)
 
+	// GetGCPImageName returns GCP image name
+	GetGCPImageName(ctx context.Context, composeID string) (string, error)
+
 	// Ready returns readiness information
 	Ready(ctx context.Context) error
 }
@@ -56,4 +59,15 @@ type EC2 interface {
 
 	// RunInstances launches one or more instances
 	RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error)
+}
+
+// Caller is responsible for closing the client using Close() call
+var GetGCPClient func(ctx context.Context) (GCP, error)
+
+type GCP interface {
+	// Close performs close on the gRPC client
+	Close()
+
+	// RunInstances launches one or more instances
+	RunInstances(ctx context.Context, projectID string, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) error
 }

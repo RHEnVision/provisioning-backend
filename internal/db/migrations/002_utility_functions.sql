@@ -41,13 +41,13 @@ BEGIN
 END;
 $provider_type_azure$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
 
-CREATE OR REPLACE FUNCTION provider_type_gce()
+CREATE OR REPLACE FUNCTION provider_type_gcp()
   RETURNS INTEGER AS
-$provider_type_gce$
+$provider_type_gcp$
 BEGIN
   RETURN(SELECT 4);
 END;
-$provider_type_gce$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
+$provider_type_gcp$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
 
 -- Reset all sequences to the maximum value, works on empty tables too
 CREATE OR REPLACE FUNCTION reset_sequences(schema TEXT)

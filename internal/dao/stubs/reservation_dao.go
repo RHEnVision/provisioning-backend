@@ -39,6 +39,10 @@ func (stub *reservationDaoStub) CreateAWS(ctx context.Context, reservation *mode
 	return nil
 }
 
+func (stub *reservationDaoStub) CreateGCP(ctx context.Context, reservation *models.GCPReservation) error {
+	return nil
+}
+
 func (stub *reservationDaoStub) CreateNoop(ctx context.Context, reservation *models.NoopReservation) error {
 	return nil
 }
