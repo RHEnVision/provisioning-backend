@@ -1,6 +1,6 @@
 # `/api`
 
-OpenAPI/Swagger specs, JSON schema files, protocol definition files.
+OpenAPI 3.1 specs, JSON schema files, protocol definition files.
 
 Examples:
 
