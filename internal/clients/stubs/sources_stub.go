@@ -50,8 +50,8 @@ func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (strin
 	return "11", nil
 }
 
-func (mock *SourcesClientStub) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
-	var TestSourceData = []clients.Source{
+func (mock *SourcesClientStub) ListProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
+	var TestSourceData = []*clients.Source{
 		{
 			Id:           ptr.String("1"),
 			Name:         ptr.String("source1"),
@@ -65,7 +65,7 @@ func (mock *SourcesClientStub) ListProvisioningSources(ctx context.Context) (*[]
 			Uid:          ptr.String("31b5338b-685d-4056-ba39-d00b4d7f19cc"),
 		},
 	}
-	return &TestSourceData, nil
+	return TestSourceData, nil
 }
 
 // APIClient
