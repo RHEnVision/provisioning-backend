@@ -107,9 +107,15 @@ parameters:
   - description: Cpu limit of service
     name: CPU_LIMIT
     value: "1"
+  - description: Cpu request increment
+    name: CPU_REQUESTS
+    value: 100m
   - description: memory limit of service
     name: MEMORY_LIMIT
     value: 1Gi
+  - description: memory request increment
+    name: MEMORY_REQUESTS
+    value: 100Mi
   - name: MIN_REPLICAS
     value: "1"
   - description: Image tag
