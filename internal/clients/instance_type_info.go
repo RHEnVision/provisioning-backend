@@ -14,17 +14,17 @@ type InstanceTypeInfo struct {
 }
 
 func (iii *InstanceTypeInfo) InstanceTypesForZone(region, zone string, supported *bool) ([]*InstanceType, error) {
-	result := make([]*InstanceType, 0, 64)
 	names, err := iii.RegionalAvailability.NamesForZone(region, zone)
 	if err != nil {
 		return nil, err
 	}
-	for _, name := range names {
+	result := make([]*InstanceType, len(names))
+	for i, name := range names {
 		rt := iii.RegisteredTypes.Get(name)
 		if supported != nil && *supported != rt.Supported {
 			continue
 		}
-		result = append(result, rt)
+		result[i] = rt
 	}
 	return result, nil
 }

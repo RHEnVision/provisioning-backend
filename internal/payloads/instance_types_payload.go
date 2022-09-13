@@ -20,9 +20,9 @@ func (s *InstanceTypeResponse) Render(_ http.ResponseWriter, _ *http.Request) er
 }
 
 func NewListInstanceTypeResponse(sl []*clients.InstanceType) []render.Renderer {
-	list := make([]render.Renderer, 0, len(sl))
-	for _, instanceType := range sl {
-		list = append(list, &InstanceTypeResponse{instanceType})
+	list := make([]render.Renderer, len(sl))
+	for i, instanceType := range sl {
+		list[i] = &InstanceTypeResponse{instanceType}
 	}
 	return list
 }

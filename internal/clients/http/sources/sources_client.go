@@ -49,15 +49,6 @@ func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	return &sourcesClient{client: c, logger: logger}, nil
 }
 
-func copySource(src Source) clients.Source {
-	return clients.Source{
-		Id:           src.Id,
-		Name:         src.Name,
-		SourceTypeId: src.SourceTypeId,
-		Uid:          src.Uid,
-	}
-}
-
 type appType struct {
 	Id          string `json:"id"`
 	Name        string `json:"name"`
@@ -83,7 +74,7 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 	return nil
 }
 
-func (c *sourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
+func (c *sourcesClient) ListProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
 	c.logger.Trace().Msg("Listing provisioning sources")
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
@@ -106,11 +97,17 @@ func (c *sourcesClient) ListProvisioningSources(ctx context.Context) (*[]clients
 		return nil, fmt.Errorf("list provisioning sources call: %w", err)
 	}
 
-	result := make([]clients.Source, 0, len(*resp.JSON200.Data))
-	for _, s := range *resp.JSON200.Data {
-		result = append(result, copySource(s))
+	result := make([]*clients.Source, len(*resp.JSON200.Data))
+	for i, src := range *resp.JSON200.Data {
+		newSrc := clients.Source{
+			Id:           src.Id,
+			Name:         src.Name,
+			SourceTypeId: src.SourceTypeId,
+			Uid:          src.Uid,
+		}
+		result[i] = &newSrc
 	}
-	return &result, nil
+	return result, nil
 }
 
 func (c *sourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string, error) {
@@ -209,10 +206,10 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 
 func filterSourceAuthentications(authentications *[]AuthenticationRead) (AuthenticationRead, error) {
 	auths := *authentications
-	list := make([]AuthenticationRead, 0, len(auths))
-	for _, auth := range auths {
+	list := make([]AuthenticationRead, len(auths))
+	for i, auth := range auths {
 		if *auth.ResourceType == "Application" {
-			list = append(list, auth)
+			list[i] = auth
 		}
 	}
 	// Assumption: each source has one authentication linked to it

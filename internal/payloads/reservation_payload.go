@@ -138,8 +138,8 @@ func NewNoopReservationResponse(reservation *models.NoopReservation) render.Rend
 }
 
 func NewReservationListResponse(reservations []*models.Reservation) []render.Renderer {
-	list := make([]render.Renderer, 0, len(reservations))
-	for _, reservation := range reservations {
+	list := make([]render.Renderer, len(reservations))
+	for i, reservation := range reservations {
 		var finishedAt *time.Time
 		if reservation.FinishedAt.Valid {
 			finishedAt = &reservation.FinishedAt.Time
@@ -148,7 +148,7 @@ func NewReservationListResponse(reservations []*models.Reservation) []render.Ren
 		if reservation.Success.Valid {
 			success = &reservation.Success.Bool
 		}
-		list = append(list, &GenericReservationResponsePayload{
+		list[i] = &GenericReservationResponsePayload{
 			ID:         reservation.ID,
 			Provider:   int(reservation.Provider),
 			CreatedAt:  reservation.CreatedAt,
@@ -158,7 +158,7 @@ func NewReservationListResponse(reservations []*models.Reservation) []render.Ren
 			Steps:      reservation.Steps,
 			Step:       reservation.Step,
 			Error:      reservation.Error,
-		})
+		}
 	}
 	return list
 }
