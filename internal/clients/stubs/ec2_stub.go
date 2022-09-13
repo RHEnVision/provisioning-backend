@@ -5,8 +5,8 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
-	"github.com/aws/smithy-go/ptr"
 )
 
 type ec2CtxKeyType string
@@ -46,11 +46,11 @@ func (mock *EC2ClientStub) ListInstanceTypesWithPaginator() ([]types.InstanceTyp
 		{
 			InstanceType: types.InstanceTypeA12xlarge,
 			VCpuInfo: &types.VCpuInfo{
-				DefaultCores: ptr.Int32(2),
-				DefaultVCpus: ptr.Int32(2),
+				DefaultCores: ptr.ToInt32(2),
+				DefaultVCpus: ptr.ToInt32(2),
 			},
 			MemoryInfo: &types.MemoryInfo{
-				SizeInMiB: ptr.Int64(22),
+				SizeInMiB: ptr.ToInt64(22),
 			},
 			ProcessorInfo: &types.ProcessorInfo{
 				SupportedArchitectures: []types.ArchitectureType{types.ArchitectureTypeX8664, types.ArchitectureTypeArm64},
@@ -59,11 +59,11 @@ func (mock *EC2ClientStub) ListInstanceTypesWithPaginator() ([]types.InstanceTyp
 		{
 			InstanceType: types.InstanceTypeC5Xlarge,
 			VCpuInfo: &types.VCpuInfo{
-				DefaultCores: ptr.Int32(2),
-				DefaultVCpus: ptr.Int32(2),
+				DefaultCores: ptr.ToInt32(2),
+				DefaultVCpus: ptr.ToInt32(2),
 			},
 			MemoryInfo: &types.MemoryInfo{
-				SizeInMiB: ptr.Int64(22),
+				SizeInMiB: ptr.ToInt64(22),
 			},
 			ProcessorInfo: &types.ProcessorInfo{
 				SupportedArchitectures: []types.ArchitectureType{types.ArchitectureTypeX8664},

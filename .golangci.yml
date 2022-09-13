@@ -11,11 +11,15 @@ linters:
     - sql
     - module
     - unused
+    - format
+    - import
   enable:
     - predeclared
   disable:
     - maligned # deprecated by fieldalignment
     - scopelint # deprecated by exportloopref
+    - gci # too strict
+    - gofumpt # too strict
 linters-settings:
   govet:
     check-shadowing: true
