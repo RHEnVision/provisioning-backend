@@ -9,7 +9,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
-	"github.com/aws/smithy-go/ptr"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	rhidentity "github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
@@ -20,7 +20,7 @@ const (
 	DefaultAccountNumber = "1"
 )
 
-var xRhId = newIdentity(DefaultOrgId, ptr.String(DefaultAccountNumber))
+var xRhId = newIdentity(DefaultOrgId, ptr.To(DefaultAccountNumber))
 
 func AddIdentityHeader(t *testing.T, req *http.Request) *http.Request {
 	req.Header.Add("X-Rh-Identity", setUpValidIdentity(t))

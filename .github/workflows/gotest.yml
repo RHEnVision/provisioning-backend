@@ -5,19 +5,8 @@ on:
       - main
   pull_request:
 jobs:
-  formatting:
-    name: go fmt and goimports
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          go-version: "1.18"
-      - uses: Jerome1337/gofmt-action@v1.0.4
-      - uses: Jerome1337/goimports-action@v1.0.3
-
   linting:
-    name: golangci-lint
+    name: code format, imports and linters
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

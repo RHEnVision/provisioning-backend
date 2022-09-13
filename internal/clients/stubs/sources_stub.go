@@ -6,7 +6,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
-	"github.com/aws/smithy-go/ptr"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 )
 
 type sourcesCtxKeyType string
@@ -53,16 +53,16 @@ func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (strin
 func (mock *SourcesClientStub) ListProvisioningSources(ctx context.Context) (*[]clients.Source, error) {
 	var TestSourceData = []clients.Source{
 		{
-			Id:           ptr.String("1"),
-			Name:         ptr.String("source1"),
-			SourceTypeId: ptr.String("1"),
-			Uid:          ptr.String("5eebe172-7baa-4280-823f-19e597d091e9"),
+			Id:           ptr.To("1"),
+			Name:         ptr.To("source1"),
+			SourceTypeId: ptr.To("1"),
+			Uid:          ptr.To("5eebe172-7baa-4280-823f-19e597d091e9"),
 		},
 		{
-			Id:           ptr.String("2"),
-			Name:         ptr.String("source2"),
-			SourceTypeId: ptr.String("2"),
-			Uid:          ptr.String("31b5338b-685d-4056-ba39-d00b4d7f19cc"),
+			Id:           ptr.To("2"),
+			Name:         ptr.To("source2"),
+			SourceTypeId: ptr.To("2"),
+			Uid:          ptr.To("31b5338b-685d-4056-ba39-d00b4d7f19cc"),
 		},
 	}
 	return &TestSourceData, nil
