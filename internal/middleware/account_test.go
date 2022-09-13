@@ -13,8 +13,8 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
-	"github.com/aws/smithy-go/ptr"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,7 +39,7 @@ func TestAccountMiddleware(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 	})
 	t.Run("create non-existing account", func(t *testing.T) {
-		ctx := identity.WithCustomIdentity(t, context.Background(), "124", ptr.String("12"))
+		ctx := identity.WithCustomIdentity(t, context.Background(), "124", ptr.To("12"))
 		ctx = stubs.WithAccountDaoOne(ctx)
 
 		req, err := http.NewRequestWithContext(ctx, "GET", "/test", nil)
@@ -92,7 +92,7 @@ func TestAccountMiddleware(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 	})
 	t.Run("create non-existing null account", func(t *testing.T) {
-		ctx := identity.WithCustomIdentity(t, context.Background(), "124", ptr.String("12"))
+		ctx := identity.WithCustomIdentity(t, context.Background(), "124", ptr.To("12"))
 		ctx = stubs.WithAccountDaoNull(ctx)
 
 		req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/v1/pubkeys", nil)
