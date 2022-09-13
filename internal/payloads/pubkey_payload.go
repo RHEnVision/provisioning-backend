@@ -29,9 +29,9 @@ func NewPubkeyResponse(pubkey *models.Pubkey) render.Renderer {
 }
 
 func NewPubkeyListResponse(pubkeys []*models.Pubkey) []render.Renderer {
-	list := make([]render.Renderer, 0, len(pubkeys))
-	for _, pubkey := range pubkeys {
-		list = append(list, &PubkeyResponse{Pubkey: pubkey})
+	list := make([]render.Renderer, len(pubkeys))
+	for i, pubkey := range pubkeys {
+		list[i] = &PubkeyResponse{Pubkey: pubkey}
 	}
 	return list
 }

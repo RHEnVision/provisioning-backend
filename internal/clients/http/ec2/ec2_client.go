@@ -190,9 +190,9 @@ func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32
 
 func (c *ec2Client) parseRunInstancesResponse(respAWS *ec2.RunInstancesOutput) []*string {
 	instances := respAWS.Instances
-	list := make([]*string, 0, len(instances))
-	for _, instance := range instances {
-		list = append(list, instance.InstanceId)
+	list := make([]*string, len(instances))
+	for i, instance := range instances {
+		list[i] = instance.InstanceId
 	}
 	return list
 }

@@ -22,11 +22,10 @@ func (s *SourceResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
-func NewListSourcesResponse(sl *[]clients.Source) []render.Renderer {
-	sList := *sl
-	list := make([]render.Renderer, 0, len(sList))
-	for i := range sList {
-		list = append(list, &SourceResponse{Source: &sList[i]})
+func NewListSourcesResponse(sourceList []*clients.Source) []render.Renderer {
+	list := make([]render.Renderer, len(sourceList))
+	for i, source := range sourceList {
+		list[i] = &SourceResponse{Source: source}
 	}
 	return list
 }
