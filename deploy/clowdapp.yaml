@@ -69,13 +69,13 @@ objects:
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-aws-acc
-                    key: key
+                    key: aws_access_key_id
                     optional: false
               - name: AWS_SECRET
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-aws-acc
-                    key: secret
+                    key: aws_secret_access_key
                     optional: false
               - name: AWS_INSTANCE_PREFIX
                 value: ${AWS_INSTANCE_PREFIX}
