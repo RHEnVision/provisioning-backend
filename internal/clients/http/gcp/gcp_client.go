@@ -9,7 +9,7 @@ import (
 	compute "cloud.google.com/go/compute/apiv1"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-	"github.com/aws/smithy-go/ptr"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/rs/zerolog"
 )
 
@@ -48,30 +48,30 @@ func (c *gcpClient) RunInstances(ctx context.Context, projectID string, namePatt
 		Zone:    zone,
 		BulkInsertInstanceResourceResource: &computepb.BulkInsertInstanceResource{
 			NamePattern: namePattern,
-			Count:       ptr.Int64(amount),
-			MinCount:    ptr.Int64(amount),
+			Count:       &amount,
+			MinCount:    &amount,
 			InstanceProperties: &computepb.InstanceProperties{
 				Disks: []*computepb.AttachedDisk{
 					{
 						InitializeParams: &computepb.AttachedDiskInitializeParams{
 							SourceImage: imageName,
 						},
-						AutoDelete: ptr.Bool(true),
-						Boot:       ptr.Bool(true),
-						Type:       ptr.String(computepb.AttachedDisk_PERSISTENT.String()),
+						AutoDelete: ptr.To(true),
+						Boot:       ptr.To(true),
+						Type:       ptr.To(computepb.AttachedDisk_PERSISTENT.String()),
 					},
 				},
-				MachineType: ptr.String(machineType),
+				MachineType: ptr.To(machineType),
 				NetworkInterfaces: []*computepb.NetworkInterface{
 					{
-						Name: ptr.String("global/networks/default"),
+						Name: ptr.To("global/networks/default"),
 					},
 				},
 				Metadata: &computepb.Metadata{
 					Items: []*computepb.Items{
 						{
-							Key:   ptr.String("ssh-keys"),
-							Value: ptr.String(keyBody),
+							Key:   ptr.To("ssh-keys"),
+							Value: ptr.To(keyBody),
 						},
 					},
 				},

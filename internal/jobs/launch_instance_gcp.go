@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/aws/smithy-go/ptr"
 	"github.com/lzap/dejq"
 )
 
@@ -83,7 +83,7 @@ func handleLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArg
 
 	defer gcpClient.Close()
 
-	err = gcpClient.RunInstances(ctx, args.ProjectID, ptr.String("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
+	err = gcpClient.RunInstances(ctx, args.ProjectID, ptr.To("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
 	if err != nil {
 		return fmt.Errorf("cannot run instances for gcp client: %w", err)
 	}
