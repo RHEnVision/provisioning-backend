@@ -27,7 +27,7 @@ func initEnvironment() {
 	config.Initialize()
 	err := db.Initialize("integration")
 	if err != nil {
-		panic(fmt.Errorf("cannot connect to database, create cmd/dao_tests/local.yaml: %v", err))
+		panic(fmt.Errorf("cannot connect to database, create configs/local.integration.yaml: %v", err))
 	}
 }
 
