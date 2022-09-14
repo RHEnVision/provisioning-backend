@@ -12,9 +12,9 @@ func init() {
 	// Database
 	parser.Viper.SetDefault("database.host", "localhost")
 	parser.Viper.SetDefault("database.port", 5432)
-	parser.Viper.SetDefault("database.name", "provisioning")
-	parser.Viper.SetDefault("database.user", "provisioning")
-	parser.Viper.SetDefault("database.password", nil)
+	parser.Viper.SetDefault("database.name", "")
+	parser.Viper.SetDefault("database.user", "")
+	parser.Viper.SetDefault("database.password", "")
 	parser.Viper.SetDefault("database.loglevel", 1)
 
 	// Logging
