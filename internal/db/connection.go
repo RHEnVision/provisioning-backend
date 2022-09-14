@@ -13,10 +13,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var (
-	// DB is the main connection pool (sqlx on top of database/sql connection pool)
-	DB *sqlx.DB
-)
+// DB is the main connection pool (sqlx on top of database/sql connection pool)
+var DB *sqlx.DB
 
 func GetConnectionString(prefix, schema string) string {
 	if len(config.Database.Password) > 0 {
@@ -37,8 +35,8 @@ func GetConnectionString(prefix, schema string) string {
 			config.Database.Name,
 			schema)
 	}
-
 }
+
 func Initialize(schema string) error {
 	var err error
 	if schema == "" {

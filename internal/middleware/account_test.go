@@ -31,7 +31,7 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var acc = ctxval.AccountId(r.Context())
+			acc := ctxval.AccountId(r.Context())
 			assert.NotNil(t, acc, "account id was not set")
 		})
 
@@ -50,7 +50,7 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var accId = ctxval.AccountId(r.Context())
+			accId := ctxval.AccountId(r.Context())
 			assert.NotNil(t, accId, "account id was not set")
 			accDao, innerErr := dao.GetAccountDao(r.Context())
 			if innerErr != nil {
@@ -84,7 +84,7 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var acc = ctxval.AccountId(r.Context())
+			acc := ctxval.AccountId(r.Context())
 			assert.NotNil(t, acc, "account id was not set")
 		})
 
@@ -101,7 +101,7 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var accId = ctxval.AccountId(r.Context())
+			accId := ctxval.AccountId(r.Context())
 			assert.NotNil(t, accId, "account id was not set")
 			accDao, innerErr := dao.GetAccountDao(r.Context())
 			if innerErr != nil {

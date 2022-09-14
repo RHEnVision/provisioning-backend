@@ -11,10 +11,12 @@ import (
 	"github.com/go-chi/render"
 )
 
-var UnknownProviderTypeError = errors.New("unknown provider type parameter")
-var ProviderTypeNotImplementedError = errors.New("provider type not yet implemented")
-var InvalidRequestPubkeyNewError = errors.New("provide either existing (via NewName/NewBody) or new pubkey (ExistingID)")
-var InvalidRequestPubkeyMissingError = errors.New("provide both NewName and NewBody for pubkey")
+var (
+	UnknownProviderTypeError         = errors.New("unknown provider type parameter")
+	ProviderTypeNotImplementedError  = errors.New("provider type not yet implemented")
+	InvalidRequestPubkeyNewError     = errors.New("provide either existing (via NewName/NewBody) or new pubkey (ExistingID)")
+	InvalidRequestPubkeyMissingError = errors.New("provide both NewName and NewBody for pubkey")
+)
 
 // CreateReservation dispatches requests to type provider specific handlers
 func CreateReservation(w http.ResponseWriter, r *http.Request) {

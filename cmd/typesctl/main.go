@@ -18,12 +18,12 @@ func main() {
 	}
 	helpProviders := strings.Join(validProviders, ",")
 
-	var providerFlag = flag.String("provider", "", fmt.Sprintf("provider: [%s] (required)", helpProviders))
-	var printAllFlag = flag.Bool("all", false, "print everything (long output)")
-	var printTypeFlag = flag.String("type", "", "print specific instance type detail (or 'all')")
-	var printRegionFlag = flag.String("region", "", "print instance type names for a region (or 'all')")
-	var printZoneFlag = flag.String("zone", "", "print instance type names for a zone (region is needed too)")
-	var generateFlag = flag.Bool("generate", false, "generate new type information")
+	providerFlag := flag.String("provider", "", fmt.Sprintf("provider: [%s] (required)", helpProviders))
+	printAllFlag := flag.Bool("all", false, "print everything (long output)")
+	printTypeFlag := flag.String("type", "", "print specific instance type detail (or 'all')")
+	printRegionFlag := flag.String("region", "", "print instance type names for a region (or 'all')")
+	printZoneFlag := flag.String("zone", "", "print instance type names for a zone (region is needed too)")
+	generateFlag := flag.Bool("generate", false, "generate new type information")
 	flag.Parse()
 
 	provider, ok := providers.TypeProviders[strings.ToLower(*providerFlag)]

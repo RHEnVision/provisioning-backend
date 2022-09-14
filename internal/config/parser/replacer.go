@@ -4,8 +4,10 @@ import (
 	"strings"
 )
 
-var knownMap map[string]string
-var unknownMap map[string]bool
+var (
+	knownMap   map[string]string
+	unknownMap map[string]bool
+)
 
 func init() {
 	knownMap = make(map[string]string)

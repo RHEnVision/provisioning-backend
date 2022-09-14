@@ -94,7 +94,7 @@ func (di *accountDaoSqlx) GetById(ctx context.Context, id int64) (*models.Accoun
 }
 
 func (di *accountDaoSqlx) GetOrCreateByIdentity(ctx context.Context, orgId string, accountNumber string) (*models.Account, error) {
-	var acc, err = di.GetByOrgId(ctx, orgId)
+	acc, err := di.GetByOrgId(ctx, orgId)
 	var norows dao.NoRowsError
 	if err == nil {
 		return acc, nil

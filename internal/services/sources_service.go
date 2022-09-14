@@ -23,5 +23,4 @@ func ListSources(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "list sources", err))
 		return
 	}
-
 }

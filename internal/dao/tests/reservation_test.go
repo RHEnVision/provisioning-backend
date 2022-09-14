@@ -127,7 +127,6 @@ func TestUpdateReservationIDForAWS(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, "2", awsReservationId)
-
 }
 
 func TestUpdateStatusReservation(t *testing.T) {
