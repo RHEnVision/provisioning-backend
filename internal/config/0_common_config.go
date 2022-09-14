@@ -1,6 +1,10 @@
 package config
 
-import "github.com/RHEnVision/provisioning-backend/internal/config/parser"
+import (
+	"time"
+
+	"github.com/RHEnVision/provisioning-backend/internal/config/parser"
+)
 
 // Common initialization must be called first.
 func init() {
@@ -8,6 +12,12 @@ func init() {
 	parser.Viper.SetDefault("app.name", "provisioning")
 	parser.Viper.SetDefault("app.port", 8000)
 	parser.Viper.SetDefault("app.version", "v1")
+
+	// App Cache
+	parser.Viper.SetDefault("app.cache.expiration", 1*time.Hour)
+	parser.Viper.SetDefault("app.cache.cleanupInterval", 5*time.Minute)
+	parser.Viper.SetDefault("app.cache.typeAppId", true)
+	parser.Viper.SetDefault("app.cache.account", true)
 
 	// Database
 	parser.Viper.SetDefault("database.host", "localhost")

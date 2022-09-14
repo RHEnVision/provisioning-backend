@@ -24,6 +24,12 @@ var config struct {
 		Port        int
 		Version     string
 		Compression bool
+		Cache       struct {
+			Expiration      time.Duration
+			CleanupInterval time.Duration
+			AppTypeId       bool
+			Account         bool
+		}
 	}
 	Database struct {
 		Host        string

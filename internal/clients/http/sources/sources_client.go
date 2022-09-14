@@ -162,14 +162,14 @@ func (c *sourcesClient) GetArn(ctx context.Context, sourceId clients.ID) (string
 }
 
 func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
-	if appTypeId, ok := cache.AppTypeId(); ok {
+	if appTypeId, ok := cache.FindAppTypeId(ctx); ok {
 		return appTypeId, nil
 	}
 	appTypeId, err := c.loadAppId(ctx)
 	if err != nil {
 		return "", err
 	}
-	cache.SetAppTypeId(appTypeId)
+	cache.SetAppTypeId(ctx, appTypeId)
 	return appTypeId, nil
 }
 
