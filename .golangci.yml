@@ -10,7 +10,6 @@ linters:
     - performance
     - sql
     - module
-    - unused
     - format
     - import
   enable:
@@ -20,9 +19,13 @@ linters:
     - scopelint # deprecated by exportloopref
     - gci # too strict
     - gofumpt # too strict
+    - contextcheck # too restrictive
 linters-settings:
   govet:
     check-shadowing: true
+  gosec:
+    excludes:
+      - G112 # slowloris attack - TODO (easyfix)
 issues:
   exclude-rules:
     # If a Stmt is prepared on a DB, it will remain usable for the lifetime of the DB. When the Stmt needs to execute
