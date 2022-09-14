@@ -27,6 +27,15 @@ logging:
 app:
   # HTTP transparent gzip compression
   compression: false
+  # Application-level clache
+  cache:
+    # Item expiration time (1 hour)
+    #expiration:
+    # Cleanup interval (5 minutes)
+    #cleanupInterval:
+    # Individual application cache features
+    typeAppId: true
+    account: true
 
 # AWS service account credentials
 aws:
