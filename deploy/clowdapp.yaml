@@ -104,12 +104,18 @@ parameters:
   - description: ClowdEnv Name
     name: ENV_NAME
     required: true
+  - name: CPU_REQUEST
+    description: CPU request per container
+    value: "200m"
   - description: Cpu limit of service
     name: CPU_LIMIT
     value: "1"
+  - name: MEMORY_REQUEST
+    description: Memory request per container
+    value: "256Mi"
   - description: memory limit of service
     name: MEMORY_LIMIT
-    value: 1Gi
+    value: "1Gi"
   - name: MIN_REPLICAS
     value: "1"
   - description: Image tag
