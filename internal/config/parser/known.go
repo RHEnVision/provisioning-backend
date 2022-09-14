@@ -5,14 +5,21 @@ package parser
 // library.
 //
 // The second column is optional. When not set, environment variable is the same,
-// except "." are replaced with "_". Otherwise the value from the second column
+// except "." are replaced with "_". Otherwise, the value from the second column
 // is used. Examples:
 //
 // APP_NAME (implicit from APP.NAME)
 // AWS_INSTANCE_PREFIX (explicitly set)
+//
+// This is not great solution, but the alternative would be to remove viper dependency.
 var known = [][]string{
 	{"APP", ""},
 	{"APP.NAME", ""},
+	{"APP.CACHE", ""},
+	{"APP.CACHE.ACCOUNT", ""},
+	{"APP.CACHE.TYPEAPPID", "APP.CACHE.TYPE_APP_ID"},
+	{"APP.CACHE.EXPIRATION", ""},
+	{"APP.CACHE.CLEANUPINTERVAL", "APP_CACHE_CLEANUP_INTERVAL"},
 	{"APP.PORT", ""},
 	{"APP.VERSION", ""},
 	{"APP.COMPRESSION", ""},

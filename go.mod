@@ -23,7 +23,6 @@ require (
 	github.com/go-openapi/runtime v0.24.1
 	github.com/go-playground/mold/v4 v4.2.0
 	github.com/go-playground/validator/v10 v10.11.0
-	github.com/hashicorp/golang-lru v0.5.4
 	github.com/jackc/pgconn v1.13.0
 	github.com/jackc/pgx/v4 v4.17.1
 	github.com/jackc/tern v1.13.0
