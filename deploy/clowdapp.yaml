@@ -95,7 +95,7 @@ objects:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
       database:
-        name: provisioning_backend
+        name: provisioning-backend
         version: 13
       dependencies:
         - sources-api
