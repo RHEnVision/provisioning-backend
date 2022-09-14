@@ -10,7 +10,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	awsCfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -73,8 +73,8 @@ func getStsAssumedCredentials(ctx context.Context, logger zerolog.Logger, arn st
 	}
 
 	output, err := stsClient.AssumeRole(ctx, &sts.AssumeRoleInput{
-		RoleArn:         aws.String(arn),
-		RoleSessionName: aws.String("name"),
+		RoleArn:         ptr.To(arn),
+		RoleSessionName: ptr.To("name"),
 	})
 
 	if err != nil {
@@ -89,15 +89,15 @@ func getStsAssumedCredentials(ctx context.Context, logger zerolog.Logger, arn st
 func (c *ec2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error) {
 	c.logger.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
 	input := &ec2.ImportKeyPairInput{}
-	input.KeyName = aws.String(key.Name)
+	input.KeyName = ptr.To(key.Name)
 	input.PublicKeyMaterial = []byte(key.Body)
 	input.TagSpecifications = []types.TagSpecification{
 		{
 			ResourceType: types.ResourceTypeKeyPair,
 			Tags: []types.Tag{
 				{
-					Key:   aws.String("rhhc:id"),
-					Value: aws.String(tag),
+					Key:   ptr.To("rhhc:id"),
+					Value: ptr.To(tag),
 				},
 			},
 		},
@@ -113,13 +113,13 @@ func (c *ec2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error)
 		return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
 	}
 
-	return aws.ToString(output.KeyPairId), nil
+	return ptr.From(output.KeyPairId), nil
 }
 
 func (c *ec2Client) DeleteSSHKey(handle string) error {
 	c.logger.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
 	input := &ec2.DeleteKeyPairInput{}
-	input.KeyPairId = aws.String(handle)
+	input.KeyPairId = ptr.To(handle)
 	_, err := c.ec2.DeleteKeyPair(c.context, input)
 
 	if err != nil {
@@ -133,7 +133,7 @@ func (c *ec2Client) DeleteSSHKey(handle string) error {
 }
 
 func (c *ec2Client) ListInstanceTypesWithPaginator() ([]types.InstanceTypeInfo, error) {
-	input := &ec2.DescribeInstanceTypesInput{MaxResults: aws.Int32(100)}
+	input := &ec2.DescribeInstanceTypesInput{MaxResults: ptr.ToInt32(100)}
 	pag := ec2.NewDescribeInstanceTypesPaginator(c.ec2, input)
 
 	res := make([]types.InstanceTypeInfo, 0, 128)
@@ -154,10 +154,10 @@ func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32
 	c.logger.Trace().Msg("Run AWS EC2 instance")
 	encodedUserData := base64.StdEncoding.EncodeToString(userData)
 	input := &ec2.RunInstancesInput{
-		MaxCount:     aws.Int32(amount),
-		MinCount:     aws.Int32(amount),
+		MaxCount:     ptr.To(amount),
+		MinCount:     ptr.To(amount),
 		InstanceType: instanceType,
-		ImageId:      aws.String(AMI),
+		ImageId:      ptr.To(AMI),
 		KeyName:      &keyName,
 		UserData:     &encodedUserData,
 	}
@@ -167,8 +167,8 @@ func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32
 				ResourceType: types.ResourceTypeInstance,
 				Tags: []types.Tag{
 					{
-						Key:   aws.String("Name"),
-						Value: aws.String(*name),
+						Key:   ptr.To("Name"),
+						Value: name,
 					},
 				},
 			},
