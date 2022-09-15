@@ -9,8 +9,10 @@ HTTP Clients
   validate-clients      Compare generated client code with git
 
 Code quality
-  fmt                   Format the project using `go fmt`
+  format                Format Go source code using `go fmt`
+  imports               Rearrange imports using `goimports`
   lint                  Run Go language linter `golangci-lint`
+  check-migrations      Check migration files for changes
 
 Building
   build                 Build all binaries

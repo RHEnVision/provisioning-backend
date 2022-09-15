@@ -1,5 +1,7 @@
 ##@ Database migrations
 
+MIGRATION_NAME ?= unnamed
+
 .PHONY: migrate
 migrate: ## Run database migration
 	go run ./cmd/pbmigrate
@@ -11,5 +13,5 @@ purgedb: ## Delete database (dangerous!)
 .PHONY: generate-migration
 MIGRATION_NAME?=unnamed
 generate-migration: ## Generate new migration file, use MIGRATION_NAME=name
-	migrate create -ext sql -dir internal/db/migrations -seq -digits 3 $(MIGRATION_NAME)
+	tern new -m internal/db/migrations $(MIGRATION_NAME)
 
