@@ -93,9 +93,9 @@ func main() {
 
 	jsonB, err := json.MarshalIndent(doc, "", "  ")
 	checkErr(err)
-	err = ioutil.WriteFile("./api/openapi.gen.json", jsonB, 0644) // #nosec G306
+	err = ioutil.WriteFile("./api/openapi.gen.json", jsonB, 0o644) // #nosec G306
 	checkErr(err)
-	err = ioutil.WriteFile("./api/openapi.gen.yaml", b.Bytes(), 0644) // #nosec G306
+	err = ioutil.WriteFile("./api/openapi.gen.yaml", b.Bytes(), 0o644) // #nosec G306
 	checkErr(err)
 	fmt.Println("Spec was generated successfully")
 }

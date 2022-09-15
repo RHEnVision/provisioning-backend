@@ -18,7 +18,6 @@ linters:
     - maligned # deprecated by fieldalignment
     - scopelint # deprecated by exportloopref
     - gci # too strict
-    - gofumpt # too strict
     - contextcheck # too restrictive
 linters-settings:
   govet:

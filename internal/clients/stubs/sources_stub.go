@@ -51,7 +51,7 @@ func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (strin
 }
 
 func (mock *SourcesClientStub) ListProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
-	var TestSourceData = []*clients.Source{
+	TestSourceData := []*clients.Source{
 		{
 			Id:           ptr.To("1"),
 			Name:         ptr.To("source1"),
@@ -83,6 +83,7 @@ func (mock *SourcesIntegrationStub) ShowSourceWithResponse(ctx context.Context, 
 		},
 	}, nil
 }
+
 func (mock *SourcesIntegrationStub) ListApplicationTypeSourcesWithResponse(ctx context.Context, appTypeId sources.ID, params *sources.ListApplicationTypeSourcesParams, reqEditors ...sources.RequestEditorFn) (*sources.ListApplicationTypeSourcesResponse, error) {
 	return &sources.ListApplicationTypeSourcesResponse{
 		JSON200: &sources.SourcesCollection{

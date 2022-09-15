@@ -96,7 +96,6 @@ func (di *pubkeyResourceDaoSqlx) UnscopedDelete(ctx context.Context, id int64) e
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
 		return NewDeleteMismatchAffectedError(ctx, di, 1, rows)
-
 	}
 	return nil
 }

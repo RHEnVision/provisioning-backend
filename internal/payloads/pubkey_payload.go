@@ -11,8 +11,10 @@ import (
 type PubkeyPayload struct {
 	*models.Pubkey
 }
-type PubkeyRequest PubkeyPayload
-type PubkeyResponse PubkeyPayload
+type (
+	PubkeyRequest  PubkeyPayload
+	PubkeyResponse PubkeyPayload
+)
 
 func (p *PubkeyRequest) Bind(_ *http.Request) error {
 	// Fingerprint is read-only field

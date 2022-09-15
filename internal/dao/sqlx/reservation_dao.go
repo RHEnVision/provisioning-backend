@@ -219,7 +219,6 @@ func (di *reservationDaoSqlx) UpdateStatus(ctx context.Context, id int64, status
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
 		return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
-
 	}
 	return nil
 }
@@ -234,7 +233,6 @@ func (di *reservationDaoSqlx) UpdateReservationIDForAWS(ctx context.Context, id 
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
 		return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
-
 	}
 	return nil
 }
@@ -249,7 +247,6 @@ func (di *reservationDaoSqlx) FinishWithSuccess(ctx context.Context, id int64) e
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
 		return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
-
 	}
 	return nil
 }
@@ -264,7 +261,6 @@ func (di *reservationDaoSqlx) FinishWithError(ctx context.Context, id int64, err
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
 		return NewUpdateMismatchAffectedError(ctx, di, 1, rows)
-
 	}
 	return nil
 }
@@ -279,7 +275,6 @@ func (di *reservationDaoSqlx) Delete(ctx context.Context, id int64) error {
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
 		return NewDeleteMismatchAffectedError(ctx, di, 1, rows)
-
 	}
 	return nil
 }
