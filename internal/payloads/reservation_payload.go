@@ -70,6 +70,34 @@ type AWSReservationResponsePayload struct {
 	PowerOff bool `json:"poweroff"`
 }
 
+type GCPReservationResponsePayload struct {
+	ID int64 `json:"reservation_id"`
+
+	// Pubkey ID.
+	PubkeyID int64 `json:"pubkey_id"`
+
+	// Source ID.
+	SourceID string `json:"source_id"`
+
+	// GCP zone.
+	Zone string `json:"zone"`
+
+	// GCP Machine type.
+	MachineType string `json:"machine_type"`
+
+	// Amount of instances to provision of type: Instance type.
+	Amount int64 `json:"amount"`
+
+	// The ID of the image from which the instance is created.
+	ImageID string `json:"image_id"`
+
+	// The name of the gcp operation which was created.
+	GCPOperationName string `json:"gcp_operation_name,omitempty"`
+
+	// Immediately power off the system after initialization
+	PowerOff bool `json:"poweroff"`
+}
+
 type NoopReservationResponsePayload struct {
 	ID int64 `json:"reservation_id"`
 }
@@ -100,6 +128,29 @@ type AWSReservationRequestPayload struct {
 	PowerOff bool `json:"poweroff"`
 }
 
+type GCPReservationRequestPayload struct {
+	// Pubkey ID.
+	PubkeyID int64 `json:"pubkey_id"`
+
+	// Source ID.
+	SourceID string `json:"source_id"`
+
+	// GCP zone.
+	Zone string `json:"zone"`
+
+	// GCP Machine type.
+	MachineType string `json:"instance_type"`
+
+	// Amount of instances to provision of type: Instance type.
+	Amount int64 ` json:"amount"`
+
+	// Image Builder UUID of the image that should be launched.
+	ImageID string `json:"image_id"`
+
+	// Immediately power off the system after initialization
+	PowerOff bool `json:"poweroff"`
+}
+
 func (p *GenericReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
@@ -112,12 +163,20 @@ func (p *AWSReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Re
 	return nil
 }
 
+func (p *GCPReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
+	return nil
+}
+
 func (p *NoopReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
 func NewReservationResponse(reservation *models.Reservation) render.Renderer {
 	return reservationResponseMapper(reservation)
+}
+
+func (p *GCPReservationRequestPayload) Bind(_ *http.Request) error {
+	return nil
 }
 
 func NewAWSReservationResponse(reservation *models.AWSReservation) render.Renderer {
@@ -130,6 +189,21 @@ func NewAWSReservationResponse(reservation *models.AWSReservation) render.Render
 		AWSReservationID: reservation.AWSReservationID,
 		ID:               reservation.ID,
 		Name:             reservation.Detail.Name,
+		PowerOff:         reservation.Detail.PowerOff,
+	}
+	return &response
+}
+
+func NewGCPReservationResponse(reservation *models.GCPReservation) render.Renderer {
+	response := GCPReservationResponsePayload{
+		PubkeyID:         reservation.PubkeyID,
+		ImageID:          reservation.ImageID,
+		SourceID:         reservation.SourceID,
+		Zone:             reservation.Detail.Zone,
+		Amount:           reservation.Detail.Amount,
+		MachineType:      reservation.Detail.MachineType,
+		GCPOperationName: reservation.GCPOperationName,
+		ID:               reservation.ID,
 		PowerOff:         reservation.Detail.PowerOff,
 	}
 	return &response

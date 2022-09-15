@@ -81,6 +81,31 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, err
 	return ami.(string), nil
 }
 
+func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (string, error) {
+	c.logger.Trace().Msgf("Getting Name of image %v", composeID)
+
+	imageStatus, err := c.fetchImageStatus(ctx, composeID)
+	if err != nil {
+		return "", err
+	}
+
+	c.logger.Trace().Msg("Verifying GCP type")
+	if imageStatus.Type != UploadTypesGcp {
+		return "", fmt.Errorf("%w: expected image type GCP", http.UnknownImageTypeErr)
+	}
+	imageName, ok := imageStatus.Options.(map[string]interface{})["image_name"]
+	if !ok {
+		return "", fmt.Errorf("%w: image name was not found", http.NameNotFoundInStatusErr)
+	}
+
+	projectID, ok := imageStatus.Options.(map[string]interface{})["project_id"]
+	if !ok {
+		return "", fmt.Errorf("%w: project id was not found", http.IDNotFoundInStatusErr)
+	}
+
+	return fmt.Sprintf("projects/%s/global/images/%s", projectID, imageName.(string)), nil
+}
+
 func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
 	c.logger.Trace().Msgf("Fetching image status %v", composeID)
 

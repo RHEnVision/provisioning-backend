@@ -39,6 +39,10 @@ func (stub *reservationDaoStub) CreateAWS(ctx context.Context, reservation *mode
 	return nil
 }
 
+func (stub *reservationDaoStub) CreateGCP(ctx context.Context, reservation *models.GCPReservation) error {
+	return nil
+}
+
 func (stub *reservationDaoStub) CreateNoop(ctx context.Context, reservation *models.NoopReservation) error {
 	return nil
 }
@@ -64,6 +68,10 @@ func (stub *reservationDaoStub) UpdateStatus(ctx context.Context, id int64, stat
 }
 
 func (stub *reservationDaoStub) UpdateReservationIDForAWS(ctx context.Context, id int64, awsReservationId string) error {
+	return nil
+}
+
+func (stub *reservationDaoStub) UpdateOperationNameForGCP(ctx context.Context, id int64, gcpOperationName string) error {
 	return nil
 }
 

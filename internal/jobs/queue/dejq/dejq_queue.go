@@ -33,6 +33,7 @@ func RegisterJobs(logger *zerolog.Logger) {
 	dejqQueue.RegisterHandler(queue.TypeNoop, jobs.HandleNoop)
 	dejqQueue.RegisterHandler(queue.TypePubkeyUploadAws, jobs.HandlePubkeyUploadAWS)
 	dejqQueue.RegisterHandler(queue.TypeLaunchInstanceAws, jobs.HandleLaunchInstanceAWS)
+	dejqQueue.RegisterHandler(queue.TypeLaunchInstanceGcp, jobs.HandleLaunchInstanceGCP)
 }
 
 func Initialize(ctx context.Context, logger *zerolog.Logger) error {
