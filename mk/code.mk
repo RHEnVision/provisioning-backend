@@ -23,6 +23,6 @@ lint: ## Run Go language linter `golangci-lint`
 check-migrations: ## Check migration files for changes
 	@scripts/check_migrations.sh
 
-.PHONY: fmt
+.PHONY: fmt ## Alias to perform all code formatting and linting
 fmt: format imports lint check-migrations
 
