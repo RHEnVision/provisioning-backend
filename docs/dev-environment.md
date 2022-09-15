@@ -38,6 +38,12 @@ Most of our team members use either Jetbrains GoLand, or VSCode. Here are the re
 }
 ```
 
+## Code checking and linting
+
+We use several formatting and linting tools (like go fmt, goimports, golangci-lint) to enforce code style and quality. There are multiple make targets available and an alias which runs them all: `make fmt`.
+
+Additionally, migration files (`internal/db/migrations/*.sql`) must not be modified, you are only allowed to add new files into this directory. One of the validators will enforce this, however, it is possible to skip it by creating an empty commit on top of the change in case it's necessary (e.g. reformat the SQL code).
+
 ## Additional Go versions
 
 Go language fully supports multi-version installation. Just follow [the official documentation](https://go.dev/doc/manage-install) by using the `go install` command.
