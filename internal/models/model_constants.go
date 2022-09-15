@@ -18,7 +18,7 @@ const (
 	ProviderTypeAzure
 
 	// Google Compute Engine provider
-	ProviderTypeGCE
+	ProviderTypeGCP
 )
 
 func ProviderTypeFromString(str string) ProviderType {
@@ -29,8 +29,8 @@ func ProviderTypeFromString(str string) ProviderType {
 		return ProviderTypeAWS
 	case "azure":
 		return ProviderTypeAzure
-	case "gce":
-		return ProviderTypeGCE
+	case "gcp":
+		return ProviderTypeGCP
 	default:
 		return ProviderTypeUnknown
 	}

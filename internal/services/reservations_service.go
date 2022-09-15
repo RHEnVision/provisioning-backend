@@ -28,8 +28,8 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 		CreateAWSReservation(w, r)
 	case models.ProviderTypeAzure:
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
-	case models.ProviderTypeGCE:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
+	case models.ProviderTypeGCP:
+		CreateGCPReservation(w, r)
 	case models.ProviderTypeUnknown:
 	default:
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), UnknownProviderTypeError))
