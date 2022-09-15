@@ -95,18 +95,20 @@ var config struct {
 	}
 }
 
-var Application = &config.App
-var Database = &config.Database
-var Prometheus = &config.Prometheus
-var Logging = &config.Logging
-var Cloudwatch = &config.Cloudwatch
-var AWS = &config.AWS
-var Azure = &config.Azure
-var Features = &config.FeatureFlags
-var RestEndpoints = &config.RestEndpoints
-var ImageBuilder = &config.RestEndpoints.ImageBuilder
-var Sources = &config.RestEndpoints.Sources
-var Worker = &config.Worker
+var (
+	Application   = &config.App
+	Database      = &config.Database
+	Prometheus    = &config.Prometheus
+	Logging       = &config.Logging
+	Cloudwatch    = &config.Cloudwatch
+	AWS           = &config.AWS
+	Azure         = &config.Azure
+	Features      = &config.FeatureFlags
+	RestEndpoints = &config.RestEndpoints
+	ImageBuilder  = &config.RestEndpoints.ImageBuilder
+	Sources       = &config.RestEndpoints.Sources
+	Worker        = &config.Worker
+)
 
 func Initialize() {
 	if clowder.IsClowderEnabled() {
@@ -134,9 +136,11 @@ func Initialize() {
 	}
 }
 
-var validateMissingSecretError = errors.New("config error: Cloudwatch enabled but Region and Key and Secret are not provided")
-var validateGroupStreamError = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
-var validateInvalidEnvironmentError = errors.New("config error: Environment must be production or development")
+var (
+	validateMissingSecretError      = errors.New("config error: Cloudwatch enabled but Region and Key and Secret are not provided")
+	validateGroupStreamError        = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
+	validateInvalidEnvironmentError = errors.New("config error: Environment must be production or development")
+)
 
 func validate() error {
 	if envMatch, _ := regexp.MatchString(`^(production|development|test)$`, Features.Environment); !envMatch {

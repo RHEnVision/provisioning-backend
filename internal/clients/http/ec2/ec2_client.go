@@ -76,7 +76,6 @@ func getStsAssumedCredentials(ctx context.Context, logger zerolog.Logger, arn st
 		RoleArn:         ptr.To(arn),
 		RoleSessionName: ptr.To("name"),
 	})
-
 	if err != nil {
 		logger.Error().Err(err).Msgf("cannot assume role %s", err)
 		return nil, fmt.Errorf("cannot assume role %w", err)
@@ -103,7 +102,6 @@ func (c *ec2Client) ImportPubkey(key *models.Pubkey, tag string) (string, error)
 		},
 	}
 	output, err := c.ec2.ImportKeyPair(c.context, input)
-
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
 			err = clients.UnauthorizedErr
@@ -121,7 +119,6 @@ func (c *ec2Client) DeleteSSHKey(handle string) error {
 	input := &ec2.DeleteKeyPairInput{}
 	input.KeyPairId = ptr.To(handle)
 	_, err := c.ec2.DeleteKeyPair(c.context, input)
-
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
 			err = clients.UnauthorizedErr

@@ -108,9 +108,11 @@ func fmtDetailedError(sql string, mgErr *pgconn.PgError) string {
 	return errb.String()
 }
 
-var ErrNoMigrationsFound = errors.New("no migrations found")
-var ErrMigration = errors.New("unable to perform migration")
-var ErrSeedProduction = errors.New("seed in production")
+var (
+	ErrNoMigrationsFound = errors.New("no migrations found")
+	ErrMigration         = errors.New("unable to perform migration")
+	ErrSeedProduction    = errors.New("seed in production")
+)
 
 // Migrate executes embedded SQL scripts from internal/db/migrations. For the time being
 // only "up" migrations are supported. When this package is initialized, the directory

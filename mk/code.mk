@@ -1,8 +1,15 @@
 ##@ Code quality
 
+.PHONY: format-fmt
+format-fmt:
+	gofmt -l -w -s .
+
+.PHONY: format-fumpt
+format-fumpt:
+	gofumpt -l -w .
+
 .PHONY: format
-format: ## Format Go source code using `go fmt`
-	go fmt ./...
+format: format-fmt format-fumpt ## Format Go source code using `go fmt`
 
 .PHONY: imports
 imports: ## Rearrange imports using `goimports`

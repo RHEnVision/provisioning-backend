@@ -7,8 +7,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var awsSupported = make(map[string]interface{})
-var ErrArchitectureNotSupported = errors.New("architecture is not supported")
+var (
+	awsSupported                = make(map[string]interface{})
+	ErrArchitectureNotSupported = errors.New("architecture is not supported")
+)
 
 type supportedInstanceTypes struct {
 	Aws []string `yaml:"aws"`

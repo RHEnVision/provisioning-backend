@@ -34,6 +34,7 @@ func getImageBuilderClientStub(ctx context.Context) (si clients.ImageBuilder, er
 	}
 	return si, err
 }
+
 func (*ImageBuilderClientStub) Ready(ctx context.Context) error {
 	return nil
 }

@@ -44,7 +44,7 @@ func compareAndMarshal(filename string, obj any) error {
 
 	if !bytes.Equal(newBuffer, oldBuffer) {
 		/* #nosec */
-		err = os.WriteFile(filename, newBuffer, 0644)
+		err = os.WriteFile(filename, newBuffer, 0o644)
 		if err != nil {
 			return fmt.Errorf("unable to save instance types: %w", err)
 		}

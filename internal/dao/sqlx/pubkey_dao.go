@@ -152,7 +152,6 @@ func (di *pubkeyDaoSqlx) Delete(ctx context.Context, id int64) error {
 	}
 	if rows, _ := res.RowsAffected(); rows != 1 {
 		return NewDeleteMismatchAffectedError(ctx, di, 1, rows)
-
 	}
 	return nil
 }
