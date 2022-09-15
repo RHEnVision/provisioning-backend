@@ -58,7 +58,7 @@ jobs:
           DATABASE_USER: postgres
           DATABASE_PASSWORD: foobar
           DATABASE_NAME: provisioning_test
-        run: make integration-test migrations
+        run: make integration-test check-migrations
 
   openapi:
     name: "🪆 Generated code diff check"
