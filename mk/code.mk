@@ -19,6 +19,10 @@ imports: ## Rearrange imports using `goimports`
 lint: ## Run Go language linter `golangci-lint`
 	golangci-lint run
 
+.PHONY: check-migrations
+check-migrations: ## Check migration files for changes
+	@scripts/check_migrations.sh
+
 .PHONY: fmt
-fmt: format imports lint
+fmt: format imports lint check-migrations
 
