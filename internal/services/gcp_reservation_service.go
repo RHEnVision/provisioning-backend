@@ -105,6 +105,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	name, ibErr := IBClient.GetGCPImageName(r.Context(), reservation.ImageID)
 	if ibErr != nil {
 		renderError(w, r, payloads.ClientError(r.Context(), "Image Builder", "can't get name from image builder", ibErr, 500))
+		return
 	}
 
 	logger.Trace().Msgf("Image Name is %s", name)
@@ -135,5 +136,6 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	// Return response payload
 	if err := render.Render(w, r, payloads.NewGCPReservationResponse(reservation)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+		return
 	}
 }
