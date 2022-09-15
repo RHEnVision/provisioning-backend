@@ -42,7 +42,7 @@ func (c *gcpClient) Close() {
 	c.instancesClient.Close()
 }
 
-func (c *gcpClient) RunInstances(ctx context.Context, projectID string, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) error {
+func (c *gcpClient) RunInstances(ctx context.Context, projectID string, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error) {
 	req := &computepb.BulkInsertInstanceRequest{
 		Project: projectID,
 		Zone:    zone,
@@ -80,10 +80,10 @@ func (c *gcpClient) RunInstances(ctx context.Context, projectID string, namePatt
 	}
 
 	c.logger.Trace().Msg("Executing Insert")
-	_, err := c.instancesClient.BulkInsert(ctx, req)
+	op, err := c.instancesClient.BulkInsert(ctx, req)
 	if err != nil {
-		return fmt.Errorf("cannot bulk insert instances: %w", err)
+		return nil, fmt.Errorf("cannot bulk insert instances: %w", err)
 	}
 
-	return nil
+	return ptr.To(op.Name()), nil
 }

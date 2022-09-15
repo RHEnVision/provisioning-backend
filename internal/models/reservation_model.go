@@ -106,7 +106,7 @@ type GCPReservation struct {
 	SourceID string `db:"source_id" json:"source_id"`
 
 	// The ID of the gcp reservation which was created.
-	GCPReservationID string `db:"gcp_reservation_id"`
+	GCPOperationName string `db:"gcp_operation_name"`
 
 	// The ID of the image from which the instance is created.
 	ImageID string `json:"image_id"`

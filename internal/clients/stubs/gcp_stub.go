@@ -33,6 +33,6 @@ func getGCPClientStub(ctx context.Context) (si clients.GCP, err error) {
 func (mock *GCPClientStub) Close() {
 }
 
-func (mock *GCPClientStub) RunInstances(ctx context.Context, projectID string, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) error {
-	return NotImplementedErr
+func (mock *GCPClientStub) RunInstances(ctx context.Context, projectID string, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error) {
+	return nil, NotImplementedErr
 }

@@ -91,8 +91,8 @@ type GCPReservationResponsePayload struct {
 	// The ID of the image from which the instance is created.
 	ImageID string `json:"image_id"`
 
-	// The ID of the gcp reservation which was created.
-	GCPReservationID string
+	// The name of the gcp operation which was created.
+	GCPOperationName string `json:"gcp_operation_name,omitempty"`
 
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff"`
@@ -202,7 +202,7 @@ func NewGCPReservationResponse(reservation *models.GCPReservation) render.Render
 		Zone:             reservation.Detail.Zone,
 		Amount:           reservation.Detail.Amount,
 		MachineType:      reservation.Detail.MachineType,
-		GCPReservationID: reservation.GCPReservationID,
+		GCPOperationName: reservation.GCPOperationName,
 		ID:               reservation.ID,
 		PowerOff:         reservation.Detail.PowerOff,
 	}

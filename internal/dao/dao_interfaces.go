@@ -85,6 +85,9 @@ type ReservationDao interface {
 	// UpdateReservationIDForAWS updates AWS reservation id field. UNSCOPED.
 	UpdateReservationIDForAWS(ctx context.Context, id int64, awsReservationId string) error
 
+	// UpdateOperationNameForGCP updates GCP operation name field. UNSCOPED.
+	UpdateOperationNameForGCP(ctx context.Context, id int64, gcpOperationName string) error
+
 	// FinishWithSuccess sets Success flag. UNSCOPED.
 	FinishWithSuccess(ctx context.Context, id int64) error
 

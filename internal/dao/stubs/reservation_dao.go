@@ -71,6 +71,10 @@ func (stub *reservationDaoStub) UpdateReservationIDForAWS(ctx context.Context, i
 	return nil
 }
 
+func (stub *reservationDaoStub) UpdateOperationNameForGCP(ctx context.Context, id int64, gcpOperationName string) error {
+	return nil
+}
+
 func (stub *reservationDaoStub) FinishWithSuccess(ctx context.Context, id int64) error {
 	return nil
 }

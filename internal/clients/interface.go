@@ -69,5 +69,5 @@ type GCP interface {
 	Close()
 
 	// RunInstances launches one or more instances
-	RunInstances(ctx context.Context, projectID string, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) error
+	RunInstances(ctx context.Context, projectID string, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error)
 }

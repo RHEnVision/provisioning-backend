@@ -83,9 +83,19 @@ func handleLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArg
 
 	defer gcpClient.Close()
 
-	err = gcpClient.RunInstances(ctx, args.ProjectID, ptr.To("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
+	opName, err := gcpClient.RunInstances(ctx, args.ProjectID, ptr.To("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
 	if err != nil {
 		return fmt.Errorf("cannot run instances for gcp client: %w", err)
+	}
+
+	rDao, err := dao.GetReservationDao(ctx)
+	if err != nil {
+		return fmt.Errorf("cannot get reservation dao: %w", err)
+	}
+
+	err = rDao.UpdateOperationNameForGCP(ctx, args.ReservationID, *opName)
+	if err != nil {
+		return fmt.Errorf("cannot update operation name for GCP : %w", err)
 	}
 
 	return nil
