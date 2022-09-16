@@ -60,7 +60,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
 	}
 
-	pkrDao, err := dao.GetPubkeyResourceDao(ctx)
+	pkrDao, err := dao.GetPubkeyDao(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
 	}

@@ -35,14 +35,14 @@ func createPubkeyResourceAzure() *models.PubkeyResource {
 	}
 }
 
-func setupPubkeyResource(t *testing.T) (dao.PubkeyResourceDao, context.Context) {
+func setupPubkeyResource(t *testing.T) (dao.PubkeyDao, context.Context) {
 	setup()
 	ctx := identity.WithTenant(t, context.Background())
-	resourceDao, err := dao.GetPubkeyResourceDao(ctx)
+	pubkeyDao, err := dao.GetPubkeyDao(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return resourceDao, ctx
+	return pubkeyDao, ctx
 }
 
 func teardownPubkeyResource(_ *testing.T) {
@@ -50,12 +50,12 @@ func teardownPubkeyResource(_ *testing.T) {
 }
 
 func TestCreateResource(t *testing.T) {
-	resourceDao, ctx := setupPubkeyResource(t)
+	pubkeyDao, ctx := setupPubkeyResource(t)
 	defer teardownPubkeyResource(t)
 	resource := createPubkeyResourceNoop()
-	err := resourceDao.UnscopedCreate(ctx, resource)
+	err := pubkeyDao.UnscopedCreate(ctx, resource)
 	require.NoError(t, err)
-	resources, err := resourceDao.UnscopedListByPubkeyId(ctx, resource.PubkeyID)
+	resources, err := pubkeyDao.UnscopedListByPubkeyId(ctx, resource.PubkeyID)
 	require.NoError(t, err)
 
 	assert.Equal(t, 1, len(resources))
@@ -63,30 +63,30 @@ func TestCreateResource(t *testing.T) {
 }
 
 func TestGetResourceByProviderType(t *testing.T) {
-	resourceDao, ctx := setupPubkeyResource(t)
+	pubkeyDao, ctx := setupPubkeyResource(t)
 	defer teardownPubkeyResource(t)
 	resource := createPubkeyResourceNoop()
-	err := resourceDao.UnscopedCreate(ctx, resource)
+	err := pubkeyDao.UnscopedCreate(ctx, resource)
 	require.NoError(t, err)
-	createdResource, err := resourceDao.UnscopedGetResourceByProviderType(ctx, resource.PubkeyID, resource.Provider)
+	createdResource, err := pubkeyDao.UnscopedGetResourceByProviderType(ctx, resource.PubkeyID, resource.Provider)
 	require.NoError(t, err)
 
 	assert.Equal(t, resource, createdResource)
 }
 
 func TestListByPubkeyIdResource(t *testing.T) {
-	resourceDao, ctx := setupPubkeyResource(t)
+	pubkeyDao, ctx := setupPubkeyResource(t)
 	defer teardownPubkeyResource(t)
 	pkId := int64(1)
-	resourcesBefore, err := resourceDao.UnscopedListByPubkeyId(ctx, pkId)
+	resourcesBefore, err := pubkeyDao.UnscopedListByPubkeyId(ctx, pkId)
 	require.NoError(t, err)
 	noopResource := createPubkeyResourceNoop()
-	err = resourceDao.UnscopedCreate(ctx, noopResource)
+	err = pubkeyDao.UnscopedCreate(ctx, noopResource)
 	require.NoError(t, err)
 	azureResource := createPubkeyResourceAzure()
-	err = resourceDao.UnscopedCreate(ctx, azureResource)
+	err = pubkeyDao.UnscopedCreate(ctx, azureResource)
 	require.NoError(t, err)
-	resourcesAfter, err := resourceDao.UnscopedListByPubkeyId(ctx, pkId)
+	resourcesAfter, err := pubkeyDao.UnscopedListByPubkeyId(ctx, pkId)
 	require.NoError(t, err)
 
 	assert.Equal(t, len(resourcesBefore)+2, len(resourcesAfter))
@@ -95,19 +95,19 @@ func TestListByPubkeyIdResource(t *testing.T) {
 }
 
 func TestDeleteResource(t *testing.T) {
-	resourceDao, ctx := setupPubkeyResource(t)
+	pubkeyDao, ctx := setupPubkeyResource(t)
 	defer teardownPubkeyResource(t)
 	resource := createPubkeyResourceNoop()
-	err := resourceDao.UnscopedCreate(ctx, resource)
+	err := pubkeyDao.UnscopedCreate(ctx, resource)
 	require.NoError(t, err)
-	resources, err := resourceDao.UnscopedListByPubkeyId(ctx, resource.PubkeyID)
+	resources, err := pubkeyDao.UnscopedListByPubkeyId(ctx, resource.PubkeyID)
 	require.NoError(t, err)
 
 	assert.Equal(t, 1, len(resources))
 
-	err = resourceDao.UnscopedDelete(ctx, resource.ID)
+	err = pubkeyDao.UnscopedDelete(ctx, resource.ID)
 	require.NoError(t, err)
-	resources, err = resourceDao.UnscopedListByPubkeyId(ctx, resource.PubkeyID)
+	resources, err = pubkeyDao.UnscopedListByPubkeyId(ctx, resource.PubkeyID)
 	require.NoError(t, err)
 
 	assert.Equal(t, 0, len(resources))
