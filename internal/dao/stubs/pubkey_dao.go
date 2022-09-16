@@ -101,3 +101,19 @@ func (stub *pubkeyDaoStub) Delete(ctx context.Context, id int64) error {
 	}
 	return nil
 }
+
+func (stub *pubkeyDaoStub) UnscopedGetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error) {
+	return nil, nil
+}
+
+func (stub *pubkeyDaoStub) UnscopedCreate(ctx context.Context, pkr *models.PubkeyResource) error {
+	return nil
+}
+
+func (stub *pubkeyDaoStub) UnscopedDelete(ctx context.Context, id int64) error {
+	return nil
+}
+
+func (stub *pubkeyDaoStub) UnscopedListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error) {
+	return nil, nil
+}
