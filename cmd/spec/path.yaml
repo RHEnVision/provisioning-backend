@@ -152,7 +152,9 @@ paths:
       operationId: getReservationsList
       description: >
         A reservation is a way to activate a job, keeps all data needed for a job to start.
-        This operation returns list of all reservations for particular account.
+        This operation returns list of all reservations for particular account. To get a
+        reservation with common fields, use /reservations/ID. To get a detailed reservation
+        with all fields which are different per provider, use /reservations/aws/ID.
       responses:
         '200':
           description: 'Returned on success.'
@@ -166,7 +168,7 @@ paths:
           $ref: '#/components/responses/InternalError'
   /reservations/{ID}:
     get:
-      description: 'Return a reservation by id'
+      description: 'Return a generic reservation by id'
       operationId: getReservationByID
       parameters:
       - in: path
@@ -178,7 +180,7 @@ paths:
         description: 'Reservation ID'
       responses:
         "200":
-          description: 'Returned on success.'
+          description: 'Returns generic reservation information like status or creation time.'
           content:
             application/json:
               schema:
@@ -206,6 +208,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/v1.AWSReservationResponse'
+        "500":
+          $ref: '#/components/responses/InternalError'
+    get:
+      description: 'Return an AWS reservation with details by id'
+      operationId: getAWSReservationByID
+      parameters:
+        - in: path
+          name: ID
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: 'Reservation ID, must be an AWS reservation otherwise 404 is returned'
+      responses:
+        "200":
+          description: 'Returns detailed reservation information for an AWS reservation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.AWSReservationResponse'
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: '#/components/responses/InternalError'
   /reservations/noop:

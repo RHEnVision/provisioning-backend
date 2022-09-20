@@ -73,6 +73,9 @@ type ReservationDao interface {
 	// GetById returns reservation for a particular account.
 	GetById(ctx context.Context, id int64) (*models.Reservation, error)
 
+	// GetAWSById returns reservation for a particular account.
+	GetAWSById(ctx context.Context, id int64) (*models.AWSReservation, error)
+
 	// List returns reservation for a particular account.
 	List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error)
 

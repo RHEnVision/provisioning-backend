@@ -72,8 +72,14 @@ func apiRouter() http.Handler {
 
 		r.Route("/reservations", func(r chi.Router) {
 			r.Get("/", s.ListReservations)
-			r.Get("/{ID}", s.GetReservation)
-			r.Post("/{type}", s.CreateReservation)
+			// Different types do have different payloads, therefore TYPE must be part of
+			// URL and not a URL (filter) parameter.
+			r.Route("/{TYPE}", func(r chi.Router) {
+				r.Get("/{ID}", s.GetReservationDetail)
+				r.Post("/", s.CreateReservation)
+			})
+			// Generic reservation detail request (no details provided)
+			r.Get("/{ID}", s.GetReservationDetail)
 		})
 
 		// Unsupported routes are not published through OpenAPI, they are documented
