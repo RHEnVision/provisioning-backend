@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -66,17 +67,27 @@ type AWSDetail struct {
 
 // TODO: Use pgx native driver with scany library instead of sqlx which does not
 func (detail *AWSDetail) Value() (driver.Value, error) {
-	return json.Marshal(detail)
+	result, err := json.Marshal(detail)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal reservation detail: %w", err)
+	}
+	return result, nil
 }
 
 // TODO: Use pgx native driver with scany library instead of sqlx which does not
+var ReservationDetailScanTypeErr = errors.New("type assertion to []byte failed")
+
 func (detail *AWSDetail) Scan(value interface{}) error {
 	b, ok := value.([]byte)
 	if !ok {
-		return errors.New("type assertion to []byte failed")
+		return ReservationDetailScanTypeErr
 	}
 
-	return json.Unmarshal(b, &detail)
+	err := json.Unmarshal(b, &detail)
+	if err != nil {
+		return fmt.Errorf("unable to marshal reservation detail: %w", err)
+	}
+	return nil
 }
 
 type AWSReservation struct {
@@ -95,7 +106,7 @@ type AWSReservation struct {
 	ImageID string `db:"image_id" json:"image_id"`
 
 	// Detail information is stored as JSON in DB
-	Detail *AWSDetail `json:"detail"`
+	Detail *AWSDetail `db:"detail" json:"detail"`
 }
 
 type GCPDetail struct {

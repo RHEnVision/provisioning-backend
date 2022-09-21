@@ -31,6 +31,7 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 	case models.ProviderTypeGCP:
 		CreateGCPReservation(w, r)
 	case models.ProviderTypeUnknown:
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), UnknownProviderTypeError))
 	default:
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), UnknownProviderTypeError))
 	}
@@ -55,23 +56,12 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func renderNotFoundOrDAOError(w http.ResponseWriter, r *http.Request, err error, daoError string) {
-	var e dao.NoRowsError
-	if errors.As(err, &e) {
-		renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
-	} else {
-		renderError(w, r, payloads.NewDAOError(r.Context(), daoError, err))
-	}
-}
-
 func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 	id, err := ParseInt64(r, "ID")
 	if err != nil {
 		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
 		return
 	}
-
-	pType := models.ProviderTypeFromString(chi.URLParam(r, "TYPE"))
 
 	rDao, err := dao.GetReservationDao(r.Context())
 	if err != nil {
@@ -80,7 +70,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: Add support for GCP and Azure, not generic reservation
-	switch pType {
+	switch pType := models.ProviderTypeFromString(chi.URLParam(r, "TYPE")); pType {
 	case models.ProviderTypeAWS:
 		reservation, err := rDao.GetAWSById(r.Context(), id)
 		if err != nil {
@@ -91,7 +81,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation)); err != nil {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
 		}
-	case models.ProviderTypeNoop, models.ProviderTypeUnknown:
+	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
 		reservation, err := rDao.GetById(r.Context(), id)
 		if err != nil {
 			renderNotFoundOrDAOError(w, r, err, "get reservation detail")
@@ -101,6 +91,10 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		if err := render.Render(w, r, payloads.NewReservationResponse(reservation)); err != nil {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
 		}
+	case models.ProviderTypeAzure:
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
+	case models.ProviderTypeGCP:
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
 	default:
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
 	}
