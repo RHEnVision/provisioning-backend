@@ -49,9 +49,13 @@ func Initialize(schema string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to parse database configuration")
 	}
-	if config.Database.LogLevel > 0 {
+	logLevel, err := pgx.LogLevelFromString(config.Database.LogLevel)
+	if err != nil {
+		return errors.Wrap(err, "unknown db log level")
+	}
+	if logLevel > 0 {
 		connConfig.Logger = zerologadapter.NewLogger(log.Logger)
-		connConfig.LogLevel = pgx.LogLevel(config.Database.LogLevel)
+		connConfig.LogLevel = logLevel
 	}
 	connStrRegistered := stdlib.RegisterConnConfig(connConfig)
 

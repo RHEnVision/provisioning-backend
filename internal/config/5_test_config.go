@@ -18,4 +18,7 @@ func init() {
 	parser.Viper.SetDefault("app.cache.cleanupInterval", time.Duration(0))
 	parser.Viper.SetDefault("app.cache.typeAppId", false)
 	parser.Viper.SetDefault("app.cache.account", false)
+
+	// Telemetry
+	parser.Viper.SetDefault("telemetry.loggerExporter", false)
 }

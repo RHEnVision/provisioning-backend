@@ -35,10 +35,15 @@ require (
 	github.com/prometheus/client_golang v1.13.0
 	github.com/redhatinsights/app-common-go v1.6.3
 	github.com/redhatinsights/platform-go-middlewares v0.20.0
+	github.com/riandyrn/otelchi v0.4.0
 	github.com/rs/xid v1.4.0
 	github.com/rs/zerolog v1.28.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.0
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.36.0
+	go.opentelemetry.io/otel v1.10.0
+	go.opentelemetry.io/otel/sdk v1.10.0
+	go.opentelemetry.io/otel/trace v1.10.0
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
 	google.golang.org/api v0.81.0
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd
@@ -66,8 +71,10 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/analysis v0.21.4 // indirect
 	github.com/go-openapi/errors v0.20.3 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
@@ -122,6 +129,8 @@ require (
 	github.com/subosito/gotenv v1.4.1 // indirect
 	go.mongodb.org/mongo-driver v1.10.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
+	go.opentelemetry.io/contrib v1.0.0 // indirect
+	go.opentelemetry.io/otel/metric v0.32.0 // indirect
 	golang.org/x/net v0.0.0-20220708220712-1185a9018129 // indirect
 	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5 // indirect
 	golang.org/x/sys v0.0.0-20220829200755-d48e67d00261 // indirect

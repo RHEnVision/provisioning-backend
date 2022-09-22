@@ -7,8 +7,13 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
+	"github.com/RHEnVision/provisioning-backend/internal/random"
 	"github.com/rs/zerolog/log"
 )
+
+func init() {
+	random.SeedGlobal()
+}
 
 func main() {
 	config.Initialize()

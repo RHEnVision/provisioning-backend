@@ -12,6 +12,7 @@ import (
 func init() {
 	// App
 	parser.Viper.Set("featureFlags.environment", "test")
+	parser.Viper.SetDefault("telemetry.loggerExporter", false)
 
 	// App Cache
 	parser.Viper.SetDefault("app.cache.expiration", time.Duration(0))

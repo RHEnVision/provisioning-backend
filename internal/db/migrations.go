@@ -13,10 +13,8 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4/stdlib"
-	"github.com/rs/zerolog/log"
-
-	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/jackc/tern/migrate"
+	"github.com/rs/zerolog/log"
 )
 
 //go:embed migrations

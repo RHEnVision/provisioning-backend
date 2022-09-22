@@ -1,14 +1,17 @@
 package config
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"regexp"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config/parser"
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/rs/zerolog"
 )
@@ -45,12 +48,16 @@ var config struct {
 		MaxLifetime time.Duration
 		MaxOpenConn int
 		MaxIdleConn int
-		LogLevel    int
+		LogLevel    string
 	}
 	Logging struct {
 		Level    int
 		Stdout   bool
 		MaxField int
+	}
+	Telemetry struct {
+		Enabled        bool
+		LoggerExporter bool
 	}
 	Cloudwatch struct {
 		Enabled bool
@@ -115,6 +122,7 @@ var (
 	Database      = &config.Database
 	Prometheus    = &config.Prometheus
 	Logging       = &config.Logging
+	Telemetry     = &config.Telemetry
 	Cloudwatch    = &config.Cloudwatch
 	AWS           = &config.AWS
 	Azure         = &config.Azure
@@ -194,6 +202,18 @@ func IsDevelopment() bool {
 
 func IsProduction() bool {
 	return Features.Environment == "production"
+}
+
+func StringToURL(ctx context.Context, urlStr string) *url.URL {
+	if urlStr == "" {
+		return nil
+	}
+	urlProxy, err := url.Parse(urlStr)
+	if err != nil {
+		ctxval.Logger(ctx).Warn().Msgf("Unable to parse proxy URL: '%s', ignoring proxy", urlStr)
+		return nil
+	}
+	return urlProxy
 }
 
 // DumpConfig writes configuration to a logger. It removes all secrets, however, it is never

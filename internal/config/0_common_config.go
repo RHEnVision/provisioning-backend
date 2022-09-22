@@ -25,10 +25,14 @@ func init() {
 	parser.Viper.SetDefault("database.name", "")
 	parser.Viper.SetDefault("database.user", "")
 	parser.Viper.SetDefault("database.password", "")
-	parser.Viper.SetDefault("database.loglevel", 1)
+	parser.Viper.SetDefault("database.loglevel", "none")
 
 	// Logging
 	parser.Viper.SetDefault("logging.level", 1)
+
+	// Telemetry
+	parser.Viper.SetDefault("telemetry.enabled", false)
+	parser.Viper.SetDefault("telemetry.loggerExporter", true)
 
 	// Cloudwatch
 	parser.Viper.SetDefault("cloudwatch.enabled", false)
@@ -47,7 +51,9 @@ func init() {
 	parser.Viper.SetDefault("featureFlags.environment", "production")
 
 	// RestEndpoints
+	parser.Viper.SetDefault("restEndpoints.imageBuilder.openTelemetry", true)
 	parser.Viper.SetDefault("restEndpoints.imageBuilder.url", "")
+	parser.Viper.SetDefault("restEndpoints.sources.openTelemetry", true)
 	parser.Viper.SetDefault("restEndpoints.sources.url", "")
 	parser.Viper.SetDefault("restEndpoints.traceData", false)
 
