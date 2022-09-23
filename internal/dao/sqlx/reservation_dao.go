@@ -25,12 +25,18 @@ const (
 	listReservations          = `SELECT * FROM reservations WHERE account_id = $1 ORDER BY id LIMIT $2 OFFSET $3`
 	createInstance            = `INSERT INTO reservation_instances (reservation_id, instance_id) VALUES ($1, $2)`
 	listInstanceReservations  = `SELECT * FROM reservation_instances ORDER BY reservation_id LIMIT $1 OFFSET $2`
+
+	getAWSReservationById = `SELECT id, provider, account_id, created_at, steps, step, status, error, finished_at, success,
+    	pubkey_id, source_id, image_id, aws_reservation_id, detail
+		FROM reservations, aws_reservation_details
+		WHERE account_id = $1 AND id = $2 AND id = reservation_id AND provider = provider_type_aws() LIMIT 1`
 )
 
 type reservationDaoSqlx struct {
 	name                      string
 	create                    *sqlx.Stmt
 	getById                   *sqlx.Stmt
+	getAWSById                *sqlx.Stmt
 	createAwsDetail           *sqlx.Stmt
 	createGcpDetail           *sqlx.Stmt
 	updateStatus              *sqlx.Stmt
@@ -56,6 +62,10 @@ func getReservationDao(ctx context.Context) (dao.ReservationDao, error) {
 	daoImpl.getById, err = db.DB.PreparexContext(ctx, getReservationById)
 	if err != nil {
 		return nil, NewPrepareStatementError(ctx, &daoImpl, getReservationById, err)
+	}
+	daoImpl.getAWSById, err = db.DB.PreparexContext(ctx, getAWSReservationById)
+	if err != nil {
+		return nil, NewPrepareStatementError(ctx, &daoImpl, getAWSReservationById, err)
 	}
 	daoImpl.createAwsDetail, err = db.DB.PreparexContext(ctx, createAwsDetail)
 	if err != nil {
@@ -220,6 +230,22 @@ func (di *reservationDaoSqlx) GetById(ctx context.Context, id int64) (*models.Re
 	query := getReservationById
 	stmt := di.getById
 	result := &models.Reservation{}
+
+	err := stmt.GetContext(ctx, result, ctxAccountId(ctx), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, NewNoRowsError(ctx, di, query, err)
+		} else {
+			return nil, NewGetError(ctx, di, query, err)
+		}
+	}
+	return result, nil
+}
+
+func (di *reservationDaoSqlx) GetAWSById(ctx context.Context, id int64) (*models.AWSReservation, error) {
+	query := getAWSReservationById
+	stmt := di.getAWSById
+	result := &models.AWSReservation{}
 
 	err := stmt.GetContext(ctx, result, ctxAccountId(ctx), id)
 	if err != nil {

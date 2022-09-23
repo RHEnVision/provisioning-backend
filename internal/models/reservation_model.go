@@ -2,6 +2,10 @@ package models
 
 import (
 	"database/sql"
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"time"
 )
 
@@ -61,6 +65,31 @@ type AWSDetail struct {
 	PowerOff bool `json:"poweroff"`
 }
 
+// TODO: Use pgx native driver with scany library instead of sqlx which does not
+func (detail *AWSDetail) Value() (driver.Value, error) {
+	result, err := json.Marshal(detail)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal reservation detail: %w", err)
+	}
+	return result, nil
+}
+
+// TODO: Use pgx native driver with scany library instead of sqlx which does not
+var ReservationDetailScanTypeErr = errors.New("type assertion to []byte failed")
+
+func (detail *AWSDetail) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return ReservationDetailScanTypeErr
+	}
+
+	err := json.Unmarshal(b, &detail)
+	if err != nil {
+		return fmt.Errorf("unable to marshal reservation detail: %w", err)
+	}
+	return nil
+}
+
 type AWSReservation struct {
 	Reservation
 
@@ -74,7 +103,7 @@ type AWSReservation struct {
 	AWSReservationID string `db:"aws_reservation_id" json:"aws_reservation_id"`
 
 	// The ID of the image from which the instance is created. AMI's must be prefixed with 'ami-'.
-	ImageID string `json:"image_id"`
+	ImageID string `db:"image_id" json:"image_id"`
 
 	// Detail information is stored as JSON in DB
 	Detail *AWSDetail `db:"detail" json:"detail"`

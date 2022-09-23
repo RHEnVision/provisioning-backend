@@ -55,6 +55,10 @@ func (stub *reservationDaoStub) GetById(ctx context.Context, id int64) (*models.
 	return nil, nil
 }
 
+func (stub *reservationDaoStub) GetAWSById(ctx context.Context, id int64) (*models.AWSReservation, error) {
+	return nil, nil
+}
+
 func (stub *reservationDaoStub) List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error) {
 	return nil, nil
 }
