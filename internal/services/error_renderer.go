@@ -1,10 +1,13 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
 )
 
@@ -22,5 +25,14 @@ func renderError(w http.ResponseWriter, r *http.Request, renderer render.Rendere
 	errRender := render.Render(w, r, renderer)
 	if errRender != nil {
 		writeBasicError(w, r, errRender)
+	}
+}
+
+func renderNotFoundOrDAOError(w http.ResponseWriter, r *http.Request, err error, daoError string) {
+	var e dao.NoRowsError
+	if errors.As(err, &e) {
+		renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
+	} else {
+		renderError(w, r, payloads.NewDAOError(r.Context(), daoError, err))
 	}
 }

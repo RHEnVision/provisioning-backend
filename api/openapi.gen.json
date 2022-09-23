@@ -391,7 +391,7 @@
     },
     "/reservations": {
       "get": {
-        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. This operation returns list of all reservations for particular account.\n",
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. This operation returns list of all reservations for particular account. To get a reservation with common fields, use /reservations/ID. To get a detailed reservation with all fields which are different per provider, use /reservations/aws/ID.\n",
         "operationId": "getReservationsList",
         "responses": {
           "200": {
@@ -443,6 +443,42 @@
         }
       }
     },
+    "/reservations/aws/{ID}": {
+      "get": {
+        "description": "Return an AWS reservation with details by id",
+        "operationId": "getAWSReservationByID",
+        "parameters": [
+          {
+            "description": "Reservation ID, must be an AWS reservation otherwise 404 is returned",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.AWSReservationResponse"
+                }
+              }
+            },
+            "description": "Returns detailed reservation information for an AWS reservation."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
     "/reservations/noop": {
       "post": {
         "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. A Noop reservation actually does nothing and immediately finish background job. This reservation has no input payload\n",
@@ -466,7 +502,7 @@
     },
     "/reservations/{ID}": {
       "get": {
-        "description": "Return a reservation by id",
+        "description": "Return a generic reservation by id",
         "operationId": "getReservationByID",
         "parameters": [
           {
@@ -489,7 +525,7 @@
                 }
               }
             },
-            "description": "Returned on success."
+            "description": "Returns generic reservation information like status or creation time."
           },
           "404": {
             "$ref": "#/components/responses/NotFound"

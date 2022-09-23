@@ -20,7 +20,7 @@ var (
 
 // CreateReservation dispatches requests to type provider specific handlers
 func CreateReservation(w http.ResponseWriter, r *http.Request) {
-	pType := models.ProviderTypeFromString(chi.URLParam(r, "type"))
+	pType := models.ProviderTypeFromString(chi.URLParam(r, "TYPE"))
 	switch pType {
 	case models.ProviderTypeNoop:
 		CreateNoopReservation(w, r)
@@ -31,6 +31,7 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 	case models.ProviderTypeGCP:
 		CreateGCPReservation(w, r)
 	case models.ProviderTypeUnknown:
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), UnknownProviderTypeError))
 	default:
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), UnknownProviderTypeError))
 	}
@@ -55,7 +56,7 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetReservation(w http.ResponseWriter, r *http.Request) {
+func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 	id, err := ParseInt64(r, "ID")
 	if err != nil {
 		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
@@ -68,18 +69,33 @@ func GetReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reservation, err := rDao.GetById(r.Context(), id)
-	if err != nil {
-		var e dao.NoRowsError
-		if errors.As(err, &e) {
-			renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
-		} else {
-			renderError(w, r, payloads.NewDAOError(r.Context(), "get reservation by id", err))
+	// TODO: Add support for GCP and Azure, not generic reservation
+	switch pType := models.ProviderTypeFromString(chi.URLParam(r, "TYPE")); pType {
+	case models.ProviderTypeAWS:
+		reservation, err := rDao.GetAWSById(r.Context(), id)
+		if err != nil {
+			renderNotFoundOrDAOError(w, r, err, "get reservation detail")
+			return
 		}
-		return
-	}
 
-	if err := render.Render(w, r, payloads.NewReservationResponse(reservation)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+		if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation)); err != nil {
+			renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+		}
+	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
+		reservation, err := rDao.GetById(r.Context(), id)
+		if err != nil {
+			renderNotFoundOrDAOError(w, r, err, "get reservation detail")
+			return
+		}
+
+		if err := render.Render(w, r, payloads.NewReservationResponse(reservation)); err != nil {
+			renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+		}
+	case models.ProviderTypeAzure:
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
+	case models.ProviderTypeGCP:
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
+	default:
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
 	}
 }
