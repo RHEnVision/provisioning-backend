@@ -20,5 +20,6 @@ func init() {
 	parser.Viper.SetDefault("app.cache.account", false)
 
 	// Telemetry
-	parser.Viper.SetDefault("telemetry.loggerExporter", false)
+	parser.Viper.SetDefault("telemetry.jaeger.enabled", false)
+	parser.Viper.SetDefault("telemetry.logger.enabled", false)
 }

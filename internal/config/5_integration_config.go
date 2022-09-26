@@ -20,6 +20,10 @@ func init() {
 	parser.Viper.SetDefault("app.cache.typeAppId", false)
 	parser.Viper.SetDefault("app.cache.account", false)
 
+	// Telemetry
+	parser.Viper.SetDefault("telemetry.jaeger.enabled", false)
+	parser.Viper.SetDefault("telemetry.logger.enabled", false)
+
 	// load configs/local.integration.yaml
 	parser.Viper.AddConfigPath("./configs")
 	// and relative to internal/dao/tests (go test utility changes workdir)

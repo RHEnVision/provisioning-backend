@@ -39,7 +39,6 @@ func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 		if config.RestEndpoints.TraceData {
 			doer = http.NewLoggingDoer(ctx, doer)
 		}
-		doer = http.NewOpenTelemetryDoer(ctx, doer, "ImageBuilder")
 		c.Client = doer
 		return nil
 	})

@@ -56,8 +56,14 @@ var config struct {
 		MaxField int
 	}
 	Telemetry struct {
-		Enabled        bool
-		LoggerExporter bool
+		Enabled bool
+		Jaeger  struct {
+			Enabled  bool
+			Endpoint string
+		}
+		Logger struct {
+			Enabled bool
+		}
 	}
 	Cloudwatch struct {
 		Enabled bool

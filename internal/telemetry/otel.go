@@ -10,6 +10,7 @@ import (
 	"github.com/riandyrn/otelchi"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
@@ -34,14 +35,21 @@ func Initialize(rootLogger *zerolog.Logger) *Telemetry {
 	logger := rootLogger.With().Bool("otel", true).Logger()
 
 	var exporterOption trace.TracerProviderOption
-	if config.Telemetry.LoggerExporter {
+	if config.Telemetry.Jaeger.Enabled {
+		// production use case: full exporting, batching
+		exporter, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(config.Telemetry.Jaeger.Endpoint)))
+		if err != nil {
+			panic(err)
+		}
+		exporterOption = trace.WithBatcher(exporter)
+	} else if config.Telemetry.Logger.Enabled {
 		// development use case: logger exporting, synchronous
 		exporter := NewZerologExporter(&logger)
 		exporterOption = trace.WithSyncer(exporter)
 	} else {
-		// production use case: full exporting, batching
+		// No tracing configured - do nothing
 		exporter := NewNoopExporter()
-		exporterOption = trace.WithBatcher(exporter)
+		exporterOption = trace.WithSyncer(exporter)
 	}
 
 	res, err := resource.Merge(

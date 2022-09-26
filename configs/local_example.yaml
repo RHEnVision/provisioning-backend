@@ -28,9 +28,14 @@ logging:
 telemetry:
   # OpenTelemetry tracing support
   #enabled: true
+  # Jaeger Tracing exporter
+  jaeger:
+    #enabled: true
+    #endpoint: http://localhost:14268/api/traces
   # Send OpenTelemetry output to logger as trace log level. No other exporting
   # is currently supported, Jaeger exporting is planned for the platform.
-  loggerExporter: true
+  logger:
+    #enabled: true
 
 app:
   # HTTP transparent gzip compression

@@ -41,7 +41,6 @@ func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 		if config.RestEndpoints.TraceData {
 			doer = http.NewLoggingDoer(ctx, doer)
 		}
-		doer = http.NewOpenTelemetryDoer(ctx, doer, "Sources")
 		c.Client = doer
 		return nil
 	})

@@ -32,7 +32,8 @@ func init() {
 
 	// Telemetry
 	parser.Viper.SetDefault("telemetry.enabled", false)
-	parser.Viper.SetDefault("telemetry.loggerExporter", true)
+	parser.Viper.SetDefault("telemetry.jaeger.enabled", false)
+	parser.Viper.SetDefault("telemetry.logger.enabled", false)
 
 	// Cloudwatch
 	parser.Viper.SetDefault("cloudwatch.enabled", false)
