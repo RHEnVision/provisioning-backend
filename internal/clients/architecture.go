@@ -10,7 +10,8 @@ import (
 type ArchitectureType string
 
 const (
-	ArchitectureTypeI386       ArchitectureType = "i386"
+	ArchitectureTypeI386 ArchitectureType = "i386"
+	// TODO rename to X86_64
 	ArchitectureTypeX8664      ArchitectureType = "x86_64"
 	ArchitectureTypeArm64      ArchitectureType = "arm64"
 	ArchitectureTypeAppleX8664 ArchitectureType = "apple-x86_64"

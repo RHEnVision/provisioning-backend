@@ -31,8 +31,8 @@ func printRegionalAvailabilityAzure(region, zone string) {
 }
 
 func generateTypesAzure() error {
-	azureInstanceTypes := clients.NewRegisteredInstanceTypes()
-	azureRegionalTypes := clients.NewRegionalInstanceTypes()
+	instanceTypes := clients.NewRegisteredInstanceTypes()
+	regionalTypes := clients.NewRegionalInstanceTypes()
 	restricted := make(map[armcompute.ResourceSKURestrictionsReasonCode]int, 0)
 
 	opts := azidentity.ClientSecretCredentialOptions{}
@@ -117,13 +117,13 @@ func generateTypesAzure() error {
 			}
 
 			// Register instance type
-			azureInstanceTypes.Register(instanceType)
+			instanceTypes.Register(instanceType)
 
 			if v.Restrictions == nil || len(v.Restrictions) == 0 {
 				// Unrestricted type
 				for _, location := range v.LocationInfo {
 					for _, zone := range location.Zones {
-						azureRegionalTypes.Add(strings.ToLower(*location.Location), strings.ToLower(*zone), instanceType)
+						regionalTypes.Add(strings.ToLower(*location.Location), strings.ToLower(*zone), instanceType)
 					}
 				}
 			} else {
@@ -141,12 +141,12 @@ func generateTypesAzure() error {
 		}
 	}
 
-	err = azureInstanceTypes.Save("internal/clients/http/azure/types/types.yaml")
+	err = instanceTypes.Save("internal/clients/http/azure/types/types.yaml")
 	if err != nil {
 		return fmt.Errorf("unable to generate types: %w", err)
 	}
 
-	err = azureRegionalTypes.Save("internal/clients/http/azure/types/availability")
+	err = regionalTypes.Save("internal/clients/http/azure/types/availability")
 	if err != nil {
 		return fmt.Errorf("unable to generate types: %w", err)
 	}

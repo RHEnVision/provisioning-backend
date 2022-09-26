@@ -63,6 +63,7 @@ func init() {
 	parser.Viper.SetDefault("aws.session", "")
 	parser.Viper.SetDefault("aws.instancePrefix", "")
 	parser.Viper.SetDefault("aws.defaultRegion", "us-east-1")
+	parser.Viper.SetDefault("aws.signingRegion", "us-east-1")
 
 	// Azure
 	parser.Viper.SetDefault("azure.defaultRegion", "eastus")

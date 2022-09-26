@@ -5,16 +5,12 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 )
 
 func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
-	logger := ctxval.Logger(r.Context())
-
 	sourceId := chi.URLParam(r, "ID")
 	region := r.URL.Query().Get("region")
 	if region == "" {
@@ -43,17 +39,9 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := ec2Client.ListInstanceTypesWithPaginator(r.Context())
+	instances, err := ec2Client.ListInstanceTypesWithPaginator(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "can't list EC2 instance types", err))
-		return
-	}
-
-	numBefore := len(res)
-	instances, err := ec2.NewInstanceTypes(r.Context(), res)
-	logger.Trace().Msgf("Total AWS EC2 instance types: %d (%d after architecture breakdown)", numBefore, len(instances))
-	if err != nil {
-		renderError(w, r, payloads.NewAWSError(r.Context(), "can't convertAWSTypes", err))
 		return
 	}
 

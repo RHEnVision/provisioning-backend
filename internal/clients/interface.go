@@ -49,9 +49,11 @@ type ClientStatuser interface {
 	Status(ctx context.Context) error
 }
 
-// GetCustomerEC2Client returns an EC2 facade interface. There are currently
-// two implementations available: HTTP and stub
+// GetCustomerEC2Client returns an EC2 facade interface with assumed role.
 var GetCustomerEC2Client func(ctx context.Context, auth *Authentication, region string) (EC2, error)
+
+// GetCustomerEC2Client returns an EC2 facade interface for the service account.
+var GetServiceEC2Client func(ctx context.Context, region string) (EC2, error)
 
 type EC2 interface {
 	ClientStatuser
@@ -67,22 +69,20 @@ type EC2 interface {
 
 	// DeleteSSHKey deletes a given ssh key-pair found by AWS ID
 	DeleteSSHKey(ctx context.Context, handle string) error
-	ListInstanceTypesWithPaginator(ctx context.Context) ([]types.InstanceTypeInfo, error)
+	ListInstanceTypesWithPaginator(ctx context.Context) ([]*InstanceType, error)
 
 	// RunInstances launches one or more instances
 	RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error)
 }
 
-// GetAzureClient returns an Azure facade interface. There are currently
-// two implementations available: HTTP and stub
+// GetAzureClient returns an Azure facade interface.
 var GetAzureClient func(ctx context.Context, auth *Authentication) (Azure, error)
 
 type Azure interface {
 	ClientStatuser
 }
 
-// GetGCPClient returns a GCP facade interface. There are currently
-// two implementations available: HTTP and stub
+// GetGCPClient returns a GCP facade interface.
 var GetGCPClient func(ctx context.Context, auth *Authentication) (GCP, error)
 
 type GCP interface {
