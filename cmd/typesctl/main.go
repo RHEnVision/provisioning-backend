@@ -7,6 +7,10 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/cmd/typesctl/providers"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 )
 
 func main() {

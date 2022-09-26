@@ -11,6 +11,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	awsCfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -21,15 +22,46 @@ import (
 )
 
 type ec2Client struct {
-	ec2 *ec2.Client
+	ec2     *ec2.Client
+	assumed bool
 }
 
 func init() {
 	clients.GetCustomerEC2Client = newAssumedEC2ClientWithRegion
+	clients.GetServiceEC2Client = newEC2ClientWithRegion
 }
 
 func logger(ctx context.Context) zerolog.Logger {
 	return ctxval.Logger(ctx).With().Str("client", "ec2").Logger()
+}
+
+func endpointResolver() aws.EndpointResolverWithOptionsFunc {
+	return aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+		return aws.Endpoint{
+			PartitionID:   "aws",
+			URL:           fmt.Sprintf("https://%s.%s.amazonaws.com", service, config.AWS.SigningRegion),
+			SigningRegion: config.AWS.SigningRegion,
+		}, nil
+	})
+}
+
+func newEC2ClientWithRegion(ctx context.Context, region string) (clients.EC2, error) {
+	if region == "" {
+		region = config.AWS.DefaultRegion
+	}
+
+	newCfg, err := awsCfg.LoadDefaultConfig(ctx,
+		awsCfg.WithRegion(region),
+		awsCfg.WithEndpointResolverWithOptions(endpointResolver()),
+		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
+	if err != nil {
+		return nil, fmt.Errorf("cannot create a new ec2 config: %w", err)
+	}
+
+	return &ec2Client{
+		ec2:     ec2.NewFromConfig(newCfg),
+		assumed: false,
+	}, nil
 }
 
 func newAssumedEC2ClientWithRegion(ctx context.Context, auth *clients.Authentication, region string) (clients.EC2, error) {
@@ -46,15 +78,17 @@ func newAssumedEC2ClientWithRegion(ctx context.Context, auth *clients.Authentica
 		return nil, err
 	}
 
-	newCfg, err := awsCfg.LoadDefaultConfig(ctx, awsCfg.WithRegion(region), awsCfg.WithCredentialsProvider(
-		credentials.NewStaticCredentialsProvider(*creds.AccessKeyId, *creds.SecretAccessKey, *creds.SessionToken),
-	))
+	newCfg, err := awsCfg.LoadDefaultConfig(ctx,
+		awsCfg.WithRegion(region),
+		awsCfg.WithEndpointResolverWithOptions(endpointResolver()),
+		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(*creds.AccessKeyId, *creds.SecretAccessKey, *creds.SessionToken)))
 	if err != nil {
 		return nil, fmt.Errorf("cannot create a new ec2 config: %w", err)
 	}
 
 	return &ec2Client{
-		ec2: ec2.NewFromConfig(newCfg),
+		ec2:     ec2.NewFromConfig(newCfg),
+		assumed: true,
 	}, nil
 }
 
@@ -66,10 +100,10 @@ func (c *ec2Client) Status(ctx context.Context) error {
 func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*stsTypes.Credentials, error) {
 	logger := logger(ctx)
 
-	// TODO: role assume should be region agnostic
-	cfg, err := awsCfg.LoadDefaultConfig(ctx, awsCfg.WithRegion(region),
-		awsCfg.WithCredentialsProvider(
-			credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
+	cfg, err := awsCfg.LoadDefaultConfig(ctx,
+		awsCfg.WithRegion(region),
+		awsCfg.WithEndpointResolverWithOptions(endpointResolver()),
+		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
 	if err != nil {
 		logger.Error().Err(err).Msgf("Cannot create an sts client %s", err)
 		return nil, fmt.Errorf("cannot create an sts client %w", err)
@@ -93,6 +127,9 @@ func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*
 
 // ImportPubkey imports a key and returns AWS ID
 func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
+	if !c.assumed {
+		return "", http.ServiceAccountUnsupportedOperationErr
+	}
 	logger := logger(ctx)
 	logger.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
 
@@ -124,6 +161,9 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 }
 
 func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
+	if !c.assumed {
+		return http.ServiceAccountUnsupportedOperationErr
+	}
 	logger := logger(ctx)
 	logger.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
 
@@ -141,7 +181,6 @@ func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
 }
 
 func (c *ec2Client) ListAllRegions(ctx context.Context) ([]clients.Region, error) {
-	logger := logger(ctx)
 	input := &ec2.DescribeRegionsInput{
 		AllRegions: ptr.To(true),
 	}
@@ -154,7 +193,6 @@ func (c *ec2Client) ListAllRegions(ctx context.Context) ([]clients.Region, error
 		return nil, fmt.Errorf("cannot list regions: %w", err)
 	}
 
-	logger.Trace().Msgf("Listed %d regions from AWS", len(output.Regions))
 	result := make([]clients.Region, 0, len(output.Regions))
 	for _, region := range output.Regions {
 		result = append(result, clients.Region(*region.RegionName))
@@ -164,8 +202,6 @@ func (c *ec2Client) ListAllRegions(ctx context.Context) ([]clients.Region, error
 }
 
 func (c *ec2Client) ListAllZones(ctx context.Context, region clients.Region) ([]clients.Zone, error) {
-	logger := logger(ctx)
-
 	input := &ec2.DescribeAvailabilityZonesInput{
 		AllAvailabilityZones: ptr.To(true),
 		Filters: []types.Filter{
@@ -184,7 +220,6 @@ func (c *ec2Client) ListAllZones(ctx context.Context, region clients.Region) ([]
 		return nil, fmt.Errorf("cannot list zones: %w", err)
 	}
 
-	logger.Trace().Msgf("Listed %d zones from AWS", len(output.AvailabilityZones))
 	result := make([]clients.Zone, 0, len(output.AvailabilityZones))
 	for _, zone := range output.AvailabilityZones {
 		result = append(result, clients.Zone(*zone.ZoneName))
@@ -193,7 +228,7 @@ func (c *ec2Client) ListAllZones(ctx context.Context, region clients.Region) ([]
 	return result, nil
 }
 
-func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]types.InstanceTypeInfo, error) {
+func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]*clients.InstanceType, error) {
 	input := &ec2.DescribeInstanceTypesInput{MaxResults: ptr.ToInt32(100)}
 	pag := ec2.NewDescribeInstanceTypesPaginator(c.ec2, input)
 
@@ -208,10 +243,20 @@ func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]types
 		}
 		res = append(res, resp.InstanceTypes...)
 	}
-	return res, nil
+
+	// convert to the client type
+	instances, err := NewInstanceTypes(ctx, res)
+	if err != nil {
+		return nil, fmt.Errorf("cannot convert instance types: %w", err)
+	}
+
+	return instances, nil
 }
 
 func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
+	if !c.assumed {
+		return nil, nil, http.ServiceAccountUnsupportedOperationErr
+	}
 	logger := logger(ctx)
 	logger.Trace().Msg("Run AWS EC2 instance")
 

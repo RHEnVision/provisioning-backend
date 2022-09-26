@@ -6,6 +6,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/api"
 	azure_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure/types"
+	ec2_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2/types"
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
@@ -106,7 +107,11 @@ func apiRouter() http.Handler {
 		r.Route("/instance_types", func(r chi.Router) {
 			r.Route("/azure", func(r chi.Router) {
 				r.Use(middleware.ETagMiddleware(azure_types.ETagValue))
-				r.Get("/", s.ListAzureBuiltinInstanceTypes)
+				r.Get("/", s.ListBuiltinInstanceTypes(azure_types.InstanceTypesForZone))
+			})
+			r.Route("/aws", func(r chi.Router) {
+				r.Use(middleware.ETagMiddleware(ec2_types.ETagValue))
+				r.Get("/", s.ListBuiltinInstanceTypes(ec2_types.InstanceTypesForZone))
 			})
 		})
 	})
