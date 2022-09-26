@@ -38,13 +38,23 @@ The policy JSON to use in step above:
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "RedHatProvisioningFederation",
+            "Sid": "AssumeRole",
             "Effect": "Allow",
             "Action": [
                 "sts:AssumeRole",
                 "sts:GetFederationToken"
             ],
             "Resource": "arn:aws:iam::*:role/*"
+        },
+        {
+            "Sid": "DescribeGenericData",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeInstanceTypeOfferings",
+                "ec2:DescribeRegions",
+                "ec2:DescribeInstanceTypes"
+            ],
+            "Resource": "*"
         }
     ]
 }
@@ -63,6 +73,16 @@ Create a new user for the Service account:
 * Confirm by clicking on Create user.
 * On the next page, make sure to copy Access key and secret key and paste them both into the application configuration (e.g. `local.yaml` or K8s configuration).
 
+#### Service account STS endpoints
+
+The application needs to be able to connect to all regions, by default only STS endpoints version 1 are enabled. To enable all:
+
+* Navigate to Identity and Access Management (IAM) on AWS.
+* Click on Account Settings
+* In the STS section, click on Edit for the Global endpoint section.
+* Set to "Valid in all AWS Regions
+
+For more info visit the [IAM User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_enable-regions.html#sts-regions-manage-tokens).
 
 ### Tenant account
 

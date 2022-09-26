@@ -66,6 +66,7 @@ var config struct {
 		Secret        string
 		Session       string
 		DefaultRegion string
+		SigningRegion string
 	}
 	Azure struct {
 		TenantID       string

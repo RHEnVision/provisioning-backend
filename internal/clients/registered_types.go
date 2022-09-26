@@ -18,6 +18,13 @@ func NewRegisteredInstanceTypes() *RegisteredInstanceTypes {
 }
 
 func (rit *RegisteredInstanceTypes) Register(it InstanceType) {
+	// Set supported flag (it should be 1536 but let's make it safe)
+	if it.MemoryMiB >= 1500 {
+		it.Supported = true
+	} else {
+		it.Supported = false
+	}
+
 	rit.types[it.Name] = &it
 }
 
@@ -29,28 +36,6 @@ func (rit *RegisteredInstanceTypes) Load(buffer []byte) error {
 	err := yaml.Unmarshal(buffer, &rit.types)
 	if err != nil {
 		return fmt.Errorf("unable to unmarshal registered instance types: %w", err)
-	}
-
-	return nil
-}
-
-func (rit *RegisteredInstanceTypes) LoadSupported(buffer []byte) error {
-	supportedList := make([]InstanceTypeName, 0)
-	err := yaml.Unmarshal(buffer, &supportedList)
-	if err != nil {
-		return fmt.Errorf("unable to unmarshal supported instance types: %w", err)
-	}
-	supported := make(map[InstanceTypeName]bool, len(supportedList))
-	for _, name := range supportedList {
-		supported[name] = true
-	}
-
-	for itn, it := range rit.types {
-		if _, ok := supported[itn]; ok {
-			it.Supported = true
-		} else {
-			it.Supported = false
-		}
 	}
 
 	return nil

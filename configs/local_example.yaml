@@ -44,8 +44,10 @@ aws:
   key:
   secret:
   session:
-  # default region for non-regional requests
+  # default region for non-regional requests (when region is not provided by the user)
   defaultRegion: us-east-1
+  # region for the STS service (pick the closest possible)
+  signingRegion: us-east-1
 
 # Azure service account credentials
 azure:

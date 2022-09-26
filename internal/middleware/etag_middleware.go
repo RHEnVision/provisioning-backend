@@ -11,8 +11,16 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 )
 
+// An InstanceTypeExpiration represents the default expiration time for instance types
+const InstanceTypeExpiration time.Duration = 4 * time.Hour
+
+// An OpenAPIExpiration represents the default expiration time for the OpenAPI JSON
+const OpenAPIExpiration time.Duration = 30 * time.Minute
+
+// An InvalidETagErr is returned to prevent empty tag generation
 var InvalidETagErr = errors.New("empty etag provided")
 
+// An ETag represents W3C ETag caching header
 type ETag struct {
 	Name       string
 	Expiration time.Duration
@@ -58,6 +66,7 @@ func ETagMiddleware(etagFunc ETagValueFunc) func(next http.Handler) http.Handler
 	}
 }
 
+// GenerateETagFromBuffer calculates etag value from one or more buffers (e.g. embedded files)
 func GenerateETagFromBuffer(name string, expiration time.Duration, buffers ...[]byte) (*ETag, error) {
 	start := time.Now()
 	hash := crc64.New(crc64.MakeTable(crc64.ECMA))
@@ -77,7 +86,7 @@ func GenerateETagFromBuffer(name string, expiration time.Duration, buffers ...[]
 	return etag, nil
 }
 
-// AllETags returns all etags for diagnostic purposes
+// AllETags returns all ETags for diagnostic purposes
 func AllETags() []*ETag {
 	return etags
 }

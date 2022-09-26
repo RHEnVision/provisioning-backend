@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
 )
@@ -16,7 +15,7 @@ var etag *middleware.ETag
 
 func init() {
 	var err error
-	etag, err = middleware.GenerateETagFromBuffer("json-spec", 30*time.Minute, embeddedJSONSpec)
+	etag, err = middleware.GenerateETagFromBuffer("json-spec", middleware.OpenAPIExpiration, embeddedJSONSpec)
 	if err != nil {
 		panic(err)
 	}
