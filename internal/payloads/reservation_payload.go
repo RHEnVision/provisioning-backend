@@ -181,6 +181,7 @@ func (p *GCPReservationRequestPayload) Bind(_ *http.Request) error {
 
 func NewAWSReservationResponse(reservation *models.AWSReservation) render.Renderer {
 	response := AWSReservationResponsePayload{
+		PubkeyID:         reservation.PubkeyID,
 		ImageID:          reservation.ImageID,
 		SourceID:         reservation.SourceID,
 		Region:           reservation.Detail.Region,
