@@ -96,7 +96,7 @@ func main() {
 	r.Use(m.NewPatternMiddleware(version.PrometheusLabelName))
 	r.Use(telemetry.Middleware(r))
 	r.Use(m.VersionMiddleware)
-	r.Use(m.RequestID)
+	r.Use(m.TraceID)
 	r.Use(m.LoggerMiddleware(&log.Logger))
 
 	// Set Content-Type to JSON for chi renderer. Warning: Non-chi routes
