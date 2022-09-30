@@ -36,7 +36,7 @@ func newGCPClient(ctx context.Context, auth *clients.Authentication) (clients.GC
 	options := []option.ClientOption{
 		option.WithCredentialsJSON([]byte(config.GCP.JSON)),
 		option.WithQuotaProject(auth.Payload),
-		option.WithRequestReason(ctxval.RequestId(ctx)),
+		option.WithRequestReason(ctxval.TraceId(ctx)),
 	}
 	return &gcpClient{
 		auth:    auth,

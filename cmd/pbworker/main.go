@@ -8,6 +8,7 @@ import (
 
 	// Job queue implementation
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
+	"github.com/RHEnVision/provisioning-backend/internal/random"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -23,6 +24,10 @@ import (
 	"github.com/rs/xid"
 	"github.com/rs/zerolog/log"
 )
+
+func init() {
+	random.SeedGlobal()
+}
 
 func main() {
 	config.Initialize()

@@ -6,6 +6,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/cache/memcache"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
@@ -13,16 +14,19 @@ import (
 var (
 	accountCache = memcache.New[AccountKey, *models.Account](config.Application.Cache.CleanupInterval)
 	metricHit    = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "app_cache_account_hits",
-		Help: "The total number of cache hits for account ID",
+		Name:        "app_cache_account_hits",
+		Help:        "The total number of cache hits for account ID",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName},
 	})
 	metricMiss = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "app_cache_account_miss",
-		Help: "The total number of cache misses for account ID",
+		Name:        "app_cache_account_miss",
+		Help:        "The total number of cache misses for account ID",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName},
 	})
 	_ = promauto.NewGaugeFunc(prometheus.GaugeOpts{
-		Name: "app_cache_account_items",
-		Help: "The total number of cache items for account ID",
+		Name:        "app_cache_account_items",
+		Help:        "The total number of cache items for account ID",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName},
 	}, func() float64 {
 		return float64(accountCache.Count())
 	})

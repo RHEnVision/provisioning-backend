@@ -48,7 +48,7 @@ func (c *LoggingDoer) Do(req *http.Request) (*http.Response, error) {
 	// delegate the request
 	resp, err := c.doer.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request error: %w", err)
+		return nil, NewDoerErr(err)
 	}
 
 	if resp.Body != nil {

@@ -12,8 +12,12 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel"
 )
+
+const TraceName = "github.com/EnVision/provisioning/internal/clients/http/sources"
 
 type sourcesClient struct {
 	client *ClientWithResponses
@@ -29,20 +33,15 @@ func logger(ctx context.Context) zerolog.Logger {
 
 func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	c, err := NewClientWithResponses(config.Sources.URL, func(c *Client) error {
-		if config.Sources.Proxy.URL != "" {
-			if config.Features.Environment != "development" {
-				return http.ClientProxyProductionUseErr
-			}
-			var client HttpRequestDoer
-			client, err := http.NewProxyDoer(ctx, config.Sources.Proxy.URL)
-			if err != nil {
-				return fmt.Errorf("cannot create proxy doer: %w", err)
-			}
-			if config.RestEndpoints.TraceData {
-				client = http.NewLoggingDoer(ctx, client)
-			}
-			c.Client = client
+		var doer HttpRequestDoer
+		doer, err := telemetry.HTTPClient(ctx, config.StringToURL(ctx, config.Sources.Proxy.URL))
+		if err != nil {
+			return fmt.Errorf("cannot HTTP client: %w", err)
 		}
+		if config.RestEndpoints.TraceData {
+			doer = http.NewLoggingDoer(ctx, doer)
+		}
+		c.Client = doer
 		return nil
 	})
 	if err != nil {
@@ -62,6 +61,9 @@ type dataElement struct {
 }
 
 func (c *sourcesClient) Ready(ctx context.Context) error {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "Ready")
+	defer span.End()
+
 	logger := logger(ctx)
 	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
