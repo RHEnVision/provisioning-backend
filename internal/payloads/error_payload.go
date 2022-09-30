@@ -50,7 +50,7 @@ func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -64,7 +64,7 @@ func NewMissingRequestParameterError(ctx context.Context, param string) *Respons
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Context:        ctx,
 	}
 }
@@ -77,7 +77,7 @@ func PubkeyAlreadyExistsError(ctx context.Context, err error) *ResponseError {
 	return &ResponseError{
 		HTTPStatusCode: 422,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -91,7 +91,7 @@ func ClientError(ctx context.Context, client string, message string, err error, 
 	return &ResponseError{
 		HTTPStatusCode: status,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -105,7 +105,7 @@ func NewClientInitializationError(ctx context.Context, message string, err error
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -119,7 +119,7 @@ func NewNotFoundError(ctx context.Context, err error) *ResponseError {
 	return &ResponseError{
 		HTTPStatusCode: 404,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -133,7 +133,7 @@ func NewInitializeDAOError(ctx context.Context, message string, err error) *Resp
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -147,7 +147,7 @@ func NewEnqueueTaskError(ctx context.Context, message string, err error) *Respon
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -161,7 +161,7 @@ func NewDAOError(ctx context.Context, message string, err error) *ResponseError 
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -175,7 +175,7 @@ func NewRenderError(ctx context.Context, message string, err error) *ResponseErr
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -189,7 +189,7 @@ func NewURLParsingError(ctx context.Context, paramName string, err error) *Respo
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -203,7 +203,7 @@ func NewStatusError(ctx context.Context, err error) *ResponseError {
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -217,7 +217,7 @@ func NewAWSError(ctx context.Context, message string, err error) *ResponseError 
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -231,7 +231,7 @@ func NewAzureError(ctx context.Context, message string, err error) *ResponseErro
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -245,7 +245,7 @@ func NewGCPError(ctx context.Context, message string, err error) *ResponseError 
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}
@@ -259,7 +259,7 @@ func NewUnknownError(ctx context.Context, err error) *ResponseError {
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.RequestId(ctx),
+		RequestId:      ctxval.TraceId(ctx),
 		Err:            err,
 		Context:        ctx,
 	}

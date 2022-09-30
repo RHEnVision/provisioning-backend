@@ -12,11 +12,14 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
+	"github.com/RHEnVision/provisioning-backend/internal/random"
 
 	// HTTP client implementations
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/config/parser"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
+	"github.com/RHEnVision/provisioning-backend/internal/version"
 
 	// Job queue implementation
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
@@ -37,12 +40,17 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+func init() {
+	random.SeedGlobal()
+}
+
 func statusOk(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 }
 
 func main() {
+	ctx := context.Background()
 	config.Initialize()
 
 	// initialize stdout logging and AWS clients first
@@ -64,6 +72,9 @@ func main() {
 		logger.Warn().Msgf("Unknown ENV variables, add them in the codebase: %+v", unknown)
 	}
 
+	tel := telemetry.Initialize(&log.Logger)
+	defer tel.Close(ctx)
+
 	// initialize the rest
 	err = db.Initialize("public")
 	if err != nil {
@@ -71,7 +82,6 @@ func main() {
 	}
 
 	// initialize the job queue
-	ctx := context.Background()
 	err = dejq.Initialize(ctx, &logger)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing dejq queue")
@@ -83,10 +93,10 @@ func main() {
 
 	// Routes for the main service
 	r := chi.NewRouter()
+	r.Use(m.NewPatternMiddleware(version.PrometheusLabelName))
+	r.Use(telemetry.Middleware(r))
 	r.Use(m.VersionMiddleware)
-	r.Use(m.RequestID)
-	r.Use(m.RequestNum)
-	r.Use(m.MetricsMiddleware)
+	r.Use(m.TraceID)
 	r.Use(m.LoggerMiddleware(&log.Logger))
 
 	// Set Content-Type to JSON for chi renderer. Warning: Non-chi routes

@@ -12,10 +12,9 @@ import (
 type commonKeyId int
 
 const (
-	loggerCtxKey     commonKeyId = iota
-	requestIdCtxKey  commonKeyId = iota
-	requestNumCtxKey commonKeyId = iota
-	accountIdCtxKey  commonKeyId = iota
+	loggerCtxKey    commonKeyId = iota
+	requestIdCtxKey commonKeyId = iota
+	accountIdCtxKey commonKeyId = iota
 )
 
 var MissingAccountInContextError = errors.New("operation requires account_id in context")
@@ -38,25 +37,16 @@ func WithLogger(ctx context.Context, logger *zerolog.Logger) context.Context {
 	return context.WithValue(ctx, loggerCtxKey, logger)
 }
 
-// RequestId returns request id or an empty string when not set.
-func RequestId(ctx context.Context) string {
+// TraceId returns request id or an empty string when not set.
+func TraceId(ctx context.Context) string {
 	if ctx.Value(requestIdCtxKey) == nil {
 		return ""
 	}
 	return ctx.Value(requestIdCtxKey).(string)
 }
 
-func WithRequestId(ctx context.Context, id string) context.Context {
+func WithTraceId(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, requestIdCtxKey, id)
-}
-
-// RequestNumber returns request counter.
-func RequestNumber(ctx context.Context) uint64 {
-	return ctx.Value(requestNumCtxKey).(uint64)
-}
-
-func WithRequestNumber(ctx context.Context, num uint64) context.Context {
-	return context.WithValue(ctx, requestNumCtxKey, num)
 }
 
 // Account returns current account model or panics when not set

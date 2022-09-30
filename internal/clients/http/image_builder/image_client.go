@@ -10,8 +10,12 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel"
 )
+
+const TraceName = "github.com/EnVision/provisioning/internal/clients/http/image_builder"
 
 type ibClient struct {
 	client *ClientWithResponses
@@ -27,20 +31,15 @@ func logger(ctx context.Context) zerolog.Logger {
 
 func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 	c, err := NewClientWithResponses(config.ImageBuilder.URL, func(c *Client) error {
-		if config.ImageBuilder.Proxy.URL != "" {
-			var client HttpRequestDoer
-			if config.Features.Environment != "development" {
-				return http.ClientProxyProductionUseErr
-			}
-			client, err := http.NewProxyDoer(ctx, config.ImageBuilder.Proxy.URL)
-			if err != nil {
-				return fmt.Errorf("cannot create proxy doer: %w", err)
-			}
-			if config.RestEndpoints.TraceData {
-				client = http.NewLoggingDoer(ctx, client)
-			}
-			c.Client = client
+		var doer HttpRequestDoer
+		doer, err := telemetry.HTTPClient(ctx, config.StringToURL(ctx, config.ImageBuilder.Proxy.URL))
+		if err != nil {
+			return fmt.Errorf("cannot HTTP client: %w", err)
 		}
+		if config.RestEndpoints.TraceData {
+			doer = http.NewLoggingDoer(ctx, doer)
+		}
+		c.Client = doer
 		return nil
 	})
 	if err != nil {
@@ -50,6 +49,9 @@ func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 }
 
 func (c *ibClient) Ready(ctx context.Context) error {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "Ready")
+	defer span.End()
+
 	logger := logger(ctx)
 	resp, err := c.client.GetReadiness(ctx, headers.AddImageBuilderIdentityHeader)
 	if err != nil {

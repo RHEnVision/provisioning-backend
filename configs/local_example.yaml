@@ -11,8 +11,9 @@ database:
   maxIdleConn: 20
   maxLifetime: 5m
   maxIdletime: 10m
-  # 1-none, 2-error, 3-warn, 4-info, 5-debug, 6-trace
-  loglevel: 1
+  # Database tracing level, not effective if telemetry is enabled. Possible values:
+  # none, error, warn, info, debug, trace
+  #loglevel: trace
 
 logging:
   # Overall log level (-1 trace, 0 debug, 1 info ... 5 panic)
@@ -23,6 +24,18 @@ logging:
   # the standard output clean and human-readable. Set to zero or comment out
   # to disable.
   maxField: 0
+
+telemetry:
+  # OpenTelemetry tracing support
+  #enabled: true
+  # Jaeger Tracing exporter
+  jaeger:
+    #enabled: true
+    #endpoint: http://localhost:14268/api/traces
+  # Send OpenTelemetry output to logger as trace log level. No other exporting
+  # is currently supported, Jaeger exporting is planned for the platform.
+  logger:
+    #enabled: true
 
 app:
   # HTTP transparent gzip compression
