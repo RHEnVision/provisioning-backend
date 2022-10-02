@@ -6,18 +6,16 @@ import (
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/cmd/typesctl/providers"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/logging"
-	"github.com/rs/zerolog/log"
-
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 )
 
 func main() {
 	config.Initialize()
-	log.Logger = logging.InitializeStdout()
+	logging.InitializeStdout()
 
 	validProviders := make([]string, 0)
 	for p := range providers.TypeProviders {

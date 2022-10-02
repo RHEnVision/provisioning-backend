@@ -7,7 +7,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/go-logr/zerologr"
@@ -41,7 +40,8 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 	if config.Worker.Queue == "memory" {
 		dejqQueue, err = mem.NewClient(ctx, zerologr.New(logger))
 	} else if config.Worker.Queue == "postgres" {
-		dejqQueue, err = postgres.NewClient(ctx, zerologr.New(logger), db.DB.DB,
+		// TODO dejq must be refactored to use PGX too
+		dejqQueue, err = postgres.NewClient(ctx, zerologr.New(logger), nil,
 			config.Worker.Concurrency,
 			time.Duration(config.Worker.HeartbeatSec)*time.Second,
 			config.Worker.MaxBeats)

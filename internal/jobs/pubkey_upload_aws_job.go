@@ -69,8 +69,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	skip := true
 	pkrCheck, errDao := pkrDao.UnscopedGetResourceByProviderType(ctx, args.PubkeyID, models.ProviderTypeAWS)
 	if errDao != nil {
-		var e dao.NoRowsError
-		if errors.As(errDao, &e) {
+		if errors.Is(errDao, dao.ErrNoRows) {
 			skip = false
 		} else {
 			return fmt.Errorf("unable to check pubkey resource: %w", errDao)

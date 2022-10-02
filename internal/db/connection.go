@@ -1,22 +1,26 @@
 package db
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/log/zerologadapter"
-	"github.com/jackc/pgx/v4/stdlib"
-	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/exaring/otelpgx"
+	pgxlog "github.com/jackc/pgx-zerolog"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/tracelog"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+
+	_ "github.com/georgysavva/scany/v2"
 )
 
-// DB is the main connection pool (sqlx on top of database/sql connection pool)
-var DB *sqlx.DB
+// Pool is the main connection pool for the whole application
+var Pool *pgxpool.Pool
 
-func GetConnectionString(prefix, schema string) string {
+func getConnString(prefix, schema string) string {
 	if len(config.Database.Password) > 0 {
 		return fmt.Sprintf("%s://%s:%s@%s:%d/%s?search_path=%s",
 			prefix,
@@ -37,41 +41,67 @@ func GetConnectionString(prefix, schema string) string {
 	}
 }
 
-func Initialize(schema string) error {
+// Initialize creates connection pool. Close must be called when done.
+func Initialize(ctx context.Context, schema string) error {
 	var err error
 	if schema == "" {
 		schema = "public"
 	}
 
 	// register and setup logging configuration
-	connStr := GetConnectionString("postgres", schema)
-	connConfig, err := pgx.ParseConfig(connStr)
+	connStr := getConnString("postgres", schema)
+	poolConfig, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
-		return errors.Wrap(err, "unable to parse database configuration")
-	}
-	logLevel, err := pgx.LogLevelFromString(config.Database.LogLevel)
-	if err != nil {
-		return errors.Wrap(err, "unknown db log level")
-	}
-	if logLevel > 0 {
-		connConfig.Logger = zerologadapter.NewLogger(log.Logger)
-		connConfig.LogLevel = logLevel
-	}
-	connStrRegistered := stdlib.RegisterConnConfig(connConfig)
-
-	DB, err = sqlx.Open("pgx", connStrRegistered)
-	if err != nil {
-		return errors.Wrap(err, "unable to connect to database")
+		return fmt.Errorf("unable to parse db configuration: %w", err)
 	}
 
-	DB.SetMaxIdleConns(config.Database.MaxIdleConn)
-	DB.SetMaxOpenConns(config.Database.MaxOpenConn)
-	DB.SetConnMaxLifetime(config.Database.MaxLifetime)
-	DB.SetConnMaxIdleTime(config.Database.MaxIdleTime)
-	err = DB.Ping()
+	poolConfig.MaxConns = config.Database.MaxConn
+	poolConfig.MinConns = config.Database.MinConn
+	poolConfig.MaxConnLifetime = config.Database.MaxLifetime
+	poolConfig.MaxConnIdleTime = config.Database.MaxIdleTime
+
+	if config.Telemetry.Enabled {
+		poolConfig.ConnConfig.Tracer = otelpgx.NewTracer()
+	} else {
+		logLevel, configErr := tracelog.LogLevelFromString(config.Database.LogLevel)
+		if configErr != nil {
+			return fmt.Errorf("cannot parse db log level configuration: %w", configErr)
+		}
+
+		if logLevel > 0 {
+			zeroLogger := pgxlog.NewLogger(log.Logger,
+				pgxlog.WithContextFunc(func(ctx context.Context, logWith zerolog.Context) zerolog.Context {
+					traceId := ctxval.TraceId(ctx)
+					if traceId != "" {
+						logWith = logWith.Str("trace_id", traceId)
+					}
+					accountId := ctxval.AccountIdOrNil(ctx)
+					if accountId != 0 {
+						logWith = logWith.Int64("account_id", accountId)
+					}
+					return logWith
+				}))
+			poolConfig.ConnConfig.Tracer = &tracelog.TraceLog{
+				Logger:   zeroLogger,
+				LogLevel: logLevel,
+			}
+		}
+	}
+
+	Pool, err = pgxpool.NewWithConfig(ctx, poolConfig)
 	if err != nil {
-		return errors.Wrap(err, "unable to ping the database")
+		return fmt.Errorf("unable to create connection pool: %w", err)
+	}
+
+	err = Pool.Ping(ctx)
+	if err != nil {
+		return fmt.Errorf("unable to ping the database: %w", err)
 	}
 
 	return nil
+}
+
+func Close() {
+	log.Logger.Info().Msg("Closing all database connections")
+	Pool.Close()
 }

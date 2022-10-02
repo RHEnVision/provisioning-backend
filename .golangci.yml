@@ -19,6 +19,7 @@ linters:
     - scopelint # deprecated by exportloopref
     - gci # too strict
     - contextcheck # too restrictive
+    - gomoddirectives # TODO remove after scany/tern v2 are released
 linters-settings:
   govet:
     check-shadowing: true
@@ -27,12 +28,6 @@ linters-settings:
       - G112 # slowloris attack - TODO (easyfix)
 issues:
   exclude-rules:
-    # If a Stmt is prepared on a DB, it will remain usable for the lifetime of the DB. When the Stmt needs to execute
-    # on a new underlying connection, it will prepare itself on the new connection automatically.
-    - path: 'internal/dao/sqlx/(.+)\.go'
-      linters:
-        - sqlclosecheck
-
     # Makes easier to write test code.
     - path: '(.+)_test\.go'
       linters:

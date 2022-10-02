@@ -1,98 +1,34 @@
 package dao
 
 import (
-	"context"
 	"errors"
-	"fmt"
-	"strings"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-	"github.com/go-playground/validator/v10"
+	"github.com/jackc/pgx/v5"
 )
 
-type NamedForError interface {
-	// NameForError returns DAO implementation name that is passed in the error message (e.g. "account").
-	NameForError() string
-}
+var (
+	// ErrNoRows is returned when there are no rows in the result
+	ErrNoRows = pgx.ErrNoRows
 
-// Error represents a common DAO error.
-type Error struct {
-	Message string
-	Context context.Context
-	Err     error
-}
+	// ErrAffectedMismatch is returned when unexpected number of affected rows
+	// was returned for INSERT, UPDATE and DELETE queries.
+	ErrAffectedMismatch = errors.New("unexpected affected rows")
 
-// ValidationError is returned when validation on model fails
-type ValidationError struct {
-	Message string
-	Context context.Context
-	Err     error
-	Model   interface{}
-}
+	// ErrValidation is returned when model does not validate
+	ErrValidation = errors.New("validation error")
 
-// TransformationError is returned when model transformation fails
-type TransformationError Error
+	// ErrValidation is returned when model transformation fails
+	ErrTransformation = errors.New("transformation error")
 
-// NoRowsError is returned when no rows were returned.
-type NoRowsError struct {
-	Message string
-	Context context.Context
-	Err     error
-}
+	// ErrWrongAccount is returned on DAO operations with not matching account id in the context
+	ErrWrongAccount = errors.New("wrong account")
 
-// MismatchAffectedError is returned when affected rows do not match expectation (e.g. create/delete).
-type MismatchAffectedError struct {
-	Message string
-	Context context.Context
-}
+	// ErrStubGeneric is a generic error returned for test-related cases
+	ErrStubGeneric = errors.New("generic stub error")
 
-var WrongTenantError = errors.New("trying to manipulate data of different tenant")
+	// ErrStubMissingContext is returned when stub object is missing from the context
+	ErrStubMissingContext = errors.New("missing variable in context")
 
-func (e Error) Error() string {
-	return fmt.Sprintf("DAO error: %s: %s", e.Message, e.Err.Error())
-}
-
-func (e Error) Unwrap() error {
-	return e.Err
-}
-
-func (e ValidationError) Error() string {
-	return fmt.Sprintf("DAO error: %s: %s", e.Message, e.Err.Error())
-}
-
-func (e ValidationError) Unwrap() error {
-	return e.Err
-}
-
-func (e NoRowsError) Error() string {
-	return fmt.Sprintf("DAO no rows returned: %s", e.Message)
-}
-
-func (e NoRowsError) Unwrap() error {
-	return e.Err
-}
-
-func (e MismatchAffectedError) Error() string {
-	return fmt.Sprintf("DAO mismatch affected rows: %s", e.Message)
-}
-
-func (e TransformationError) Error() string {
-	return fmt.Sprintf("DAO error: %s: %s", e.Message, e.Err.Error())
-}
-
-func (e TransformationError) Unwrap() error {
-	return e.Err
-}
-
-func NewValidationError(ctx context.Context, dao NamedForError, model interface{}, validationErr validator.ValidationErrors) ValidationError {
-	errors := []string{fmt.Sprintf("Validation of %s failed: ", dao.NameForError())}
-	for _, ve := range validationErr {
-		errors = append(errors, ve.Error())
-	}
-	msg := strings.Join(errors, ", ")
-
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Info().Msg(msg)
-	}
-	return ValidationError{Context: ctx, Message: msg, Err: validationErr, Model: model}
-}
+	// ErrStubContextAlreadySet is returned when stub object was already added to the context
+	ErrStubContextAlreadySet = errors.New("context object already set")
+)

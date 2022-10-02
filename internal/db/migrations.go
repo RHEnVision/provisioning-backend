@@ -11,20 +11,20 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4/stdlib"
-	"github.com/jackc/tern/migrate"
+	"github.com/RHEnVision/provisioning-backend/internal/db/migrations"
+	"github.com/RHEnVision/provisioning-backend/internal/db/seeds"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/tern/v2/migrate"
 	"github.com/rs/zerolog/log"
 )
 
-//go:embed migrations
-var embeddedMigrations embed.FS
-
-//go:embed seeds
-var embeddedSeeds embed.FS
-
 type EmbeddedFS struct {
 	efs *embed.FS
+}
+
+//nolint:wrapcheck
+func (efs *EmbeddedFS) Open(name string) (fs.File, error) {
+	return efs.efs.Open(name)
 }
 
 func NewEmbeddedFS(fs *embed.FS) *EmbeddedFS {
@@ -47,20 +47,14 @@ func (efs *EmbeddedFS) ReadDir(dirname string) ([]fs.FileInfo, error) {
 	return result, nil
 }
 
+//nolint:wrapcheck
 func (efs *EmbeddedFS) ReadFile(filename string) ([]byte, error) {
-	result, err := efs.efs.ReadFile(filename)
-	if err != nil {
-		return nil, fmt.Errorf("unable to read file: %w", err)
-	}
-	return result, nil
+	return efs.efs.ReadFile(filename)
 }
 
+//nolint:wrapcheck
 func (efs *EmbeddedFS) Glob(pattern string) (matches []string, err error) {
-	result, err := fs.Glob(efs.efs, pattern)
-	if err != nil {
-		return nil, fmt.Errorf("unable to glob: %w", err)
-	}
-	return result, nil
+	return fs.Glob(efs.efs, pattern)
 }
 
 func fmtDetailedError(sql string, mgErr *pgconn.PgError) string {
@@ -115,61 +109,50 @@ var (
 // Migrate executes embedded SQL scripts from internal/db/migrations. For the time being
 // only "up" migrations are supported. When this package is initialized, the directory
 // is verified that it only contains XXX_*.up.sql files (XXX = numbers).
-func Migrate(schema string) error {
+func Migrate(ctx context.Context, schema string) error {
 	logger := log.Logger.With().Bool("migration", true).Logger()
-	ctx := context.Background()
 	logger.Debug().Msgf("Started migration")
 	if schema == "" {
 		schema = "public"
 	}
 
-	stdConn, connErr := DB.Conn(ctx)
+	conn, connErr := Pool.Acquire(ctx)
 	if connErr != nil {
-		return fmt.Errorf("error acquiring connection from pool: %w", connErr)
+		return fmt.Errorf("error acquiring connection from the pool: %w", connErr)
 	}
-	defer stdConn.Close()
+	defer conn.Release()
 
-	wrapErr := stdConn.Raw(func(pgxConn interface{}) error {
-		conn := pgxConn.(*stdlib.Conn).Conn()
-		opts := migrate.MigratorOptions{
-			MigratorFS: NewEmbeddedFS(&embeddedMigrations),
-		}
-		table := fmt.Sprintf("%s.schema_version", schema)
-		migrator, err := migrate.NewMigratorEx(ctx, conn, table, &opts)
-		if err != nil {
-			return fmt.Errorf("error initializing migrator: %w", err)
-		}
-		err = migrator.LoadMigrations("migrations/")
-		if err != nil {
-			return fmt.Errorf("error loading migrations: %w", err)
-		}
-		if len(migrator.Migrations) == 0 {
-			return ErrNoMigrationsFound
-		}
+	mfs := NewEmbeddedFS(&migrations.EmbeddedMigrations)
+	table := fmt.Sprintf("%s.schema_version", schema)
+	migrator, err := migrate.NewMigrator(ctx, conn.Conn(), table)
+	if err != nil {
+		return fmt.Errorf("error initializing migrator: %w", err)
+	}
+	err = migrator.LoadMigrations(mfs)
+	if err != nil {
+		return fmt.Errorf("error loading migrations: %w", err)
+	}
+	if len(migrator.Migrations) == 0 {
+		return ErrNoMigrationsFound
+	}
 
-		migrator.OnStart = func(sequence int32, name, direction, sql string) {
-			logger.Info().Str("sql", sql).Msgf("Executing migration %s %s", name, direction)
-		}
+	migrator.OnStart = func(sequence int32, name, direction, sql string) {
+		logger.Info().Str("sql", sql).Msgf("Executing migration %s %s", name, direction)
+	}
 
-		err = migrator.Migrate(ctx)
-		if err != nil {
-			var mgErr *migrate.MigrationPgError
-			var pgErr *pgconn.PgError
-			if errors.As(err, &mgErr) && errors.As(err, &pgErr) {
-				return fmt.Errorf("%w: %s", ErrMigration, fmtDetailedError(mgErr.Sql, pgErr))
-			} else {
-				return fmt.Errorf("unable to perform migration: %w", err)
-			}
+	err = migrator.Migrate(ctx)
+	if err != nil {
+		var mgErr *migrate.MigrationPgError
+		var pgErr *pgconn.PgError
+		if errors.As(err, &mgErr) && errors.As(err, &pgErr) {
+			return fmt.Errorf("%w: %s", ErrMigration, fmtDetailedError(mgErr.Sql, pgErr))
+		} else {
+			return fmt.Errorf("unable to perform migration: %w", err)
 		}
-
-		return nil
-	})
-	if wrapErr != nil {
-		return fmt.Errorf("error migrating: %w", wrapErr)
 	}
 
 	// Print some additional info
-	rows, err := DB.Query("SELECT version, applied_at FROM schema_migrations_history")
+	rows, err := Pool.Query(ctx, "SELECT version, applied_at FROM schema_migrations_history")
 	if err != nil {
 		logger.Fatal().Err(err).Msg("Error querying schema history")
 	}
@@ -192,7 +175,7 @@ func Migrate(schema string) error {
 }
 
 // Seed executes embedded SQL scripts from internal/db/seeds
-func Seed(seedScript string) error {
+func Seed(ctx context.Context, seedScript string) error {
 	logger := log.Logger.With().Bool("seed", true).Logger()
 	logger.Debug().Msgf("Started execution of seed script %s", seedScript)
 
@@ -200,7 +183,7 @@ func Seed(seedScript string) error {
 	if seedScript == "drop_all" && config.Features.Environment != "development" {
 		return fmt.Errorf("%w: an attempt to run drop_all seed script in non %s environment", ErrSeedProduction, config.Features.Environment)
 	}
-	file, err := embeddedSeeds.Open(fmt.Sprintf("seeds/%s.sql", seedScript))
+	file, err := seeds.EmbeddedSeeds.Open(fmt.Sprintf("%s.sql", seedScript))
 	if err != nil {
 		return fmt.Errorf("unable to open seed script %s: %w", seedScript, err)
 	}
@@ -209,7 +192,7 @@ func Seed(seedScript string) error {
 	if err != nil {
 		return fmt.Errorf("unable to read seed script %s: %w", seedScript, err)
 	}
-	_, err = DB.Exec(string(buffer))
+	_, err = Pool.Exec(ctx, string(buffer))
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {

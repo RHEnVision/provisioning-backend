@@ -7,10 +7,10 @@ database:
   name:
   user:
   password:
-  maxOpenConn: 25
-  maxIdleConn: 20
-  maxLifetime: 5m
-  maxIdletime: 10m
+  #minConn: 2
+  #maxConn: 100
+  #maxLifetime: 2h
+  #maxIdleTime: 15m
   # Database tracing level, not effective if telemetry is enabled. Possible values:
   # none, error, warn, info, debug, trace
   #loglevel: trace

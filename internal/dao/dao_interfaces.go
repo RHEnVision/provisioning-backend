@@ -37,6 +37,8 @@ type PubkeyDao interface {
 	GetById(ctx context.Context, id int64) (*models.Pubkey, error)
 	List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error)
 	Delete(ctx context.Context, id int64) error
+
+	// TODO rename to UnscopedXXXResource
 	UnscopedCreate(ctx context.Context, pkr *models.PubkeyResource) error
 	UnscopedGetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error)
 	UnscopedListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error)
@@ -71,6 +73,7 @@ type ReservationDao interface {
 	List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error)
 
 	// ListInstances returns instances associated to a reservation. UNSCOPED.
+	// It currently lists all instances and not instances for a reservation, this is a TODO.
 	ListInstances(ctx context.Context, limit, offset int64) ([]*models.ReservationInstance, error)
 
 	// UpdateStatus sets status field and increment step counter by addSteps. UNSCOPED.
