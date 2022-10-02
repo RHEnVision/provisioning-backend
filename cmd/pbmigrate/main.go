@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
@@ -16,10 +17,11 @@ func init() {
 }
 
 func main() {
+	ctx := context.Background()
 	config.Initialize()
 
 	// initialize stdout logging and AWS clients first
-	log.Logger = logging.InitializeStdout()
+	logging.InitializeStdout()
 	cloudwatchlogs.Initialize()
 
 	// initialize cloudwatch using the AWS clients
@@ -31,14 +33,15 @@ func main() {
 	log.Logger = logger
 	logging.DumpConfigForDevelopment()
 
-	err = db.Initialize("public")
+	err = db.Initialize(ctx, "public")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
+	defer db.Close()
 
 	if len(os.Args[1:]) > 0 && os.Args[1] == "purgedb" {
 		logger.Warn().Msg("Database purge: all data is being dropped")
-		err = db.Seed("drop_all")
+		err = db.Seed(ctx, "drop_all")
 		if err != nil {
 			logger.Fatal().Err(err).Msg("Error purging the database")
 			return
@@ -46,14 +49,14 @@ func main() {
 		logger.Info().Msgf("Database %s has been purged to blank state", config.Database.Name)
 	}
 
-	err = db.Migrate("public")
+	err = db.Migrate(ctx, "public")
 	if err != nil {
 		logger.Fatal().Err(err).Msg("Error running migration")
 		return
 	}
 
 	if config.Database.SeedScript != "" {
-		err = db.Seed(config.Database.SeedScript)
+		err = db.Seed(ctx, config.Database.SeedScript)
 		if err != nil {
 			logger.Fatal().Err(err).Msg("Error running migration")
 			return

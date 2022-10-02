@@ -2,58 +2,56 @@ package dao
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
-	"github.com/jmoiron/sqlx"
+	"github.com/jackc/pgx/v5"
 )
 
 // A TxFn is a function that will be called with an initialized `Transaction` object
 // that can be used for executing statements and queries against a database.
-type TxFn func(tx *sqlx.Tx) error
+type TxFn func(tx pgx.Tx) error
 
 // WithTransaction creates a new transaction and handles rollback/commit based on the
 // error object returned by the `TxFn` or when it panics.
 func WithTransaction(ctx context.Context, fn TxFn) error {
 	logger := ctxval.Logger(ctx)
-	tx, err := db.DB.BeginTxx(ctx, &sql.TxOptions{
-		Isolation: sql.LevelDefault,
-		ReadOnly:  false,
-	})
-	if err != nil {
-		logger.Error().Err(err).Msg("Cannot begin database transaction")
-		return fmt.Errorf("cannot begin transaction: %w", err)
+	tx, beginErr := db.Pool.Begin(ctx)
+	if beginErr != nil {
+		logger.Warn().Err(beginErr).Msg("Cannot begin database transaction")
+		return fmt.Errorf("transaction error: %w", beginErr)
 	}
 
 	defer func() {
 		if p := recover(); p != nil {
-			logger.Trace().Msg("Rolling database transaction back")
-			err = tx.Rollback()
-			if err != nil {
-				logger.Error().Err(err).Msg("Cannot rollback database transaction")
+			logger.Warn().Msgf("Rolling database transaction back due to panic call: %s", p)
+			rollErr := tx.Rollback(ctx)
+			if rollErr != nil {
+				logger.Warn().Err(rollErr).Msg("Cannot rollback database transaction")
 				return
 			}
 			panic(p)
-		} else if err != nil {
-			logger.Trace().Msg("Rolling database transaction back")
-			err = tx.Rollback()
-			if err != nil {
-				logger.Error().Err(err).Msg("Cannot rollback database transaction")
-				return
-			}
-		} else {
-			logger.Trace().Msg("Committing database transaction")
-			err = tx.Commit()
-			if err != nil {
-				logger.Error().Err(err).Msg("Cannot rollback database transaction")
-				return
-			}
 		}
 	}()
 
-	logger.Trace().Msg("Starting database transaction")
-	err = fn(tx)
-	return err
+	callErr := fn(tx)
+
+	if callErr != nil {
+		logger.Warn().Msg("Rolling database transaction back due to error")
+		rollErr := tx.Rollback(ctx)
+		if rollErr != nil {
+			logger.Warn().Err(rollErr).Msg("Cannot rollback database transaction")
+			// return the call (root cause) error and not transaction error
+			return fmt.Errorf("transaction error: %w", callErr)
+		}
+	}
+
+	commitErr := tx.Commit(ctx)
+	if commitErr != nil {
+		logger.Warn().Err(commitErr).Msg("Cannot rollback database transaction")
+		return fmt.Errorf("transaction error: %w", commitErr)
+	}
+
+	return nil
 }

@@ -49,11 +49,20 @@ func WithTraceId(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, requestIdCtxKey, id)
 }
 
-// Account returns current account model or panics when not set
+// AccountId returns current account model or panics when not set
 func AccountId(ctx context.Context) int64 {
 	value := ctx.Value(accountIdCtxKey)
 	if value == nil {
 		panic(MissingAccountInContextError)
+	}
+	return value.(int64)
+}
+
+// AccountIdOrNil returns current account model or 0 when not set.
+func AccountIdOrNil(ctx context.Context) int64 {
+	value := ctx.Value(accountIdCtxKey)
+	if value == nil {
+		return 0
 	}
 	return value.(int64)
 }

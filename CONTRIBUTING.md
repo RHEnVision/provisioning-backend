@@ -12,7 +12,7 @@ Here are few points before you start contributing:
 * Database DDL SQL goes into `internal/db/migrations` as SQL files. Table names are in plural form.
 * Do not put any code logic into database models.
 * All database operations (CRUD, eager loading) lives in `internal/dao` (Data Access Objects) with a common API interface.
-* The actual implementation lives in `internal/dao/sqlx` package, all operations are passed with Context and errors are wrapped.
+* The actual implementation lives in `internal/dao/pgx` package, all operations are passed with Context and errors are wrapped.
 * Database models must be not exposed directly into JSON API, use `internal/payloads` package to wrap them.
 * Business logic (the actual code) does belong into `internal/services` package, each API call should have a dedicated file.
 * HTTP routes go into `internal/routes` package.

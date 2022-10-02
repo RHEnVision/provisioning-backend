@@ -2,6 +2,9 @@ module github.com/RHEnVision/provisioning-backend
 
 go 1.18
 
+// go get github.com/georgysavva/scany/v2@v2.0.0-alpha.2
+// go get github.com/jackc/tern/v2@v2.0.0-beta.2
+
 require (
 	cloud.google.com/go/compute v1.10.0
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.1.0
@@ -16,6 +19,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.19
 	github.com/aws/smithy-go v1.13.3
 	github.com/deepmap/oapi-codegen v1.11.0
+	github.com/exaring/otelpgx v0.1.1
+	github.com/georgysavva/scany/v2 v2.0.0-alpha.2
 	github.com/getkin/kin-openapi v0.103.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-chi/chi/v5 v5.0.7
@@ -24,9 +29,9 @@ require (
 	github.com/go-openapi/runtime v0.24.1
 	github.com/go-playground/mold/v4 v4.2.0
 	github.com/go-playground/validator/v10 v10.11.1
-	github.com/jackc/pgconn v1.13.0
-	github.com/jackc/pgx/v4 v4.17.2
-	github.com/jackc/tern v1.13.0
+	github.com/jackc/pgx-zerolog v0.0.0-20220923130014-7856b90a65ae
+	github.com/jackc/pgx/v5 v5.0.1
+	github.com/jackc/tern/v2 v2.0.0-beta.2
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lzap/cloudwatchwriter2 v1.0.0
 	github.com/lzap/dejq v1.0.2
@@ -56,8 +61,8 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork v1.1.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v0.7.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
-	github.com/Masterminds/semver v1.5.0 // indirect
-	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
+	github.com/Masterminds/semver/v3 v3.1.1 // indirect
+	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.17 // indirect
@@ -96,12 +101,15 @@ require (
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/invopop/yaml v0.2.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
+	github.com/jackc/pgconn v1.13.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.3.1 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.12.0 // indirect
+	github.com/jackc/pgx/v4 v4.17.2 // indirect
 	github.com/jackc/puddle v1.3.0 // indirect
+	github.com/jackc/puddle/v2 v2.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
@@ -122,6 +130,7 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
+	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

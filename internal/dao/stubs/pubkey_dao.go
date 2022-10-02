@@ -37,17 +37,13 @@ func (stub *pubkeyDaoStub) Create(ctx context.Context, pubkey *models.Pubkey) er
 		pubkey.AccountID = ctxAccountId(ctx)
 	}
 	if pubkey.AccountID != ctxAccountId(ctx) {
-		return dao.WrongTenantError
+		return dao.ErrWrongAccount
 	}
 	if err := models.Validate(ctx, pubkey); err != nil {
-		return dao.NewValidationError(ctx, stub, pubkey, err)
+		return dao.ErrValidation
 	}
 	if err := models.Transform(ctx, pubkey); err != nil {
-		return dao.TransformationError{
-			Message: "cannot generate SSH fingerprint",
-			Context: ctx,
-			Err:     err,
-		}
+		return dao.ErrTransformation
 	}
 
 	pubkey.ID = stub.lastId + 1
@@ -61,7 +57,7 @@ func (stub *pubkeyDaoStub) Update(ctx context.Context, pubkey *models.Pubkey) er
 		pubkey.AccountID = ctxAccountId(ctx)
 	}
 	if pubkey.AccountID != ctxAccountId(ctx) {
-		return dao.WrongTenantError
+		return dao.ErrWrongAccount
 	}
 
 	for idx, p := range stub.store {
@@ -70,7 +66,7 @@ func (stub *pubkeyDaoStub) Update(ctx context.Context, pubkey *models.Pubkey) er
 			return nil
 		}
 	}
-	return NewRecordNotFoundError(ctx, stub)
+	return dao.ErrNoRows
 }
 
 func (stub *pubkeyDaoStub) GetById(ctx context.Context, id int64) (*models.Pubkey, error) {
@@ -79,7 +75,7 @@ func (stub *pubkeyDaoStub) GetById(ctx context.Context, id int64) (*models.Pubke
 			return pk, nil
 		}
 	}
-	return nil, NewRecordNotFoundError(ctx, stub)
+	return nil, dao.ErrNoRows
 }
 
 func (stub *pubkeyDaoStub) List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error) {

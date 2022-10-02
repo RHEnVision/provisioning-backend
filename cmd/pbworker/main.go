@@ -17,7 +17,7 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 
 	// Performs initialization of DAO implementation, must be initialized before any database packages.
-	_ "github.com/RHEnVision/provisioning-backend/internal/dao/sqlx"
+	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
 
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
@@ -30,10 +30,11 @@ func init() {
 }
 
 func main() {
+	ctx := context.Background()
 	config.Initialize()
 
 	// initialize stdout logging and AWS clients first
-	log.Logger = logging.InitializeStdout()
+	logging.InitializeStdout()
 	cloudwatchlogs.Initialize()
 
 	// initialize cloudwatch using the AWS clients
@@ -59,13 +60,13 @@ func main() {
 
 	// initialize the database
 	logger.Debug().Msg("Initializing database connection")
-	err = db.Initialize("public")
+	err = db.Initialize(ctx, "public")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
+	defer db.Close()
 
 	// initialize the job queue
-	ctx := context.Background()
 	err = dejq.Initialize(ctx, &logger)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing dejq queue")
