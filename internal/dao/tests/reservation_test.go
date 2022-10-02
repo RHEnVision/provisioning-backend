@@ -5,6 +5,7 @@ package tests
 
 import (
 	"context"
+	"math"
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -15,7 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createNoopReservation() *models.NoopReservation {
+func newNoopReservation() *models.NoopReservation {
 	return &models.NoopReservation{
 		Reservation: models.Reservation{
 			ID:        10,
@@ -26,17 +27,28 @@ func createNoopReservation() *models.NoopReservation {
 	}
 }
 
-func createInstancesReservation(reservationId int64) *models.ReservationInstance {
+func newInstancesReservation(reservationId int64) *models.ReservationInstance {
 	return &models.ReservationInstance{
 		ReservationID: reservationId,
 		InstanceID:    "1",
 	}
 }
 
-func createAWSReservation() *models.AWSReservation {
+func newAWSReservation() *models.AWSReservation {
 	return &models.AWSReservation{
 		Reservation: models.Reservation{
 			Provider:  models.ProviderTypeAWS,
+			AccountID: 1,
+			Status:    "Created",
+		},
+		PubkeyID: 1,
+	}
+}
+
+func newGCPReservation() *models.GCPReservation {
+	return &models.GCPReservation{
+		Reservation: models.Reservation{
+			Provider:  models.ProviderTypeGCP,
 			AccountID: 1,
 			Status:    "Created",
 		},
@@ -56,164 +68,234 @@ func teardownReservation(_ *testing.T) {
 	teardown()
 }
 
-func TestCreateNoop(t *testing.T) {
+func TestReservationCreateNoop(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	err := reservationDao.CreateNoop(ctx, createNoopReservation())
-	require.NoError(t, err)
-	reservations, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(reservations))
+	t.Run("success", func(t *testing.T) {
+		res := newNoopReservation()
+		err := reservationDao.CreateNoop(ctx, res)
+		require.NoError(t, err)
+
+		newRes, err := reservationDao.GetById(ctx, res.ID)
+		require.NoError(t, err)
+		assert.Equal(t, res.ID, newRes.ID)
+	})
 }
 
-func TestCreateAWS(t *testing.T) {
+func TestReservationGetById(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	err := reservationDao.CreateAWS(ctx, createAWSReservation())
-	require.NoError(t, err)
-	reservations, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(reservations))
+	t.Run("success", func(t *testing.T) {
+		res := newNoopReservation()
+		err := reservationDao.CreateNoop(ctx, res)
+		require.NoError(t, err)
+
+		newRes, err := reservationDao.GetById(ctx, res.ID)
+		require.NoError(t, err)
+		assert.Equal(t, res.ID, newRes.ID)
+	})
+
+	t.Run("no rows", func(t *testing.T) {
+		_, err := reservationDao.GetById(ctx, math.MaxInt64)
+		require.ErrorIs(t, err, dao.ErrNoRows)
+	})
 }
 
-func TestCreateInstance(t *testing.T) {
+func TestReservationCreateAWS(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	reservation := createAWSReservation()
-	err := reservationDao.CreateAWS(ctx, reservation)
-	require.NoError(t, err)
-	err = reservationDao.CreateInstance(ctx, createInstancesReservation(reservation.ID))
-	require.NoError(t, err)
-	reservations, err := reservationDao.ListInstances(ctx, 10, 0)
-	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(reservations))
+	t.Run("success", func(t *testing.T) {
+		res := newAWSReservation()
+		err := reservationDao.CreateAWS(ctx, res)
+		require.NoError(t, err)
+
+		newRes, err := reservationDao.GetById(ctx, res.ID)
+		require.NoError(t, err)
+		assert.Equal(t, res.ID, newRes.ID)
+	})
 }
 
-func TestListReservation(t *testing.T) {
+func TestReservationCreateGCP(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	awsReservation := createAWSReservation()
-	err := reservationDao.CreateAWS(ctx, awsReservation)
-	require.NoError(t, err)
-	noopReservation := createNoopReservation()
-	err = reservationDao.CreateNoop(ctx, noopReservation)
-	require.NoError(t, err)
-	reservations, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
 
-	assert.Equal(t, 2, len(reservations))
+	t.Run("success", func(t *testing.T) {
+		res := newGCPReservation()
+		err := reservationDao.CreateGCP(ctx, res)
+		require.NoError(t, err)
+
+		newRes, err := reservationDao.GetById(ctx, res.ID)
+		require.NoError(t, err)
+		assert.Equal(t, res.ID, newRes.ID)
+	})
 }
 
-func TestUpdateReservationIDForAWS(t *testing.T) {
+func TestReservationCreateAWSInstance(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	reservation := createAWSReservation()
-	err := reservationDao.CreateAWS(ctx, reservation)
-	require.NoError(t, err)
-	var count int
 
-	err = db.DB.Get(&count, "SELECT COUNT(*) FROM aws_reservation_details")
-	require.NoError(t, err)
+	t.Run("success", func(t *testing.T) {
+		reservation := newAWSReservation()
+		err := reservationDao.CreateAWS(ctx, reservation)
+		require.NoError(t, err)
 
-	assert.Equal(t, 1, count)
+		err = reservationDao.CreateInstance(ctx, newInstancesReservation(reservation.ID))
+		require.NoError(t, err)
 
-	err = reservationDao.UpdateReservationIDForAWS(ctx, reservation.ID, "2")
-	require.NoError(t, err)
-	var awsReservationId string
-	err = db.DB.Get(&awsReservationId, "SELECT aws_reservation_id FROM aws_reservation_details WHERE reservation_id = $1", reservation.ID)
-	require.NoError(t, err)
-
-	assert.Equal(t, "2", awsReservationId)
+		reservations, err := reservationDao.ListInstances(ctx, 10, 0)
+		require.NoError(t, err)
+		assert.Equal(t, 1, len(reservations))
+	})
 }
 
-func TestUpdateStatusReservation(t *testing.T) {
+func TestReservationList(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	err := reservationDao.CreateNoop(ctx, createNoopReservation())
-	require.NoError(t, err)
-	reservationsBefore, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
 
-	err = reservationDao.UpdateStatus(ctx, reservationsBefore[0].ID, "Edited", 0)
-	require.NoError(t, err)
+	t.Run("empty", func(t *testing.T) {
+		reservations, err := reservationDao.List(ctx, 10, 0)
+		require.NoError(t, err)
+		require.Empty(t, reservations)
+	})
 
-	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
-	assert.Equal(t, "Edited", reservationsAfter[0].Status)
-	assert.Equal(t, reservationsBefore[0].Step, reservationsAfter[0].Step)
+	t.Run("success", func(t *testing.T) {
+		awsReservation := newAWSReservation()
+		err := reservationDao.CreateAWS(ctx, awsReservation)
+		require.NoError(t, err)
+
+		noopReservation := newNoopReservation()
+		err = reservationDao.CreateNoop(ctx, noopReservation)
+		require.NoError(t, err)
+
+		reservations, err := reservationDao.List(ctx, 10, 0)
+		require.NoError(t, err)
+		assert.Equal(t, 2, len(reservations))
+	})
 }
 
-func TestUpdateStepReservation(t *testing.T) {
+func TestReservationUpdateIDForAWS(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	err := reservationDao.CreateNoop(ctx, createNoopReservation())
-	require.NoError(t, err)
 
-	reservationsBefore, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
+	t.Run("success", func(t *testing.T) {
+		reservation := newAWSReservation()
+		err := reservationDao.CreateAWS(ctx, reservation)
+		require.NoError(t, err)
+		var count int
 
-	err = reservationDao.UpdateStatus(ctx, reservationsBefore[0].ID, "Edited", 42)
-	require.NoError(t, err)
+		err = db.Pool.QueryRow(ctx, "SELECT COUNT(*) FROM aws_reservation_details").Scan(&count)
+		require.NoError(t, err)
+		assert.Equal(t, 1, count)
 
-	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
-	assert.Equal(t, reservationsBefore[0].Step+42, reservationsAfter[0].Step)
+		err = reservationDao.UpdateReservationIDForAWS(ctx, reservation.ID, "r-8954738954")
+		require.NoError(t, err)
+
+		var awsReservationId string
+		query := "SELECT aws_reservation_id FROM aws_reservation_details WHERE reservation_id = $1"
+		err = db.Pool.QueryRow(ctx, query, reservation.ID).Scan(&awsReservationId)
+		require.NoError(t, err)
+
+		assert.Equal(t, "r-8954738954", awsReservationId)
+	})
 }
 
-func TestDeleteReservation(t *testing.T) {
+func TestReservationUpdateStatus(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	noopReservation := createNoopReservation()
-	err := reservationDao.CreateNoop(ctx, noopReservation)
-	require.NoError(t, err)
 
-	reservationsBefore, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
+	t.Run("status text", func(t *testing.T) {
+		res := newNoopReservation()
+		err := reservationDao.CreateNoop(ctx, res)
+		require.NoError(t, err)
 
-	err = reservationDao.Delete(ctx, reservationsBefore[0].ID)
-	require.NoError(t, err)
-	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
-	assert.Equal(t, len(reservationsBefore)-1, len(reservationsAfter))
+		err = reservationDao.UpdateStatus(ctx, res.ID, "Edited", 0)
+		require.NoError(t, err)
+
+		newRes, err := reservationDao.GetById(ctx, res.ID)
+		require.NoError(t, err)
+		assert.Equal(t, "Edited", newRes.Status)
+		assert.Equal(t, res.Step, newRes.Step)
+	})
+
+	t.Run("step", func(t *testing.T) {
+		res := newNoopReservation()
+		err := reservationDao.CreateNoop(ctx, res)
+		require.NoError(t, err)
+
+		err = reservationDao.UpdateStatus(ctx, res.ID, "New step", 1)
+		require.NoError(t, err)
+
+		newRes, err := reservationDao.GetById(ctx, res.ID)
+		require.NoError(t, err)
+		assert.Equal(t, res.Step+1, newRes.Step)
+	})
 }
 
-func TestFinishReservation(t *testing.T) {
+func TestReservationDelete(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	err := reservationDao.CreateNoop(ctx, createNoopReservation())
-	require.NoError(t, err)
 
-	reservationsBefore, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
+	t.Run("success", func(t *testing.T) {
+		res := newNoopReservation()
+		err := reservationDao.CreateNoop(ctx, res)
+		require.NoError(t, err)
 
-	err = reservationDao.FinishWithSuccess(ctx, reservationsBefore[0].ID)
-	require.NoError(t, err)
+		err = reservationDao.Delete(ctx, res.ID)
+		require.NoError(t, err)
 
-	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
+		_, err = reservationDao.GetById(ctx, res.ID)
+		require.ErrorIs(t, err, dao.ErrNoRows)
+	})
 
-	assert.Equal(t, reservationsBefore[0].ID, reservationsAfter[0].ID)
-	assert.Equal(t, true, reservationsAfter[0].Success.Bool)
+	t.Run("mismatch", func(t *testing.T) {
+		err := reservationDao.Delete(ctx, math.MaxInt64)
+		require.ErrorIs(t, err, dao.ErrAffectedMismatch)
+	})
 }
 
-func TestFinishWithErrorReservation(t *testing.T) {
+func TestReservationFinish(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)
-	err := reservationDao.CreateNoop(ctx, createNoopReservation())
-	require.NoError(t, err)
 
-	reservationsBefore, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
+	t.Run("with success", func(t *testing.T) {
+		res := newNoopReservation()
+		err := reservationDao.CreateNoop(ctx, res)
+		require.NoError(t, err)
 
-	err = reservationDao.FinishWithError(ctx, reservationsBefore[0].ID, "An error")
-	require.NoError(t, err)
+		err = reservationDao.FinishWithSuccess(ctx, res.ID)
+		require.NoError(t, err)
 
-	reservationsAfter, err := reservationDao.List(ctx, 10, 0)
-	require.NoError(t, err)
+		newRes, err := reservationDao.GetById(ctx, res.ID)
+		require.NoError(t, err)
+		assert.True(t, newRes.Success.Valid)
+		assert.True(t, newRes.Success.Bool)
+	})
 
-	assert.Equal(t, "An error", reservationsAfter[0].Error)
-	assert.Equal(t, false, reservationsAfter[0].Success.Bool)
+	t.Run("with error", func(t *testing.T) {
+		res := newNoopReservation()
+		err := reservationDao.CreateNoop(ctx, res)
+		require.NoError(t, err)
+
+		err = reservationDao.FinishWithError(ctx, res.ID, "error")
+		require.NoError(t, err)
+
+		newRes, err := reservationDao.GetById(ctx, res.ID)
+		require.NoError(t, err)
+		assert.True(t, newRes.Success.Valid)
+		assert.False(t, newRes.Success.Bool)
+		assert.Equal(t, "error", newRes.Error)
+	})
+
+	t.Run("mismatch success", func(t *testing.T) {
+		err := reservationDao.FinishWithSuccess(ctx, math.MaxInt64)
+		require.ErrorIs(t, err, dao.ErrAffectedMismatch)
+	})
+
+	t.Run("mismatch error", func(t *testing.T) {
+		err := reservationDao.FinishWithError(ctx, math.MaxInt64, "")
+		require.ErrorIs(t, err, dao.ErrAffectedMismatch)
+	})
 }

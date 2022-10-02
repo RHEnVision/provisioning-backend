@@ -72,8 +72,7 @@ func GetPubkey(w http.ResponseWriter, r *http.Request) {
 
 	pubkey, err := pubkeyDao.GetById(r.Context(), id)
 	if err != nil {
-		var e dao.NoRowsError
-		if errors.As(err, &e) {
+		if errors.Is(err, dao.ErrNoRows) {
 			renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
 		} else {
 			renderError(w, r, payloads.NewDAOError(r.Context(), "get pubkey by id", err))
@@ -101,8 +100,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 
 	err = pubkeyDao.Delete(r.Context(), id)
 	if err != nil {
-		var e *dao.MismatchAffectedError
-		if errors.As(err, &e) {
+		if errors.Is(err, dao.ErrAffectedMismatch) {
 			renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
 		} else {
 			renderError(w, r, payloads.NewDAOError(r.Context(), "delete pubkey", err))

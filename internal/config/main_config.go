@@ -46,8 +46,8 @@ var config struct {
 		SeedScript  string
 		MaxIdleTime time.Duration
 		MaxLifetime time.Duration
-		MaxOpenConn int
-		MaxIdleConn int
+		MaxConn     int32
+		MinConn     int32
 		LogLevel    string
 	}
 	Logging struct {

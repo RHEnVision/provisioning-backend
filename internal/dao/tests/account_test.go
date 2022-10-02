@@ -6,6 +6,7 @@ package tests
 import (
 	"context"
 	"database/sql"
+	"math"
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -15,16 +16,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createAccount() *models.Account {
+func newAccount2() *models.Account {
 	return &models.Account{
-		OrgID:         "2",
-		AccountNumber: sql.NullString{String: "100", Valid: true},
+		OrgID:         "200",
+		AccountNumber: sql.NullString{String: "2000", Valid: true},
 	}
 }
 
-func createAccountWithNullAccountNumber() *models.Account {
+func newAccount3() *models.Account {
 	return &models.Account{
-		OrgID:         "2",
+		OrgID:         "300",
+		AccountNumber: sql.NullString{String: "3000", Valid: true},
+	}
+}
+
+func newAccountNull() *models.Account {
+	return &models.Account{
+		OrgID:         "400",
 		AccountNumber: sql.NullString{},
 	}
 }
@@ -43,95 +51,133 @@ func teardownAccount(_ *testing.T) {
 	teardown()
 }
 
-func TestCreateAccount(t *testing.T) {
+func TestAccountCreate(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
-	acc := createAccount()
-	err := accDao.Create(ctx, acc)
-	require.NoError(t, err)
-	account, err := accDao.GetById(ctx, 2)
-	require.NoError(t, err)
 
-	assert.Equal(t, acc, account)
+	t.Run("success", func(t *testing.T) {
+		acc := newAccount2()
+		err := accDao.Create(ctx, acc)
+		require.NoError(t, err)
+
+		account, err := accDao.GetById(ctx, 2)
+		require.NoError(t, err)
+		assert.Equal(t, acc, account)
+	})
+
+	t.Run("with null account number", func(t *testing.T) {
+		acc := newAccountNull()
+		err := accDao.Create(ctx, acc)
+		require.NoError(t, err)
+
+		account, err := accDao.GetByOrgId(ctx, "400")
+		require.NoError(t, err)
+		assert.Equal(t, acc, account)
+	})
 }
 
-func TestCreateAccountWithNullAccountNumber(t *testing.T) {
+func TestAccountList(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
-	acc := createAccountWithNullAccountNumber()
-	err := accDao.Create(ctx, acc)
-	require.NoError(t, err)
-	account, err := accDao.GetById(ctx, 2)
-	require.NoError(t, err)
 
-	assert.Equal(t, acc, account)
+	t.Run("success", func(t *testing.T) {
+		acc := newAccount2()
+		err := accDao.Create(ctx, acc)
+		accounts, err := accDao.List(ctx, 100, 0)
+		require.NoError(t, err)
+		assert.Equal(t, 2, len(accounts))
+		require.Contains(t, accounts, acc)
+	})
+
+	t.Run("with offset", func(t *testing.T) {
+		a2 := newAccount2()
+		_ = accDao.Create(ctx, a2)
+		a3 := newAccount3()
+		_ = accDao.Create(ctx, a3)
+		accounts, err := accDao.List(ctx, 1, 1)
+		require.NoError(t, err)
+		assert.Equal(t, a2.OrgID, accounts[0].OrgID)
+		assert.Equal(t, a2.AccountNumber, accounts[0].AccountNumber)
+		accounts, err = accDao.List(ctx, 1, 2)
+		require.NoError(t, err)
+		assert.Equal(t, a3.OrgID, accounts[0].OrgID)
+		assert.Equal(t, a3.AccountNumber, accounts[0].AccountNumber)
+	})
 }
 
-func TestListAccount(t *testing.T) {
+func TestAccountGetById(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
-	acc := createAccount()
-	err := accDao.Create(ctx, acc)
-	accounts, err := accDao.List(ctx, 100, 0)
-	require.NoError(t, err)
 
-	assert.Equal(t, 2, len(accounts))
-	require.Contains(t, accounts, acc)
+	t.Run("success", func(t *testing.T) {
+		account, err := accDao.GetById(ctx, 1)
+		require.NoError(t, err)
+		assert.Equal(t, "1", account.OrgID)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		_, err := accDao.GetById(ctx, math.MaxInt64)
+		require.ErrorIs(t, err, dao.ErrNoRows)
+	})
 }
 
-func TestGetByIdAccount(t *testing.T) {
+func TestAccountGetByAccountNumber(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
-	account, err := accDao.GetById(ctx, 1)
-	require.NoError(t, err)
 
-	assert.Equal(t, "1", account.OrgID)
-	assert.Equal(t, "1", account.AccountNumber.String)
+	t.Run("success", func(t *testing.T) {
+		account, err := accDao.GetByAccountNumber(ctx, "1")
+		require.NoError(t, err)
+		assert.Equal(t, "1", account.OrgID)
+	})
+
+	t.Run("success", func(t *testing.T) {
+		_, err := accDao.GetByAccountNumber(ctx, "0")
+		require.ErrorIs(t, err, dao.ErrNoRows)
+	})
 }
 
-func TestGetByAccountNumber(t *testing.T) {
+func TestAccountGetByOrgId(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
-	account, err := accDao.GetByAccountNumber(ctx, "1")
-	require.NoError(t, err)
 
-	assert.Equal(t, "1", account.OrgID)
+	t.Run("success", func(t *testing.T) {
+		account, err := accDao.GetByOrgId(ctx, "1")
+		require.NoError(t, err)
+		assert.Equal(t, int64(1), account.ID)
+		assert.Equal(t, "1", account.AccountNumber.String)
+	})
+
+	t.Run("not found", func(t *testing.T) {
+		_, err := accDao.GetByOrgId(ctx, "0")
+		require.ErrorIs(t, err, dao.ErrNoRows)
+	})
 }
 
-func TestGetByOrgId(t *testing.T) {
+func TestAccountGetOrCreateByIdentity(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer teardownAccount(t)
-	account, err := accDao.GetByOrgId(ctx, "1")
-	require.NoError(t, err)
 
-	assert.Equal(t, int64(1), account.ID)
-	assert.Equal(t, "1", account.AccountNumber.String)
-}
+	t.Run("new record", func(t *testing.T) {
+		account, err := accDao.GetOrCreateByIdentity(ctx, "101", "101")
+		require.NoError(t, err)
+		account, err = accDao.GetByOrgId(ctx, "101")
+		assert.Equal(t, "101", account.OrgID)
+		account, err = accDao.GetByAccountNumber(ctx, "101")
+		assert.Equal(t, "101", account.AccountNumber.String)
+	})
 
-func TestGetOrCreateByIdentityGet(t *testing.T) {
-	accDao, ctx := setupAccount(t)
-	defer teardownAccount(t)
-	account, err := accDao.GetOrCreateByIdentity(ctx, "1", "1")
-	require.NoError(t, err)
+	t.Run("already exists by org id", func(t *testing.T) {
+		account, err := accDao.GetOrCreateByIdentity(ctx, "1", "0")
+		require.NoError(t, err)
+		assert.Equal(t, "1", account.OrgID)
+		assert.Equal(t, "1", account.AccountNumber.String)
+	})
 
-	assert.Equal(t, "1", account.OrgID)
-	assert.Equal(t, "1", account.AccountNumber.String)
-}
-
-func TestGetOrCreateByIdentityAccountCreate(t *testing.T) {
-	accDao, ctx := setupAccount(t)
-	defer teardownAccount(t)
-	accountsBefore, err := accDao.List(ctx, 100, 0)
-	require.NoError(t, err)
-	_, err = accDao.GetOrCreateByIdentity(ctx, "2", "100")
-	require.NoError(t, err)
-	accountsAfter, err := accDao.List(ctx, 100, 0)
-	require.NoError(t, err)
-	account, err := accDao.GetByOrgId(ctx, "2")
-	require.NoError(t, err)
-
-	assert.Equal(t, len(accountsBefore)+1, len(accountsAfter))
-	assert.Equal(t, "2", account.OrgID)
-	assert.Equal(t, "100", account.AccountNumber.String)
-	assert.Equal(t, true, account.AccountNumber.Valid)
+	t.Run("already exists by account number", func(t *testing.T) {
+		account, err := accDao.GetOrCreateByIdentity(ctx, "0", "1")
+		require.NoError(t, err)
+		assert.Equal(t, "1", account.OrgID)
+		assert.Equal(t, "1", account.AccountNumber.String)
+	})
 }

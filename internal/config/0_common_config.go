@@ -26,6 +26,10 @@ func init() {
 	parser.Viper.SetDefault("database.user", "")
 	parser.Viper.SetDefault("database.password", "")
 	parser.Viper.SetDefault("database.loglevel", "none")
+	parser.Viper.SetDefault("database.minConn", 2)
+	parser.Viper.SetDefault("database.maxConn", 100)
+	parser.Viper.SetDefault("database.maxLifetime", 2*time.Hour)
+	parser.Viper.SetDefault("database.maxIdleTime", 15*time.Minute)
 
 	// Logging
 	parser.Viper.SetDefault("logging.level", 1)
