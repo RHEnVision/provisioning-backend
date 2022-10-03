@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -35,7 +34,9 @@ func (s *APISchemaGen) init() {
 
 func (s *APISchemaGen) addSchema(name string, model interface{}) {
 	schema, err := openapi3gen.NewSchemaRefForValue(model, s.Components.Schemas)
-	checkErr(err)
+	if err != nil {
+		panic(err)
+	}
 	s.Components.Schemas[name] = schema
 }
 
@@ -74,33 +75,42 @@ func main() {
 	swagger.Servers = gen.Servers
 	swagger.Components = gen.Components
 
-	b := &bytes.Buffer{}
-	err := json.NewEncoder(b).Encode(swagger)
-	checkErr(err)
+	bufferJSON := &bytes.Buffer{}
+	err := json.NewEncoder(bufferJSON).Encode(swagger)
+	if err != nil {
+		panic(err)
+	}
 
-	schema, err := yaml.JSONToYAML(b.Bytes())
-	checkErr(err)
+	bufferYAML, err := yaml.JSONToYAML(bufferJSON.Bytes())
+	if err != nil {
+		panic(err)
+	}
 
-	paths, err := ioutil.ReadFile("./cmd/spec/path.yaml")
-	checkErr(err)
+	bufferPathsYAML, err := ioutil.ReadFile("./cmd/spec/path.yaml")
+	if err != nil {
+		panic(err)
+	}
 
-	b = &bytes.Buffer{}
-	b.Write(paths)
-	b.Write(schema)
+	bufferFinalYAML := &bytes.Buffer{}
+	bufferFinalYAML.Write(bufferPathsYAML)
+	bufferFinalYAML.Write(bufferYAML)
 
-	doc, err := openapi3.NewLoader().LoadFromData(b.Bytes())
-	checkErr(err)
+	loadedSchema, err := openapi3.NewLoader().LoadFromData(bufferFinalYAML.Bytes())
+	if err != nil {
+		panic(err)
+	}
 
-	jsonB, err := json.MarshalIndent(doc, "", "  ")
-	checkErr(err)
-	err = ioutil.WriteFile("./api/openapi.gen.json", jsonB, 0o644) // #nosec G306
-	checkErr(err)
-	err = ioutil.WriteFile("./api/openapi.gen.yaml", b.Bytes(), 0o644) // #nosec G306
-	checkErr(err)
-	fmt.Println("Spec was generated successfully")
-}
+	bufferFinalJSON, err := json.MarshalIndent(loadedSchema, "", "  ")
+	if err != nil {
+		panic(err)
+	}
 
-func checkErr(err error) {
+	err = ioutil.WriteFile("./api/openapi.gen.json", bufferFinalJSON, 0o644) // #nosec G306
+	if err != nil {
+		panic(err)
+	}
+
+	err = ioutil.WriteFile("./api/openapi.gen.yaml", bufferFinalYAML.Bytes(), 0o644) // #nosec G306
 	if err != nil {
 		panic(err)
 	}
