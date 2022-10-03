@@ -18,7 +18,6 @@ require (
 	github.com/deepmap/oapi-codegen v1.11.0
 	github.com/getkin/kin-openapi v0.100.0
 	github.com/ghodss/yaml v1.0.0
-	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/render v1.0.2
 	github.com/go-logr/zerologr v1.2.2
@@ -48,7 +47,6 @@ require (
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
 	google.golang.org/api v0.81.0
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd
-	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -141,4 +139,5 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/oleiade/lane.v1 v1.0.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
