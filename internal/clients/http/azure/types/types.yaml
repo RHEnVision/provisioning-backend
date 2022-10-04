@@ -7456,17 +7456,6 @@ Standard_NC96ads_A100_v4:
     azure:
         gen_v1: false
         gen_v2: true
-Standard_NCC24ads_A100_v4:
-    name: Standard_NCC24ads_A100_v4
-    vcpus: 24
-    cores: 24
-    memory_mib: 220000
-    storage_gb: 1150
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: false
-        gen_v2: true
 Standard_ND6s:
     name: Standard_ND6s
     vcpus: 6
@@ -7813,7 +7802,7 @@ Standard_NV48s_v3:
     vcpus: 48
     cores: 24
     memory_mib: 448000
-    storage_gb: 1376
+    storage_gb: 3018
     supported: true
     arch: x86_64
     azure:
