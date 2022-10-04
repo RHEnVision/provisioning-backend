@@ -265,6 +265,61 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/instance_types/{PROVIDER}": {
+      "get": {
+        "description": "Return a list of instance types for particular provider. A region must be provided. A zone must be provided for Azure.\n",
+        "operationId": "getInstanceTypeListAll",
+        "parameters": [
+          {
+            "description": "Cloud provider: aws, azure",
+            "in": "path",
+            "name": "PROVIDER",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Region to list instance types within. This is required.",
+            "in": "query",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Availability zone (or location) to list instance types within. Not applicable for AWS EC2 as all zones within a region are the same (will lead to an error when used). Required for Azure.",
+            "in": "query",
+            "name": "zone",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/v1.InstanceTypeResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Return on success. Instance types have a field \"supported\" that indicates whether that particular type is supported by Red Hat. Typically, instances with less than 1.5 GiB RAM are not supported, but other rules may apply.\n"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
     "/pubkeys": {
       "get": {
         "description": "A pubkey represents an SSH public portion of a key pair with name and body. This operation returns list of all pubkeys for particular account.\n",
@@ -562,7 +617,7 @@
     },
     "/sources/{ID}/instance_types": {
       "get": {
-        "description": "Return a list of instance types",
+        "description": "Return a list of instance types (DEPRECATED: use /instance_types)",
         "operationId": "getInstanceTypeList",
         "parameters": [
           {

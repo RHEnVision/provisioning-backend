@@ -118,7 +118,7 @@ paths:
           $ref: "#/components/responses/InternalError"
   /sources/{ID}/instance_types:
       get:
-        description: 'Return a list of instance types'
+        description: 'Return a list of instance types (DEPRECATED: use /instance_types)'
         operationId: getInstanceTypeList
         parameters:
         - in: path
@@ -147,6 +147,48 @@ paths:
             $ref: "#/components/responses/NotFound"
           '500':
             $ref: "#/components/responses/InternalError"
+  /instance_types/{PROVIDER}:
+    get:
+      description: >
+        Return a list of instance types for particular provider. A region must be provided. A zone must be provided
+        for Azure.
+      operationId: getInstanceTypeListAll
+      parameters:
+        - in: path
+          name: PROVIDER
+          schema:
+            type: string
+          required: true
+          description: 'Cloud provider: aws, azure'
+        - in: query
+          name: region
+          schema:
+            type: string
+          required: true
+          description: Region to list instance types within. This is required.
+        - in: query
+          name: zone
+          schema:
+            type: string
+          required: false
+          description: Availability zone (or location) to list instance types within. Not applicable for AWS EC2 as
+            all zones within a region are the same (will lead to an error when used). Required for Azure.
+      responses:
+        '200':
+          description: >
+            Return on success. Instance types have a field "supported" that indicates
+            whether that particular type is supported by Red Hat. Typically, instances
+            with less than 1.5 GiB RAM are not supported, but other rules may apply.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/v1.InstanceTypeResponse'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalError"
   /reservations:
     get:
       operationId: getReservationsList
