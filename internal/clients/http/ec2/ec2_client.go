@@ -160,7 +160,7 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 		return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
 	}
 
-	return ptr.From(output.KeyPairId), nil
+	return *output.KeyPairId, nil
 }
 
 func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
