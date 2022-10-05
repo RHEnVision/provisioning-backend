@@ -57,10 +57,10 @@ aws:
   key:
   secret:
   session:
+  # detailed logging including headers and body into trace log level (verbose!)
+  logging: false
   # default region for non-regional requests (when region is not provided by the user)
   defaultRegion: us-east-1
-  # region for the STS service (pick the closest possible)
-  signingRegion: us-east-1
 
 # Azure service account credentials
 azure:
