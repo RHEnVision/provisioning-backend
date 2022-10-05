@@ -73,16 +73,22 @@ Create a new user for the Service account:
 * Confirm by clicking on Create user.
 * On the next page, make sure to copy Access key and secret key and paste them both into the application configuration (e.g. `local.yaml` or K8s configuration).
 
-#### Service account STS endpoints
+#### Service account regions and STS endpoints
 
-The application needs to be able to connect to all regions, by default only STS endpoints version 1 are enabled. To enable all:
+The application needs to be able to connect to all regions, by default only selected regions are enabled:
+
+* Navigate to Account on the top-right side under account name.
+* Scroll down to AWS Regions
+* Enable regions (Bahrain, Jakarta, Cape Town, UAE, Milan and others)
+
+To be able to use global STS endpoint, enable STS version 1 tokens for all the regions:
 
 * Navigate to Identity and Access Management (IAM) on AWS.
 * Click on Account Settings
 * In the STS section, click on Edit for the Global endpoint section.
-* Set to "Valid in all AWS Regions
+* Set to "Valid in all AWS Regions"
 
-For more info visit the [IAM User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_enable-regions.html#sts-regions-manage-tokens).
+For more info visit the [IAM User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_enable-regions.html#sts-regions-manage-tokens) and [Managing AWS Regions](https://docs.aws.amazon.com/general/latest/gr/rande-manage.html).
 
 ### Tenant account
 

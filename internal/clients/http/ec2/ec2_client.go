@@ -35,31 +35,36 @@ func logger(ctx context.Context) zerolog.Logger {
 	return ctxval.Logger(ctx).With().Str("client", "ec2").Logger()
 }
 
-func endpointResolver() aws.EndpointResolverWithOptionsFunc {
-	return aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-		return aws.Endpoint{
-			PartitionID:   "aws",
-			URL:           fmt.Sprintf("https://%s.%s.amazonaws.com", service, config.AWS.SigningRegion),
-			SigningRegion: config.AWS.SigningRegion,
-		}, nil
-	})
-}
-
-func newEC2ClientWithRegion(ctx context.Context, region string) (clients.EC2, error) {
+func awsConfig(ctx context.Context, region string, optFns ...func(*awsCfg.LoadOptions) error) (*aws.Config, error) {
 	if region == "" {
 		region = config.AWS.DefaultRegion
 	}
 
-	newCfg, err := awsCfg.LoadDefaultConfig(ctx,
-		awsCfg.WithRegion(region),
-		awsCfg.WithEndpointResolverWithOptions(endpointResolver()),
+	loggingOpt := awsCfg.WithClientLogMode(aws.LogRetries)
+	if config.AWS.Logging {
+		loggingOpt = awsCfg.WithClientLogMode(aws.LogRequestWithBody | aws.LogRetries | aws.LogResponseWithBody | aws.LogSigning)
+	}
+
+	optFns = append(optFns, loggingOpt,
+		awsCfg.WithLogger(NewEC2Logger(ctx)),
+		awsCfg.WithRegion(region))
+
+	newCfg, err := awsCfg.LoadDefaultConfig(ctx, optFns...)
+	if err != nil {
+		return nil, fmt.Errorf("config error: %w", err)
+	}
+	return &newCfg, nil
+}
+
+func newEC2ClientWithRegion(ctx context.Context, region string) (clients.EC2, error) {
+	cfg, err := awsConfig(ctx, region,
 		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
 	if err != nil {
-		return nil, fmt.Errorf("cannot create a new ec2 config: %w", err)
+		return nil, fmt.Errorf("aws: %w", err)
 	}
 
 	return &ec2Client{
-		ec2:     ec2.NewFromConfig(newCfg),
+		ec2:     ec2.NewFromConfig(*cfg),
 		assumed: false,
 	}, nil
 }
@@ -73,21 +78,22 @@ func newAssumedEC2ClientWithRegion(ctx context.Context, auth *clients.Authentica
 		region = config.AWS.DefaultRegion
 	}
 
-	creds, err := getStsAssumedCredentials(ctx, auth.Payload, region)
+	assumedCredentials, err := getStsAssumedCredentials(ctx, auth.Payload, region)
 	if err != nil {
 		return nil, err
 	}
 
-	newCfg, err := awsCfg.LoadDefaultConfig(ctx,
-		awsCfg.WithRegion(region),
-		awsCfg.WithEndpointResolverWithOptions(endpointResolver()),
-		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(*creds.AccessKeyId, *creds.SecretAccessKey, *creds.SessionToken)))
+	cfg, err := awsConfig(ctx, region,
+		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
+			*assumedCredentials.AccessKeyId,
+			*assumedCredentials.SecretAccessKey,
+			*assumedCredentials.SessionToken)))
 	if err != nil {
-		return nil, fmt.Errorf("cannot create a new ec2 config: %w", err)
+		return nil, fmt.Errorf("aws: %w", err)
 	}
 
 	return &ec2Client{
-		ec2:     ec2.NewFromConfig(newCfg),
+		ec2:     ec2.NewFromConfig(*cfg),
 		assumed: true,
 	}, nil
 }
@@ -100,15 +106,12 @@ func (c *ec2Client) Status(ctx context.Context) error {
 func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*stsTypes.Credentials, error) {
 	logger := logger(ctx)
 
-	cfg, err := awsCfg.LoadDefaultConfig(ctx,
-		awsCfg.WithRegion(region),
-		awsCfg.WithEndpointResolverWithOptions(endpointResolver()),
+	cfg, err := awsConfig(ctx, region,
 		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
 	if err != nil {
-		logger.Error().Err(err).Msgf("Cannot create an sts client %s", err)
-		return nil, fmt.Errorf("cannot create an sts client %w", err)
+		return nil, fmt.Errorf("aws sts: %w", err)
 	}
-	stsClient := sts.NewFromConfig(cfg)
+	stsClient := sts.NewFromConfig(*cfg)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create an sts client %w", err)
 	}
