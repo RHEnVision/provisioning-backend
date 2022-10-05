@@ -16,7 +16,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 )
 
-var GetAccountDao func(ctx context.Context) (AccountDao, error)
+var GetAccountDao func(ctx context.Context) AccountDao
 
 // AccountDao TODO
 type AccountDao interface {
@@ -28,7 +28,7 @@ type AccountDao interface {
 	List(ctx context.Context, limit, offset int64) ([]*models.Account, error)
 }
 
-var GetPubkeyDao func(ctx context.Context) (PubkeyDao, error)
+var GetPubkeyDao func(ctx context.Context) PubkeyDao
 
 // PubkeyDao TODO
 type PubkeyDao interface {
@@ -45,7 +45,7 @@ type PubkeyDao interface {
 	UnscopedDelete(ctx context.Context, id int64) error
 }
 
-var GetReservationDao func(ctx context.Context) (ReservationDao, error)
+var GetReservationDao func(ctx context.Context) ReservationDao
 
 // ReservationDao represents a reservation, an abstraction of one or more background jobs with
 // associated detail information different for different cloud providers (like number of vCPUs,

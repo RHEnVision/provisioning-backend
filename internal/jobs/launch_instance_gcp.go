@@ -66,10 +66,7 @@ func handleLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArg
 	updateStatusBefore(ctx, args.ReservationID, "Launching instance(s)")
 	defer updateStatusAfter(ctx, args.ReservationID, "Launched instance(s)", 1)
 
-	pkD, err := dao.GetPubkeyDao(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot get pubkey dao: %w", err)
-	}
+	pkD := dao.GetPubkeyDao(ctx)
 
 	pk, err := pkD.GetById(ctx, args.PubkeyID)
 	if err != nil {
@@ -86,10 +83,7 @@ func handleLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArg
 		return fmt.Errorf("cannot run instances for gcp client: %w", err)
 	}
 
-	rDao, err := dao.GetReservationDao(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot get reservation dao: %w", err)
-	}
+	rDao := dao.GetReservationDao(ctx)
 
 	err = rDao.UpdateOperationNameForGCP(ctx, args.ReservationID, *opName)
 	if err != nil {

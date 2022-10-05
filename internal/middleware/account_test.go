@@ -52,10 +52,7 @@ func TestAccountMiddleware(t *testing.T) {
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			accId := ctxval.AccountId(r.Context())
 			assert.NotNil(t, accId, "account id was not set")
-			accDao, innerErr := dao.GetAccountDao(r.Context())
-			if innerErr != nil {
-				t.Errorf("failed to initialize account: %v", err)
-			}
+			accDao := dao.GetAccountDao(r.Context())
 			acc, innerErr := accDao.GetById(r.Context(), accId)
 			if innerErr != nil {
 				t.Errorf("could not fetch account by id: %v", err)
@@ -66,10 +63,7 @@ func TestAccountMiddleware(t *testing.T) {
 		handler := middleware.AccountMiddleware(isAccInNext)
 		handler.ServeHTTP(rr, req)
 
-		count, err := stubs.AccountStubCount(ctx)
-		if err != nil {
-			t.Errorf("Error while fetching account count: %v", err)
-		}
+		count := stubs.AccountStubCount(ctx)
 		assert.Equal(t, 2, count)
 	})
 	t.Run("existing null account", func(t *testing.T) {
@@ -103,10 +97,7 @@ func TestAccountMiddleware(t *testing.T) {
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			accId := ctxval.AccountId(r.Context())
 			assert.NotNil(t, accId, "account id was not set")
-			accDao, innerErr := dao.GetAccountDao(r.Context())
-			if innerErr != nil {
-				t.Errorf("failed to initialize account: %v", err)
-			}
+			accDao := dao.GetAccountDao(r.Context())
 			acc, innerErr := accDao.GetById(r.Context(), accId)
 			if innerErr != nil {
 				t.Errorf("could not fetch account by id: %v", err)
@@ -117,10 +108,7 @@ func TestAccountMiddleware(t *testing.T) {
 		handler := middleware.AccountMiddleware(isAccInNext)
 		handler.ServeHTTP(rr, req)
 
-		count, err := stubs.AccountStubCount(ctx)
-		if err != nil {
-			t.Errorf("Error while fetching account count: %v", err)
-		}
+		count := stubs.AccountStubCount(ctx)
 		assert.Equal(t, 2, count)
 	})
 }

@@ -16,20 +16,13 @@ func init() {
 	dao.GetReservationDao = getReservationDao
 }
 
-func ReservationStubCount(ctx context.Context) (int, error) {
-	pkdao, err := getReservationDaoStub(ctx)
-	if err != nil {
-		return 0, err
-	}
-	return len(pkdao.store), nil
+func ReservationStubCount(ctx context.Context) int {
+	pkdao := getReservationDaoStub(ctx)
+	return len(pkdao.store)
 }
 
-func getReservationDao(ctx context.Context) (dao.ReservationDao, error) {
+func getReservationDao(ctx context.Context) dao.ReservationDao {
 	return getReservationDaoStub(ctx)
-}
-
-func (stub *reservationDaoStub) NameForError() string {
-	return "reservation"
 }
 
 func (stub *reservationDaoStub) CreateAWS(ctx context.Context, reservation *models.AWSReservation) error {

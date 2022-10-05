@@ -18,8 +18,8 @@ func init() {
 
 type reservationDao struct{}
 
-func getReservationDao(ctx context.Context) (dao.ReservationDao, error) {
-	return &reservationDao{}, nil
+func getReservationDao(ctx context.Context) dao.ReservationDao {
+	return &reservationDao{}
 }
 
 func (x *reservationDao) CreateNoop(ctx context.Context, reservation *models.NoopReservation) error {

@@ -40,20 +40,13 @@ func init() {
 	dao.GetAccountDao = getAccountDao
 }
 
-func (stub *accountDaoStub) NameForError() string {
-	return "account"
-}
-
-func getAccountDao(ctx context.Context) (dao.AccountDao, error) {
+func getAccountDao(ctx context.Context) dao.AccountDao {
 	return getAccountDaoStub(ctx)
 }
 
-func AccountStubCount(ctx context.Context) (int, error) {
-	accdao, err := getAccountDaoStub(ctx)
-	if err != nil {
-		return 0, err
-	}
-	return len(accdao.store), nil
+func AccountStubCount(ctx context.Context) int {
+	accdao := getAccountDaoStub(ctx)
+	return len(accdao.store)
 }
 
 func (stub *accountDaoStub) Create(ctx context.Context, pk *models.Account) error {

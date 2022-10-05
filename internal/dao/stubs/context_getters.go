@@ -29,13 +29,13 @@ func WithPubkeyDao(parent context.Context) context.Context {
 	return ctx
 }
 
-func getPubkeyDaoStub(ctx context.Context) (*pubkeyDaoStub, error) {
+func getPubkeyDaoStub(ctx context.Context) *pubkeyDaoStub {
 	var ok bool
 	var pkdao *pubkeyDaoStub
 	if pkdao, ok = ctx.Value(pubkeyCtxKey).(*pubkeyDaoStub); !ok {
-		return nil, dao.ErrStubMissingContext
+		panic(dao.ErrStubMissingContext)
 	}
-	return pkdao, nil
+	return pkdao
 }
 
 func WithReservationDao(parent context.Context) context.Context {
@@ -47,13 +47,13 @@ func WithReservationDao(parent context.Context) context.Context {
 	return ctx
 }
 
-func getReservationDaoStub(ctx context.Context) (*reservationDaoStub, error) {
+func getReservationDaoStub(ctx context.Context) *reservationDaoStub {
 	var ok bool
 	var resDao *reservationDaoStub
 	if resDao, ok = ctx.Value(reservationCtxKey).(*reservationDaoStub); !ok {
-		return nil, dao.ErrStubMissingContext
+		panic(dao.ErrStubMissingContext)
 	}
-	return resDao, nil
+	return resDao
 }
 
 func WithAccountDaoOne(parent context.Context) context.Context {
@@ -74,11 +74,11 @@ func WithAccountDaoNull(parent context.Context) context.Context {
 	return ctx
 }
 
-func getAccountDaoStub(ctx context.Context) (*accountDaoStub, error) {
+func getAccountDaoStub(ctx context.Context) *accountDaoStub {
 	var ok bool
 	var accdao *accountDaoStub
 	if accdao, ok = ctx.Value(accountCtxKey).(*accountDaoStub); !ok {
-		return nil, dao.ErrStubMissingContext
+		panic(dao.ErrStubMissingContext)
 	}
-	return accdao, nil
+	return accdao
 }

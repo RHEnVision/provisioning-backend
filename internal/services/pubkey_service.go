@@ -17,13 +17,9 @@ func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pkDao, err := dao.GetPubkeyDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
-		return
-	}
+	pkDao := dao.GetPubkeyDao(r.Context())
 
-	err = pkDao.Create(r.Context(), payload.Pubkey)
+	err := pkDao.Create(r.Context(), payload.Pubkey)
 	if err != nil {
 		if db.IsPostgresError(err, db.UniqueConstraintErrorCode) != nil {
 			renderError(w, r, payloads.PubkeyAlreadyExistsError(r.Context(), err))
@@ -39,11 +35,7 @@ func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListPubkeys(w http.ResponseWriter, r *http.Request) {
-	pubkeyDao, err := dao.GetPubkeyDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
-		return
-	}
+	pubkeyDao := dao.GetPubkeyDao(r.Context())
 
 	pubkeys, err := pubkeyDao.List(r.Context(), 100, 0)
 	if err != nil {
@@ -64,11 +56,7 @@ func GetPubkey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pubkeyDao, err := dao.GetPubkeyDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
-		return
-	}
+	pubkeyDao := dao.GetPubkeyDao(r.Context())
 
 	pubkey, err := pubkeyDao.GetById(r.Context(), id)
 	if err != nil {
@@ -92,11 +80,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pubkeyDao, err := dao.GetPubkeyDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
-		return
-	}
+	pubkeyDao := dao.GetPubkeyDao(r.Context())
 
 	err = pubkeyDao.Delete(r.Context(), id)
 	if err != nil {

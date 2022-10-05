@@ -40,10 +40,7 @@ func newAccountNull() *models.Account {
 func setupAccount(t *testing.T) (dao.AccountDao, context.Context) {
 	setup()
 	ctx := identity.WithTenant(t, context.Background())
-	accDao, err := dao.GetAccountDao(ctx)
-	if err != nil {
-		panic(err)
-	}
+	accDao := dao.GetAccountDao(ctx)
 	return accDao, ctx
 }
 

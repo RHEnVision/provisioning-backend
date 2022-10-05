@@ -41,17 +41,8 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	// 	return
 	// }
 
-	rDao, err := dao.GetReservationDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "reservation DAO", err))
-		return
-	}
-
-	pkDao, err := dao.GetPubkeyDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "pubkey DAO", err))
-		return
-	}
+	rDao := dao.GetReservationDao(r.Context())
+	pkDao := dao.GetPubkeyDao(r.Context())
 
 	detail := &models.GCPDetail{
 		Zone:        payload.Zone,

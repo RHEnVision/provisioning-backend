@@ -40,11 +40,7 @@ func finishJob(ctx context.Context, reservationId int64, jobErr error) {
 func finishWithSuccess(ctx context.Context, reservationId int64) {
 	ctxLogger := ctxval.Logger(ctx).With().Int64("reservation_id", reservationId).Logger()
 
-	rDao, err := dao.GetReservationDao(ctx)
-	if err != nil {
-		ctxLogger.Warn().Err(err).Msg("unable to update job status: dao")
-		return
-	}
+	rDao := dao.GetReservationDao(ctx)
 
 	reservation, err := rDao.GetById(ctx, reservationId)
 	if err != nil {
@@ -67,12 +63,8 @@ func finishWithError(ctx context.Context, reservationId int64, jobError error) {
 	ctxLogger := ctxval.Logger(ctx).With().Int64("reservation_id", reservationId).Logger()
 	ctxLogger.Warn().Err(jobError).Msgf("Job returned an error: %s", jobError.Error())
 
-	rDao, err := dao.GetReservationDao(ctx)
-	if err != nil {
-		ctxLogger.Warn().Err(err).Msg("unable to update job status: dao")
-		return
-	}
-	err = rDao.FinishWithError(ctx, reservationId, jobError.Error())
+	rDao := dao.GetReservationDao(ctx)
+	err := rDao.FinishWithError(ctx, reservationId, jobError.Error())
 	if err != nil {
 		ctxLogger.Warn().Err(err).Msg("unable to update job status: finish")
 	}
@@ -89,13 +81,9 @@ func updateStatusAfter(ctx context.Context, id int64, status string, addSteps in
 		ctxLogger.Trace().Bool("step", true).Msgf("Increased step number by: %d", addSteps)
 	}
 
-	rDao, err := dao.GetReservationDao(ctx)
-	if err != nil {
-		ctxLogger.Warn().Err(err).Msg("unable to update step number: dao")
-		return
-	}
+	rDao := dao.GetReservationDao(ctx)
 
-	err = rDao.UpdateStatus(ctx, id, status, int32(addSteps))
+	err := rDao.UpdateStatus(ctx, id, status, int32(addSteps))
 	if err != nil {
 		ctxLogger.Warn().Err(err).Msg("unable to update step number: update")
 	}
