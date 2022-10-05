@@ -19,7 +19,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	stsTypes "github.com/aws/aws-sdk-go-v2/service/sts/types"
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
 )
+
+const TraceName = "github.com/EnVision/provisioning/internal/clients/http/ec2"
 
 type ec2Client struct {
 	ec2     *ec2.Client
@@ -131,6 +135,9 @@ func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*
 
 // ImportPubkey imports a key and returns AWS ID
 func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ImportPubkey")
+	defer span.End()
+
 	if !c.assumed {
 		return "", http.ServiceAccountUnsupportedOperationErr
 	}
@@ -158,6 +165,7 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 		} else if isAWSOperationError(err, "InvalidKeyPair.Duplicate") {
 			err = http.DuplicatePubkeyErr
 		}
+		span.SetStatus(codes.Error, err.Error())
 		return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
 	}
 
@@ -165,6 +173,9 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 }
 
 func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "DeleteSSHKey")
+	defer span.End()
+
 	if !c.assumed {
 		return http.ServiceAccountUnsupportedOperationErr
 	}
@@ -178,6 +189,7 @@ func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
 		if isAWSUnauthorizedError(err) {
 			err = clients.UnauthorizedErr
 		}
+		span.SetStatus(codes.Error, err.Error())
 		return fmt.Errorf("cannot delete SSH key %v: %w", input.KeyPairId, err)
 	}
 
@@ -233,6 +245,9 @@ func (c *ec2Client) ListAllZones(ctx context.Context, region clients.Region) ([]
 }
 
 func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]*clients.InstanceType, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListInstanceTypesWithPaginator")
+	defer span.End()
+
 	input := &ec2.DescribeInstanceTypesInput{MaxResults: ptr.ToInt32(100)}
 	pag := ec2.NewDescribeInstanceTypesPaginator(c.ec2, input)
 
@@ -243,6 +258,7 @@ func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]*clie
 			if isAWSUnauthorizedError(err) {
 				err = clients.UnauthorizedErr
 			}
+			span.SetStatus(codes.Error, err.Error())
 			return nil, fmt.Errorf("cannot list instance types: %w", err)
 		}
 		res = append(res, resp.InstanceTypes...)
@@ -251,6 +267,7 @@ func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]*clie
 	// convert to the client type
 	instances, err := NewInstanceTypes(ctx, res)
 	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		return nil, fmt.Errorf("cannot convert instance types: %w", err)
 	}
 
@@ -258,6 +275,9 @@ func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]*clie
 }
 
 func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "RunInstances")
+	defer span.End()
+
 	if !c.assumed {
 		return nil, nil, http.ServiceAccountUnsupportedOperationErr
 	}
@@ -291,10 +311,12 @@ func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32
 		if isAWSUnauthorizedError(err) {
 			err = clients.UnauthorizedErr
 		}
+		span.SetStatus(codes.Error, err.Error())
 		return nil, nil, fmt.Errorf("cannot run instances: %w", err)
 	}
 	instances := c.parseRunInstancesResponse(resp)
 	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		return nil, nil, fmt.Errorf("cannot ParseRunInstancesResponse: %w", err)
 	}
 	return instances, resp.ReservationId, nil
