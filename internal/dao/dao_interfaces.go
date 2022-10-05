@@ -18,7 +18,7 @@ import (
 
 var GetAccountDao func(ctx context.Context) AccountDao
 
-// AccountDao TODO
+// AccountDao represents an account (tenant)
 type AccountDao interface {
 	Create(ctx context.Context, pk *models.Account) error
 	GetById(ctx context.Context, id int64) (*models.Account, error)
@@ -30,7 +30,8 @@ type AccountDao interface {
 
 var GetPubkeyDao func(ctx context.Context) PubkeyDao
 
-// PubkeyDao TODO
+// PubkeyDao represents Pubkeys (public part of ssh key pair) and corresponding Resources (uploaded pubkeys
+// to specific cloud providers in specific regions).
 type PubkeyDao interface {
 	Create(ctx context.Context, pk *models.Pubkey) error
 	Update(ctx context.Context, pk *models.Pubkey) error
@@ -38,11 +39,10 @@ type PubkeyDao interface {
 	List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error)
 	Delete(ctx context.Context, id int64) error
 
-	// TODO rename to UnscopedXXXResource
-	UnscopedCreate(ctx context.Context, pkr *models.PubkeyResource) error
+	UnscopedCreateResource(ctx context.Context, pkr *models.PubkeyResource) error
 	UnscopedGetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error)
-	UnscopedListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error)
-	UnscopedDelete(ctx context.Context, id int64) error
+	UnscopedListResourcesByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error)
+	UnscopedDeleteResource(ctx context.Context, id int64) error
 }
 
 var GetReservationDao func(ctx context.Context) ReservationDao

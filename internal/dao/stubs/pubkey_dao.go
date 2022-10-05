@@ -95,14 +95,14 @@ func (stub *pubkeyDaoStub) UnscopedGetResourceByProviderType(ctx context.Context
 	return nil, nil
 }
 
-func (stub *pubkeyDaoStub) UnscopedCreate(ctx context.Context, pkr *models.PubkeyResource) error {
+func (stub *pubkeyDaoStub) UnscopedCreateResource(ctx context.Context, pkr *models.PubkeyResource) error {
 	return nil
 }
 
-func (stub *pubkeyDaoStub) UnscopedDelete(ctx context.Context, id int64) error {
+func (stub *pubkeyDaoStub) UnscopedDeleteResource(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (stub *pubkeyDaoStub) UnscopedListByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error) {
+func (stub *pubkeyDaoStub) UnscopedListResourcesByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error) {
 	return nil, nil
 }
