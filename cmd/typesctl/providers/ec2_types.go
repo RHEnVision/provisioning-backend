@@ -40,9 +40,12 @@ func generateTypesEC2() error {
 		return fmt.Errorf("unable to list EC2 regions: %w", err)
 	}
 
-	// This will throw AuthFailure unless "Valid in all AWS Regions" STS endpoint is configured.
+	// This will throw AuthFailure unless all regions are enabled and "Valid in all AWS Regions"
+	// STS endpoint is configured for the account.
+	//
 	// For more info:
 	// https://aws.amazon.com/premiumsupport/knowledge-center/iam-validate-access-credentials/
+	// https://docs.aws.amazon.com/general/latest/gr/rande-manage.html
 	// https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_enable-regions.html#sts-regions-manage-tokens
 	for _, region := range regions {
 		client, regionErr := clients.GetServiceEC2Client(ctx, region.String())

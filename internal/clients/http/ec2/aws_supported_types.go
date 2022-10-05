@@ -5,11 +5,13 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/supported"
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
 func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) ([]*clients.InstanceType, error) {
+	logger := ctxval.Logger(ctx)
 	list := make([]*clients.InstanceType, 0, len(types))
 	for i := range types {
 		architectures := types[i].ProcessorInfo.SupportedArchitectures
@@ -33,5 +35,6 @@ func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) ([]*c
 			list = append(list, &it)
 		}
 	}
+	logger.Trace().Msgf("Number of instance types returned: %d, after filtering: %d", len(types), len(list))
 	return list, nil
 }

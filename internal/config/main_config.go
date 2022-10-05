@@ -79,7 +79,7 @@ var config struct {
 		Secret        string
 		Session       string
 		DefaultRegion string
-		SigningRegion string
+		Logging       bool
 	}
 	Azure struct {
 		TenantID       string
