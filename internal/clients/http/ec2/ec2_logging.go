@@ -16,8 +16,7 @@ func (logger *ec2Logger) Logf(classification logging.Classification, format stri
 }
 
 func NewEC2Logger(ctx context.Context) *ec2Logger {
-	logger := logger(ctx)
 	return &ec2Logger{
-		zlog: &logger,
+		zlog: logger(ctx),
 	}
 }

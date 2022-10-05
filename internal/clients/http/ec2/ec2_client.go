@@ -31,8 +31,9 @@ func init() {
 	clients.GetServiceEC2Client = newEC2ClientWithRegion
 }
 
-func logger(ctx context.Context) zerolog.Logger {
-	return ctxval.Logger(ctx).With().Str("client", "ec2").Logger()
+func logger(ctx context.Context) *zerolog.Logger {
+	logger := ctxval.Logger(ctx).With().Str("client", "ec2").Logger()
+	return &logger
 }
 
 func awsConfig(ctx context.Context, region string, optFns ...func(*awsCfg.LoadOptions) error) (*aws.Config, error) {
