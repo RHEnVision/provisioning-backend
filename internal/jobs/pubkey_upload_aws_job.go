@@ -50,20 +50,14 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	updateStatusBefore(ctx, args.ReservationID, "Uploading public key")
 	defer updateStatusAfter(ctx, args.ReservationID, "Uploaded public key", 1)
 
-	pkDao, err := dao.GetPubkeyDao(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot upload aws pubkey: %w", err)
-	}
+	pkDao := dao.GetPubkeyDao(ctx)
 
 	pubkey, err := pkDao.GetById(ctx, args.PubkeyID)
 	if err != nil {
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
 	}
 
-	pkrDao, err := dao.GetPubkeyDao(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot upload aws pubkey: %w", err)
-	}
+	pkrDao := dao.GetPubkeyDao(ctx)
 
 	// check presence first
 	skip := true

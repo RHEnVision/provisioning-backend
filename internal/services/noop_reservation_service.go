@@ -19,11 +19,7 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	logger := ctxval.Logger(r.Context())
 	accountId := ctxval.AccountId(r.Context())
 
-	rDao, err := dao.GetReservationDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "reservation DAO", err))
-		return
-	}
+	rDao := dao.GetReservationDao(r.Context())
 	reservation := &models.NoopReservation{
 		Reservation: models.Reservation{
 			Provider:  models.ProviderTypeNoop,
@@ -34,7 +30,7 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create reservation in the database
-	err = rDao.CreateNoop(r.Context(), reservation)
+	err := rDao.CreateNoop(r.Context(), reservation)
 	if err != nil {
 		renderError(w, r, payloads.NewDAOError(r.Context(), "create reservation", err))
 		return

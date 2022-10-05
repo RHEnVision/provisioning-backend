@@ -59,8 +59,7 @@ func newGCPReservation() *models.GCPReservation {
 func setupReservation(t *testing.T) (dao.ReservationDao, context.Context) {
 	setup()
 	ctx := identity.WithTenant(t, context.Background())
-	reservationDao, err := dao.GetReservationDao(ctx)
-	require.NoError(t, err)
+	reservationDao := dao.GetReservationDao(ctx)
 	return reservationDao, ctx
 }
 

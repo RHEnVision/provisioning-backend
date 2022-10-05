@@ -7,9 +7,6 @@ import (
 )
 
 func AddPubkey(ctx context.Context, pubkey *models.Pubkey) error {
-	pubkeyDao, err := getPubkeyDaoStub(ctx)
-	if err != nil {
-		return err
-	}
+	pubkeyDao := getPubkeyDaoStub(ctx)
 	return pubkeyDao.Create(ctx, pubkey)
 }

@@ -38,11 +38,7 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListReservations(w http.ResponseWriter, r *http.Request) {
-	rDao, err := dao.GetReservationDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "reservation DAO", err))
-		return
-	}
+	rDao := dao.GetReservationDao(r.Context())
 
 	reservations, err := rDao.List(r.Context(), 100, 0)
 	if err != nil {
@@ -63,11 +59,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rDao, err := dao.GetReservationDao(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewInitializeDAOError(r.Context(), "reservation DAO", err))
-		return
-	}
+	rDao := dao.GetReservationDao(r.Context())
 
 	// TODO: Add support for GCP and Azure, not generic reservation
 	switch pType := models.ProviderTypeFromString(chi.URLParam(r, "TYPE")); pType {

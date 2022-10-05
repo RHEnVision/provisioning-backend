@@ -20,8 +20,8 @@ func init() {
 
 type accountDao struct{}
 
-func getAccountDao(ctx context.Context) (dao.AccountDao, error) {
-	return &accountDao{}, nil
+func getAccountDao(ctx context.Context) dao.AccountDao {
+	return &accountDao{}
 }
 
 func (x *accountDao) Create(ctx context.Context, account *models.Account) error {

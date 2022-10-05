@@ -17,8 +17,8 @@ func init() {
 
 type pubkeyDao struct{}
 
-func getPubkeyDao(ctx context.Context) (dao.PubkeyDao, error) {
-	return &pubkeyDao{}, nil
+func getPubkeyDao(ctx context.Context) dao.PubkeyDao {
+	return &pubkeyDao{}
 }
 
 func (x *pubkeyDao) validate(ctx context.Context, pubkey *models.Pubkey) error {
