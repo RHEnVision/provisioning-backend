@@ -52,7 +52,6 @@ func TestCreateAWSReservationHandler(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-	stubCount, err := stubs.ReservationStubCount(ctx)
-	require.NoError(t, err, "failed to read count from stubbed store")
+	stubCount := stubs.ReservationStubCount(ctx)
 	assert.Equal(t, 1, stubCount, "Reservation has not been Created through DAO")
 }

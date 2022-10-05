@@ -77,7 +77,6 @@ func TestCreatePubkeyHandler(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-	stubCount, err := stubs.PubkeyStubCount(ctx)
-	require.NoError(t, err, "failed to read count from stubbed store")
+	stubCount := stubs.PubkeyStubCount(ctx)
 	assert.Equal(t, 1, stubCount, "Pubkey has not been Created through DAO")
 }

@@ -64,10 +64,7 @@ func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArg
 	updateStatusBefore(ctx, args.ReservationID, "Launching instance(s)")
 	defer updateStatusAfter(ctx, args.ReservationID, "Launched instance(s)", 1)
 
-	pkD, err := dao.GetPubkeyDao(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot get pubkey dao: %w", err)
-	}
+	pkD := dao.GetPubkeyDao(ctx)
 
 	pk, err := pkD.GetById(ctx, args.PubkeyID)
 	if err != nil {
@@ -95,10 +92,7 @@ func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArg
 		return fmt.Errorf("cannot run instances: %w", err)
 	}
 
-	resD, err := dao.GetReservationDao(ctx)
-	if err != nil {
-		return fmt.Errorf("cannot GetReservationDao: %w", err)
-	}
+	resD := dao.GetReservationDao(ctx)
 
 	// For each instance that was created in AWS, add it as a DB record
 	for _, instanceId := range instances {

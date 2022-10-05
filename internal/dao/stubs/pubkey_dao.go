@@ -16,20 +16,13 @@ func init() {
 	dao.GetPubkeyDao = getPubkeyDao
 }
 
-func PubkeyStubCount(ctx context.Context) (int, error) {
-	pkdao, err := getPubkeyDaoStub(ctx)
-	if err != nil {
-		return 0, err
-	}
-	return len(pkdao.store), nil
+func PubkeyStubCount(ctx context.Context) int {
+	pkdao := getPubkeyDaoStub(ctx)
+	return len(pkdao.store)
 }
 
-func getPubkeyDao(ctx context.Context) (dao.PubkeyDao, error) {
+func getPubkeyDao(ctx context.Context) dao.PubkeyDao {
 	return getPubkeyDaoStub(ctx)
-}
-
-func (stub *pubkeyDaoStub) NameForError() string {
-	return "pubkey"
 }
 
 func (stub *pubkeyDaoStub) Create(ctx context.Context, pubkey *models.Pubkey) error {

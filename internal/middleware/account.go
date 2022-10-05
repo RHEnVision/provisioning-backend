@@ -27,12 +27,7 @@ func AccountMiddleware(next http.Handler) http.Handler {
 			logger.Trace().Int64("account", foundAccount.ID).Msg("Account cache hit")
 		} else {
 			// account not found in cache
-			accDao, err := dao.GetAccountDao(r.Context())
-			if err != nil {
-				logger.Error().Err(err).Msg("Failed to initialize connection to fetch Account info")
-				http.Error(w, http.StatusText(500), 500)
-				return
-			}
+			accDao := dao.GetAccountDao(r.Context())
 
 			account, err := accDao.GetOrCreateByIdentity(r.Context(), orgID, accountNumber)
 			if err != nil {

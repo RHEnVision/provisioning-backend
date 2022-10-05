@@ -39,10 +39,7 @@ func newPubkeyResourceAzure() *models.PubkeyResource {
 func setupPubkeyResource(t *testing.T) (dao.PubkeyDao, context.Context) {
 	setup()
 	ctx := identity.WithTenant(t, context.Background())
-	pubkeyDao, err := dao.GetPubkeyDao(ctx)
-	if err != nil {
-		panic(err)
-	}
+	pubkeyDao := dao.GetPubkeyDao(ctx)
 	return pubkeyDao, ctx
 }
 

@@ -63,10 +63,7 @@ func newAnna2021Key() *models.Pubkey {
 func setupPubkey(t *testing.T) (dao.PubkeyDao, context.Context) {
 	setup()
 	ctx := identity.WithTenant(t, context.Background())
-	pkDao, err := dao.GetPubkeyDao(ctx)
-	if err != nil {
-		panic(err)
-	}
+	pkDao := dao.GetPubkeyDao(ctx)
 	return pkDao, ctx
 }
 
