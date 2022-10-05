@@ -57,11 +57,9 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
 	}
 
-	pkrDao := dao.GetPubkeyDao(ctx)
-
 	// check presence first
 	skip := true
-	pkrCheck, errDao := pkrDao.UnscopedGetResourceByProviderType(ctx, args.PubkeyID, models.ProviderTypeAWS)
+	pkrCheck, errDao := pkDao.UnscopedGetResourceByProviderType(ctx, args.PubkeyID, models.ProviderTypeAWS)
 	if errDao != nil {
 		if errors.Is(errDao, dao.ErrNoRows) {
 			skip = false
@@ -80,6 +78,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 		PubkeyID: pubkey.ID,
 		Provider: models.ProviderTypeAWS,
 		SourceID: args.SourceID,
+		Region:   args.Region,
 	}
 	pkr.RandomizeTag()
 
@@ -99,7 +98,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	}
 
 	// create resource with handle
-	err = pkrDao.UnscopedCreate(ctx, &pkr)
+	err = pkDao.UnscopedCreate(ctx, &pkr)
 	if err != nil {
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
 	}
