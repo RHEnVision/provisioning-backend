@@ -98,7 +98,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	}
 
 	// create resource with handle
-	err = pkDao.UnscopedCreate(ctx, &pkr)
+	err = pkDao.UnscopedCreateResource(ctx, &pkr)
 	if err != nil {
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
 	}

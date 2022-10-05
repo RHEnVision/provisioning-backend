@@ -110,7 +110,7 @@ func (x *pubkeyDao) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (x *pubkeyDao) UnscopedCreate(ctx context.Context, pkr *models.PubkeyResource) error {
+func (x *pubkeyDao) UnscopedCreateResource(ctx context.Context, pkr *models.PubkeyResource) error {
 	query := `INSERT INTO pubkey_resources
     	(pubkey_id, provider, source_id, handle, tag, region)
 		VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, tag`
@@ -140,7 +140,7 @@ func (x *pubkeyDao) UnscopedGetResourceByProviderType(ctx context.Context, pubke
 	return result, nil
 }
 
-func (x *pubkeyDao) UnscopedListByPubkeyId(ctx context.Context, id int64) ([]*models.PubkeyResource, error) {
+func (x *pubkeyDao) UnscopedListResourcesByPubkeyId(ctx context.Context, id int64) ([]*models.PubkeyResource, error) {
 	query := `SELECT * FROM pubkey_resources WHERE pubkey_id = $1`
 	var result []*models.PubkeyResource
 
@@ -156,7 +156,7 @@ func (x *pubkeyDao) UnscopedListByPubkeyId(ctx context.Context, id int64) ([]*mo
 	return result, nil
 }
 
-func (x *pubkeyDao) UnscopedDelete(ctx context.Context, id int64) error {
+func (x *pubkeyDao) UnscopedDeleteResource(ctx context.Context, id int64) error {
 	query := `DELETE FROM pubkey_resources WHERE id = $1`
 
 	tag, err := db.Pool.Exec(ctx, query, id)
