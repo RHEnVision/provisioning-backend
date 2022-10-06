@@ -4,6 +4,7 @@ go 1.18
 
 // go get github.com/georgysavva/scany/v2@v2.0.0-alpha.2
 // go get github.com/jackc/tern/v2@v2.0.0-beta.2
+// go get github.com/IBM/pgxpoolprometheus@v1.1.0-beta.1
 
 require (
 	cloud.google.com/go/compute v1.10.0
@@ -32,7 +33,6 @@ require (
 	github.com/jackc/pgx-zerolog v0.0.0-20220923130014-7856b90a65ae
 	github.com/jackc/pgx/v5 v5.0.1
 	github.com/jackc/tern/v2 v2.0.0-beta.2
-	github.com/jmoiron/sqlx v1.3.5
 	github.com/lzap/cloudwatchwriter2 v1.0.0
 	github.com/lzap/dejq v1.0.2
 	github.com/pkg/errors v0.9.1
@@ -49,7 +49,7 @@ require (
 	go.opentelemetry.io/otel/exporters/jaeger v1.10.0
 	go.opentelemetry.io/otel/sdk v1.10.0
 	go.opentelemetry.io/otel/trace v1.10.0
-	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
+	golang.org/x/crypto v0.0.0-20221005025214-4161e89ecf1b
 	google.golang.org/api v0.98.0
 	google.golang.org/genproto v0.0.0-20220930163606-c98284e70a91
 	gopkg.in/yaml.v3 v3.0.1
@@ -60,6 +60,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.0.1 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork v1.1.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v0.7.0 // indirect
+	github.com/IBM/pgxpoolprometheus v1.1.0-beta.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.2 // indirect

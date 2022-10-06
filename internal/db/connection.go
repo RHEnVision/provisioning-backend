@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/IBM/pgxpoolprometheus"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/exaring/otelpgx"
 	pgxlog "github.com/jackc/pgx-zerolog"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/tracelog"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
@@ -97,6 +100,15 @@ func Initialize(ctx context.Context, schema string) error {
 	if err != nil {
 		return fmt.Errorf("unable to ping the database: %w", err)
 	}
+
+	// Register telemetry
+	labels := map[string]string{
+		"service": version.PrometheusLabelName,
+		"db_host": config.Database.Host,
+		"db_name": config.Database.Name,
+	}
+	collector := pgxpoolprometheus.NewCollector(Pool, labels)
+	prometheus.MustRegister(collector)
 
 	return nil
 }
