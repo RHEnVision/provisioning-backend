@@ -68,7 +68,7 @@ objects:
               requests:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
-        - name: service
+        - name: api
           minReplicas: ${{MIN_REPLICAS}}
           webServices:
             public:
