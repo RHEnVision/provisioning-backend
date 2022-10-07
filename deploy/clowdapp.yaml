@@ -35,6 +35,14 @@ objects:
                   - /pbmigrate
                 inheritEnv: true
             env:
+              - name: LOGGING_LEVEL
+                value: ${LOGGING_LEVEL}
+              - name: DATABASE_LOGGING_LEVEL
+                value: ${DATABASE_LOGGING_LEVEL}
+              - name: TELEMETRY_ENABLED
+                value: ${TELEMETRY_ENABLED}
+              - name: TELEMETRY_LOGGER_ENABLED
+                value: ${TELEMETRY_LOGGER_ENABLED}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
               - name: CLOUDWATCH_ENABLED
@@ -103,6 +111,14 @@ objects:
               successThreshold: 1
               timeoutSeconds: 120
             env:
+              - name: LOGGING_LEVEL
+                value: ${LOGGING_LEVEL}
+              - name: DATABASE_LOGGING_LEVEL
+                value: ${DATABASE_LOGGING_LEVEL}
+              - name: TELEMETRY_ENABLED
+                value: ${TELEMETRY_ENABLED}
+              - name: TELEMETRY_LOGGER_ENABLED
+                value: ${TELEMETRY_LOGGER_ENABLED}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
               - name: CLOUDWATCH_ENABLED
@@ -168,6 +184,18 @@ parameters:
   - description: Image name
     name: IMAGE
     value: quay.io/cloudservices/provisioning-backend
+  - description: Logging level (trace, debug, info, warn, error, fatal, panic)
+    name: LOGGING_LEVEL
+    value: "info"
+  - description: Postgres driver logging level (trace, debug, info, warn, error, fatal, panic)
+    name: DATABASE_LOGGING_LEVEL
+    value: "info"
+  - description: OpenTelemetry collecting
+    name: TELEMETRY_ENABLED
+    value: "true"
+  - description: OpenTelemetry export into the logger
+    name: TELEMETRY_LOGGER_ENABLED
+    value: "true"
   - description: Enable compression of the API responses
     name: APP_COMPRESSION
     value: "true"

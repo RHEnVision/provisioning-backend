@@ -9,7 +9,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
-
 	cww "github.com/lzap/cloudwatchwriter2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -62,8 +61,10 @@ func InitializeStdout() {
 		panic(fmt.Errorf("cannot parse log level '%s': %w", config.Logging.Level, err))
 	}
 	zerolog.SetGlobalLevel(level)
+
 	log.Logger = decorate(log.Output(zerolog.ConsoleWriter{
 		Out:        os.Stdout,
+		NoColor:    config.InEphemeralClowder(),
 		TimeFormat: time.Kitchen,
 		FormatFieldValue: func(i interface{}) string {
 			return truncateText(fmt.Sprintf("%s", i), config.Logging.MaxField)
