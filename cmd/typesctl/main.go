@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	config.Initialize()
+	config.Initialize("configs/api.env", "configs/typesctl.env")
 	logging.InitializeStdout()
 
 	validProviders := make([]string, 0)

@@ -180,8 +180,8 @@ func Seed(ctx context.Context, seedScript string) error {
 	logger.Debug().Msgf("Started execution of seed script %s", seedScript)
 
 	// Prevent from accidental execution of drop_all seed in production
-	if seedScript == "drop_all" && config.Features.Environment != "development" {
-		return fmt.Errorf("%w: an attempt to run drop_all seed script in non %s environment", ErrSeedProduction, config.Features.Environment)
+	if seedScript == "drop_all" && config.InClowder() {
+		return fmt.Errorf("%w: an attempt to run drop_all seed script in clowder environment", ErrSeedProduction)
 	}
 	file, err := seeds.EmbeddedSeeds.Open(fmt.Sprintf("%s.sql", seedScript))
 	if err != nil {

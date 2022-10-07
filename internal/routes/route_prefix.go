@@ -3,9 +3,9 @@ package routes
 import (
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/version"
 )
 
 func PathPrefix() string {
-	return fmt.Sprintf("/api/%s/%s", config.Application.Name, config.Application.Version)
+	return fmt.Sprintf("/api/%s/%s", version.APIPathName, version.APIPathVersion)
 }

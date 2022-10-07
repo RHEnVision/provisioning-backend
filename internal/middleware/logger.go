@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 
 	"github.com/go-chi/chi/v5/middleware"
@@ -39,14 +38,13 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 					Int("bytes_out", ww.BytesWritten()).
 					Logger()
 
-				if !config.Features.ExitOnPanic {
-					if rec := recover(); rec != nil {
-						log.Error().
-							Bool("panic", true).
-							Int("status", panicStatus).
-							Msgf("Unhandled panic: %s\n%s", rec, debug.Stack())
-						http.Error(ww, http.StatusText(panicStatus), panicStatus)
-					}
+				// prevent the application from exiting
+				if rec := recover(); rec != nil {
+					log.Error().
+						Bool("panic", true).
+						Int("status", panicStatus).
+						Msgf("Unhandled panic: %s\n%s", rec, debug.Stack())
+					http.Error(ww, http.StatusText(panicStatus), panicStatus)
 				}
 
 				log.Info().

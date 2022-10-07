@@ -9,6 +9,9 @@ TAGS
 /vendor/
 /configs/local.yaml
 /configs/local.*.yaml
+/configs/api.env
+/configs/worker.env
+/configs/test.env
 /deploy/bonfire.yaml
 /Containerfile
 /tern.conf
