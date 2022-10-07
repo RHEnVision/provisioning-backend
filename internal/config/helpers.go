@@ -2,6 +2,7 @@ package config
 
 import (
 	"net/url"
+	"strings"
 
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/rs/zerolog"
@@ -11,6 +12,11 @@ import (
 // production, stage or ephemeral.
 func InClowder() bool {
 	return clowder.IsClowderEnabled()
+}
+
+// InEphemeralClowder returns true, when the app is running in ephemeral clowder environment.
+func InEphemeralClowder() bool {
+	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-ephemeral")
 }
 
 func StringToURL(urlStr string) *url.URL {
