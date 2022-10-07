@@ -31,7 +31,7 @@ func init() {
 
 func main() {
 	ctx := context.Background()
-	config.Initialize()
+	config.Initialize("configs/api.env", "configs/worker.env")
 
 	// initialize stdout logging and AWS clients first
 	logging.InitializeStdout()

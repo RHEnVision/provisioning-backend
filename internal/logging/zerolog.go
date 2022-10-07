@@ -91,7 +91,7 @@ func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error)
 }
 
 func DumpConfigForDevelopment() {
-	if config.IsDevelopment() {
+	if !config.InClowder() {
 		config.DumpConfig(log.Logger)
 	}
 }

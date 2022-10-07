@@ -9,6 +9,8 @@
 # content related with a rule. Try to short the description.
 #
 
+MAKE_DOC=docs/make.md
+
 .PHONY: help
 help: ## Print out the help content
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
@@ -19,3 +21,7 @@ generate-help-doc:
 	echo '```' >> $(MAKE_DOC)
 	make help | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" >> $(MAKE_DOC)
 	echo '```' >> $(MAKE_DOC)
+
+.PHONY: generate-example-config
+generate-example-config:
+	go run cmd/confgen/main.go > configs/example.env

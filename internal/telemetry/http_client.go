@@ -13,7 +13,8 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
-var ClientProxyProductionUseErr = errors.New("HTTP client proxy can be only used in development")
+// ClientProxyProductionUseErr is returned when HTTP proxy is configured in a Clowder environment
+var ClientProxyProductionUseErr = errors.New("HTTP client proxy cannot be used in clowder")
 
 // HTTPClient returns newly initialized http.Client type with OpenTelemetry
 // transport. This client should be used for all REST communication on the
@@ -24,7 +25,7 @@ func HTTPClient(ctx context.Context, proxy *url.URL) (*http.Client, error) {
 	logger := ctxval.Logger(ctx)
 	var proxyFunc func(*http.Request) (*url.URL, error)
 	if proxy != nil {
-		if config.Features.Environment != "development" {
+		if config.InClowder() {
 			return nil, ClientProxyProductionUseErr
 		}
 		logger.Trace().Msgf("Creating HTTP client with proxy: %s", proxy.String())

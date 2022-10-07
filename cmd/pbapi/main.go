@@ -17,7 +17,6 @@ import (
 	// HTTP client implementations
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
-	"github.com/RHEnVision/provisioning-backend/internal/config/parser"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 
@@ -51,7 +50,7 @@ func statusOk(w http.ResponseWriter, _ *http.Request) {
 
 func main() {
 	ctx := context.Background()
-	config.Initialize()
+	config.Initialize("configs/api.env")
 
 	// initialize stdout logging and AWS clients first
 	logging.InitializeStdout()
@@ -65,12 +64,6 @@ func main() {
 	defer clsFunc()
 	log.Logger = logger
 	logging.DumpConfigForDevelopment()
-
-	// report unknown environmental variables (see ./internal/config/parser/known.go)
-	unknown := parser.UnknownEnvVariables()
-	if len(unknown) > 0 {
-		logger.Warn().Msgf("Unknown ENV variables, add them in the codebase: %+v", unknown)
-	}
 
 	tel := telemetry.Initialize(&log.Logger)
 	defer tel.Close(ctx)
