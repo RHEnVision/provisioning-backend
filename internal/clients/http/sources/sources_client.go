@@ -12,7 +12,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
-	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
 )
@@ -33,15 +32,7 @@ func logger(ctx context.Context) zerolog.Logger {
 
 func newSourcesClient(ctx context.Context) (clients.Sources, error) {
 	c, err := NewClientWithResponses(config.Sources.URL, func(c *Client) error {
-		var doer HttpRequestDoer
-		doer, err := telemetry.HTTPClient(ctx, config.StringToURL(ctx, config.Sources.Proxy.URL))
-		if err != nil {
-			return fmt.Errorf("cannot HTTP client: %w", err)
-		}
-		if config.RestEndpoints.TraceData {
-			doer = http.NewLoggingDoer(ctx, doer)
-		}
-		c.Client = doer
+		c.Client = http.NewPlatformClient(ctx, config.Sources.Proxy.URL)
 		return nil
 	})
 	if err != nil {
