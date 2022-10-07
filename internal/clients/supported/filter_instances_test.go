@@ -15,7 +15,7 @@ import (
 func TestEC2MapArchitectures(t *testing.T) {
 	result, err := clients.MapArchitectures(context.Background(), "x86-64")
 	assert.Nil(t, err)
-	assert.Equal(t, clients.ArchitectureTypeX8664, result)
+	assert.Equal(t, clients.ArchitectureTypeX86_64, result)
 	result, err = clients.MapArchitectures(context.Background(), "i386")
 	assert.Nil(t, err)
 	assert.Equal(t, clients.ArchitectureTypeI386, result)
@@ -24,7 +24,7 @@ func TestEC2MapArchitectures(t *testing.T) {
 	assert.Equal(t, clients.ArchitectureTypeArm64, result)
 	result, err = clients.MapArchitectures(context.Background(), "x86_64_mac")
 	assert.Nil(t, err)
-	assert.Equal(t, clients.ArchitectureTypeAppleX8664, result)
+	assert.Equal(t, clients.ArchitectureTypeAppleX86_64, result)
 	result, err = clients.MapArchitectures(context.Background(), "arm64_mac")
 	assert.Nil(t, err)
 	assert.Equal(t, clients.ArchitectureTypeAppleArm64, result)
@@ -35,7 +35,7 @@ func TestEC2MapArchitectures(t *testing.T) {
 func TestAzureMapArchitectures(t *testing.T) {
 	result, err := clients.MapArchitectures(context.Background(), "x64")
 	assert.Nil(t, err)
-	assert.Equal(t, clients.ArchitectureTypeX8664, result)
+	assert.Equal(t, clients.ArchitectureTypeX86_64, result)
 	result, err = clients.MapArchitectures(context.Background(), "arm64")
 	assert.Nil(t, err)
 	assert.Equal(t, clients.ArchitectureTypeArm64, result)
