@@ -45,10 +45,6 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err != nil {
-		renderError(w, r, payloads.NewAWSError(r.Context(), "can't FilterUnsupportedTypes", err))
-		return
-	}
 	if err := render.RenderList(w, r, payloads.NewListInstanceTypeResponse(instances)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "list instance types", err))
 		return
