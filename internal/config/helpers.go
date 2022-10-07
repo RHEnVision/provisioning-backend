@@ -1,10 +1,8 @@
 package config
 
 import (
-	"context"
 	"net/url"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/rs/zerolog"
 )
@@ -15,13 +13,12 @@ func InClowder() bool {
 	return clowder.IsClowderEnabled()
 }
 
-func StringToURL(ctx context.Context, urlStr string) *url.URL {
+func StringToURL(urlStr string) *url.URL {
 	if urlStr == "" {
 		return nil
 	}
 	urlProxy, err := url.Parse(urlStr)
 	if err != nil {
-		ctxval.Logger(ctx).Warn().Msgf("Unable to parse proxy URL: '%s', ignoring proxy", urlStr)
 		return nil
 	}
 	return urlProxy
