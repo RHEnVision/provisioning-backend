@@ -84,7 +84,7 @@ func (mock *EC2ClientStub) ListInstanceTypesWithPaginator(ctx context.Context) (
 			MemoryMiB:          16000,
 			EphemeralStorageGB: 0,
 			Supported:          true,
-			Architecture:       clients.ArchitectureTypeX8664,
+			Architecture:       clients.ArchitectureTypeX86_64,
 		},
 		{
 			Name:               "c5.xlarge",
@@ -93,7 +93,7 @@ func (mock *EC2ClientStub) ListInstanceTypesWithPaginator(ctx context.Context) (
 			MemoryMiB:          8000,
 			EphemeralStorageGB: 0,
 			Supported:          true,
-			Architecture:       clients.ArchitectureTypeX8664,
+			Architecture:       clients.ArchitectureTypeX86_64,
 		},
 	}, nil
 }
