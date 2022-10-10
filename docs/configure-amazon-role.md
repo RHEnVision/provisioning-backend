@@ -71,7 +71,7 @@ Create a new user for the Service account:
 * On the next screen, select Attach existing policies directly and find policy named **redhat-provisioning-policy**.
 * Click on Next and Review.
 * Confirm by clicking on Create user.
-* On the next page, make sure to copy Access key and secret key and paste them both into the application configuration (e.g. `local.yaml` or K8s configuration).
+* On the next page, make sure to copy Access key and secret key and paste them both into the application configuration (e.g. `config/api.env` or K8s configuration).
 
 #### Service account regions and STS endpoints
 
@@ -182,6 +182,6 @@ The service can be configured to send all its logs via AWS CloudWatch API. This 
 * On the next screen, select Attach existing policies directly and find policy named **AmazonAPIGatewayPushToCloudWatchLogs**.
 * Click on Next and Review.
 * Confirm by clicking on Create user.
-* On the next page, make sure to copy Access key and secret key and paste them both into the application configuration (e.g. `local.yaml` or K8s configuration).
+* On the next page, make sure to copy Access key and secret key and paste them both into the application configuration (e.g. `config/api.env` or K8s configuration).
 
 

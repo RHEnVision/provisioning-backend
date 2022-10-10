@@ -141,7 +141,7 @@ objects:
       dependencies:
         - sources-api
 
-# possible application ENV variables are in configs/example.env
+# possible application ENV variables are in config/api.env.example
 parameters:
   - description: ClowdEnv Name
     name: ENV_NAME

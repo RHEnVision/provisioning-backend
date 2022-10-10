@@ -7,11 +7,8 @@ TAGS
 /pbmigrate
 /pbworker
 /vendor/
-/configs/local.yaml
-/configs/local.*.yaml
-/configs/api.env
-/configs/worker.env
-/configs/test.env
+/config/*.env
+/configs
 /deploy/bonfire.yaml
 /Containerfile
 /tern.conf
