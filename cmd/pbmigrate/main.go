@@ -18,7 +18,7 @@ func init() {
 
 func main() {
 	ctx := context.Background()
-	config.Initialize("configs/api.env", "configs/migrate.env")
+	config.Initialize("config/api.env", "config/migrate.env")
 
 	// initialize stdout logging and AWS clients first
 	logging.InitializeStdout()
