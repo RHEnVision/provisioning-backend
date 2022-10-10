@@ -17,10 +17,16 @@ make build
 
 ## Configuration
 
-Configuration is done via configuration files in `configs/` directory, see [local_example.yaml](configs/local_example.yaml) file for list of options with documentation. Environmental variables override the values from configuration files and always take precedence.
-To use environment variables for nested configurations just join the nested keys by `_` e.g. `database.host` becomes `DATABASE_HOST`.
-When `local.yaml` file is found in `configs` directory, it overrides `defaults.yaml`
-When running in Clowder env, defaults are overriden by config consumed through [consoleDot shared library](https://github.com/RedHatInsights/app-common-go/)
+Configuration is done via configuration files in `config/` directory, see [config/api.env.example](config/api.env.example) file for list of options with documentation. The application expects `config/app.env` file to be present, other programs from this git repo also look up additional file which will override values:
+
+* `pbworker` looks up `config/worker.env`
+* `pbmigrate` looks up `config/migrate.env`
+* `typesctl` looks up `config/typesctl.env`
+* integration (DAO) tests look up `config/test.env`
+
+Environmental variables always override any values from configuration files, or can be used for complete configuration of the application without any `.env` file.
+
+Finally, when running the app in Clowder environment, some configuration values are overwritten by those from Clowder. See [consoleDot shared library](https://github.com/RedHatInsights/app-common-go/) for more details.
 
 ## Development setup
 

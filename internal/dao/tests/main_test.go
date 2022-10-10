@@ -1,7 +1,7 @@
 //go:build integration
 // +build integration
 
-// To override application configuration for integration tests, copy local.yaml into this directory.
+// To override application configuration for integration tests, create config/test.env file.
 
 package tests
 
@@ -27,11 +27,11 @@ func teardown() {
 }
 
 func initEnvironment() {
-	config.Initialize("configs/test.env")
+	config.Initialize("config/test.env")
 
 	err := db.Initialize(context.Background(), "integration")
 	if err != nil {
-		panic(fmt.Errorf("cannot connect to database, create configs/local.integration.yaml: %v", err))
+		panic(fmt.Errorf("cannot connect to database: %v", err))
 	}
 }
 

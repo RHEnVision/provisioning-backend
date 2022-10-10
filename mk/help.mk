@@ -24,4 +24,4 @@ generate-help-doc:
 
 .PHONY: generate-example-config
 generate-example-config:
-	go run cmd/confgen/main.go > configs/example.env
+	go run cmd/confgen/main.go > configs/api.env.example

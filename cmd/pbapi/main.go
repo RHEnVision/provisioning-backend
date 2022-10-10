@@ -50,7 +50,7 @@ func statusOk(w http.ResponseWriter, _ *http.Request) {
 
 func main() {
 	ctx := context.Background()
-	config.Initialize("configs/api.env")
+	config.Initialize("config/api.env")
 
 	// initialize stdout logging and AWS clients first
 	logging.InitializeStdout()

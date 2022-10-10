@@ -87,8 +87,8 @@ Follow [instructions](../scripts/README.sources) to perform the setup. Note that
 
 Tip: On MacOS, you can install Sources on a remote Fedora Linux (or a small VM) and configure the application to connect there, instead of localhost.
 
-Tip: Alternatively, the application supports connecting to the stage environment through a HTTP proxy. See [configuration example](../configs/local_example.yaml) for more details. Make sure to use account number from stage environment instead of the pre-seeded account number 000013.
+Tip: Alternatively, the application supports connecting to the stage environment through a HTTP proxy. See [configuration example](../config/api.env.example) for more details. Make sure to use account number from stage environment instead of the pre-seeded account number 000013.
 
 ## Image Builder
 
-Because Image Builder is more complex for installation, we do not recommend installing it on your local machine right now. Configure connection through HTTP proxy to the stage environment in `local.yaml`. See [configuration example](../configs/local_example.yaml) for an example, you will need to ask someone from the company for real URLs for the service and the proxy.
+Because Image Builder is more complex for installation, we do not recommend installing it on your local machine right now. Configure connection through HTTP proxy to the stage environment in `config/api.env`. See [configuration example](../config/api.env.example) for an example, you will need to ask someone from the company for real URLs for the service and the proxy.
