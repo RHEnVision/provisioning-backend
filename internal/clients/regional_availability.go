@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"sort"
 	"strings"
 
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 )
 
@@ -62,12 +62,16 @@ func (rit *RegionalTypeAvailability) Add(region, zone string, it InstanceType) {
 	if _, ok := rit.types[raz]; !ok {
 		rit.types[raz] = make([]InstanceTypeName, 0)
 	}
-	rit.types[raz] = append(rit.types[raz], it.Name)
+	// keep lists of types sorted for faster lookups
+	if _, found := slices.BinarySearch(rit.types[raz], it.Name); !found {
+		rit.types[raz] = append(rit.types[raz], it.Name)
+		slices.Sort(rit.types[raz])
+	}
 }
 
 func (rit *RegionalTypeAvailability) Save(directory string) error {
 	for key, value := range rit.types {
-		sort.Sort(value)
+		slices.Sort(value)
 		filename := filepath.Join(directory, key+".yaml")
 		err := compareAndMarshal(filename, value)
 		if err != nil {
@@ -121,7 +125,8 @@ func splitRegionZone(str string) (string, string, error) {
 	}
 }
 
-func (rit *RegionalTypeAvailability) Print(fRegion, fZone string) {
+func (rit *RegionalTypeAvailability) Sprint(fRegion, fZone string) string {
+	sb := strings.Builder{}
 	for raz, names := range rit.types {
 		region, zone, err := splitRegionZone(raz)
 		if err != nil {
@@ -131,16 +136,19 @@ func (rit *RegionalTypeAvailability) Print(fRegion, fZone string) {
 			(fRegion == region && fZone == "") ||
 			(fRegion == region && fZone == zone) ||
 			(fRegion == "all" && fZone == "") {
-			fmt.Printf("Region '%s' availability zone '%s':\n", region, zone)
-			sb := strings.Builder{}
-			for _, name := range names {
+			header := fmt.Sprintf("\nRegion '%s' availability zone '%s': ", region, zone)
+			sb.WriteString(header)
+			for i, name := range names {
 				sb.WriteString(name.String())
-				sb.WriteString(", ")
+				if i != len(names)-1 {
+					sb.WriteString(", ")
+				} else {
+					sb.WriteString("\n")
+				}
 			}
-			fmt.Println(sb.String())
-			fmt.Println("")
 		}
 	}
+	return sb.String()
 }
 
 func ConcatBuffers(fsTypes embed.FS, path string) []byte {
