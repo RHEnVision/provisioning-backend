@@ -50,7 +50,8 @@ func PrintRegisteredTypes(typeName string) {
 }
 
 func PrintRegionalAvailability(region, zone string) {
-	typeInfo.RegionalAvailability.Print(region, zone)
+	str := typeInfo.RegionalAvailability.Sprint(region, zone)
+	fmt.Println(str)
 }
 
 func InstanceTypesForZone(region, zone string, supported *bool) ([]*clients.InstanceType, error) {
