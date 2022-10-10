@@ -57,7 +57,11 @@ func decorate(l zerolog.Logger) zerolog.Logger {
 // InitializeStdout initializes logging to standard output with human-friendly output.
 // It is used before CloudWatch logging output is initialized, or in unit and integration tests.
 func InitializeStdout() {
-	zerolog.SetGlobalLevel(zerolog.Level(config.Logging.Level))
+	level, err := zerolog.ParseLevel(config.Logging.Level)
+	if err != nil {
+		panic(fmt.Errorf("cannot parse log level '%s': %w", config.Logging.Level, err))
+	}
+	zerolog.SetGlobalLevel(level)
 	log.Logger = decorate(log.Output(zerolog.ConsoleWriter{
 		Out:        os.Stdout,
 		TimeFormat: time.Kitchen,
