@@ -57,8 +57,8 @@ objects:
                 value: ${WORKER_QUEUE}
               - name: WORKER_CONCURRENCY
                 value: ${WORKER_CONCURRENCY}
-              - name: WORKER_HEARTBEAT_SEC
-                value: ${WORKER_HEARTBEAT_SEC}
+              - name: WORKER_HEARTBEAT
+                value: ${WORKER_HEARTBEAT}
               - name: WORKER_MAX_BEATS
                 value: ${WORKER_MAX_BEATS}
             resources:
@@ -187,8 +187,8 @@ parameters:
     name: WORKER_CONCURRENCY
     value: "100"
   - description: Internal queue heartbeat interval. How often to update job liveness information.
-    name: WORKER_HEARTBEAT_SEC
-    value: "30"
+    name: WORKER_HEARTBEAT
+    value: "30s"
   - description: Internal queue beat threshold. Now many times the beat can be updated until job is cancelled.
     name: WORKER_MAX_BEATS
     value: "10"
