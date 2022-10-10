@@ -21,8 +21,8 @@ var config struct {
 		Compression    bool   `env:"COMPRESSION" env-default:"false" env-description:"HTTP payload compression"`
 		InstancePrefix string `env:"INSTANCE_PREFIX" env-default:"" env-description:"prefix for all VMs names"`
 		Cache          struct {
-			Expiration      time.Duration `env:"EXPIRATION" env-default:"1h" env-description:"in-memory cache expiration"`
-			CleanupInterval time.Duration `env:"CLEANUP_INTERVAL" env-default:"5m" env-description:"in-memory expiration interval"`
+			Expiration      time.Duration `env:"EXPIRATION" env-default:"1h" env-description:"in-memory cache expiration (time interval syntax)"`
+			CleanupInterval time.Duration `env:"CLEANUP_INTERVAL" env-default:"5m" env-description:"in-memory expiration interval (time interval syntax)"`
 			AppTypeId       bool          `env:"APP_TYPE_ID" env-default:"true" env-description:"sources app_type_id cache"`
 			Account         bool          `env:"ACCOUNT" env-default:"true" env-description:"account DB ID caching"`
 		} `env-prefix:"CACHE_"`
@@ -36,8 +36,8 @@ var config struct {
 		SeedScript  string        `env:"SEED_SCRIPT" env-default:"" env-description:"database seed script (dev only)"`
 		MinConn     int32         `env:"MIN_CONN" env-default:"2" env-description:"connection pool minimum size"`
 		MaxConn     int32         `env:"MAX_CONN" env-default:"50" env-description:"connection pool maximum size"`
-		MaxIdleTime time.Duration `env:"MAX_IDLE_TIME" env-default:"15m" env-description:"connection pool idle time"`
-		MaxLifetime time.Duration `env:"MAX_LIFETIME" env-default:"2h" env-description:"connection pool total lifetime"`
+		MaxIdleTime time.Duration `env:"MAX_IDLE_TIME" env-default:"15m" env-description:"connection pool idle time (time interval syntax)"`
+		MaxLifetime time.Duration `env:"MAX_LIFETIME" env-default:"2h" env-description:"connection pool total lifetime (time interval syntax)"`
 		LogLevel    string        `env:"LOG_LEVEL" env-default:"info" env-description:"logging level of database logs"`
 	} `env-prefix:"DATABASE_"`
 	Logging struct {
@@ -102,11 +102,10 @@ var config struct {
 		TraceData bool `env:"TRACE_DATA" env-default:"true" env-description:"open telemetry HTTP context pass and trace"`
 	} `env-prefix:"REST_ENDPOINTS_"`
 	Worker struct {
-		Queue       string `env:"QUEUE" env-default:"memory" env-description:"job worker implementation (memory, sqs, postgres)"`
-		Concurrency int    `env:"CONCURRENCY" env-default:"50" env-description:"number of goroutines handling jobs"`
-		// TODO time.Duration
-		HeartbeatSec int `env:"HEARTBEAT_SEC" env-default:"30" env-description:"heartbeat interval"`
-		MaxBeats     int `env:"MAX_BEATS" env-default:"10" env-description:"maximum amount of heartbeats allowed"`
+		Queue       string        `env:"QUEUE" env-default:"memory" env-description:"job worker implementation (memory, sqs, postgres)"`
+		Concurrency int           `env:"CONCURRENCY" env-default:"50" env-description:"number of goroutines handling jobs"`
+		Heartbeat   time.Duration `env:"HEARTBEAT" env-default:"30s" env-description:"heartbeat interval (time interval syntax)"`
+		MaxBeats    int           `env:"MAX_BEATS" env-default:"10" env-description:"maximum amount of heartbeats allowed"`
 	} `env-prefix:"WORKER_"`
 }
 

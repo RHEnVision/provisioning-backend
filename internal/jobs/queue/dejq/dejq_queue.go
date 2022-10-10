@@ -3,7 +3,6 @@ package dejq
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -43,7 +42,7 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 		// TODO dejq must be refactored to use PGX too
 		dejqQueue, err = postgres.NewClient(ctx, zerologr.New(logger), nil,
 			config.Worker.Concurrency,
-			time.Duration(config.Worker.HeartbeatSec)*time.Second,
+			config.Worker.Heartbeat,
 			config.Worker.MaxBeats)
 	} else if config.Worker.Queue == "sqs" {
 		panic("SQS dejqQueue implementation is not supported")
