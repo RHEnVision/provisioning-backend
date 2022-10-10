@@ -41,10 +41,9 @@ var config struct {
 		LogLevel    string        `env:"LOG_LEVEL" env-default:"info" env-description:"logging level of database logs"`
 	} `env-prefix:"DATABASE_"`
 	Logging struct {
-		// TODO make this string
-		Level    int  `env:"LEVEL" env-default:"1" env-description:"main application logger level"`
-		Stdout   bool `env:"STDOUT" env-default:"true" env-description:"main logger standard output"`
-		MaxField int  `env:"MAX_FIELD" env-default:"0" env-description:"main logger maximum field length (dev only)"`
+		Level    string `env:"LEVEL" env-default:"info" env-description:"logger level (trace, debug, info, warn, error, fatal, panic)"`
+		Stdout   bool   `env:"STDOUT" env-default:"true" env-description:"logger standard output"`
+		MaxField int    `env:"MAX_FIELD" env-default:"0" env-description:"logger maximum field length (dev only)"`
 	} `env-prefix:"LOGGING_"`
 	Telemetry struct {
 		Enabled bool `env:"ENABLED" env-default:"false" env-description:"open telemetry collecting"`
@@ -130,9 +129,8 @@ var (
 
 // Errors
 var (
-	validateMissingSecretError      = errors.New("config error: Cloudwatch enabled but Region and Key and Secret are not provided")
-	validateGroupStreamError        = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
-	validateInvalidEnvironmentError = errors.New("config error: Environment must be production or development")
+	validateMissingSecretError = errors.New("config error: Cloudwatch enabled but Region and Key and Secret are not provided")
+	validateGroupStreamError   = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
 )
 
 // Initialize loads configuration from provided .env files, the first existing file wins.
