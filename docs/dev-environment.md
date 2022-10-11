@@ -92,3 +92,7 @@ Tip: Alternatively, the application supports connecting to the stage environment
 ## Image Builder
 
 Because Image Builder is more complex for installation, we do not recommend installing it on your local machine right now. Configure connection through HTTP proxy to the stage environment in `config/api.env`. See [configuration example](../config/api.env.example) for an example, you will need to ask someone from the company for real URLs for the service and the proxy.
+
+## Writing Go code
+
+Ready to write some Go code? Read [contributing guide](../CONTRIBUTING.md).
