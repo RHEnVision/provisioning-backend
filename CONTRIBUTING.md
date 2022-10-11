@@ -1,5 +1,31 @@
 # Contributing to Provisioning
 
+## Commit messages
+
+Commit messages must be in the form of:
+
+* `type: brief summary` (maximum 70 characters)
+* `type(component): brief summary`
+
+Supported types:
+
+* feat (Feature)
+* fix
+* refactor
+* perf
+* revert
+* chore
+* demo
+* docs
+* style
+* test
+
+For components, use Go package names which have the most changes. This is optional.
+
+For WIP branches, start commit message with `WIP` and it will pass on CI.
+
+Use `make check-commits` to check commit message locally.
+
 ## Basic guidelines for code contributions
 
 Here are few points before you start contributing:
