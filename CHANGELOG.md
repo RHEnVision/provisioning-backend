@@ -1,12 +1,99 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Chores
+- **changelog:** GHA action for commits
+- **changelog:** introduced changelog generator
+
 
 <a name="0.8.0"></a>
 ## [0.8.0] - 2022-10-10
 
+
+- Update to app-common-go 1.6.4
+- Rebase and go mod tidy
+- Rename configs/ to config/
+- Regenerate example config
+- Heartbeat is time interval now
+- Logging config is string instead of int
+- Remove viper for cleanenv
+- Regenerate types and drop duplicities
+- Do not add duplicate entries into instance types
+- Remove unnecessary error check
+- Add the new instance_types to OpenAPI
+- Rename clowder service to 'api'
+- Add prometheus pgx metrics
+- Launch worker alongside api
+- Rename architectures X86_64
+- Add otel to EC2 client
+- Rename Pubkey Resource DAO functions
+- return logger as pointer
+- Get value without ptr magic
+- Set region on pubkey resource Create
+- Drop error from GetXXXDAO functions
+- Change to native pgx/v5 driver with scany
+- Drop signin region, add logging, simplify
+- Refresh EC2 types correctly
+- Refresh EC2 zone types correctly
+- Refresh types for EC2
+- Refresh types for Azure
+- Update dependencies
+- Improve variable naming in schema generator
+- Remove multiple versions of same libraries
+- Fetch HEAD^ for DAO tests
+- OpenTelemetry with logger exporter and Prometheus
+- Implement EC2 types precaching
+- Add pubkey id to AWS response
+- Try standartize the database name
+- Pin linter to 1.47.3
+- HMSPROV-285: Reservation detail for AWS ([#235](https://github.com/RHEnVision/provisioning-backend/issues/235))
+- Refactor Sources and Cloud provider APIs
+- Add HTTP response and app-level caching
+- Add GCP doc workflow
+- Merge Pubkey and Pubkey Resource DAO
+- Add Region To PubkeyResource Model
+- Add a make/CI target to check migration changes
+- Add a make/CI target to check migration changes
+
+
 <a name="0.7.0"></a>
 ## [0.7.0] - 2022-09-15
+
+
+- Add GCP reservation and launch instance job
+- Enable gofumpt ([#230](https://github.com/RHEnVision/provisioning-backend/issues/230))
+- Use same secret keys in all environments
+- Revert "Rename database to match stage"
+- Rename database to match stage
+- Use ptr in ec2 client too
+- Update golangci-lint to latest
+- Package ptr with generics
+- HMSPROV-239 - add reservation status endpoint
+- Fix Viper Default Values
+- Add CPU and MEMORY _REQUESTS parameter defaults
+- OpenAPI 3.1 is not Swagger
+- Avoid appending when copying slices
+- Pubkey resource unscoped by account
+- Explain our workflow in AWS further
+- Add test for Azure instance types service
+- Remove unused old API-generated interface
+- Add documentation to the client interfaces
+- Unexport client implementation types
+- Rename and split client models into separate files
+- Split architecture and supported features
+- Move HTTP "Doers" to http package
+- Move errors to http package
+- Improve NotFound errors
+- Wrap common errors for all clients too
+- Use context-aware logging with client field
+- Rename common errors and move AWS-related
+- Improve logging of AWS client
+- Improve error handling of image builder client
+- Improve error handling of sources client
+- Add azure instance types endpoint
+- Change iqe plugin name
+- Changed plugin name
+
 ### Reverts
 - Rename database to match stage
 
@@ -14,8 +101,37 @@
 <a name="0.6.0"></a>
 ## [0.6.0] - 2022-08-31
 
+
+- ETag middleware with implementation for OpenAPI
+- Split Makefile and create devel docs
+- Enable compression in clowder by default
+- Transparent HTTP gzip compression
+- Transparent HTTP gzip compression
+- Unify service test assertions and error handling
+- Rename and refactor generation tool
+- Refactor instance types for Azure, types for Azure
+- Add instance types service test
+- Refactor integration tests
+- Use require.NoError in all DAO tests
+- Add missing APP.COMPRESSION ENV variable
+- Move dao tests into internal/ and fix config
+- Upgrade to Go 1.18
+- Region aware reservation endpoint
+- Improve EC2 error handling
+- Simplify EC2 client initialization
+- HMSPROV-79 Resource tests
+- List responses need array schemas
+- Fix path in makefile and configs
+- Add sts and ec2 interfaces and stubs
+- Fix stubs structure
+- Fix variadic function bug
+- Support for multiple names and JSONB detail
+- Rework environmental variables
+
+
 <a name="0.5.0"></a>
 ## [0.5.0] - 2022-08-30
+
 
 - Add region to instance type endpoint
 - Update types .http file and update log line
@@ -60,6 +176,7 @@
 <a name="0.3.0"></a>
 ## [0.3.0] - 2022-08-11
 
+
 - Client proxy support with basic auth for stage
 - Add golang lint suggestion
 - Use table truncate for each test
@@ -99,6 +216,7 @@
 
 <a name="0.2.0"></a>
 ## [0.2.0] - 2022-07-27
+
 
 - Test identity DAO independent ([#119](https://github.com/RHEnVision/provisioning-backend/issues/119))
 - Remove redundant code from sources stub
@@ -169,6 +287,7 @@
 
 <a name="0.1.0"></a>
 ## 0.1.0 - 2022-06-15
+
 
 - Replace gomigrate by tern in tools
 - Fix and regenerate clients
