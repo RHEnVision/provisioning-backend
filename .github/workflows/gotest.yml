@@ -5,6 +5,17 @@ on:
       - main
   pull_request:
 jobs:
+  commit:
+    name: "💾 Commit message"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 2
+      - run: |
+          make check-commits
+
   linting:
     name: "🎯 Code format, imports and style"
     runs-on: ubuntu-latest
