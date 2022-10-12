@@ -41,6 +41,30 @@ const (
 	ApplicationUpdateAvailabilityStatusUnavailable        ApplicationUpdateAvailabilityStatus = "unavailable"
 )
 
+// Defines values for AuthenticationCreateAuthtype.
+const (
+	AuthenticationCreateAuthtypeAccessKeySecretKey                   AuthenticationCreateAuthtype = "access_key_secret_key"
+	AuthenticationCreateAuthtypeApiTokenAccountId                    AuthenticationCreateAuthtype = "api_token_account_id"
+	AuthenticationCreateAuthtypeArn                                  AuthenticationCreateAuthtype = "arn"
+	AuthenticationCreateAuthtypeBitbucketAppPassword                 AuthenticationCreateAuthtype = "bitbucket-app-password"
+	AuthenticationCreateAuthtypeCloudMeterArn                        AuthenticationCreateAuthtype = "cloud-meter-arn"
+	AuthenticationCreateAuthtypeDockerAccessToken                    AuthenticationCreateAuthtype = "docker-access-token"
+	AuthenticationCreateAuthtypeGithubPersonalAccessToken            AuthenticationCreateAuthtype = "github-personal-access-token"
+	AuthenticationCreateAuthtypeGitlabPersonalAccessToken            AuthenticationCreateAuthtype = "gitlab-personal-access-token"
+	AuthenticationCreateAuthtypeLighthouseSubscriptionId             AuthenticationCreateAuthtype = "lighthouse_subscription_id"
+	AuthenticationCreateAuthtypeMarketplaceToken                     AuthenticationCreateAuthtype = "marketplace-token"
+	AuthenticationCreateAuthtypeOcid                                 AuthenticationCreateAuthtype = "ocid"
+	AuthenticationCreateAuthtypeProjectIdServiceAccountJson          AuthenticationCreateAuthtype = "project_id_service_account_json"
+	AuthenticationCreateAuthtypeProvisioningArn                      AuthenticationCreateAuthtype = "provisioning-arn"
+	AuthenticationCreateAuthtypeProvisioningLighthouseSubscriptionId AuthenticationCreateAuthtype = "provisioning_lighthouse_subscription_id"
+	AuthenticationCreateAuthtypeProvisioningProjectId                AuthenticationCreateAuthtype = "provisioning_project_id"
+	AuthenticationCreateAuthtypeQuayEncryptedPassword                AuthenticationCreateAuthtype = "quay-encrypted-password"
+	AuthenticationCreateAuthtypeReceptorNode                         AuthenticationCreateAuthtype = "receptor_node"
+	AuthenticationCreateAuthtypeTenantIdClientIdClientSecret         AuthenticationCreateAuthtype = "tenant_id_client_id_client_secret"
+	AuthenticationCreateAuthtypeToken                                AuthenticationCreateAuthtype = "token"
+	AuthenticationCreateAuthtypeUsernamePassword                     AuthenticationCreateAuthtype = "username_password"
+)
+
 // Defines values for AuthenticationCreateResourceType.
 const (
 	AuthenticationCreateResourceTypeApplication    AuthenticationCreateResourceType = "Application"
@@ -51,23 +75,26 @@ const (
 
 // Defines values for AuthenticationReadAuthtype.
 const (
-	AuthenticationReadAuthtypeAccessKeySecretKey           AuthenticationReadAuthtype = "access_key_secret_key"
-	AuthenticationReadAuthtypeApiTokenAccountId            AuthenticationReadAuthtype = "api_token_account_id"
-	AuthenticationReadAuthtypeArn                          AuthenticationReadAuthtype = "arn"
-	AuthenticationReadAuthtypeBitbucketAppPassword         AuthenticationReadAuthtype = "bitbucket-app-password"
-	AuthenticationReadAuthtypeCloudMeterArn                AuthenticationReadAuthtype = "cloud-meter-arn"
-	AuthenticationReadAuthtypeDockerAccessToken            AuthenticationReadAuthtype = "docker-access-token"
-	AuthenticationReadAuthtypeGithubPersonalAccessToken    AuthenticationReadAuthtype = "github-personal-access-token"
-	AuthenticationReadAuthtypeGitlabPersonalAccessToken    AuthenticationReadAuthtype = "gitlab-personal-access-token"
-	AuthenticationReadAuthtypeLighthouseSubscriptionId     AuthenticationReadAuthtype = "lighthouse_subscription_id"
-	AuthenticationReadAuthtypeMarketplaceToken             AuthenticationReadAuthtype = "marketplace-token"
-	AuthenticationReadAuthtypeOcid                         AuthenticationReadAuthtype = "ocid"
-	AuthenticationReadAuthtypeProjectIdServiceAccountJson  AuthenticationReadAuthtype = "project_id_service_account_json"
-	AuthenticationReadAuthtypeQuayEncryptedPassword        AuthenticationReadAuthtype = "quay-encrypted-password"
-	AuthenticationReadAuthtypeReceptorNode                 AuthenticationReadAuthtype = "receptor_node"
-	AuthenticationReadAuthtypeTenantIdClientIdClientSecret AuthenticationReadAuthtype = "tenant_id_client_id_client_secret"
-	AuthenticationReadAuthtypeToken                        AuthenticationReadAuthtype = "token"
-	AuthenticationReadAuthtypeUsernamePassword             AuthenticationReadAuthtype = "username_password"
+	AuthenticationReadAuthtypeAccessKeySecretKey                   AuthenticationReadAuthtype = "access_key_secret_key"
+	AuthenticationReadAuthtypeApiTokenAccountId                    AuthenticationReadAuthtype = "api_token_account_id"
+	AuthenticationReadAuthtypeArn                                  AuthenticationReadAuthtype = "arn"
+	AuthenticationReadAuthtypeBitbucketAppPassword                 AuthenticationReadAuthtype = "bitbucket-app-password"
+	AuthenticationReadAuthtypeCloudMeterArn                        AuthenticationReadAuthtype = "cloud-meter-arn"
+	AuthenticationReadAuthtypeDockerAccessToken                    AuthenticationReadAuthtype = "docker-access-token"
+	AuthenticationReadAuthtypeGithubPersonalAccessToken            AuthenticationReadAuthtype = "github-personal-access-token"
+	AuthenticationReadAuthtypeGitlabPersonalAccessToken            AuthenticationReadAuthtype = "gitlab-personal-access-token"
+	AuthenticationReadAuthtypeLighthouseSubscriptionId             AuthenticationReadAuthtype = "lighthouse_subscription_id"
+	AuthenticationReadAuthtypeMarketplaceToken                     AuthenticationReadAuthtype = "marketplace-token"
+	AuthenticationReadAuthtypeOcid                                 AuthenticationReadAuthtype = "ocid"
+	AuthenticationReadAuthtypeProjectIdServiceAccountJson          AuthenticationReadAuthtype = "project_id_service_account_json"
+	AuthenticationReadAuthtypeProvisioningArn                      AuthenticationReadAuthtype = "provisioning-arn"
+	AuthenticationReadAuthtypeProvisioningLighthouseSubscriptionId AuthenticationReadAuthtype = "provisioning_lighthouse_subscription_id"
+	AuthenticationReadAuthtypeProvisioningProjectId                AuthenticationReadAuthtype = "provisioning_project_id"
+	AuthenticationReadAuthtypeQuayEncryptedPassword                AuthenticationReadAuthtype = "quay-encrypted-password"
+	AuthenticationReadAuthtypeReceptorNode                         AuthenticationReadAuthtype = "receptor_node"
+	AuthenticationReadAuthtypeTenantIdClientIdClientSecret         AuthenticationReadAuthtype = "tenant_id_client_id_client_secret"
+	AuthenticationReadAuthtypeToken                                AuthenticationReadAuthtype = "token"
+	AuthenticationReadAuthtypeUsernamePassword                     AuthenticationReadAuthtype = "username_password"
 )
 
 // Defines values for AuthenticationReadResourceType.
@@ -80,23 +107,26 @@ const (
 
 // Defines values for BulkCreatePayloadAuthenticationsAuthtype.
 const (
-	BulkCreatePayloadAuthenticationsAuthtypeAccessKeySecretKey           BulkCreatePayloadAuthenticationsAuthtype = "access_key_secret_key"
-	BulkCreatePayloadAuthenticationsAuthtypeApiTokenAccountId            BulkCreatePayloadAuthenticationsAuthtype = "api_token_account_id"
-	BulkCreatePayloadAuthenticationsAuthtypeArn                          BulkCreatePayloadAuthenticationsAuthtype = "arn"
-	BulkCreatePayloadAuthenticationsAuthtypeBitbucketAppPassword         BulkCreatePayloadAuthenticationsAuthtype = "bitbucket-app-password"
-	BulkCreatePayloadAuthenticationsAuthtypeCloudMeterArn                BulkCreatePayloadAuthenticationsAuthtype = "cloud-meter-arn"
-	BulkCreatePayloadAuthenticationsAuthtypeDockerAccessToken            BulkCreatePayloadAuthenticationsAuthtype = "docker-access-token"
-	BulkCreatePayloadAuthenticationsAuthtypeGithubPersonalAccessToken    BulkCreatePayloadAuthenticationsAuthtype = "github-personal-access-token"
-	BulkCreatePayloadAuthenticationsAuthtypeGitlabPersonalAccessToken    BulkCreatePayloadAuthenticationsAuthtype = "gitlab-personal-access-token"
-	BulkCreatePayloadAuthenticationsAuthtypeLighthouseSubscriptionId     BulkCreatePayloadAuthenticationsAuthtype = "lighthouse_subscription_id"
-	BulkCreatePayloadAuthenticationsAuthtypeMarketplaceToken             BulkCreatePayloadAuthenticationsAuthtype = "marketplace-token"
-	BulkCreatePayloadAuthenticationsAuthtypeOcid                         BulkCreatePayloadAuthenticationsAuthtype = "ocid"
-	BulkCreatePayloadAuthenticationsAuthtypeProjectIdServiceAccountJson  BulkCreatePayloadAuthenticationsAuthtype = "project_id_service_account_json"
-	BulkCreatePayloadAuthenticationsAuthtypeQuayEncryptedPassword        BulkCreatePayloadAuthenticationsAuthtype = "quay-encrypted-password"
-	BulkCreatePayloadAuthenticationsAuthtypeReceptorNode                 BulkCreatePayloadAuthenticationsAuthtype = "receptor_node"
-	BulkCreatePayloadAuthenticationsAuthtypeTenantIdClientIdClientSecret BulkCreatePayloadAuthenticationsAuthtype = "tenant_id_client_id_client_secret"
-	BulkCreatePayloadAuthenticationsAuthtypeToken                        BulkCreatePayloadAuthenticationsAuthtype = "token"
-	BulkCreatePayloadAuthenticationsAuthtypeUsernamePassword             BulkCreatePayloadAuthenticationsAuthtype = "username_password"
+	BulkCreatePayloadAuthenticationsAuthtypeAccessKeySecretKey                   BulkCreatePayloadAuthenticationsAuthtype = "access_key_secret_key"
+	BulkCreatePayloadAuthenticationsAuthtypeApiTokenAccountId                    BulkCreatePayloadAuthenticationsAuthtype = "api_token_account_id"
+	BulkCreatePayloadAuthenticationsAuthtypeArn                                  BulkCreatePayloadAuthenticationsAuthtype = "arn"
+	BulkCreatePayloadAuthenticationsAuthtypeBitbucketAppPassword                 BulkCreatePayloadAuthenticationsAuthtype = "bitbucket-app-password"
+	BulkCreatePayloadAuthenticationsAuthtypeCloudMeterArn                        BulkCreatePayloadAuthenticationsAuthtype = "cloud-meter-arn"
+	BulkCreatePayloadAuthenticationsAuthtypeDockerAccessToken                    BulkCreatePayloadAuthenticationsAuthtype = "docker-access-token"
+	BulkCreatePayloadAuthenticationsAuthtypeGithubPersonalAccessToken            BulkCreatePayloadAuthenticationsAuthtype = "github-personal-access-token"
+	BulkCreatePayloadAuthenticationsAuthtypeGitlabPersonalAccessToken            BulkCreatePayloadAuthenticationsAuthtype = "gitlab-personal-access-token"
+	BulkCreatePayloadAuthenticationsAuthtypeLighthouseSubscriptionId             BulkCreatePayloadAuthenticationsAuthtype = "lighthouse_subscription_id"
+	BulkCreatePayloadAuthenticationsAuthtypeMarketplaceToken                     BulkCreatePayloadAuthenticationsAuthtype = "marketplace-token"
+	BulkCreatePayloadAuthenticationsAuthtypeOcid                                 BulkCreatePayloadAuthenticationsAuthtype = "ocid"
+	BulkCreatePayloadAuthenticationsAuthtypeProjectIdServiceAccountJson          BulkCreatePayloadAuthenticationsAuthtype = "project_id_service_account_json"
+	BulkCreatePayloadAuthenticationsAuthtypeProvisioningArn                      BulkCreatePayloadAuthenticationsAuthtype = "provisioning-arn"
+	BulkCreatePayloadAuthenticationsAuthtypeProvisioningLighthouseSubscriptionId BulkCreatePayloadAuthenticationsAuthtype = "provisioning_lighthouse_subscription_id"
+	BulkCreatePayloadAuthenticationsAuthtypeProvisioningProjectId                BulkCreatePayloadAuthenticationsAuthtype = "provisioning_project_id"
+	BulkCreatePayloadAuthenticationsAuthtypeQuayEncryptedPassword                BulkCreatePayloadAuthenticationsAuthtype = "quay-encrypted-password"
+	BulkCreatePayloadAuthenticationsAuthtypeReceptorNode                         BulkCreatePayloadAuthenticationsAuthtype = "receptor_node"
+	BulkCreatePayloadAuthenticationsAuthtypeTenantIdClientIdClientSecret         BulkCreatePayloadAuthenticationsAuthtype = "tenant_id_client_id_client_secret"
+	BulkCreatePayloadAuthenticationsAuthtypeToken                                BulkCreatePayloadAuthenticationsAuthtype = "token"
+	BulkCreatePayloadAuthenticationsAuthtypeUsernamePassword                     BulkCreatePayloadAuthenticationsAuthtype = "username_password"
 )
 
 // Defines values for BulkCreatePayloadAuthenticationsResourceType.
@@ -325,7 +355,7 @@ type ApplicationsCollection struct {
 // Expected payload to create an Authentication
 type AuthenticationCreate struct {
 	// The type of the authentication
-	Authtype *interface{} `json:"authtype,omitempty"`
+	Authtype *AuthenticationCreateAuthtype `json:"authtype,omitempty"`
 
 	// The received error message when polling for the availability status
 	AvailabilityStatusError *string `json:"availability_status_error,omitempty"`
@@ -348,6 +378,9 @@ type AuthenticationCreate struct {
 	// The username for the authentication
 	Username *string `json:"username,omitempty"`
 }
+
+// The type of the authentication
+type AuthenticationCreateAuthtype string
 
 // The type of the resource this authentication belongs to
 type AuthenticationCreateResourceType string

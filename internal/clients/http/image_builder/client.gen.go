@@ -19,14 +19,18 @@ import (
 
 // Defines values for Distributions.
 const (
-	Centos8 Distributions = "centos-8"
-	Centos9 Distributions = "centos-9"
-	Rhel8   Distributions = "rhel-8"
-	Rhel84  Distributions = "rhel-84"
-	Rhel85  Distributions = "rhel-85"
-	Rhel86  Distributions = "rhel-86"
-	Rhel9   Distributions = "rhel-9"
-	Rhel90  Distributions = "rhel-90"
+	Centos8  Distributions = "centos-8"
+	Centos9  Distributions = "centos-9"
+	Fedora35 Distributions = "fedora-35"
+	Fedora36 Distributions = "fedora-36"
+	Fedora37 Distributions = "fedora-37"
+	Fedora38 Distributions = "fedora-38"
+	Rhel8    Distributions = "rhel-8"
+	Rhel84   Distributions = "rhel-84"
+	Rhel85   Distributions = "rhel-85"
+	Rhel86   Distributions = "rhel-86"
+	Rhel9    Distributions = "rhel-9"
+	Rhel90   Distributions = "rhel-90"
 )
 
 // Defines values for ImageRequestArchitecture.
@@ -76,6 +80,17 @@ const (
 	UploadTypesGcp   UploadTypes = "gcp"
 )
 
+// AWSEC2Clone defines model for AWSEC2Clone.
+type AWSEC2Clone struct {
+	// A region as described in
+	// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-regions
+	Region string `json:"region"`
+
+	// An array of AWS account IDs as described in
+	// https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html
+	ShareWithAccounts *[]string `json:"share_with_accounts,omitempty"`
+}
+
 // AWSS3UploadRequestOptions defines model for AWSS3UploadRequestOptions.
 type AWSS3UploadRequestOptions = map[string]interface{}
 
@@ -106,6 +121,11 @@ type Architectures = []ArchitectureItem
 
 // AzureUploadRequestOptions defines model for AzureUploadRequestOptions.
 type AzureUploadRequestOptions struct {
+	// Name of the created image.
+	// Must begin with a letter or number, end with a letter, number or underscore, and may contain only letters, numbers, underscores, periods, or hyphens.
+	// The total length is limited to 60 characters.
+	ImageName *string `json:"image_name,omitempty"`
+
 	// Name of the resource group where the image should be uploaded.
 	ResourceGroup string `json:"resource_group"`
 
@@ -121,6 +141,33 @@ type AzureUploadRequestOptions struct {
 // AzureUploadStatus defines model for AzureUploadStatus.
 type AzureUploadStatus struct {
 	ImageName string `json:"image_name"`
+}
+
+// CloneRequest defines model for CloneRequest.
+type CloneRequest interface{}
+
+// CloneResponse defines model for CloneResponse.
+type CloneResponse struct {
+	Id string `json:"id"`
+}
+
+// ClonesResponse defines model for ClonesResponse.
+type ClonesResponse struct {
+	Data  []ClonesResponseItem `json:"data"`
+	Links struct {
+		First string `json:"first"`
+		Last  string `json:"last"`
+	} `json:"links"`
+	Meta struct {
+		Count int `json:"count"`
+	} `json:"meta"`
+}
+
+// ClonesResponseItem defines model for ClonesResponseItem.
+type ClonesResponseItem struct {
+	CreatedAt string      `json:"created_at"`
+	Id        string      `json:"id"`
+	Request   interface{} `json:"request"`
 }
 
 // ComposeMetadata defines model for ComposeMetadata.
@@ -185,6 +232,9 @@ type Customizations struct {
 	Packages            *[]string     `json:"packages,omitempty"`
 	PayloadRepositories *[]Repository `json:"payload_repositories,omitempty"`
 	Subscription        *Subscription `json:"subscription,omitempty"`
+
+	// list of users that a customer can add, also specifying their respective groups and SSH keys
+	Users *[]User `json:"users,omitempty"`
 }
 
 // DistributionItem defines model for DistributionItem.
@@ -346,6 +396,12 @@ type UploadStatusStatus string
 // UploadTypes defines model for UploadTypes.
 type UploadTypes string
 
+// User defines model for User.
+type User struct {
+	Name   string `json:"name"`
+	SshKey string `json:"ssh_key"`
+}
+
 // Version defines model for Version.
 type Version struct {
 	Version string `json:"version"`
@@ -356,6 +412,18 @@ type ComposeImageJSONBody = ComposeRequest
 
 // GetComposesParams defines parameters for GetComposes.
 type GetComposesParams struct {
+	// max amount of composes, default 100
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// composes page offset, default 0
+	Offset *int `form:"offset,omitempty" json:"offset,omitempty"`
+}
+
+// CloneComposeJSONBody defines parameters for CloneCompose.
+type CloneComposeJSONBody = CloneRequest
+
+// GetComposeClonesParams defines parameters for GetComposeClones.
+type GetComposeClonesParams struct {
 	// max amount of composes, default 100
 	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
 
@@ -386,6 +454,9 @@ type GetPackagesParamsArchitecture string
 
 // ComposeImageJSONRequestBody defines body for ComposeImage for application/json ContentType.
 type ComposeImageJSONRequestBody = ComposeImageJSONBody
+
+// CloneComposeJSONRequestBody defines body for CloneCompose for application/json ContentType.
+type CloneComposeJSONRequestBody = CloneComposeJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -463,6 +534,9 @@ type ClientInterface interface {
 	// GetArchitectures request
 	GetArchitectures(ctx context.Context, distribution string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetCloneStatus request
+	GetCloneStatus(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ComposeImage request with any body
 	ComposeImageWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -473,6 +547,14 @@ type ClientInterface interface {
 
 	// GetComposeStatus request
 	GetComposeStatus(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CloneCompose request with any body
+	CloneComposeWithBody(ctx context.Context, composeId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CloneCompose(ctx context.Context, composeId string, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetComposeClones request
+	GetComposeClones(ctx context.Context, composeId string, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetComposeMetadata request
 	GetComposeMetadata(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -495,6 +577,18 @@ type ClientInterface interface {
 
 func (c *Client) GetArchitectures(ctx context.Context, distribution string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetArchitecturesRequest(c.Server, distribution)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetCloneStatus(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCloneStatusRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -543,6 +637,42 @@ func (c *Client) GetComposes(ctx context.Context, params *GetComposesParams, req
 
 func (c *Client) GetComposeStatus(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetComposeStatusRequest(c.Server, composeId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CloneComposeWithBody(ctx context.Context, composeId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCloneComposeRequestWithBody(c.Server, composeId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CloneCompose(ctx context.Context, composeId string, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCloneComposeRequest(c.Server, composeId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetComposeClones(ctx context.Context, composeId string, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetComposeClonesRequest(c.Server, composeId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -642,6 +772,40 @@ func NewGetArchitecturesRequest(server string, distribution string) (*http.Reque
 	}
 
 	operationPath := fmt.Sprintf("/architectures/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetCloneStatusRequest generates requests for GetCloneStatus
+func NewGetCloneStatusRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/clones/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -787,6 +951,123 @@ func NewGetComposeStatusRequest(server string, composeId string) (*http.Request,
 	if err != nil {
 		return nil, err
 	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCloneComposeRequest calls the generic CloneCompose builder with application/json body
+func NewCloneComposeRequest(server string, composeId string, body CloneComposeJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCloneComposeRequestWithBody(server, composeId, "application/json", bodyReader)
+}
+
+// NewCloneComposeRequestWithBody generates requests for CloneCompose with any type of body
+func NewCloneComposeRequestWithBody(server string, composeId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "composeId", runtime.ParamLocationPath, composeId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/composes/%s/clone", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetComposeClonesRequest generates requests for GetComposeClones
+func NewGetComposeClonesRequest(server string, composeId string, params *GetComposeClonesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "composeId", runtime.ParamLocationPath, composeId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/composes/%s/clones", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Limit != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Offset != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -1083,6 +1364,9 @@ type ClientWithResponsesInterface interface {
 	// GetArchitectures request
 	GetArchitecturesWithResponse(ctx context.Context, distribution string, reqEditors ...RequestEditorFn) (*GetArchitecturesResponse, error)
 
+	// GetCloneStatus request
+	GetCloneStatusWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetCloneStatusResponse, error)
+
 	// ComposeImage request with any body
 	ComposeImageWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ComposeImageResponse, error)
 
@@ -1093,6 +1377,14 @@ type ClientWithResponsesInterface interface {
 
 	// GetComposeStatus request
 	GetComposeStatusWithResponse(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*GetComposeStatusResponse, error)
+
+	// CloneCompose request with any body
+	CloneComposeWithBodyWithResponse(ctx context.Context, composeId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error)
+
+	CloneComposeWithResponse(ctx context.Context, composeId string, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error)
+
+	// GetComposeClones request
+	GetComposeClonesWithResponse(ctx context.Context, composeId string, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*GetComposeClonesResponse, error)
 
 	// GetComposeMetadata request
 	GetComposeMetadataWithResponse(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*GetComposeMetadataResponse, error)
@@ -1129,6 +1421,28 @@ func (r GetArchitecturesResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetArchitecturesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetCloneStatusResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *UploadStatus
+}
+
+// Status returns HTTPResponse.Status
+func (r GetCloneStatusResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetCloneStatusResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1196,6 +1510,50 @@ func (r GetComposeStatusResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetComposeStatusResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CloneComposeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *CloneResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CloneComposeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CloneComposeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetComposeClonesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ClonesResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetComposeClonesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetComposeClonesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1342,6 +1700,15 @@ func (c *ClientWithResponses) GetArchitecturesWithResponse(ctx context.Context, 
 	return ParseGetArchitecturesResponse(rsp)
 }
 
+// GetCloneStatusWithResponse request returning *GetCloneStatusResponse
+func (c *ClientWithResponses) GetCloneStatusWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetCloneStatusResponse, error) {
+	rsp, err := c.GetCloneStatus(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetCloneStatusResponse(rsp)
+}
+
 // ComposeImageWithBodyWithResponse request with arbitrary body returning *ComposeImageResponse
 func (c *ClientWithResponses) ComposeImageWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ComposeImageResponse, error) {
 	rsp, err := c.ComposeImageWithBody(ctx, contentType, body, reqEditors...)
@@ -1375,6 +1742,32 @@ func (c *ClientWithResponses) GetComposeStatusWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseGetComposeStatusResponse(rsp)
+}
+
+// CloneComposeWithBodyWithResponse request with arbitrary body returning *CloneComposeResponse
+func (c *ClientWithResponses) CloneComposeWithBodyWithResponse(ctx context.Context, composeId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error) {
+	rsp, err := c.CloneComposeWithBody(ctx, composeId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCloneComposeResponse(rsp)
+}
+
+func (c *ClientWithResponses) CloneComposeWithResponse(ctx context.Context, composeId string, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error) {
+	rsp, err := c.CloneCompose(ctx, composeId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCloneComposeResponse(rsp)
+}
+
+// GetComposeClonesWithResponse request returning *GetComposeClonesResponse
+func (c *ClientWithResponses) GetComposeClonesWithResponse(ctx context.Context, composeId string, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*GetComposeClonesResponse, error) {
+	rsp, err := c.GetComposeClones(ctx, composeId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetComposeClonesResponse(rsp)
 }
 
 // GetComposeMetadataWithResponse request returning *GetComposeMetadataResponse
@@ -1447,6 +1840,32 @@ func ParseGetArchitecturesResponse(rsp *http.Response) (*GetArchitecturesRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Architectures
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetCloneStatusResponse parses an HTTP response from a GetCloneStatusWithResponse call
+func ParseGetCloneStatusResponse(rsp *http.Response) (*GetCloneStatusResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetCloneStatusResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest UploadStatus
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1532,6 +1951,58 @@ func ParseGetComposeStatusResponse(rsp *http.Response) (*GetComposeStatusRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest ComposeStatus
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCloneComposeResponse parses an HTTP response from a CloneComposeWithResponse call
+func ParseCloneComposeResponse(rsp *http.Response) (*CloneComposeResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CloneComposeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest CloneResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetComposeClonesResponse parses an HTTP response from a GetComposeClonesWithResponse call
+func ParseGetComposeClonesResponse(rsp *http.Response) (*GetComposeClonesResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetComposeClonesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ClonesResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
