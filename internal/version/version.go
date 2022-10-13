@@ -21,3 +21,13 @@ const (
 	// OpenTelemetryVersion is used for all OpenTelemetry tracing
 	OpenTelemetryVersion = "1.0.0"
 )
+
+func init() {
+	if BuildTime == "" {
+		BuildTime = "N/A"
+	}
+
+	if BuildCommit == "" {
+		BuildCommit = "HEAD"
+	}
+}
