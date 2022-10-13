@@ -7,6 +7,7 @@ Requirements: Go 1.18+
 ## Components
 
 * pbapi - API backend service
+* pbworker - backend job processing worker
 * pbmigrate - database migration tool with embedded SQL scripts
 
 ## Building
