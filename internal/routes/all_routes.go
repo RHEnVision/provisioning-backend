@@ -17,19 +17,22 @@ import (
 
 func redocMiddleware(handler http.Handler) http.Handler {
 	opt := redoc.RedocOpts{
+		Title:   "Provisioning OpenAPI",
 		SpecURL: fmt.Sprintf("%s/openapi.json", PathPrefix()),
 	}
 	return redoc.Redoc(opt, handler)
 }
 
 func logETags() {
-	logger := log.Logger
 	for _, etag := range middleware.AllETags() {
-		logger.Trace().Msgf("Calculated '%s' etag '%s' in %dms", etag.Name, etag.Value, etag.HashTime.Milliseconds())
+		log.Logger.Trace().Msgf("Calculated '%s' etag '%s' in %dms", etag.Name, etag.Value, etag.HashTime.Milliseconds())
 	}
 }
 
-func SetupRoutes(r *chi.Mux) {
+func MountRoot(r *chi.Mux) {
+	logETags()
+
+	r.Get("/", s.WelcomeService)
 	r.Get("/ping", s.StatusService)
 	r.Route("/docs", func(r chi.Router) {
 		r.Use(redocMiddleware)
@@ -38,14 +41,9 @@ func SetupRoutes(r *chi.Mux) {
 			r.Get("/", api.ServeOpenAPISpec)
 		})
 	})
-	r.Mount(PathPrefix(), apiRouter())
-
-	logETags()
 }
 
-func apiRouter() http.Handler {
-	r := chi.NewRouter()
-
+func MountAPI(r *chi.Mux) {
 	r.Route("/openapi.json", func(r chi.Router) {
 		r.Use(middleware.ETagMiddleware(api.ETagValue))
 		r.Get("/", api.ServeOpenAPISpec)
@@ -115,6 +113,4 @@ func apiRouter() http.Handler {
 			})
 		})
 	})
-
-	return r
 }
