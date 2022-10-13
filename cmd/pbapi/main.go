@@ -13,6 +13,7 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
+	s "github.com/RHEnVision/provisioning-backend/internal/services"
 
 	// HTTP client implementations
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
@@ -41,11 +42,6 @@ import (
 
 func init() {
 	random.SeedGlobal()
-}
-
-func statusOk(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
 }
 
 func main() {
@@ -85,17 +81,19 @@ func main() {
 	}
 	dejq.StartDequeueLoop(ctx, &logger)
 
-	// Routes for the main service
-	r := chi.NewRouter()
-	r.Use(m.NewPatternMiddleware(version.PrometheusLabelName))
-	r.Use(telemetry.Middleware(r))
-	r.Use(m.VersionMiddleware)
-	r.Use(m.TraceID)
-	r.Use(m.LoggerMiddleware(&log.Logger))
+	// Setup routes
+	rootRouter := chi.NewRouter()
+	apiRouter := chi.NewRouter()
+
+	rootRouter.Use(m.NewPatternMiddleware(version.PrometheusLabelName))
+	rootRouter.Use(telemetry.Middleware(rootRouter))
+	rootRouter.Use(m.VersionMiddleware)
+	rootRouter.Use(m.TraceID)
+	rootRouter.Use(m.LoggerMiddleware(&log.Logger))
 
 	// Set Content-Type to JSON for chi renderer. Warning: Non-chi routes
 	// MUST set Content-Type header on their own!
-	r.Use(render.SetContentType(render.ContentTypeJSON))
+	rootRouter.Use(render.SetContentType(render.ContentTypeJSON))
 
 	// Setup optional compressor, chi uses sync.Pool so this is cheap.
 	// This setup only uses the default gzip which is widely supported
@@ -107,28 +105,28 @@ func main() {
 			"application/json",
 			"application/x-yaml",
 			"text/plain")
-		r.Use(compressor.Handler)
+		rootRouter.Use(compressor.Handler)
 	}
 
-	// Unauthenticated routes
-	r.Get("/", statusOk)
-	// Main routes
-	routes.SetupRoutes(r)
+	// Mount paths
+	routes.MountRoot(rootRouter)
+	routes.MountAPI(apiRouter)
+	rootRouter.Mount(routes.PathPrefix(), apiRouter)
 
 	// Routes for metrics
-	mr := chi.NewRouter()
-	mr.Get("/", statusOk)
-	mr.Handle(config.Prometheus.Path, promhttp.Handler())
+	metricsRouter := chi.NewRouter()
+	metricsRouter.Get("/", s.WelcomeService)
+	metricsRouter.Handle(config.Prometheus.Path, promhttp.Handler())
 
 	log.Info().Msgf("Starting new instance on port %d with prometheus on %d", config.Application.Port, config.Prometheus.Port)
-	srv := http.Server{
+	apiServer := http.Server{
 		Addr:    fmt.Sprintf(":%d", config.Application.Port),
-		Handler: r,
+		Handler: rootRouter,
 	}
 
-	msrv := http.Server{
+	metricsServer := http.Server{
 		Addr:    fmt.Sprintf(":%d", config.Prometheus.Port),
-		Handler: mr,
+		Handler: metricsRouter,
 	}
 
 	waitForSignal := make(chan struct{})
@@ -136,24 +134,24 @@ func main() {
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)
 		<-sigint
-		if err := srv.Shutdown(context.Background()); err != nil {
+		if err := apiServer.Shutdown(context.Background()); err != nil {
 			log.Fatal().Err(err).Msg("Main service shutdown error")
 		}
-		if err := msrv.Shutdown(context.Background()); err != nil {
+		if err := metricsServer.Shutdown(context.Background()); err != nil {
 			log.Fatal().Err(err).Msg("Metrics service shutdown error")
 		}
 		close(waitForSignal)
 	}()
 
 	go func() {
-		if err := msrv.ListenAndServe(); err != nil {
+		if err := metricsServer.ListenAndServe(); err != nil {
 			if !errors.Is(err, http.ErrServerClosed) {
 				log.Fatal().Err(err).Msg("Metrics service listen error")
 			}
 		}
 	}()
 
-	if err := srv.ListenAndServe(); err != nil {
+	if err := apiServer.ListenAndServe(); err != nil {
 		if !errors.Is(err, http.ErrServerClosed) {
 			log.Fatal().Err(err).Msg("Main service listen error")
 		}
