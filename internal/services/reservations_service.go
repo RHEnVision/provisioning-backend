@@ -66,7 +66,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 	case models.ProviderTypeAWS:
 		reservation, err := rDao.GetAWSById(r.Context(), id)
 		if err != nil {
-			renderNotFoundOrDAOError(w, r, err, "get reservation detail", "")
+			renderNotFoundOrDAOError(w, r, err, "get reservation detail")
 			return
 		}
 
@@ -76,7 +76,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
 		reservation, err := rDao.GetById(r.Context(), id)
 		if err != nil {
-			renderNotFoundOrDAOError(w, r, err, "get reservation detail", "")
+			renderNotFoundOrDAOError(w, r, err, "get reservation detail")
 			return
 		}
 
