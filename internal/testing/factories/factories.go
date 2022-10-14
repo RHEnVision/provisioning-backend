@@ -21,11 +21,11 @@ func GenerateRSAPubKey(t *testing.T) string {
 	t.Helper()
 	rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		t.Fatalf("Failed to generate pubky: %v", err)
+		t.Fatalf("Failed to generate pubkey: %v", err)
 	}
 	pubkey, err := ssh.NewPublicKey(&rsaKey.PublicKey)
 	if err != nil {
-		t.Fatalf("Failed to generate pubky: %v", err)
+		t.Fatalf("Failed to generate pubkey: %v", err)
 	}
 	return string(ssh.MarshalAuthorizedKey(pubkey))
 }
