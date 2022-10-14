@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	MoreThenOneAuthenticationForSourceErr = errors.New("more then one authentication")
+	MoreThanOneAuthenticationForSourceErr = errors.New("more than one authentication")
 	AuthenticationForSourcesNotFoundErr   = fmt.Errorf("authentications for source weren't found in sources app: %w", clients.NotFoundErr)
 	ApplicationNotFoundErr                = fmt.Errorf("application not found is sources app: %w", clients.NotFoundErr)
 	ApplicationTypeNotFoundErr            = fmt.Errorf("application type 'provisioning' not found: %w", clients.NotFoundErr)

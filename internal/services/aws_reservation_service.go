@@ -57,7 +57,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
 	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
 	if err != nil {
-		renderNotFoundOrDAOError(w, r, err, "get pubkey by id", "")
+		renderNotFoundOrDAOError(w, r, err, "get pubkey by id")
 		return
 	}
 	logger.Debug().Msgf("Found pubkey %d named '%s'", pk.ID, pk.Name)
