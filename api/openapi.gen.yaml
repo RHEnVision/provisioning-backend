@@ -441,9 +441,10 @@ components:
       type: object
     v1.ResponseError:
       properties:
+        error: {}
         msg:
           type: string
-        request_id:
+        trace_id:
           type: string
       type: object
     v1.SourceResponse:

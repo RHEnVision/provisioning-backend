@@ -215,7 +215,7 @@ func filterSourceAuthentications(authentications *[]AuthenticationRead) (Authent
 	}
 	// Assumption: each source has one authentication linked to it
 	if len(list) > 1 {
-		return AuthenticationRead{}, http.MoreThenOneAuthenticationForSourceErr
+		return AuthenticationRead{}, http.MoreThanOneAuthenticationForSourceErr
 	}
 	return list[0], nil
 }

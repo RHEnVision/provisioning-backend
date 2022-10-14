@@ -227,10 +227,11 @@
       },
       "v1.ResponseError": {
         "properties": {
+          "error": {},
           "msg": {
             "type": "string"
           },
-          "request_id": {
+          "trace_id": {
             "type": "string"
           }
         },

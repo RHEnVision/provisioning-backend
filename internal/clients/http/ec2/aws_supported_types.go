@@ -2,6 +2,7 @@ package ec2
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/supported"
@@ -17,7 +18,7 @@ func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) ([]*c
 		for _, arch := range architectures {
 			arch, err := clients.MapArchitectures(ctx, string(arch))
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("instance type: %w", err)
 			}
 
 			it := clients.InstanceType{

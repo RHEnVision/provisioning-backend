@@ -15,17 +15,14 @@ type ResponseError struct {
 	// HTTP status code
 	HTTPStatusCode int `json:"-"`
 
-	// error message including message from wrapped error
+	// user facing error message
 	Message string `json:"msg"`
 
-	// request id from context (if provided)
-	RequestId string `json:"request_id,omitempty"`
+	// trace id from context (if provided)
+	TraceId string `json:"trace_id,omitempty"`
 
-	// root cause
-	Err error `json:"-"`
-
-	// context (when provided)
-	Context context.Context `json:"-"`
+	// full root cause
+	Error error `json:"error"`
 }
 
 func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
@@ -33,16 +30,8 @@ func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (e *ResponseError) Error() string {
-	return fmt.Sprintf("%s: %s", e.Message, e.Err.Error())
-}
-
-func (e *ResponseError) Unwrap() error {
-	return e.Err
-}
-
 func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
-	msg := fmt.Sprintf("invalid request: %v", err)
+	msg := "invalid request error"
 	if logger := ctxval.Logger(ctx); logger != nil {
 		// TODO we should also call .Err(err) to log error
 		logger.Warn().Msg(msg)
@@ -50,9 +39,8 @@ func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
@@ -64,8 +52,7 @@ func NewMissingRequestParameterError(ctx context.Context, param string) *Respons
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
 	}
 }
 
@@ -77,9 +64,8 @@ func PubkeyAlreadyExistsError(ctx context.Context, err error) *ResponseError {
 	return &ResponseError{
 		HTTPStatusCode: 422,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
@@ -91,9 +77,8 @@ func ClientError(ctx context.Context, client string, message string, err error, 
 	return &ResponseError{
 		HTTPStatusCode: status,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
@@ -105,79 +90,73 @@ func NewClientInitializationError(ctx context.Context, message string, err error
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
 func NewNotFoundError(ctx context.Context, err error) *ResponseError {
-	msg := fmt.Sprintf("not found: %v", err)
+	msg := "not found error"
 	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Warn().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 404,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
 func NewInitializeDAOError(ctx context.Context, message string, err error) *ResponseError {
-	msg := fmt.Sprintf("DAO initialization error: %s: %v", message, err)
+	msg := "initialize dao error"
 	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Error().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
 func NewEnqueueTaskError(ctx context.Context, message string, err error) *ResponseError {
-	msg := fmt.Sprintf("error when enqueing task: %s: %v", message, err)
+	msg := "enqueue task error"
 	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Error().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
 func NewDAOError(ctx context.Context, message string, err error) *ResponseError {
-	msg := fmt.Sprintf("DAO error: %s: %v", message, err)
+	msg := fmt.Sprintf("DAO error: %s", message)
 	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Error().Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
 func NewRenderError(ctx context.Context, message string, err error) *ResponseError {
-	msg := fmt.Sprintf("render error: %s: %v", message, err)
+	msg := fmt.Sprintf("render error: %s", message)
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Error().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
@@ -189,23 +168,21 @@ func NewURLParsingError(ctx context.Context, paramName string, err error) *Respo
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
 func NewStatusError(ctx context.Context, err error) *ResponseError {
-	msg := fmt.Sprintf("status check error: %v", err)
+	name := "status error"
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Error().Msg(name)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
-		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		Message:        "status error",
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
@@ -217,9 +194,8 @@ func NewAWSError(ctx context.Context, message string, err error) *ResponseError 
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
@@ -231,9 +207,8 @@ func NewAzureError(ctx context.Context, message string, err error) *ResponseErro
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }
 
@@ -245,22 +220,7 @@ func NewGCPError(ctx context.Context, message string, err error) *ResponseError 
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
-	}
-}
-
-func NewUnknownError(ctx context.Context, err error) *ResponseError {
-	msg := fmt.Sprintf("unknown error: %v", err)
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
-	}
-	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        msg,
-		RequestId:      ctxval.TraceId(ctx),
-		Err:            err,
-		Context:        ctx,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err,
 	}
 }

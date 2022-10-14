@@ -63,7 +63,7 @@ func GetPubkey(w http.ResponseWriter, r *http.Request) {
 
 	pubkey, err := pubkeyDao.GetById(r.Context(), id)
 	if err != nil {
-		renderNotFoundOrDAOError(w, r, err, "get pubkey by id", "")
+		renderNotFoundOrDAOError(w, r, err, "get pubkey by id")
 		return
 	}
 
