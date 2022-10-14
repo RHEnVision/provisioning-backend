@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -51,11 +50,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
 	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
 	if err != nil {
-		if errors.Is(err, dao.ErrNoRows) {
-			renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
-		} else {
-			renderError(w, r, payloads.NewDAOError(r.Context(), "get pubkey by id", err))
-		}
+		renderNotFoundOrDAOError(w, r, err, "get pubkey by id", "")
 		return
 	}
 	logger.Debug().Msgf("Found pubkey %d named '%s'", pk.ID, pk.Name)
