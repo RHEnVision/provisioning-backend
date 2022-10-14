@@ -6,7 +6,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/supported"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
@@ -18,7 +17,7 @@ func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) ([]*c
 		for _, arch := range architectures {
 			arch, err := clients.MapArchitectures(ctx, string(arch))
 			if err != nil {
-				return nil, payloads.ClientError(ctx, "Instance type", "", err, 500)
+				return nil, err
 			}
 
 			it := clients.InstanceType{
