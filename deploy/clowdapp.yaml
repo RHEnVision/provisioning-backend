@@ -63,6 +63,8 @@ objects:
                     optional: false
               - name: APP_INSTANCE_PREFIX
                 value: ${APP_INSTANCE_PREFIX}
+              - name: APP_CACHE_TYPE
+                value: ${APP_CACHE_TYPE}
               - name: WORKER_QUEUE
                 value: ${WORKER_QUEUE}
               - name: WORKER_CONCURRENCY
@@ -146,8 +148,7 @@ objects:
               - name: APP_INSTANCE_PREFIX
                 value: ${APP_INSTANCE_PREFIX}
               - name: WORKER_QUEUE
-                # this is temporary until we get backend-job-worker running
-                value: memory
+                value: ${WORKER_QUEUE}
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}
@@ -158,6 +159,7 @@ objects:
       database:
         name: provisioning
         version: 13
+      inMemoryDb: true
       dependencies:
         - sources-api
 
@@ -216,16 +218,19 @@ parameters:
   - description: Instance prefix adds string to all instance names, leave blank for production
     name: APP_INSTANCE_PREFIX
     value: ""
+  - description: Application cache type (none, memory or redis)
+    name: APP_CACHE_TYPE
+    value: "redis"
   - description: Internal queue type (memory/sqs/postgres).
     name: WORKER_QUEUE
-    value: "memory"
-  - description: Internal queue concurrency, how many goroutines to run in parallel.
+    value: "redis"
+  - description: Internal queue concurrency, how many goroutines to run in parallel. Not used in 'redis' mode.
     name: WORKER_CONCURRENCY
     value: "100"
-  - description: Internal queue heartbeat interval. How often to update job liveness information.
+  - description: Internal queue heartbeat interval. How often to update job liveness information. Not used in 'redis' mode.
     name: WORKER_HEARTBEAT
     value: "30s"
-  - description: Internal queue beat threshold. Now many times the beat can be updated until job is cancelled.
+  - description: Internal queue beat threshold. Now many times the beat can be updated until job is cancelled. Not used in 'redis' mode.
     name: WORKER_MAX_BEATS
     value: "10"
   - name: OPEN_API_FILEPATH

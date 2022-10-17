@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
@@ -70,6 +71,9 @@ func main() {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
 	defer db.Close()
+
+	// initialize cache
+	cache.Initialize()
 
 	// initialize the job queue
 	err = dejq.Initialize(ctx, &logger)

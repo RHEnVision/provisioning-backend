@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -17,6 +18,10 @@ func InClowder() bool {
 // InEphemeralClowder returns true, when the app is running in ephemeral clowder environment.
 func InEphemeralClowder() bool {
 	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-ephemeral")
+}
+
+func RedisHostAndPort() string {
+	return fmt.Sprintf("%s:%d", Application.Cache.Redis.Host, Application.Cache.Redis.Port)
 }
 
 func StringToURL(urlStr string) *url.URL {
