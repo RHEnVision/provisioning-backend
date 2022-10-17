@@ -12,6 +12,7 @@ import (
 	"github.com/lzap/dejq"
 	"github.com/lzap/dejq/mem"
 	"github.com/lzap/dejq/postgres"
+	"github.com/lzap/dejq/redis"
 	"github.com/rs/zerolog"
 )
 
@@ -38,6 +39,10 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 	var err error
 	if config.Worker.Queue == "memory" {
 		dejqQueue, err = mem.NewClient(ctx, zerologr.New(logger))
+	} else if config.Worker.Queue == "redis" {
+		dejqQueue, err = redis.NewClient(ctx, zerologr.New(logger), config.RedisHostAndPort(),
+			config.Application.Cache.Redis.User, config.Application.Cache.Redis.Password,
+			config.Application.Cache.Redis.DB, "provisioning-job-queue")
 	} else if config.Worker.Queue == "postgres" {
 		// TODO dejq must be refactored to use PGX too
 		dejqQueue, err = postgres.NewClient(ctx, zerologr.New(logger), nil,
@@ -54,8 +59,9 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 }
 
 func StartDequeueLoop(ctx context.Context, logger *zerolog.Logger) {
-	logger.Debug().Msg("Starting dequeue loop")
-	ctx = ctxval.WithLogger(ctx, logger)
+	loggerWithQueue := logger.With().Str("queue_type", config.Worker.Queue).Logger()
+	loggerWithQueue.Debug().Msg("Starting dequeue loop")
+	ctx = ctxval.WithLogger(ctx, &loggerWithQueue)
 	dejqQueue.DequeueLoop(ctx)
 }
 

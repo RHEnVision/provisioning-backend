@@ -162,14 +162,20 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.
 }
 
 func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
-	if appTypeId, ok := cache.FindAppTypeId(ctx); ok {
-		return appTypeId, nil
+	appTypeId, err := cache.FindAppTypeId(ctx)
+	if errors.Is(err, cache.NotFound) {
+		appTypeId, err = c.loadAppId(ctx)
+		if err != nil {
+			return "", err
+		}
+		err = cache.SetAppTypeId(ctx, appTypeId)
+		if err != nil {
+			return "", fmt.Errorf("unable to store app type id to cache: %w", err)
+		}
+	} else if err != nil {
+		return "", fmt.Errorf("unable to get app type id from cache: %w", err)
 	}
-	appTypeId, err := c.loadAppId(ctx)
-	if err != nil {
-		return "", err
-	}
-	cache.SetAppTypeId(ctx, appTypeId)
+
 	return appTypeId, nil
 }
 

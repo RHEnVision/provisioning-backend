@@ -1,5 +1,5 @@
 // A simple memory-only thread-safe cache with TTL.
-package memcache
+package cache
 
 import (
 	"runtime"
@@ -26,7 +26,7 @@ type item[V any] struct {
 // New creates a new cache that asynchronously cleans
 // expired entries after the given time passes. If cleaningInterval
 // is zero, no background cleanup goroutine is scheduled.
-func New[K comparable, V any](cleaningInterval time.Duration) *Cache[K, V] {
+func newMemoryCache[K comparable, V any](cleaningInterval time.Duration) *Cache[K, V] {
 	cache := &Cache[K, V]{
 		items: make(map[K]*item[V]),
 		clean: make(chan bool),

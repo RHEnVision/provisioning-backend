@@ -1,6 +1,8 @@
 package clients
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	// Common errors
