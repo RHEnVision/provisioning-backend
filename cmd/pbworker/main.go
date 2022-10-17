@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	// Job queue implementation
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
@@ -57,6 +58,9 @@ func main() {
 		Str("worker_id", xid.New().String()).
 		Logger()
 	logger.Info().Msg("Worker starting")
+
+	// initialize cache
+	cache.Initialize()
 
 	// initialize the database
 	logger.Debug().Msg("Initializing database connection")

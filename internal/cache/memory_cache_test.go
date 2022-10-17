@@ -1,15 +1,14 @@
-package memcache_test
+package cache
 
 import (
 	"testing"
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/cache/memcache"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSetAndGetFound(t *testing.T) {
-	c := memcache.New[string, string](0)
+	c := newMemoryCache[string, string](0)
 	c.Set("hello", "Hello", 0)
 	hello, found := c.Get("hello")
 	assert.True(t, found)
@@ -17,13 +16,13 @@ func TestSetAndGetFound(t *testing.T) {
 }
 
 func TestSetAndGetNotFound(t *testing.T) {
-	c := memcache.New[string, string](0)
+	c := newMemoryCache[string, string](0)
 	_, found := c.Get("does not exist")
 	assert.False(t, found)
 }
 
 func TestManualExpiration(t *testing.T) {
-	c := memcache.New[string, string](time.Minute)
+	c := newMemoryCache[string, string](time.Minute)
 	c.Set("short", "expiration", time.Nanosecond)
 	c.ExpireNow()
 
@@ -32,7 +31,7 @@ func TestManualExpiration(t *testing.T) {
 }
 
 func TestExpiration(t *testing.T) {
-	c := memcache.New[string, string](10 * time.Millisecond)
+	c := newMemoryCache[string, string](10 * time.Millisecond)
 	c.Set("short", "expiration", time.Nanosecond)
 	defer c.Stop()
 
@@ -48,13 +47,13 @@ func BenchmarkNew(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			memcache.New[string, string](5 * time.Second).Stop()
+			newMemoryCache[string, string](5 * time.Second).Stop()
 		}
 	})
 }
 
 func BenchmarkGet(b *testing.B) {
-	c := memcache.New[string, string](5 * time.Second)
+	c := newMemoryCache[string, string](5 * time.Second)
 	defer c.Stop()
 	c.Set("Hello", "World", 0)
 
@@ -69,7 +68,7 @@ func BenchmarkGet(b *testing.B) {
 }
 
 func BenchmarkSet(b *testing.B) {
-	c := memcache.New[string, string](5 * time.Second)
+	c := newMemoryCache[string, string](5 * time.Second)
 	defer c.Stop()
 
 	b.ResetTimer()

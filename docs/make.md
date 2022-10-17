@@ -5,7 +5,8 @@ Usage:
   make <target>
 
 HTTP Clients
-  update-clients        Update HTTP client stubs from upstream git repos
+  update-clients        Update OpenAPI specs from upstream
+  generate-clients      Generate HTTP client stubs
   validate-clients      Compare generated client code with git
 
 Code quality
@@ -13,6 +14,7 @@ Code quality
   imports               Rearrange imports using `goimports`
   lint                  Run Go language linter `golangci-lint`
   check-migrations      Check migration files for changes
+  check-commits         Check commit format
 
 Building
   build                 Build all binaries
@@ -36,7 +38,11 @@ Go modules
   tidy-deps             Cleanup Go modules
   download-deps         Download Go modules
   update-deps           Update Go modules to latest versions
+
+Help
   help                  Print out the help content
+  generate-help-doc     Generate 'make help' markdown in docs/
+  generate-example-config  Generate example configuration
 
 OpenAPI
   generate-spec         Generate OpenAPI spec
@@ -48,8 +54,10 @@ Testing
 
 Go commands
   install-tools         Install required Go commands
+  generate-changelog    Generate CHANGELOG.md from git history
 
 Instance types
   generate-azure-types  Generate instance types for Azure
+  generate-ec2-types    Generate instance types for Azure
   generate-types        Generate instance types for all providers
 ```

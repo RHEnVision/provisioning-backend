@@ -21,10 +21,18 @@ var config struct {
 		Compression    bool   `env:"COMPRESSION" env-default:"false" env-description:"HTTP payload compression"`
 		InstancePrefix string `env:"INSTANCE_PREFIX" env-default:"" env-description:"prefix for all VMs names"`
 		Cache          struct {
-			Expiration      time.Duration `env:"EXPIRATION" env-default:"1h" env-description:"in-memory cache expiration (time interval syntax)"`
-			CleanupInterval time.Duration `env:"CLEANUP_INTERVAL" env-default:"5m" env-description:"in-memory expiration interval (time interval syntax)"`
-			AppTypeId       bool          `env:"APP_TYPE_ID" env-default:"true" env-description:"sources app_type_id cache"`
-			Account         bool          `env:"ACCOUNT" env-default:"true" env-description:"account DB ID caching"`
+			Type       string        `env:"TYPE" env-default:"none" env-description:"application cache (none, memory, redis)"`
+			Expiration time.Duration `env:"EXPIRATION" env-default:"1h" env-description:"expiration for both memory and Redis (time interval syntax)"`
+			Redis      struct {
+				Host     string `env:"HOST" env-default:"localhost" env-description:"redis hostname"`
+				Port     int    `env:"PORT" env-default:"6379" env-description:"redis port"`
+				User     string `env:"USER" env-default:"" env-description:"redis username"`
+				Password string `env:"PASSWORD" env-default:"" env-description:"redis password"`
+				DB       int    `env:"DB" env-default:"0" env-description:"redis database number"`
+			} `env-prefix:"REDIS_"`
+			Memory struct {
+				CleanupInterval time.Duration `env:"CLEANUP_INTERVAL" env-default:"5m" env-description:"in-memory expiration interval (time interval syntax)"`
+			} `env-prefix:"MEM_"`
 		} `env-prefix:"CACHE_"`
 	} `env-prefix:"APP_"`
 	Database struct {
@@ -102,7 +110,7 @@ var config struct {
 		TraceData bool `env:"TRACE_DATA" env-default:"true" env-description:"open telemetry HTTP context pass and trace"`
 	} `env-prefix:"REST_ENDPOINTS_"`
 	Worker struct {
-		Queue       string        `env:"QUEUE" env-default:"memory" env-description:"job worker implementation (memory, sqs, postgres)"`
+		Queue       string        `env:"QUEUE" env-default:"memory" env-description:"job worker implementation (memory, redis, sqs, postgres)"`
 		Concurrency int           `env:"CONCURRENCY" env-default:"50" env-description:"number of goroutines handling jobs"`
 		Heartbeat   time.Duration `env:"HEARTBEAT" env-default:"30s" env-description:"heartbeat interval (time interval syntax)"`
 		MaxBeats    int           `env:"MAX_BEATS" env-default:"10" env-description:"maximum amount of heartbeats allowed"`
@@ -168,6 +176,19 @@ func Initialize(configFiles ...string) {
 		// prometheus
 		config.Prometheus.Port = cfg.MetricsPort
 		config.Prometheus.Path = cfg.MetricsPath
+
+		// in-memory cache
+		if cfg.InMemoryDb == nil {
+			panic("ERROR: Redis is required in clowder environment")
+		}
+		config.App.Cache.Redis.Host = cfg.InMemoryDb.Hostname
+		config.App.Cache.Redis.Port = cfg.InMemoryDb.Port
+		if cfg.InMemoryDb.Username != nil {
+			config.App.Cache.Redis.User = *cfg.InMemoryDb.Username
+		}
+		if cfg.InMemoryDb.Password != nil {
+			config.App.Cache.Redis.Password = *cfg.InMemoryDb.Password
+		}
 
 		// HTTP proxies are not allowed in clowder environment
 		config.RestEndpoints.Sources.Proxy.URL = ""
