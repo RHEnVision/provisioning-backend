@@ -120,9 +120,9 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return nil, fmt.Errorf("get source ARN call: %w", http.AuthenticationForSourcesNotFoundErr)
+			return nil, fmt.Errorf("get source authentication call: %w", http.AuthenticationForSourcesNotFoundErr)
 		}
-		return nil, fmt.Errorf("get source ARN call: %w", err)
+		return nil, fmt.Errorf("get source authentication call: %w", err)
 	}
 
 	// Filter authentications to include only auth where resource_type == "Application". We do this because
