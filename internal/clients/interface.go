@@ -16,7 +16,7 @@ type Sources interface {
 	// ListProvisioningSources returns all sources that have provisioning credentials assigned
 	ListProvisioningSources(ctx context.Context) ([]*Source, error)
 
-	// GetArn returns ARN associated with provisioning app for given sourceId
+	// GetArn returns authentication associated with provisioning app for given sourceId
 	GetAuthentication(ctx context.Context, sourceId ID) (*Authentication, error)
 
 	// GetProvisioningTypeId returns provisioning type ID
