@@ -91,7 +91,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
 	if err != nil {
 		if errors.Is(err, http.DuplicatePubkeyErr) {
-			logger.Warn().Msgf("Pubkey '%s' already present, skipping", pubkey.Name)
+			return fmt.Errorf("cannot upload aws pubkey, pubkey '%s' already present: %w", pubkey.Name, err)
 		} else {
 			return fmt.Errorf("cannot upload aws pubkey: %w", err)
 		}
