@@ -21,25 +21,11 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	var accountId int64 = ctxval.AccountId(r.Context())
 
-	// TODO fetch authentication from sources
-	auth := clients.NewAuthentication("citric-expanse-361512", models.ProviderTypeAWS)
-
-	// TODO: meanwhile these values are hardcoded until we will have instance types, sources, ssh endpoints,
-	payload := &payloads.GCPReservationRequestPayload{
-		PubkeyID: 2,
-		// TODO: The project id change to source id from sources
-		SourceID:    auth.Payload,
-		Zone:        "us-central1-a",
-		MachineType: "n1-standard-1",
-		ImageID:     "bc97177c-9d07-4db9-ad59-8b2c0bf4174e",
-		PowerOff:    true,
-		Amount:      2,
+	payload := &payloads.GCPReservationRequestPayload{}
+	if err := render.Bind(r, payload); err != nil {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), err))
+		return
 	}
-	// TODO: Uncomment after removing hard-coded values
-	// if err := render.Bind(r, payload); err != nil {
-	// 	renderError(w, r, payloads.NewInvalidRequestError(r.Context(), err))
-	// 	return
-	// }
 
 	rDao := dao.GetReservationDao(r.Context())
 	pkDao := dao.GetPubkeyDao(r.Context())
@@ -52,7 +38,6 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	}
 	reservation := &models.GCPReservation{
 		PubkeyID: payload.PubkeyID,
-		// TODO: The project id change to source id from sources
 		ImageID:  payload.ImageID,
 		SourceID: payload.SourceID,
 		Detail:   detail,
@@ -83,7 +68,29 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	}
 	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
 
-	// TODO: Fetch project id from sources
+	// Get Sources client
+	sourcesClient, err := clients.GetSourcesClient(r.Context())
+	if err != nil {
+		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client v2", err))
+		return
+	}
+
+	// Fetch project id from Sources
+	authentication, err := sourcesClient.GetAuthentication(r.Context(), payload.SourceID)
+	if err != nil {
+		if errors.Is(err, clients.NotFoundErr) {
+			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch project id from sources", err, 404))
+			return
+		}
+		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch project id from sources", err, 500))
+		return
+	}
+
+	if typeErr := authentication.MustBe(models.ProviderTypeGCP); typeErr != nil {
+		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "unexpected source type", typeErr, 500))
+		return
+	}
+
 	// TODO: upload key job if needed
 
 	// Get Image builder client
@@ -113,7 +120,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 			PubkeyID:      reservation.PubkeyID,
 			Detail:        reservation.Detail,
 			ImageName:     name,
-			ProjectID:     auth,
+			ProjectID:     authentication,
 		},
 	}
 

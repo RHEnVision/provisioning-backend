@@ -139,7 +139,7 @@ type GCPReservationRequestPayload struct {
 	Zone string `json:"zone"`
 
 	// GCP Machine type.
-	MachineType string `json:"instance_type"`
+	MachineType string `json:"machine_type"`
 
 	// Amount of instances to provision of type: Instance type.
 	Amount int64 ` json:"amount"`
