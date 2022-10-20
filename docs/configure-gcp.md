@@ -98,6 +98,12 @@ The downloaded key has the following format, where PRIVATE_KEY is the private po
   ```shell
    cat creds.json | base64
   ```
+8. Paste the base64 json in api.env under GCP_JSON variable (notice there are no new lines)
+
+9. Paste the Tenant's project id under PROJECT_ID variable in sources.local.conf
+
+10. Create an image in Image Builder for GCP https://console.stage.redhat.com/api/image-builder/v1. 
+Share that image with the **service account** you have created. 
 
 ## Configuring Sources microservice
 
