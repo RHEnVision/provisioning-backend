@@ -7,8 +7,8 @@ install-tools: ## Install required Go commands
 	go install github.com/jackc/tern@latest
 	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 	go install mvdan.cc/gofumpt@latest
-	go install github.com/git-chglog/git-chglog/cmd/git-chglog@latest
 
 .PHONY: generate-changelog
 generate-changelog: ## Generate CHANGELOG.md from git history
-	git-chglog -o CHANGELOG.md
+	@echo "Required tool: pip3 install git-changelog"
+	git-changelog --style angular --template angular --output CHANGELOG.md .
