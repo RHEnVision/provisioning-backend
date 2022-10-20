@@ -2,25 +2,33 @@
 
 ## Commit messages
 
-Commit messages must be in the form of:
+Make sure your commit message follows this subject style:
 
-* `type: brief summary` (maximum 70 characters)
-* `type(component): brief summary`
+        type: brief summary up to 70 characters or
+        type(scope): brief summary up to 70 characters
 
-Supported types:
+Type must be one of the following:
 
-* feat (Feature)
-* fix
-* refactor
-* perf
-* revert
-* chore
-* demo
-* docs
-* style
-* test
+* **build**: Changes that affect the build system
+* **ci**: Changes to our CI configuration files and scripts
+* **docs**: Documentation only changes
+* **feat**: A new feature
+* **fix**: A bug fix
+* **perf**: A code change that improves performance
+* **refactor**: A code change that neither fixes a bug nor adds a feature
+* **chore**: A non-code change that does not fit to any category
+* **test**: Adding missing tests or correcting existing tests
+* **revert**: A commit revert
 
-For components, use Go package names which have the most changes. This is optional.
+Scope is typically the most significant Go package that was changed, or the main component. Typical scopes:
+
+* dao
+* cache
+* clients
+* oapi
+* readme
+* changelog
+* scripts
 
 For WIP branches, start commit message with `WIP` and it will pass on CI.
 

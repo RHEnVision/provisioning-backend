@@ -6,7 +6,7 @@ if [[ "$MESSAGE" =~ ^WIP ]]; then
 fi
 
 MAX_LENGTH=70
-TYPES="feat fix refactor perf revert chore demo docs style test"
+TYPES="build ci docs feat fix perf refactor test chore"
 PATTERN="^[a-z\(\)]+\:\ (.*)$"
 SCOPED_PATTERN="^([a-z]+)\([a-z\-\*]+\)\:\ (.*)$"
 
