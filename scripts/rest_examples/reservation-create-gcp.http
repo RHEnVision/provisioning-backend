@@ -2,3 +2,14 @@
 POST http://{{hostname}}:{{port}}/{{prefix}}/reservations/gcp HTTP/1.1
 Content-Type: application/json
 X-Rh-Identity: {{identity}}
+
+{
+  "name": "gcp-linux-us-central1-a",
+  "zone": "us-central1-a",
+  "source_id": "3",
+  "image_id": "80967e7f-efef-4eee-85b0-bd4cef4c455d",
+  "amount": 2,
+  "machine_type": "n1-standard-1",
+  "pubkey_id": 1,
+  "poweroff": true
+}
