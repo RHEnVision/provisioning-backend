@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -58,7 +59,8 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
 	if err != nil {
 		if errors.Is(err, dao.ErrNoRows) {
-			renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
+			notFoundErr := fmt.Errorf("pubkey id %d not found for this account: %w", reservation.PubkeyID, err)
+			renderError(w, r, payloads.NewNotFoundError(r.Context(), notFoundErr))
 		} else {
 			renderError(w, r, payloads.NewDAOError(r.Context(), "get pubkey by id", err))
 		}

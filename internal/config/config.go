@@ -70,6 +70,11 @@ var config struct {
 		Session       string `env:"SESSION" env-default:"" env-description:"AWS service account session"`
 		DefaultRegion string `env:"DEFAULT_REGION" env-default:"us-east-1" env-description:"AWS region when not provided"`
 		Logging       bool   `env:"LOGGING" env-default:"false" env-description:"AWS service account logging (verbose)"`
+		// Alternative credentials through our aws-saml.py script which creates ~/.aws/credentials
+		// Only use this for development setups
+		FileCredentials bool   `env:"FILE_CREDENTIALS" env-default:"false" env-description:"read credentials from ~/.aws/credentials (dev only alternative)"`
+		FileProfile     string `env:"FILE_PROFILE" env-default:"" env-description:"credential file profile (dev only)"`
+		NoAssumeRole    bool   `env:"NO_ASSUME_ROLE" env-default:"false" env-description:"disable AssumeRole call and use service account directly (dev only)"`
 	} `env-prefix:"AWS_"`
 	Azure struct {
 		TenantID       string `env:"TENANT_ID" env-default:"" env-description:"Azure service account tenant id"`

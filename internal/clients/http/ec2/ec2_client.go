@@ -61,20 +61,30 @@ func awsConfig(ctx context.Context, region string, optFns ...func(*awsCfg.LoadOp
 	return &newCfg, nil
 }
 
+func serviceCredentialsProvider() awsCfg.LoadOptionsFunc {
+	if config.AWS.FileCredentials {
+		return awsCfg.WithSharedConfigProfile(config.AWS.FileProfile)
+	}
+	return awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session))
+}
+
 func newEC2ClientWithRegion(ctx context.Context, region string) (clients.EC2, error) {
-	cfg, err := awsConfig(ctx, region,
-		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
+	cfg, err := awsConfig(ctx, region, serviceCredentialsProvider())
 	if err != nil {
 		return nil, fmt.Errorf("aws: %w", err)
 	}
 
 	return &ec2Client{
 		ec2:     ec2.NewFromConfig(*cfg),
-		assumed: false,
+		assumed: config.AWS.NoAssumeRole,
 	}, nil
 }
 
 func newAssumedEC2ClientWithRegion(ctx context.Context, auth *clients.Authentication, region string) (clients.EC2, error) {
+	if config.AWS.NoAssumeRole {
+		return newEC2ClientWithRegion(ctx, region)
+	}
+
 	if typeErr := auth.MustBe(models.ProviderTypeAWS); typeErr != nil {
 		return nil, fmt.Errorf("unexpected authentication: %w", typeErr)
 	}
@@ -111,8 +121,7 @@ func (c *ec2Client) Status(ctx context.Context) error {
 func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*stsTypes.Credentials, error) {
 	logger := logger(ctx)
 
-	cfg, err := awsConfig(ctx, region,
-		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
+	cfg, err := awsConfig(ctx, region, serviceCredentialsProvider())
 	if err != nil {
 		return nil, fmt.Errorf("aws sts: %w", err)
 	}
