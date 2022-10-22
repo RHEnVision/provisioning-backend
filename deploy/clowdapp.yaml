@@ -39,6 +39,8 @@ objects:
                 value: ${CLOWDER_ENABLED}
               - name: CLOUDWATCH_ENABLED
                 value: ${CLOUDWATCH_ENABLED}
+              - name: IMAGE_BUILDER_URL
+                value: ${IMAGEBUILDER_URL}
               - name: AWS_KEY
                 valueFrom:
                   secretKeyRef:
@@ -107,6 +109,8 @@ objects:
                 value: ${CLOWDER_ENABLED}
               - name: CLOUDWATCH_ENABLED
                 value: ${CLOUDWATCH_ENABLED}
+              - name: IMAGE_BUILDER_URL
+                value: ${IMAGEBUILDER_URL}
               - name: OPEN_API_FILEPATH
                 value: ${OPEN_API_FILEPATH}
               - name: APP_COMPRESSION
@@ -177,6 +181,10 @@ parameters:
   - description: AWS CloudWatch logging integration
     name: CLOUDWATCH_ENABLED
     value: "false"
+  - description: ImageBuilder service URL
+    name: IMAGEBUILDER_URL
+    required: false
+    value: "http://image-builder:8080"
   - description: Instance prefix adds string to all instance names, leave blank for production
     name: APP_INSTANCE_PREFIX
     value: ""
