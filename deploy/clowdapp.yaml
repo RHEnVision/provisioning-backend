@@ -39,8 +39,8 @@ objects:
                 value: ${CLOWDER_ENABLED}
               - name: CLOUDWATCH_ENABLED
                 value: ${CLOUDWATCH_ENABLED}
-              - name: IMAGE_BUILDER_URL
-                value: ${IMAGEBUILDER_URL}
+              - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
+                value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
               - name: AWS_KEY
                 valueFrom:
                   secretKeyRef:
@@ -109,8 +109,8 @@ objects:
                 value: ${CLOWDER_ENABLED}
               - name: CLOUDWATCH_ENABLED
                 value: ${CLOUDWATCH_ENABLED}
-              - name: IMAGE_BUILDER_URL
-                value: ${IMAGEBUILDER_URL}
+              - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
+                value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
               - name: OPEN_API_FILEPATH
                 value: ${OPEN_API_FILEPATH}
               - name: APP_COMPRESSION
