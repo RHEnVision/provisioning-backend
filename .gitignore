@@ -13,7 +13,7 @@ TAGS
 /Containerfile
 /tern.conf
 /mk/private.mk
-/scripts/sources-*/
+/scripts/sources-api-go
 /scripts/sources.local.conf
 /scripts/rest_examples/*.local.http
 /scripts/rest_examples/*.private.env.json
