@@ -76,14 +76,21 @@ type EC2 interface {
 	RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error)
 }
 
-// GetAzureClient returns an Azure facade interface.
+// GetAzureClient returns an Azure client with customer's subscription ID.
 var GetAzureClient func(ctx context.Context, auth *Authentication) (Azure, error)
+
+// GetServiceAzureClient returns an Azure client for the service account itself.
+var GetServiceAzureClient func(ctx context.Context) (ServiceAzure, error)
 
 type Azure interface {
 	ClientStatuser
 }
 
-// GetGCPClient returns a GCP facade interface of the customer.
+type ServiceAzure interface {
+	RegisterInstanceTypes(ctx context.Context, instanceTypes *RegisteredInstanceTypes, regionalTypes *RegionalTypeAvailability) error
+}
+
+// GetGCPClient returns a GCP facade interface.
 var GetGCPClient func(ctx context.Context, auth *Authentication) (GCP, error)
 
 // GetServiceGCPClient returns a GCP client for the service account.
