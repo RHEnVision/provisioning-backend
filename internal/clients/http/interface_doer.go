@@ -6,7 +6,6 @@ import "net/http"
 // stack for each request as multiple doers are called leading to:
 //
 // "error in doer1: error in doer2: error in doer3: something happened"
-//
 type DoerErr struct {
 	Err error
 }

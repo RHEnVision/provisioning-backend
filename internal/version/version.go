@@ -9,11 +9,17 @@ var (
 )
 
 const (
+	// ApplicationName contains string that is used by other names
+	ApplicationName = "provisioning"
+
 	// PrometheusLabelName contains string that is included in all Prometheus metrics
-	PrometheusLabelName = "provisioning"
+	PrometheusLabelName = ApplicationName
 
 	// APIPathName is the name used in main route API prefix
-	APIPathName = PrometheusLabelName
+	APIPathName = ApplicationName
+
+	// UnleashAppName contains string used to initialize Unleash (feature flags)
+	UnleashAppName = ApplicationName
 
 	// APIPathName is the name used in main route API prefix
 	APIPathVersion = "v1"

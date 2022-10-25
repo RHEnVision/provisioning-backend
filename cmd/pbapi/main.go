@@ -62,6 +62,14 @@ func main() {
 	log.Logger = logger
 	logging.DumpConfigForDevelopment()
 
+	// initialize feature flags
+	err = config.InitializeFeatureFlags(ctx)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error initializing feature flags")
+	}
+	defer config.StopFeatureFlags(ctx)
+
+	// initialize telemetry
 	tel := telemetry.Initialize(&log.Logger)
 	defer tel.Close(ctx)
 
