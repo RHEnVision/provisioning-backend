@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -20,6 +21,10 @@ var (
 
 // CreateReservation dispatches requests to type provider specific handlers
 func CreateReservation(w http.ResponseWriter, r *http.Request) {
+	if !config.LaunchEnabled(r.Context()) {
+		writeUnauthorized(w, r)
+	}
+
 	pType := models.ProviderTypeFromString(chi.URLParam(r, "TYPE"))
 	switch pType {
 	case models.ProviderTypeNoop:

@@ -10,22 +10,12 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func write200(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-}
-
-func write503(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusServiceUnavailable)
-}
-
 func StatusService(w http.ResponseWriter, r *http.Request) {
-	write200(w, r)
+	writeOk(w, r)
 }
 
 func ReadyService(w http.ResponseWriter, r *http.Request) {
-	write200(w, r)
+	writeOk(w, r)
 }
 
 var UnknownReadinessServiceErr = errors.New("unknown service for readiness test")
@@ -41,7 +31,7 @@ func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
 		}
 		err = client.Ready(r.Context())
 		if err != nil {
-			write503(w, r)
+			writeServiceUnavailable(w, r)
 			return
 		}
 	case "ib", "image_builder", "imagebuilder":
@@ -52,7 +42,7 @@ func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
 		}
 		err = client.Ready(r.Context())
 		if err != nil {
-			write503(w, r)
+			writeServiceUnavailable(w, r)
 			return
 		}
 	default:
@@ -60,5 +50,5 @@ func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	write200(w, r)
+	writeOk(w, r)
 }

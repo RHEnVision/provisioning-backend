@@ -19,6 +19,7 @@ objects:
         service: provisioning
     spec:
       envName: ${ENV_NAME}
+      featureFlags: true
       testing:
         iqePlugin: provisioning
       deployments:

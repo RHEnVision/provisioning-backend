@@ -117,5 +117,13 @@ func MountAPI(r *chi.Mux) {
 				r.Get("/", s.ListBuiltinInstanceTypes(gcp_types.InstanceTypesForZone))
 			})
 		})
+
+		// We expose feature flags for image builder, this is undocumented since we
+		// want to push for the setup where we share the same unleash instance and this
+		// endpoint might not be needed anymore.
+		r.Route("/feature/{FLAG}", func(r chi.Router) {
+			r.Get("/", s.FeatureFlagService)
+			r.Head("/", s.FeatureFlagService)
+		})
 	})
 }
