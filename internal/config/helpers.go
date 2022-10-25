@@ -24,6 +24,16 @@ func RedisHostAndPort() string {
 	return fmt.Sprintf("%s:%d", Application.Cache.Redis.Host, Application.Cache.Redis.Port)
 }
 
+// InStageClowder returns true, when the app is running in stage clowder environment.
+func InStageClowder() bool {
+	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-stage")
+}
+
+// InProdClowder returns true, when the app is running in production clowder environment.
+func InProdClowder() bool {
+	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-stage")
+}
+
 func StringToURL(urlStr string) *url.URL {
 	if urlStr == "" {
 		return nil
@@ -55,5 +65,6 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.Azure.ClientID = replacement
 	configCopy.Azure.ClientSecret = replacement
 	configCopy.GCP.JSON = replacement
+	configCopy.Unleash.Token = replacement
 	logger.Info().Msgf("Configuration: %+v", configCopy)
 }

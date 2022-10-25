@@ -73,5 +73,5 @@ func SourcesStatus(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 		return
 	}
 
-	write200(w, r)
+	writeOk(w, r)
 }

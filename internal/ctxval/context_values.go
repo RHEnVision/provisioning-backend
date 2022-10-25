@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	ucontext "github.com/Unleash/unleash-client-go/v3/context"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -12,9 +13,10 @@ import (
 type commonKeyId int
 
 const (
-	loggerCtxKey    commonKeyId = iota
-	requestIdCtxKey commonKeyId = iota
-	accountIdCtxKey commonKeyId = iota
+	loggerCtxKey         commonKeyId = iota
+	requestIdCtxKey      commonKeyId = iota
+	accountIdCtxKey      commonKeyId = iota
+	unleashContextCtxKey commonKeyId = iota
 )
 
 var MissingAccountInContextError = errors.New("operation requires account_id in context")
@@ -69,4 +71,16 @@ func AccountIdOrNil(ctx context.Context) int64 {
 
 func WithAccountId(ctx context.Context, accountId int64) context.Context {
 	return context.WithValue(ctx, accountIdCtxKey, accountId)
+}
+
+// UnleashContext returns unleash context or an empty context when not set.
+func UnleashContext(ctx context.Context) ucontext.Context {
+	if ctx.Value(unleashContextCtxKey) == nil {
+		return ucontext.Context{}
+	}
+	return ctx.Value(unleashContextCtxKey).(ucontext.Context)
+}
+
+func WithUnleashContext(ctx context.Context, uctx ucontext.Context) context.Context {
+	return context.WithValue(ctx, unleashContextCtxKey, uctx)
 }

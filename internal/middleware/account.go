@@ -5,8 +5,11 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/version"
+	ucontext "github.com/Unleash/unleash-client-go/v3/context"
 )
 
 func AccountMiddleware(next http.Handler) http.Handler {
@@ -43,13 +46,27 @@ func AccountMiddleware(next http.Handler) http.Handler {
 		// account found in cache
 		logger.Trace().Int64("account", cachedAccount.ID).Msg("Account cache hit")
 
+		// set contexts - account id
+		ctx := ctxval.WithAccountId(r.Context(), cachedAccount.ID)
+
+		// logger
 		newLogger := logger.With().
 			Int64("account_id", cachedAccount.ID).
 			Str("org_id", cachedAccount.OrgID).
 			Str("account_number", cachedAccount.AccountNumber.String).
 			Logger()
-		ctx := ctxval.WithAccountId(r.Context(), cachedAccount.ID)
 		ctx = ctxval.WithLogger(ctx, &newLogger)
+
+		// unleash context
+		uctx := ucontext.Context{
+			UserId:        cachedAccount.OrgID,
+			RemoteAddress: r.RemoteAddr,
+			Environment:   config.Unleash.Environment,
+			AppName:       version.UnleashAppName,
+			Properties:    nil,
+		}
+		ctx = ctxval.WithUnleashContext(ctx, uctx)
+
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)

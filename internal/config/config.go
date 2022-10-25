@@ -116,6 +116,13 @@ var config struct {
 		Heartbeat   time.Duration `env:"HEARTBEAT" env-default:"30s" env-description:"heartbeat interval (time interval syntax)"`
 		MaxBeats    int           `env:"MAX_BEATS" env-default:"10" env-description:"maximum amount of heartbeats allowed"`
 	} `env-prefix:"WORKER_"`
+	Unleash struct {
+		Enabled     bool   `env:"ENABLED" env-default:"false" env-description:"unleash service (feature flags)"`
+		Environment string `env:"ENVIRONMENT" env-default:"" env-description:"unleash environment"`
+		Prefix      string `env:"PREFIX" env-default:"app.provisioning" env-description:"unleash flag prefix"`
+		URL         string `env:"URL" env-default:"http://localhost:4242" env-description:"unleash service URL"`
+		Token       string `env:"TOKEN" env-default:"" env-description:"unleash service client access token"`
+	} `env-prefix:"UNLEASH_"`
 }
 
 // Config shortcuts
@@ -133,6 +140,7 @@ var (
 	ImageBuilder  = &config.RestEndpoints.ImageBuilder
 	Sources       = &config.RestEndpoints.Sources
 	Worker        = &config.Worker
+	Unleash       = &config.Unleash
 )
 
 // Errors
@@ -189,6 +197,14 @@ func Initialize(configFiles ...string) {
 		}
 		if cfg.InMemoryDb.Password != nil {
 			config.App.Cache.Redis.Password = *cfg.InMemoryDb.Password
+		}
+
+		// feature flags
+		config.Unleash.Enabled = true
+		url := fmt.Sprintf("%s://%s:%d", cfg.FeatureFlags.Scheme, cfg.FeatureFlags.Hostname, cfg.FeatureFlags.Port)
+		config.Unleash.URL = url
+		if cfg.FeatureFlags.ClientAccessToken != nil {
+			config.Unleash.Token = *cfg.FeatureFlags.ClientAccessToken
 		}
 
 		// HTTP proxies are not allowed in clowder environment
