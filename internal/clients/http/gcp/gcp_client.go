@@ -14,7 +14,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
-	"github.com/rs/zerolog"
 )
 
 type gcpClient struct {
@@ -26,12 +25,9 @@ func init() {
 	clients.GetGCPClient = newGCPClient
 }
 
-func logger(ctx context.Context) zerolog.Logger {
-	return ctxval.Logger(ctx).With().Str("client", "gcp").Logger()
-}
-
 // GCP SDK does not provide a single client, so only configuration can be shared and
 // clients need to be created and closed in each function.
+// The difference between the customer and service authentication is which Project ID was given: the service or the customer
 func newGCPClient(ctx context.Context, auth *clients.Authentication) (clients.GCP, error) {
 	options := []option.ClientOption{
 		option.WithCredentialsJSON([]byte(config.GCP.JSON)),
@@ -45,30 +41,14 @@ func newGCPClient(ctx context.Context, auth *clients.Authentication) (clients.GC
 }
 
 func (c *gcpClient) Status(ctx context.Context) error {
-	_, _, err := c.ListAllRegionsAndZones(ctx)
+	_, err := c.ListAllRegions(ctx)
 	return err
 }
 
-func (c *gcpClient) newInstancesClient(ctx context.Context) (*compute.InstancesClient, error) {
-	client, err := compute.NewInstancesRESTClient(ctx, c.options...)
-	if err != nil {
-		return nil, fmt.Errorf("unable to create GCP regions client: %w", err)
-	}
-	return client, nil
-}
-
-func (c *gcpClient) newRegionsClient(ctx context.Context) (*compute.RegionsClient, error) {
+func (c *gcpClient) ListAllRegions(ctx context.Context) ([]clients.Region, error) {
 	client, err := compute.NewRegionsRESTClient(ctx, c.options...)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create GCP regions client: %w", err)
-	}
-	return client, nil
-}
-
-func (c *gcpClient) ListAllRegionsAndZones(ctx context.Context) ([]clients.Region, []clients.Zone, error) {
-	client, err := c.newRegionsClient(ctx)
-	if err != nil {
-		return nil, nil, fmt.Errorf("unable to list regions and zones: %w", err)
 	}
 	defer client.Close()
 
@@ -80,24 +60,28 @@ func (c *gcpClient) ListAllRegionsAndZones(ctx context.Context) ([]clients.Regio
 	}
 	iter := client.List(ctx, req)
 	regions := make([]clients.Region, 0, 32)
-	zones := make([]clients.Zone, 0, 64)
 	for {
 		region, err := iter.Next()
 		if errors.Is(err, iterator.Done) {
 			break
 		}
 		if err != nil {
-			return nil, nil, fmt.Errorf("iterator error: %w", err)
+			return nil, fmt.Errorf("iterator error: %w", err)
 		}
 		regions = append(regions, clients.Region(*region.Name))
-		for _, zone := range region.Zones {
-			zones = append(zones, clients.Zone(zone))
-		}
 	}
-	return regions, zones, nil
+	return regions, nil
 }
 
-func (c *gcpClient) RunInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error) {
+func (c *gcpClient) newInstancesClient(ctx context.Context) (*compute.InstancesClient, error) {
+	client, err := compute.NewInstancesRESTClient(ctx, c.options...)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create GCP regions client: %w", err)
+	}
+	return client, nil
+}
+
+func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error) {
 	log := logger(ctx)
 	log.Trace().Msgf("Executing bulk insert for name: %s", *namePattern)
 
