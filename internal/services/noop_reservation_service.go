@@ -48,11 +48,11 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	logger.Debug().Interface("arg", pj.Body).Msgf("Enqueuing no operation job: %+v", pj.Body)
 	err = queue.GetEnqueuer().Enqueue(r.Context(), pj)
 	if err != nil {
-		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "EnqueueNoop", err))
+		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueing task Noop reservation error", err))
 		return
 	}
 
 	if err := render.Render(w, r, payloads.NewNoopReservationResponse(reservation)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 	}
 }

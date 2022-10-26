@@ -24,7 +24,7 @@ func ListBuiltinInstanceTypes(typeFunc InstanceTypesForZoneFunc) func(w http.Res
 		}
 
 		if region == "" {
-			renderError(w, r, payloads.NewMissingRequestParameterError(r.Context(), "region"))
+			renderError(w, r, payloads.NewMissingRequestParameterError(r.Context(), "region parameter is missing"))
 			return
 		}
 
@@ -38,7 +38,7 @@ func ListBuiltinInstanceTypes(typeFunc InstanceTypesForZoneFunc) func(w http.Res
 		}
 
 		if err := render.RenderList(w, r, payloads.NewListInstanceTypeResponse(instances)); err != nil {
-			renderError(w, r, payloads.NewRenderError(r.Context(), "list instance types", err))
+			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render instance types list", err))
 			return
 		}
 	}

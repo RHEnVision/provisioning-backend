@@ -47,7 +47,7 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.RenderList(w, r, payloads.NewReservationListResponse(reservations)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "list reservations", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservations list", err))
 		return
 	}
 }
@@ -55,7 +55,7 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 	id, err := ParseInt64(r, "ID")
 	if err != nil {
-		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "unable to parse ID parameter", err))
 		return
 	}
 
@@ -71,7 +71,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation)); err != nil {
-			renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		}
 	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
 		reservation, err := rDao.GetById(r.Context(), id)
@@ -81,7 +81,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := render.Render(w, r, payloads.NewReservationResponse(reservation)); err != nil {
-			renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		}
 	case models.ProviderTypeAzure:
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))

@@ -20,7 +20,7 @@ func ListSources(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := render.RenderList(w, r, payloads.NewListSourcesResponse(sourcesList)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "list sources", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render sources list", err))
 		return
 	}
 }
