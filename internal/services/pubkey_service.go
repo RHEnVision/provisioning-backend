@@ -114,7 +114,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-				ec2Client, errEc2 := clients.GetCustomerEC2Client(r.Context(), authentication, res.Region)
+				ec2Client, errEc2 := clients.GetEC2Client(r.Context(), authentication, res.Region)
 				if errEc2 != nil {
 					renderError(w, r, payloads.NewAWSError(r.Context(), "failed to establish ec2 connection", errEc2))
 					return
