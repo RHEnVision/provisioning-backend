@@ -6910,8 +6910,8 @@ Standard_M64s:
     name: Standard_M64s
     vcpus: 64
     cores: 32
-    memory_mib: 1000000
-    storage_gb: 2048
+    memory_mib: 1024000
+    storage_gb: 2097
     supported: true
     arch: x86_64
     azure:
@@ -7451,17 +7451,6 @@ Standard_NC96ads_A100_v4:
     cores: 96
     memory_mib: 880000
     storage_gb: 262
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: false
-        gen_v2: true
-Standard_NCC24ads_A100_v4:
-    name: Standard_NCC24ads_A100_v4
-    vcpus: 24
-    cores: 24
-    memory_mib: 220000
-    storage_gb: 1150
     supported: true
     arch: x86_64
     azure:
