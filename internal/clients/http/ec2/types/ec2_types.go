@@ -35,7 +35,7 @@ func init() {
 	}
 
 	availBuf := clients.ConcatBuffers(fsTypes, availabilityPath)
-	etag, err = middleware.GenerateETagFromBuffer("azure-types", middleware.InstanceTypeExpiration, typesBuf, availBuf)
+	etag, err = middleware.GenerateETagFromBuffer("ec2-types", middleware.InstanceTypeExpiration, typesBuf, availBuf)
 	if err != nil {
 		panic(err)
 	}
