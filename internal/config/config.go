@@ -79,6 +79,7 @@ var config struct {
 		DefaultRegion  string `env:"DEFAULT_REGION" env-default:"eastus" env-description:"Azure region when not provided"`
 	} `env-prefix:"AZURE_"`
 	GCP struct {
+		ProjectID   string `env:"PROJECT_ID" env-default:"" env-description:"GCP service account project id"`
 		JSON        string `env:"JSON" env-default:"e30K" env-description:"GCP service account credentials (base64 encoded)"`
 		DefaultZone string `env:"DEFAULT_ZONE" env-default:"us-east1" env-description:"GCP region when not provided"`
 	} `env-prefix:"GCP_"`

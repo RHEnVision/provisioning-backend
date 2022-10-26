@@ -49,10 +49,10 @@ type ClientStatuser interface {
 	Status(ctx context.Context) error
 }
 
-// GetCustomerEC2Client returns an EC2 facade interface with assumed role.
-var GetCustomerEC2Client func(ctx context.Context, auth *Authentication, region string) (EC2, error)
+// GetEC2Client returns an EC2 facade interface with assumed role.
+var GetEC2Client func(ctx context.Context, auth *Authentication, region string) (EC2, error)
 
-// GetCustomerEC2Client returns an EC2 facade interface for the service account.
+// GetServiceEC2Client returns an EC2 client for the service account.
 var GetServiceEC2Client func(ctx context.Context, region string) (EC2, error)
 
 type EC2 interface {
@@ -69,6 +69,7 @@ type EC2 interface {
 
 	// DeleteSSHKey deletes a given ssh key-pair found by AWS ID
 	DeleteSSHKey(ctx context.Context, handle string) error
+
 	ListInstanceTypesWithPaginator(ctx context.Context) ([]*InstanceType, error)
 
 	// RunInstances launches one or more instances
@@ -82,15 +83,28 @@ type Azure interface {
 	ClientStatuser
 }
 
-// GetGCPClient returns a GCP facade interface.
+// GetGCPClient returns a GCP facade interface of the customer.
 var GetGCPClient func(ctx context.Context, auth *Authentication) (GCP, error)
 
-type GCP interface {
-	ClientStatuser
+// GetServiceGCPClient returns a GCP client for the service account.
+var GetServiceGCPClient func(ctx context.Context) (ServiceGCP, error)
+
+type ServiceGCP interface {
+	// RegisterInstanceTypes
+	RegisterInstanceTypes(ctx context.Context, instanceTypes *RegisteredInstanceTypes, regionalTypes *RegionalTypeAvailability) error
+
+	// ListMachineTypes returns list of all GCP machine types
+	ListMachineTypes(ctx context.Context, zone string) ([]*InstanceType, error)
 
 	// ListAllRegionsAndZones returns list of all GCP regions
 	ListAllRegionsAndZones(ctx context.Context) ([]Region, []Zone, error)
+}
+type GCP interface {
+	ClientStatuser
 
-	// RunInstances launches one or more instances
-	RunInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error)
+	// ListAllRegions returns list of all GCP regions
+	ListAllRegions(ctx context.Context) ([]Region, error)
+
+	// InsertInstances launches one or more instances
+	InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error)
 }

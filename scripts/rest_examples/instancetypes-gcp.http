@@ -1,0 +1,4 @@
+// @no-log
+GET http://{{hostname}}:{{port}}/{{prefix}}/instance_types/gcp/?region=us-east1-b HTTP/1.1
+Content-Type: application/json
+X-Rh-Identity: {{identity}}

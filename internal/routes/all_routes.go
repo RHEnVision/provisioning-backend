@@ -7,6 +7,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/api"
 	azure_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure/types"
 	ec2_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2/types"
+	gcp_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp/types"
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
@@ -110,6 +111,10 @@ func MountAPI(r *chi.Mux) {
 			r.Route("/aws", func(r chi.Router) {
 				r.Use(middleware.ETagMiddleware(ec2_types.ETagValue))
 				r.Get("/", s.ListBuiltinInstanceTypes(ec2_types.InstanceTypesForZone))
+			})
+			r.Route("/gcp", func(r chi.Router) {
+				r.Use(middleware.ETagMiddleware(gcp_types.ETagValue))
+				r.Get("/", s.ListBuiltinInstanceTypes(gcp_types.InstanceTypesForZone))
 			})
 		})
 	})
