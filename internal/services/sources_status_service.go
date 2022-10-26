@@ -45,31 +45,31 @@ func SourcesStatus(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 	case models.ProviderTypeAWS:
 		statusClient, err = clients.GetEC2Client(r.Context(), auth, config.AWS.DefaultRegion)
 		if err != nil {
-			renderError(w, r, payloads.NewAWSError(r.Context(), "unable to get client", err))
+			renderError(w, r, payloads.NewAWSError(r.Context(), "unable to get AWS client", err))
 			return
 		}
 	case models.ProviderTypeGCP:
 		statusClient, err = clients.GetGCPClient(r.Context(), auth)
 		if err != nil {
-			renderError(w, r, payloads.NewGCPError(r.Context(), "unable to get client", err))
+			renderError(w, r, payloads.NewGCPError(r.Context(), "unable to get GCP client", err))
 			return
 		}
 	case models.ProviderTypeAzure:
 		statusClient, err = clients.GetAzureClient(r.Context(), auth)
 		if err != nil {
-			renderError(w, r, payloads.NewAzureError(r.Context(), "unable to get client", err))
+			renderError(w, r, payloads.NewAzureError(r.Context(), "unable to get Azure client", err))
 			return
 		}
 	case models.ProviderTypeNoop:
 	case models.ProviderTypeUnknown:
 	default:
-		renderError(w, r, payloads.NewStatusError(r.Context(), UnknownProviderFromSourcesErr))
+		renderError(w, r, payloads.NewStatusError(r.Context(), "unknown sources provider", UnknownProviderFromSourcesErr))
 		return
 	}
 
 	err = statusClient.Status(r.Context())
 	if err != nil {
-		renderError(w, r, payloads.NewStatusError(r.Context(), err))
+		renderError(w, r, payloads.NewStatusError(r.Context(), "client status error", err))
 		return
 	}
 

@@ -146,12 +146,12 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	// Enqueue all jobs
 	err = queue.GetEnqueuer().Enqueue(r.Context(), startJobs...)
 	if err != nil {
-		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "AWS reservation", err))
+		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueing task AWS reservation error", err))
 		return
 	}
 
 	// Return response payload
 	if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render AWS reservation", err))
 	}
 }

@@ -63,7 +63,7 @@ func TestListInstanceTypesHandler(t *testing.T) {
 
 		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
 
-		assert.Contains(t, rr.Body.String(), "missing parameter")
+		assert.Contains(t, rr.Body.String(), "parameter is missing")
 	})
 }
 

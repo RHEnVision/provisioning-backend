@@ -25,7 +25,7 @@ func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 	err := pkDao.Create(r.Context(), payload.Pubkey)
 	if err != nil {
 		if db.IsPostgresError(err, db.UniqueConstraintErrorCode) != nil {
-			renderError(w, r, payloads.PubkeyAlreadyExistsError(r.Context(), err))
+			renderError(w, r, payloads.PubkeyDuplicateError(r.Context(), "pubkey with such name or fingerprint already exists for this account", err))
 		} else {
 			renderError(w, r, payloads.NewDAOError(r.Context(), "create pubkey", err))
 		}
@@ -33,7 +33,7 @@ func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.Render(w, r, payloads.NewPubkeyResponse(payload.Pubkey)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "pubkey", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render pubkey", err))
 	}
 }
 
@@ -47,7 +47,7 @@ func ListPubkeys(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.RenderList(w, r, payloads.NewPubkeyListResponse(pubkeys)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "list pubkeys", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render pubkeys list", err))
 		return
 	}
 }
@@ -55,7 +55,7 @@ func ListPubkeys(w http.ResponseWriter, r *http.Request) {
 func GetPubkey(w http.ResponseWriter, r *http.Request) {
 	id, err := ParseInt64(r, "ID")
 	if err != nil {
-		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "unable to parse ID parameter", err))
 		return
 	}
 
@@ -68,7 +68,7 @@ func GetPubkey(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.Render(w, r, payloads.NewPubkeyResponse(pubkey)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "pubkey", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render pubkey", err))
 	}
 }
 
@@ -82,7 +82,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 
 	id, err := ParseInt64(r, "ID")
 	if err != nil {
-		renderError(w, r, payloads.NewURLParsingError(r.Context(), "ID", err))
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "unable to parse ID parameter", err))
 		return
 	}
 
@@ -116,13 +116,13 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 
 				ec2Client, errEc2 := clients.GetEC2Client(r.Context(), authentication, res.Region)
 				if errEc2 != nil {
-					renderError(w, r, payloads.NewAWSError(r.Context(), "failed to establish ec2 connection", errEc2))
+					renderError(w, r, payloads.NewAWSError(r.Context(), "unable to get AWS client", errEc2))
 					return
 				}
 
 				errDelete := ec2Client.DeleteSSHKey(r.Context(), res.Handle)
 				if errDelete != nil {
-					renderError(w, r, payloads.NewAWSError(r.Context(), "can't delete public key", errDelete))
+					renderError(w, r, payloads.NewAWSError(r.Context(), "unable to delete AWS public key", errDelete))
 					return
 				}
 			} else {
