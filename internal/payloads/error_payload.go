@@ -108,19 +108,6 @@ func NewNotFoundError(ctx context.Context, err error) *ResponseError {
 	}
 }
 
-func NewInitializeDAOError(ctx context.Context, message string, err error) *ResponseError {
-	msg := "initialize dao error"
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
-	}
-	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        msg,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
-	}
-}
-
 func NewEnqueueTaskError(ctx context.Context, message string, err error) *ResponseError {
 	msg := "enqueue task error"
 	if logger := ctxval.Logger(ctx); logger != nil {
