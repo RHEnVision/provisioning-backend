@@ -56,7 +56,7 @@ func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	default:
-		renderError(w, r, payloads.NewURLParsingError(r.Context(), "SRV", UnknownReadinessServiceErr))
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "unable to parse SRV parameter", UnknownReadinessServiceErr))
 		return
 	}
 

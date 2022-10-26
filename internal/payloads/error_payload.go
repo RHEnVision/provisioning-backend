@@ -44,26 +44,24 @@ func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	}
 }
 
-func NewMissingRequestParameterError(ctx context.Context, param string) *ResponseError {
-	msg := fmt.Sprintf("missing parameter: %s", param)
+func NewMissingRequestParameterError(ctx context.Context, message string) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Warn().Msg(msg)
+		logger.Warn().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 400,
-		Message:        msg,
+		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 	}
 }
 
-func PubkeyAlreadyExistsError(ctx context.Context, err error) *ResponseError {
-	msg := "pubkey with such name or fingerprint already exists for this account"
+func PubkeyDuplicateError(ctx context.Context, message string, err error) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Warn().Msg(msg)
+		logger.Warn().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 422,
-		Message:        msg,
+		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
 	}
@@ -109,13 +107,12 @@ func NewNotFoundError(ctx context.Context, err error) *ResponseError {
 }
 
 func NewEnqueueTaskError(ctx context.Context, message string, err error) *ResponseError {
-	msg := "enqueue task error"
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Error().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
-		Message:        msg,
+		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
 	}
@@ -135,78 +132,72 @@ func NewDAOError(ctx context.Context, message string, err error) *ResponseError 
 }
 
 func NewRenderError(ctx context.Context, message string, err error) *ResponseError {
-	msg := fmt.Sprintf("render error: %s", message)
 	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Error().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
-		Message:        msg,
+		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
 	}
 }
 
-func NewURLParsingError(ctx context.Context, paramName string, err error) *ResponseError {
-	msg := fmt.Sprintf("URL parsing error for param '%s': %v", paramName, err)
+func NewURLParsingError(ctx context.Context, message string, err error) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Warn().Msg(msg)
+		logger.Warn().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 400,
-		Message:        msg,
+		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
 	}
 }
 
-func NewStatusError(ctx context.Context, err error) *ResponseError {
-	name := "status error"
+func NewStatusError(ctx context.Context, message string, err error) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(name)
+		logger.Error().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
-		Message:        "status error",
+		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
 	}
 }
 
 func NewAWSError(ctx context.Context, message string, err error) *ResponseError {
-	msg := fmt.Sprintf("AWS error: %s: %v", message, err)
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Error().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
-		Message:        msg,
+		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
 	}
 }
 
 func NewAzureError(ctx context.Context, message string, err error) *ResponseError {
-	msg := fmt.Sprintf("Azure error: %s: %v", message, err)
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Error().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
-		Message:        msg,
+		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
 	}
 }
 
 func NewGCPError(ctx context.Context, message string, err error) *ResponseError {
-	msg := fmt.Sprintf("GCP error: %s: %v", message, err)
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Error().Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
-		Message:        msg,
+		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
 	}

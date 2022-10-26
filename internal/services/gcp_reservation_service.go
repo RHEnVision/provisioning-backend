@@ -125,13 +125,13 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	// Enqueue all jobs
 	err = queue.GetEnqueuer().Enqueue(r.Context(), startJobs...)
 	if err != nil {
-		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "GCP reservation", err))
+		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueing task GCP reservation error", err))
 		return
 	}
 
 	// Return response payload
 	if err := render.Render(w, r, payloads.NewGCPReservationResponse(reservation)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "reservation", err))
+		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		return
 	}
 }
