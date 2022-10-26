@@ -31,7 +31,7 @@ type ec2Client struct {
 }
 
 func init() {
-	clients.GetCustomerEC2Client = newAssumedEC2ClientWithRegion
+	clients.GetEC2Client = newAssumedEC2ClientWithRegion
 	clients.GetServiceEC2Client = newEC2ClientWithRegion
 }
 

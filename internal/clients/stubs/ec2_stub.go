@@ -15,7 +15,7 @@ var ec2CtxKey ec2CtxKeyType = "ec2-interface"
 type EC2ClientStub struct{}
 
 func init() {
-	clients.GetCustomerEC2Client = newEC2CustomerClientStubWithRegion
+	clients.GetEC2Client = newEC2CustomerClientStubWithRegion
 	clients.GetServiceEC2Client = newEC2ServiceClientStubWithRegion
 }
 

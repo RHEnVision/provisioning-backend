@@ -83,7 +83,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	pkr.RandomizeTag()
 
 	// upload to cloud with a tag
-	ec2Client, err := clients.GetCustomerEC2Client(ctx, args.ARN, args.Region)
+	ec2Client, err := clients.GetEC2Client(ctx, args.ARN, args.Region)
 	if err != nil {
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
