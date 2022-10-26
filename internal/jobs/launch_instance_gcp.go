@@ -78,7 +78,7 @@ func handleLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArg
 		return fmt.Errorf("cannot get gcp client: %w", err)
 	}
 
-	opName, err := gcpClient.RunInstances(ctx, ptr.To("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
+	opName, err := gcpClient.InsertInstances(ctx, ptr.To("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
 	if err != nil {
 		return fmt.Errorf("cannot run instances for gcp client: %w", err)
 	}

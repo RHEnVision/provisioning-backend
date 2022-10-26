@@ -43,7 +43,7 @@ func SourcesStatus(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 	var statusClient clients.ClientStatuser
 	switch auth.Type() {
 	case models.ProviderTypeAWS:
-		statusClient, err = clients.GetCustomerEC2Client(r.Context(), auth, config.AWS.DefaultRegion)
+		statusClient, err = clients.GetEC2Client(r.Context(), auth, config.AWS.DefaultRegion)
 		if err != nil {
 			renderError(w, r, payloads.NewAWSError(r.Context(), "unable to get client", err))
 			return
