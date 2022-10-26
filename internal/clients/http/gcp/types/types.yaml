@@ -1,0 +1,1485 @@
+a2-highgpu-1g:
+    name: a2-highgpu-1g
+    vcpus: 12
+    cores: 0
+    memory_mib: 83001
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+a2-highgpu-2g:
+    name: a2-highgpu-2g
+    vcpus: 24
+    cores: 0
+    memory_mib: 166002
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+a2-highgpu-4g:
+    name: a2-highgpu-4g
+    vcpus: 48
+    cores: 0
+    memory_mib: 332005
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+a2-highgpu-8g:
+    name: a2-highgpu-8g
+    vcpus: 96
+    cores: 0
+    memory_mib: 664010
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+a2-megagpu-16g:
+    name: a2-megagpu-16g
+    vcpus: 96
+    cores: 0
+    memory_mib: 1328021
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+a2-ultragpu-1g:
+    name: a2-ultragpu-1g
+    vcpus: 12
+    cores: 0
+    memory_mib: 166002
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+a2-ultragpu-2g:
+    name: a2-ultragpu-2g
+    vcpus: 24
+    cores: 0
+    memory_mib: 332005
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+a2-ultragpu-4g:
+    name: a2-ultragpu-4g
+    vcpus: 48
+    cores: 0
+    memory_mib: 664010
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+a2-ultragpu-8g:
+    name: a2-ultragpu-8g
+    vcpus: 96
+    cores: 0
+    memory_mib: 1328021
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highcpu-2:
+    name: c2d-highcpu-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 3905
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highcpu-4:
+    name: c2d-highcpu-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highcpu-8:
+    name: c2d-highcpu-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highcpu-16:
+    name: c2d-highcpu-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highcpu-32:
+    name: c2d-highcpu-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highcpu-56:
+    name: c2d-highcpu-56
+    vcpus: 56
+    cores: 0
+    memory_mib: 109366
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highcpu-112:
+    name: c2d-highcpu-112
+    vcpus: 112
+    cores: 0
+    memory_mib: 218732
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highmem-2:
+    name: c2d-highmem-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highmem-4:
+    name: c2d-highmem-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highmem-8:
+    name: c2d-highmem-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highmem-16:
+    name: c2d-highmem-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highmem-32:
+    name: c2d-highmem-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 249980
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highmem-56:
+    name: c2d-highmem-56
+    vcpus: 56
+    cores: 0
+    memory_mib: 437465
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-highmem-112:
+    name: c2d-highmem-112
+    vcpus: 112
+    cores: 0
+    memory_mib: 874931
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-standard-2:
+    name: c2d-standard-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-standard-4:
+    name: c2d-standard-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-standard-8:
+    name: c2d-standard-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-standard-16:
+    name: c2d-standard-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-standard-32:
+    name: c2d-standard-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-standard-56:
+    name: c2d-standard-56
+    vcpus: 56
+    cores: 0
+    memory_mib: 218732
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2d-standard-112:
+    name: c2d-standard-112
+    vcpus: 112
+    cores: 0
+    memory_mib: 437465
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2-standard-4:
+    name: c2-standard-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2-standard-8:
+    name: c2-standard-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2-standard-16:
+    name: c2-standard-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2-standard-30:
+    name: c2-standard-30
+    vcpus: 30
+    cores: 0
+    memory_mib: 117178
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c2-standard-60:
+    name: c2-standard-60
+    vcpus: 60
+    cores: 0
+    memory_mib: 234356
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-highcpu-2:
+    name: e2-highcpu-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 1952
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-highcpu-4:
+    name: e2-highcpu-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 3905
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-highcpu-8:
+    name: e2-highcpu-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-highcpu-16:
+    name: e2-highcpu-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-highcpu-32:
+    name: e2-highcpu-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-highmem-2:
+    name: e2-highmem-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-highmem-4:
+    name: e2-highmem-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-highmem-8:
+    name: e2-highmem-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-highmem-16:
+    name: e2-highmem-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-medium:
+    name: e2-medium
+    vcpus: 2
+    cores: 0
+    memory_mib: 3905
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-micro:
+    name: e2-micro
+    vcpus: 2
+    cores: 0
+    memory_mib: 976
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure: null
+e2-small:
+    name: e2-small
+    vcpus: 2
+    cores: 0
+    memory_mib: 1952
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-standard-2:
+    name: e2-standard-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-standard-4:
+    name: e2-standard-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-standard-8:
+    name: e2-standard-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-standard-16:
+    name: e2-standard-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+e2-standard-32:
+    name: e2-standard-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+f1-micro:
+    name: f1-micro
+    vcpus: 1
+    cores: 0
+    memory_mib: 585
+    storage_gb: 0
+    supported: false
+    arch: x86_64
+    azure: null
+g1-small:
+    name: g1-small
+    vcpus: 1
+    cores: 0
+    memory_mib: 1659
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m1-megamem-96:
+    name: m1-megamem-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 1399890
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m1-ultramem-40:
+    name: m1-ultramem-40
+    vcpus: 40
+    cores: 0
+    memory_mib: 938403
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m1-ultramem-80:
+    name: m1-ultramem-80
+    vcpus: 80
+    cores: 0
+    memory_mib: 1876806
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m1-ultramem-160:
+    name: m1-ultramem-160
+    vcpus: 160
+    cores: 0
+    memory_mib: 3753613
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m2-hypermem-416:
+    name: m2-hypermem-416
+    vcpus: 416
+    cores: 0
+    memory_mib: 8624328
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m2-megamem-416:
+    name: m2-megamem-416
+    vcpus: 416
+    cores: 0
+    memory_mib: 5749552
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m2-ultramem-208:
+    name: m2-ultramem-208
+    vcpus: 208
+    cores: 0
+    memory_mib: 5749552
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m2-ultramem-416:
+    name: m2-ultramem-416
+    vcpus: 416
+    cores: 0
+    memory_mib: 11499104
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m2-ultramem2x-96:
+    name: m2-ultramem2x-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 1220608
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m2-ultramemx-96:
+    name: m2-ultramemx-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 585891
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highcpu-2:
+    name: n1-highcpu-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 1757
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highcpu-4:
+    name: n1-highcpu-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 3514
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highcpu-8:
+    name: n1-highcpu-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 7030
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highcpu-16:
+    name: n1-highcpu-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 14061
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highcpu-32:
+    name: n1-highcpu-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 28122
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highcpu-64:
+    name: n1-highcpu-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 56245
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highcpu-96:
+    name: n1-highcpu-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 84368
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highmem-2:
+    name: n1-highmem-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 12694
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highmem-4:
+    name: n1-highmem-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 25388
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highmem-8:
+    name: n1-highmem-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 50777
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highmem-16:
+    name: n1-highmem-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 101554
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highmem-32:
+    name: n1-highmem-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 203109
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highmem-64:
+    name: n1-highmem-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 406218
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-highmem-96:
+    name: n1-highmem-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 609327
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-megamem-96:
+    name: n1-megamem-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 1399890
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-standard-1:
+    name: n1-standard-1
+    vcpus: 1
+    cores: 0
+    memory_mib: 3661
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-standard-2:
+    name: n1-standard-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 7323
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-standard-4:
+    name: n1-standard-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 14647
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-standard-8:
+    name: n1-standard-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 29294
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-standard-16:
+    name: n1-standard-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 58589
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-standard-32:
+    name: n1-standard-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 117178
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-standard-64:
+    name: n1-standard-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 234356
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-standard-96:
+    name: n1-standard-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 351535
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-ultramem-40:
+    name: n1-ultramem-40
+    vcpus: 40
+    cores: 0
+    memory_mib: 938403
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-ultramem-80:
+    name: n1-ultramem-80
+    vcpus: 80
+    cores: 0
+    memory_mib: 1876806
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n1-ultramem-160:
+    name: n1-ultramem-160
+    vcpus: 160
+    cores: 0
+    memory_mib: 3753613
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-2:
+    name: n2d-highcpu-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 1952
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-4:
+    name: n2d-highcpu-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 3905
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-8:
+    name: n2d-highcpu-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-16:
+    name: n2d-highcpu-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-32:
+    name: n2d-highcpu-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-48:
+    name: n2d-highcpu-48
+    vcpus: 48
+    cores: 0
+    memory_mib: 46871
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-64:
+    name: n2d-highcpu-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-80:
+    name: n2d-highcpu-80
+    vcpus: 80
+    cores: 0
+    memory_mib: 78118
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-96:
+    name: n2d-highcpu-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 93742
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-128:
+    name: n2d-highcpu-128
+    vcpus: 128
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highcpu-224:
+    name: n2d-highcpu-224
+    vcpus: 224
+    cores: 0
+    memory_mib: 218732
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highmem-2:
+    name: n2d-highmem-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highmem-4:
+    name: n2d-highmem-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highmem-8:
+    name: n2d-highmem-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highmem-16:
+    name: n2d-highmem-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highmem-32:
+    name: n2d-highmem-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 249980
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highmem-48:
+    name: n2d-highmem-48
+    vcpus: 48
+    cores: 0
+    memory_mib: 374970
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highmem-64:
+    name: n2d-highmem-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 499961
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highmem-80:
+    name: n2d-highmem-80
+    vcpus: 80
+    cores: 0
+    memory_mib: 624951
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-highmem-96:
+    name: n2d-highmem-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 749941
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-2:
+    name: n2d-standard-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-4:
+    name: n2d-standard-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-8:
+    name: n2d-standard-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-16:
+    name: n2d-standard-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-32:
+    name: n2d-standard-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-48:
+    name: n2d-standard-48
+    vcpus: 48
+    cores: 0
+    memory_mib: 187485
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-64:
+    name: n2d-standard-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 249980
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-80:
+    name: n2d-standard-80
+    vcpus: 80
+    cores: 0
+    memory_mib: 312475
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-96:
+    name: n2d-standard-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 374970
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-128:
+    name: n2d-standard-128
+    vcpus: 128
+    cores: 0
+    memory_mib: 499961
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2d-standard-224:
+    name: n2d-standard-224
+    vcpus: 224
+    cores: 0
+    memory_mib: 874931
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highcpu-2:
+    name: n2-highcpu-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 1952
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highcpu-4:
+    name: n2-highcpu-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 3905
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highcpu-8:
+    name: n2-highcpu-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highcpu-16:
+    name: n2-highcpu-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highcpu-32:
+    name: n2-highcpu-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highcpu-48:
+    name: n2-highcpu-48
+    vcpus: 48
+    cores: 0
+    memory_mib: 46871
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highcpu-64:
+    name: n2-highcpu-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highcpu-80:
+    name: n2-highcpu-80
+    vcpus: 80
+    cores: 0
+    memory_mib: 78118
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highcpu-96:
+    name: n2-highcpu-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 93742
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-2:
+    name: n2-highmem-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-4:
+    name: n2-highmem-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-8:
+    name: n2-highmem-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-16:
+    name: n2-highmem-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-32:
+    name: n2-highmem-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 249980
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-48:
+    name: n2-highmem-48
+    vcpus: 48
+    cores: 0
+    memory_mib: 374970
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-64:
+    name: n2-highmem-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 499961
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-80:
+    name: n2-highmem-80
+    vcpus: 80
+    cores: 0
+    memory_mib: 624951
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-96:
+    name: n2-highmem-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 749941
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-highmem-128:
+    name: n2-highmem-128
+    vcpus: 128
+    cores: 0
+    memory_mib: 843684
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-2:
+    name: n2-standard-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-4:
+    name: n2-standard-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-8:
+    name: n2-standard-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-16:
+    name: n2-standard-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-32:
+    name: n2-standard-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-48:
+    name: n2-standard-48
+    vcpus: 48
+    cores: 0
+    memory_mib: 187485
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-64:
+    name: n2-standard-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 249980
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-80:
+    name: n2-standard-80
+    vcpus: 80
+    cores: 0
+    memory_mib: 312475
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-96:
+    name: n2-standard-96
+    vcpus: 96
+    cores: 0
+    memory_mib: 374970
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+n2-standard-128:
+    name: n2-standard-128
+    vcpus: 128
+    cores: 0
+    memory_mib: 499961
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+t2a-standard-1:
+    name: t2a-standard-1
+    vcpus: 1
+    cores: 0
+    memory_mib: 3905
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+t2a-standard-2:
+    name: t2a-standard-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+t2a-standard-4:
+    name: t2a-standard-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+t2a-standard-8:
+    name: t2a-standard-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+t2a-standard-16:
+    name: t2a-standard-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+t2a-standard-32:
+    name: t2a-standard-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+t2a-standard-48:
+    name: t2a-standard-48
+    vcpus: 48
+    cores: 0
+    memory_mib: 187485
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+t2d-standard-1:
+    name: t2d-standard-1
+    vcpus: 1
+    cores: 0
+    memory_mib: 3905
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+t2d-standard-2:
+    name: t2d-standard-2
+    vcpus: 2
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+t2d-standard-4:
+    name: t2d-standard-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+t2d-standard-8:
+    name: t2d-standard-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+t2d-standard-16:
+    name: t2d-standard-16
+    vcpus: 16
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+t2d-standard-32:
+    name: t2d-standard-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 124990
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+t2d-standard-48:
+    name: t2d-standard-48
+    vcpus: 48
+    cores: 0
+    memory_mib: 187485
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+t2d-standard-60:
+    name: t2d-standard-60
+    vcpus: 60
+    cores: 0
+    memory_mib: 234356
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
