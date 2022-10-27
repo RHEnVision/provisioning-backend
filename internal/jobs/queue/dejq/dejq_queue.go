@@ -39,20 +39,21 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 	logger.Debug().Msgf("Initializing '%s' job queue", config.Worker.Queue)
 
 	var err error
-	if config.Worker.Queue == "memory" {
+	switch config.Worker.Queue {
+	case "memory":
 		dejqQueue, err = mem.NewClient(ctx, zerologr.New(logger))
-	} else if config.Worker.Queue == "redis" {
+	case "redis":
 		dejqQueue, err = redis.NewClient(ctx, zerologr.New(logger), config.RedisHostAndPort(),
 			config.Application.Cache.Redis.User, config.Application.Cache.Redis.Password,
 			config.Application.Cache.Redis.DB, "provisioning-job-queue")
-	} else if config.Worker.Queue == "postgres" {
+	case "postgres":
 		// TODO dejq must be refactored to use PGX too
 		dejqQueue, err = postgres.NewClient(ctx, zerologr.New(logger), nil,
 			config.Worker.Concurrency,
 			config.Worker.Heartbeat,
 			config.Worker.MaxBeats)
-	} else if config.Worker.Queue == "sqs" {
-		panic("SQS dejqQueue implementation is not supported")
+	default:
+		panic("unknown WORKER_QUEUE setting, expected values: memory, redis, postgres")
 	}
 
 	if err != nil {
