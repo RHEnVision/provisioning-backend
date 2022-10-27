@@ -28,7 +28,7 @@ func init() {
 }
 
 func RegisterJobs(logger *zerolog.Logger) {
-	logger.Debug().Msg("Initializing job queue")
+	logger.Debug().Msg("Registering job queue handlers")
 	dejqQueue.RegisterHandler(queue.TypeNoop, jobs.HandleNoop)
 	dejqQueue.RegisterHandler(queue.TypePubkeyUploadAws, jobs.HandlePubkeyUploadAWS)
 	dejqQueue.RegisterHandler(queue.TypeLaunchInstanceAws, jobs.HandleLaunchInstanceAWS)
@@ -36,6 +36,8 @@ func RegisterJobs(logger *zerolog.Logger) {
 }
 
 func Initialize(ctx context.Context, logger *zerolog.Logger) error {
+	logger.Debug().Msgf("Initializing '%s' job queue", config.Worker.Queue)
+
 	var err error
 	if config.Worker.Queue == "memory" {
 		dejqQueue, err = mem.NewClient(ctx, zerologr.New(logger))
@@ -52,9 +54,15 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 	} else if config.Worker.Queue == "sqs" {
 		panic("SQS dejqQueue implementation is not supported")
 	}
+
 	if err != nil {
 		return fmt.Errorf("cannot initialize dejqQueue: %w", err)
 	}
+
+	if dejqQueue == nil {
+		panic("dejq queue was not initialized, check configuration")
+	}
+
 	return nil
 }
 
