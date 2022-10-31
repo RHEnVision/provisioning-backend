@@ -19,3 +19,4 @@ TAGS
 /scripts/rest_examples/*.local.http
 /scripts/rest_examples/*.private.env.json
 /dao_tests.test
+/.fleet/
