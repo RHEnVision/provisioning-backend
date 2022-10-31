@@ -12,6 +12,7 @@ TAGS
 /deploy/bonfire.yaml
 /Containerfile
 /tern.conf
+/internal/db/seeds/*.local.sql
 /mk/private.mk
 /scripts/sources-api-go
 /scripts/sources.local.conf
