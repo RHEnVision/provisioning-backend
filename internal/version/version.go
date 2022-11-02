@@ -21,11 +21,14 @@ const (
 	// UnleashAppName contains string used to initialize Unleash (feature flags)
 	UnleashAppName = ApplicationName
 
-	// APIPathName is the name used in main route API prefix
+	// APIPathVersion is the name used in main route API prefix
 	APIPathVersion = "v1"
 
 	// OpenTelemetryVersion is used for all OpenTelemetry tracing
 	OpenTelemetryVersion = "1.0.0"
+
+	// KafkaClientID is used to identify Kafka client
+	KafkaClientID = ApplicationName
 )
 
 func init() {
