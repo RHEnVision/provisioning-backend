@@ -12,9 +12,7 @@ TAGS
 /pbapi
 /pbmigrate
 /pbworker
-/*.test
-
-# vendoring
+/pbstatuser
 /vendor/
 
 # config
@@ -23,7 +21,8 @@ TAGS
 /deploy/bonfire.yaml
 /Containerfile
 /scripts/sources-api-go
-/scripts/sources.local.conf
+/scripts/*.local.conf
+/scripts/kafka
 /scripts/rest_examples/*.local.http
 /scripts/rest_examples/*.private.env.json
 

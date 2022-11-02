@@ -123,6 +123,18 @@ var config struct {
 		URL         string `env:"URL" env-default:"http://localhost:4242" env-description:"unleash service URL"`
 		Token       string `env:"TOKEN" env-default:"" env-description:"unleash service client access token"`
 	} `env-prefix:"UNLEASH_"`
+	Kafka struct {
+		Enabled  bool     `env:"ENABLED" env-default:"false" env-description:"kafka service enabled"`
+		Brokers  []string `env:"BROKERS" env-default:"localhost:9092" env-description:"kafka hostname:port list of brokers"`
+		AuthType string   `env:"AUTH_TYPE" env-default:"" env-description:"kafka authentication type (mtls, sasl or empty)"`
+		CACert   string   `env:"CA_CERT" env-default:"" env-description:"kafka TLS CA certificate path"`
+		SASL     struct {
+			Username         string `env:"USERNAME" env-default:"" env-description:"kafka SASL username"`
+			Password         string `env:"PASSWORD" env-default:"" env-description:"kafka SASL password"`
+			SaslMechanism    string `env:"MECHANISM" env-default:"" env-description:"kafka SASL mechanism (scram-sha-512, scram-sha-256 or plain)"`
+			SecurityProtocol string `env:"PROTOCOL" env-default:"" env-description:"kafka SASL security protocol"`
+		} `env-prefix:"SASL_"`
+	} `env-prefix:"KAFKA_"`
 }
 
 // Config shortcuts
@@ -141,6 +153,7 @@ var (
 	Sources       = &config.RestEndpoints.Sources
 	Worker        = &config.Worker
 	Unleash       = &config.Unleash
+	Kafka         = &config.Kafka
 )
 
 // Errors
@@ -205,6 +218,34 @@ func Initialize(configFiles ...string) {
 		config.Unleash.URL = url
 		if cfg.FeatureFlags.ClientAccessToken != nil {
 			config.Unleash.Token = fmt.Sprintf("Bearer %s", *cfg.FeatureFlags.ClientAccessToken)
+		}
+
+		// kafka
+		config.Kafka.Brokers = make([]string, len(cfg.Kafka.Brokers))
+		for i, b := range cfg.Kafka.Brokers {
+			config.Kafka.Brokers[i] = fmt.Sprintf("%s:%d", b.Hostname, b.Port)
+
+			// assumption: TLS/SASL credentials are always the same for all nodes in a cluster
+			if b.Authtype != nil && *b.Authtype != "" {
+				config.Kafka.AuthType = string(*b.Authtype)
+			}
+			if b.Cacert != nil && *b.Cacert != "" {
+				config.Kafka.CACert = *b.Cacert
+			}
+			if b.Sasl != nil {
+				if b.Sasl.SecurityProtocol != nil && *b.Sasl.SecurityProtocol != "" {
+					config.Kafka.SASL.SecurityProtocol = *b.Sasl.SecurityProtocol
+				}
+				if b.Sasl.SaslMechanism != nil && *b.Sasl.SaslMechanism != "" {
+					config.Kafka.SASL.SaslMechanism = *b.Sasl.SaslMechanism
+				}
+				if b.Sasl.Username != nil && *b.Sasl.Username != "" {
+					config.Kafka.SASL.Username = *b.Sasl.Username
+				}
+				if b.Sasl.Password != nil && *b.Sasl.Password != "" {
+					config.Kafka.SASL.Password = *b.Sasl.Password
+				}
+			}
 		}
 
 		// HTTP proxies are not allowed in clowder environment
