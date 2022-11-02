@@ -32,4 +32,4 @@ run: pbapi ## Build and run backend API
 
 .PHONY: clean
 clean: ## Clean build artifacts
-	rm pbapi pbmigrate pbworker
+	-rm pbapi pbmigrate pbworker
