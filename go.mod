@@ -36,7 +36,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.4.0
 	github.com/jackc/pgx-zerolog v0.0.0-20220923130014-7856b90a65ae
 	github.com/jackc/pgx/v5 v5.0.4
-	github.com/jackc/tern/v2 v2.0.0-beta.2
+	github.com/jackc/tern/v2 v2.0.0-beta.3
 	github.com/lzap/cloudwatchwriter2 v1.0.0
 	github.com/lzap/dejq v1.1.0
 	github.com/pkg/errors v0.9.1
@@ -101,7 +101,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.5.1 // indirect
-	github.com/huandu/xstrings v1.3.2 // indirect
+	github.com/huandu/xstrings v1.3.3 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/invopop/yaml v0.2.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
