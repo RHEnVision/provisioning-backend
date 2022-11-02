@@ -23,7 +23,7 @@ require (
 	github.com/aws/smithy-go v1.13.3
 	github.com/deepmap/oapi-codegen v1.11.0
 	github.com/exaring/otelpgx v0.2.0
-	github.com/georgysavva/scany/v2 v2.0.0-alpha.3
+	github.com/georgysavva/scany/v2 v2.0.0
 	github.com/getkin/kin-openapi v0.104.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-chi/chi/v5 v5.0.7
