@@ -9,10 +9,12 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/RHEnVision/provisioning-backend/internal/background"
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
+	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 
@@ -83,7 +85,20 @@ func main() {
 	// initialize cache
 	cache.Initialize()
 
-	// initialize the job queue
+	// initialize platform kafka
+	if config.Kafka.Enabled {
+		err = kafka.InitializeKafkaBroker()
+		if err != nil {
+			logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
+		}
+	}
+
+	// initialize background goroutines
+	bgCtx, bgCancel := context.WithCancel(ctx)
+	background.Initialize(bgCtx)
+	defer bgCancel()
+
+	// initialize job queue
 	err = dejq.Initialize(ctx, &logger)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing dejq queue")
@@ -157,8 +172,11 @@ func main() {
 
 	go func() {
 		if err := metricsServer.ListenAndServe(); err != nil {
-			if !errors.Is(err, http.ErrServerClosed) {
-				log.Fatal().Err(err).Msg("Metrics service listen error")
+			var errInUse syscall.Errno
+			if errors.As(err, &errInUse) && errInUse == syscall.EADDRINUSE {
+				log.Warn().Err(err).Msg("Not starting metrics service, port already in use")
+			} else if !errors.Is(err, http.ErrServerClosed) {
+				log.Warn().Err(err).Msg("Metrics service listen error")
 			}
 		}
 	}()

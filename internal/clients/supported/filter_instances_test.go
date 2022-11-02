@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"

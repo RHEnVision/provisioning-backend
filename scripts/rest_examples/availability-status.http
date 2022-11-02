@@ -1,0 +1,6 @@
+// @no-log
+POST http://{{hostname}}:{{port}}/{{prefix}}/availability_status HTTP/1.1
+Content-Type: application/json
+X-Rh-Identity: {{identity}}
+
+{"source_id": "1"}
