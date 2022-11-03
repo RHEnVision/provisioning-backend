@@ -1,3 +1,47 @@
+<a name="0.10.0"></a>
+## [0.10.0](https://github.com/RHEnVision/provisioning-backend/compare/0.9.0...0.10.0) (2022-11-02)
+
+### Bug Fixes
+- **changelog:** correct upstream links ([d34b161](https://github.com/RHEnVision/provisioning-backend/commit/d34b16184094fd51b11d1ad084b8a1201b910291))
+- **ec2:** typo in etag prefix ([ea86eb2](https://github.com/RHEnVision/provisioning-backend/commit/ea86eb23c48c78fbd894100207aa4bfb59726030))
+- **logging:** no colors for clowder ([cff318a](https://github.com/RHEnVision/provisioning-backend/commit/cff318a0ece63abe253915239e72fc9d51faf9ff))
+- **queue:** improve errors and logging for dejq init ([dff6b11](https://github.com/RHEnVision/provisioning-backend/commit/dff6b11c7a17cc5f044d71064b83b9dbb00542c3))
+- **queue:** recognize unknown worker config values ([a4114e8](https://github.com/RHEnVision/provisioning-backend/commit/a4114e8c304ebd9922d8da5e5c01b0962bf0c72c))
+- **services:** refactor errors ([c1b05f4](https://github.com/RHEnVision/provisioning-backend/commit/c1b05f44a60580e3618446a19598c6a161401337))
+- Add error messages ([e937d94](https://github.com/RHEnVision/provisioning-backend/commit/e937d948ad8faaddc5a4632cabbe93926360c412))
+- remove DAOInit Error ([5800a20](https://github.com/RHEnVision/provisioning-backend/commit/5800a20aa4f6a768c6b533eea752fd010c88bb25))
+- throw an error when pubkey is duplicated (HMSPROV-309) ([5a5078d](https://github.com/RHEnVision/provisioning-backend/commit/5a5078dd355b39d17bf2fc7a11ffc20f204e4ee8))
+
+### Build
+- **clowder:** Add full image builder URL ([ba4c795](https://github.com/RHEnVision/provisioning-backend/commit/ba4c795b25a1009c56f438e0f050e41e675ff843))
+- **deploy:** Allow passing image builder url ([e5d85bc](https://github.com/RHEnVision/provisioning-backend/commit/e5d85bcf9564e43930b93d702b93baeda794803e))
+
+### Chore
+- **azure:** refresh types ([5020551](https://github.com/RHEnVision/provisioning-backend/commit/5020551e17ea64c9985c9b17b2e2398ade83423c))
+- **errors:** change payload structure ([19d31bf](https://github.com/RHEnVision/provisioning-backend/commit/19d31bf974a9442d12f1119171ab93dc288e6392))
+- add JetBrains Fleet to gitignore ([304f719](https://github.com/RHEnVision/provisioning-backend/commit/304f71943b638c69672ccd8917851f30995b8f9a))
+- allow local seed scripts ([e59d597](https://github.com/RHEnVision/provisioning-backend/commit/e59d59702e03b1e6fa2cd6207e7730bd0dc3518b))
+- change gitignore for sources ([699b2eb](https://github.com/RHEnVision/provisioning-backend/commit/699b2ebe7fdf2ba3bc0bc69dde32b1b1a604d07a))
+
+### Code Refactoring
+- **azure:** rename client type ([c7ec156](https://github.com/RHEnVision/provisioning-backend/commit/c7ec156c79d26ae1d1baa51c1871589ff839a7cb))
+- **azure:** split service and cust ifaces ([924216b](https://github.com/RHEnVision/provisioning-backend/commit/924216b3e3eb5b8c1680116346889771d23152a6))
+- **changelog:** different tool for changelog ([febcb38](https://github.com/RHEnVision/provisioning-backend/commit/febcb38efffad06ab590d848b52cce79059100f3))
+- **clients:** change arn to authentication for generic purpose ([5b19411](https://github.com/RHEnVision/provisioning-backend/commit/5b19411b4fbef8030867fbfc4e49eecc0c65a56b))
+- **clients:** remove Customer prefix from EC2 client ([2ec34db](https://github.com/RHEnVision/provisioning-backend/commit/2ec34dbc9867b72f90fb20a44f53a23f29350f0a))
+
+### Docs
+- **readme:** Add info for creating an image for gcp ([02c171a](https://github.com/RHEnVision/provisioning-backend/commit/02c171adabec92ab1fa998fc20f02bf1d6256912))
+
+### Features
+- **cache:** add Redis cache and queue ([1d60e0f](https://github.com/RHEnVision/provisioning-backend/commit/1d60e0f59a8e2f01fda1451546f36dd3044effa3))
+- **clients:** Generated machine types and types per zone ([a654baa](https://github.com/RHEnVision/provisioning-backend/commit/a654baa0132724f6c1a5c34e8d3efdad9c826344))
+- **clients:** Preload machine types for GCP ([741b820](https://github.com/RHEnVision/provisioning-backend/commit/741b8207c6ee22d95dc33c84ef001ac413f5e68a))
+- **flags:** feature flags endpoint ([727a72f](https://github.com/RHEnVision/provisioning-backend/commit/727a72f86e5f0e89a9166ebb5dc74b5545fdfb27))
+- **gcp:** add gcp request payload ([0c718cc](https://github.com/RHEnVision/provisioning-backend/commit/0c718cc6321fd965d055288514808f9b66ce110e))
+- welcome HTML page ([a2fe12c](https://github.com/RHEnVision/provisioning-backend/commit/a2fe12cdde2d6c3525cb1e706dfc27e6ce2c4d36))
+
+
 <a name="0.9.0"></a>
 ## [0.9.0](https://github.com/RHEnVision/provisioning-backend/compare/0.8.0...0.9.0) (2022-10-17)
 
