@@ -1,22 +1,39 @@
-/.idea
-/.vscode
+# IDE configurations and build locations
+/.idea/
+/.vscode/
+/.fleet/
+/cmd/*/__debug_bin
+
+# universal-ctags
 tags
 TAGS
-/*.db
+
+# binaries
 /pbapi
 /pbmigrate
 /pbworker
+/*.test
+
+# vendoring
 /vendor/
+
+# config
 /config/*.env
 /configs
 /deploy/bonfire.yaml
 /Containerfile
-/tern.conf
-/internal/db/seeds/*.local.sql
-/mk/private.mk
 /scripts/sources-api-go
 /scripts/sources.local.conf
 /scripts/rest_examples/*.local.http
 /scripts/rest_examples/*.private.env.json
-/dao_tests.test
-/.fleet/
+
+# custom make targets
+/mk/private.mk
+
+# migrations
+/tern.conf
+/internal/db/seeds/*.local.sql
+
+# envdir/envrc (https://direnv.net)
+/.envrc
+/bin

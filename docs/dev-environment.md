@@ -10,6 +10,17 @@ The ideal installation location is `~/go`, then just add `~/go/bin` to PATH and 
 
 Tip: Go installation can be fully done in GoLang preferences, the default installation location is `~/go`.
 
+A great tool is [.envrc](https://direnv.net) which allows automatic switching of Go versions (or any environmental variables or PATH):
+
+```
+$ cat .envrc
+GOVER=1.18
+export GOROOT="$(go$GOVER env GOROOT)"
+PATH_add "$(go$GOVER env GOROOT)/bin"
+export GOBIN="$(pwd)/bin"
+PATH_add "$(pwd)/bin"
+```
+
 ## Editor or IDE
 
 Luckily, Go language contains the very cool `go fmt` utility which we take advantage. We stick with the Go language recommendations, on top of that we use `goimports` tool for import sorting to prevent git conflicts.
