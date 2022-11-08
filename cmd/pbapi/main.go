@@ -97,15 +97,15 @@ func main() {
 	rootRouter := chi.NewRouter()
 	apiRouter := chi.NewRouter()
 
-	rootRouter.Use(m.NewPatternMiddleware(version.PrometheusLabelName))
-	rootRouter.Use(telemetry.Middleware(rootRouter))
-	rootRouter.Use(m.VersionMiddleware)
-	rootRouter.Use(m.TraceID)
-	rootRouter.Use(m.LoggerMiddleware(&log.Logger))
+	apiRouter.Use(m.NewPatternMiddleware(version.PrometheusLabelName))
+	apiRouter.Use(telemetry.Middleware(apiRouter))
+	apiRouter.Use(m.VersionMiddleware)
+	apiRouter.Use(m.TraceID)
+	apiRouter.Use(m.LoggerMiddleware(&log.Logger))
 
 	// Set Content-Type to JSON for chi renderer. Warning: Non-chi routes
 	// MUST set Content-Type header on their own!
-	rootRouter.Use(render.SetContentType(render.ContentTypeJSON))
+	apiRouter.Use(render.SetContentType(render.ContentTypeJSON))
 
 	// Setup optional compressor, chi uses sync.Pool so this is cheap.
 	// This setup only uses the default gzip which is widely supported
@@ -117,7 +117,7 @@ func main() {
 			"application/json",
 			"application/x-yaml",
 			"text/plain")
-		rootRouter.Use(compressor.Handler)
+		apiRouter.Use(compressor.Handler)
 	}
 
 	// Mount paths
