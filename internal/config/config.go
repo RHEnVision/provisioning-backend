@@ -201,7 +201,7 @@ func Initialize(configFiles ...string) {
 
 		// feature flags
 		config.Unleash.Enabled = true
-		url := fmt.Sprintf("%s://%s:%d", cfg.FeatureFlags.Scheme, cfg.FeatureFlags.Hostname, cfg.FeatureFlags.Port)
+		url := fmt.Sprintf("%s://%s:%d/api", cfg.FeatureFlags.Scheme, cfg.FeatureFlags.Hostname, cfg.FeatureFlags.Port)
 		config.Unleash.URL = url
 		if cfg.FeatureFlags.ClientAccessToken != nil {
 			config.Unleash.Token = *cfg.FeatureFlags.ClientAccessToken
