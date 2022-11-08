@@ -74,7 +74,7 @@ type ReservationDao interface {
 
 	// ListInstances returns instances associated to a reservation. UNSCOPED.
 	// It currently lists all instances and not instances for a reservation, this is a TODO.
-	ListInstances(ctx context.Context, limit, offset int64) ([]*models.ReservationInstance, error)
+	ListInstances(ctx context.Context, reservationId int64) ([]*models.ReservationInstance, error)
 
 	// UpdateStatus sets status field and increment step counter by addSteps. UNSCOPED.
 	UpdateStatus(ctx context.Context, id int64, status string, addSteps int32) error
