@@ -11,6 +11,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const unleashProjectName = "default"
+
 // FeatureEnabled returns a user-specific or global feature flag. When such flag is not found,
 // true is returned.
 func FeatureEnabled(ctx context.Context, name string) bool {
@@ -45,8 +47,9 @@ func InitializeFeatureFlags(ctx context.Context) error {
 	}
 	err := unleash.Initialize(
 		unleash.WithListener(&listener),
-		unleash.WithAppName(version.UnleashAppName),
 		unleash.WithUrl(config.Unleash.URL),
+		unleash.WithProjectName(unleashProjectName),
+		unleash.WithAppName(version.UnleashAppName),
 		unleash.WithEnvironment(config.Unleash.Environment),
 		unleash.WithCustomHeaders(http.Header{"Authorization": {config.Unleash.Token}}),
 	)
