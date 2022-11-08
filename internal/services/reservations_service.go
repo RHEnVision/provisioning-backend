@@ -64,10 +64,15 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get generic reservation and find its type
 	rDao := dao.GetReservationDao(r.Context())
+	reservation, err := rDao.GetById(r.Context(), id)
+	if err != nil {
+		renderNotFoundOrDAOError(w, r, err, "get reservation detail")
+		return
+	}
 
-	// TODO: Add support for GCP and Azure, not generic reservation
-	switch pType := models.ProviderTypeFromString(chi.URLParam(r, "TYPE")); pType {
+	switch reservation.Provider {
 	case models.ProviderTypeAWS:
 		reservation, err := rDao.GetAWSById(r.Context(), id)
 		if err != nil {
@@ -75,16 +80,16 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation)); err != nil {
-			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
-		}
-	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
-		reservation, err := rDao.GetById(r.Context(), id)
+		instances, err := rDao.ListInstances(r.Context(), id)
 		if err != nil {
 			renderNotFoundOrDAOError(w, r, err, "get reservation detail")
 			return
 		}
 
+		if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation, instances)); err != nil {
+			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
+		}
+	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
 		if err := render.Render(w, r, payloads.NewReservationResponse(reservation)); err != nil {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		}

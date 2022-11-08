@@ -79,6 +79,12 @@
           "instance_type": {
             "type": "string"
           },
+          "instances": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "name": {
             "type": "string"
           },
