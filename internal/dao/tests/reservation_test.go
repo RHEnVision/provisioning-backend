@@ -144,7 +144,7 @@ func TestReservationCreateAWSInstance(t *testing.T) {
 		err = reservationDao.CreateInstance(ctx, newInstancesReservation(reservation.ID))
 		require.NoError(t, err)
 
-		reservations, err := reservationDao.ListInstances(ctx, 10, 0)
+		reservations, err := reservationDao.ListInstances(ctx, reservation.ID)
 		require.NoError(t, err)
 		assert.Equal(t, 1, len(reservations))
 	})

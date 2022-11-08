@@ -56,7 +56,7 @@ func (stub *reservationDaoStub) List(ctx context.Context, limit, offset int64) (
 	return nil, nil
 }
 
-func (stub *reservationDaoStub) ListInstances(ctx context.Context, limit, offset int64) ([]*models.ReservationInstance, error) {
+func (stub *reservationDaoStub) ListInstances(ctx context.Context, reservationId int64) ([]*models.ReservationInstance, error) {
 	return nil, nil
 }
 

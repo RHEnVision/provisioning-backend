@@ -178,12 +178,14 @@ func (x *reservationDao) List(ctx context.Context, limit, offset int64) ([]*mode
 	return result, nil
 }
 
-func (x *reservationDao) ListInstances(ctx context.Context, limit, offset int64) ([]*models.ReservationInstance, error) {
-	query := `SELECT * FROM reservation_instances ORDER BY reservation_id LIMIT $1 OFFSET $2`
+func (x *reservationDao) ListInstances(ctx context.Context, reservationId int64) ([]*models.ReservationInstance, error) {
+	query := `SELECT reservation_id, instance_id FROM reservation_instances, reservations
+         WHERE reservation_id = reservations.id AND account_id = $1 AND reservation_id = $2`
 
+	accountId := ctxval.AccountId(ctx)
 	var result []*models.ReservationInstance
 
-	rows, err := db.Pool.Query(ctx, query, limit, offset)
+	rows, err := db.Pool.Query(ctx, query, accountId, reservationId)
 	if err != nil {
 		return nil, fmt.Errorf("pgx error: %w", err)
 	}

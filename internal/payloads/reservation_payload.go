@@ -68,6 +68,9 @@ type AWSReservationResponsePayload struct {
 
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff"`
+
+	// Instance IDs, only present for finished reservations
+	Instances []string `json:"instances,omitempty"`
 }
 
 type GCPReservationResponsePayload struct {
@@ -179,7 +182,12 @@ func (p *GCPReservationRequestPayload) Bind(_ *http.Request) error {
 	return nil
 }
 
-func NewAWSReservationResponse(reservation *models.AWSReservation) render.Renderer {
+func NewAWSReservationResponse(reservation *models.AWSReservation, instances []*models.ReservationInstance) render.Renderer {
+	instanceIds := make([]string, len(instances))
+	for iter, inst := range instances {
+		instanceIds[iter] = inst.InstanceID
+	}
+
 	response := AWSReservationResponsePayload{
 		PubkeyID:         reservation.PubkeyID,
 		ImageID:          reservation.ImageID,
@@ -191,6 +199,7 @@ func NewAWSReservationResponse(reservation *models.AWSReservation) render.Render
 		ID:               reservation.ID,
 		Name:             reservation.Detail.Name,
 		PowerOff:         reservation.Detail.PowerOff,
+		Instances:        instanceIds,
 	}
 	return &response
 }

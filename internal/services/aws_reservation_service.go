@@ -151,7 +151,8 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return response payload
-	if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation)); err != nil {
+	unused := make([]*models.ReservationInstance, 0, 0)
+	if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation, unused)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render AWS reservation", err))
 	}
 }
