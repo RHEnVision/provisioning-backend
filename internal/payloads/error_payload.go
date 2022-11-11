@@ -121,7 +121,7 @@ func NewEnqueueTaskError(ctx context.Context, message string, err error) *Respon
 func NewDAOError(ctx context.Context, message string, err error) *ResponseError {
 	msg := fmt.Sprintf("DAO error: %s", message)
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(msg)
+		logger.Error().Err(err).Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
@@ -133,7 +133,7 @@ func NewDAOError(ctx context.Context, message string, err error) *ResponseError 
 
 func NewRenderError(ctx context.Context, message string, err error) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(message)
+		logger.Error().Err(err).Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
@@ -157,7 +157,7 @@ func NewURLParsingError(ctx context.Context, message string, err error) *Respons
 
 func NewStatusError(ctx context.Context, message string, err error) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(message)
+		logger.Error().Err(err).Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
@@ -169,7 +169,7 @@ func NewStatusError(ctx context.Context, message string, err error) *ResponseErr
 
 func NewAWSError(ctx context.Context, message string, err error) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(message)
+		logger.Error().Err(err).Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
@@ -181,7 +181,7 @@ func NewAWSError(ctx context.Context, message string, err error) *ResponseError 
 
 func NewAzureError(ctx context.Context, message string, err error) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(message)
+		logger.Error().Err(err).Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
@@ -193,7 +193,7 @@ func NewAzureError(ctx context.Context, message string, err error) *ResponseErro
 
 func NewGCPError(ctx context.Context, message string, err error) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(message)
+		logger.Error().Err(err).Msg(message)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 500,
