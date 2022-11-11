@@ -221,29 +221,31 @@ func Initialize(configFiles ...string) {
 		}
 
 		// kafka
-		config.Kafka.Brokers = make([]string, len(cfg.Kafka.Brokers))
-		for i, b := range cfg.Kafka.Brokers {
-			config.Kafka.Brokers[i] = fmt.Sprintf("%s:%d", b.Hostname, b.Port)
+		if cfg.Kafka != nil {
+			config.Kafka.Brokers = make([]string, len(cfg.Kafka.Brokers))
+			for i, b := range cfg.Kafka.Brokers {
+				config.Kafka.Brokers[i] = fmt.Sprintf("%s:%d", b.Hostname, b.Port)
 
-			// assumption: TLS/SASL credentials are always the same for all nodes in a cluster
-			if b.Authtype != nil && *b.Authtype != "" {
-				config.Kafka.AuthType = string(*b.Authtype)
-			}
-			if b.Cacert != nil && *b.Cacert != "" {
-				config.Kafka.CACert = *b.Cacert
-			}
-			if b.Sasl != nil {
-				if b.Sasl.SecurityProtocol != nil && *b.Sasl.SecurityProtocol != "" {
-					config.Kafka.SASL.SecurityProtocol = *b.Sasl.SecurityProtocol
+				// assumption: TLS/SASL credentials are always the same for all nodes in a cluster
+				if b.Authtype != nil && *b.Authtype != "" {
+					config.Kafka.AuthType = string(*b.Authtype)
 				}
-				if b.Sasl.SaslMechanism != nil && *b.Sasl.SaslMechanism != "" {
-					config.Kafka.SASL.SaslMechanism = *b.Sasl.SaslMechanism
+				if b.Cacert != nil && *b.Cacert != "" {
+					config.Kafka.CACert = *b.Cacert
 				}
-				if b.Sasl.Username != nil && *b.Sasl.Username != "" {
-					config.Kafka.SASL.Username = *b.Sasl.Username
-				}
-				if b.Sasl.Password != nil && *b.Sasl.Password != "" {
-					config.Kafka.SASL.Password = *b.Sasl.Password
+				if b.Sasl != nil {
+					if b.Sasl.SecurityProtocol != nil && *b.Sasl.SecurityProtocol != "" {
+						config.Kafka.SASL.SecurityProtocol = *b.Sasl.SecurityProtocol
+					}
+					if b.Sasl.SaslMechanism != nil && *b.Sasl.SaslMechanism != "" {
+						config.Kafka.SASL.SaslMechanism = *b.Sasl.SaslMechanism
+					}
+					if b.Sasl.Username != nil && *b.Sasl.Username != "" {
+						config.Kafka.SASL.Username = *b.Sasl.Username
+					}
+					if b.Sasl.Password != nil && *b.Sasl.Password != "" {
+						config.Kafka.SASL.Password = *b.Sasl.Password
+					}
 				}
 			}
 		}
