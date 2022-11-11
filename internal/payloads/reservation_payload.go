@@ -60,8 +60,8 @@ type AWSReservationResponsePayload struct {
 	// The ID of the image from which the instance is created.
 	ImageID string `json:"image_id"`
 
-	// The ID of the aws reservation which was created.
-	AWSReservationID string `json:"aws_reservation_id"`
+	// The ID of the aws reservation which was created, or missing if not created yet.
+	AWSReservationID string `json:"aws_reservation_id,omitempty"`
 
 	// Optional name of the instance(s).
 	Name *string `json:"name"`
@@ -189,17 +189,19 @@ func NewAWSReservationResponse(reservation *models.AWSReservation, instances []*
 	}
 
 	response := AWSReservationResponsePayload{
-		PubkeyID:         reservation.PubkeyID,
-		ImageID:          reservation.ImageID,
-		SourceID:         reservation.SourceID,
-		Region:           reservation.Detail.Region,
-		Amount:           reservation.Detail.Amount,
-		InstanceType:     reservation.Detail.InstanceType,
-		AWSReservationID: reservation.AWSReservationID,
-		ID:               reservation.ID,
-		Name:             reservation.Detail.Name,
-		PowerOff:         reservation.Detail.PowerOff,
-		Instances:        instanceIds,
+		PubkeyID:     reservation.PubkeyID,
+		ImageID:      reservation.ImageID,
+		SourceID:     reservation.SourceID,
+		Region:       reservation.Detail.Region,
+		Amount:       reservation.Detail.Amount,
+		InstanceType: reservation.Detail.InstanceType,
+		ID:           reservation.ID,
+		Name:         reservation.Detail.Name,
+		PowerOff:     reservation.Detail.PowerOff,
+		Instances:    instanceIds,
+	}
+	if reservation.AWSReservationID != nil {
+		response.AWSReservationID = *reservation.AWSReservationID
 	}
 	return &response
 }
