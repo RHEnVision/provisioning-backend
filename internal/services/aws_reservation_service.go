@@ -1,7 +1,7 @@
 package services
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -25,7 +25,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 
 	payload := &payloads.AWSReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), err))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "AWS reservation", err))
 		return
 	}
 
@@ -57,7 +57,8 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
 	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
 	if err != nil {
-		renderNotFoundOrDAOError(w, r, err, "get pubkey by id")
+		message := fmt.Sprintf("get pubkey with id %d", reservation.PubkeyID)
+		renderNotFoundOrDAOError(w, r, err, message)
 		return
 	}
 	logger.Debug().Msgf("Found pubkey %d named '%s'", pk.ID, pk.Name)
@@ -73,23 +74,19 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	// Get Sources client
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
-		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client v2", err))
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
 	}
 
 	// Fetch arn from Sources
 	authentication, err := sourcesClient.GetAuthentication(r.Context(), payload.SourceID)
 	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 404))
-			return
-		}
-		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 500))
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
 	}
 
 	if typeErr := authentication.MustBe(models.ProviderTypeAWS); typeErr != nil {
-		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "unexpected source type", typeErr, 500))
+		renderError(w, r, payloads.NewClientError(r.Context(), typeErr))
 		return
 	}
 
@@ -116,14 +113,15 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		IBClient, ibErr := clients.GetImageBuilderClient(r.Context())
 		logger.Trace().Msg("Creating IB client")
 		if ibErr != nil {
-			renderError(w, r, payloads.NewClientInitializationError(r.Context(), "image builder client", ibErr))
+			renderError(w, r, payloads.NewClientError(r.Context(), ibErr))
 			return
 		}
 
 		// Get AMI
 		ami, ibErr = IBClient.GetAWSAmi(r.Context(), reservation.ImageID)
 		if ibErr != nil {
-			renderError(w, r, payloads.ClientError(r.Context(), "Image Builder", "can't get ami from image builder", ibErr, 500))
+			renderError(w, r, payloads.NewClientError(r.Context(), ibErr))
+			return
 		}
 	}
 

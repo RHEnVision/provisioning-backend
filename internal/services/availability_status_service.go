@@ -12,7 +12,7 @@ import (
 func AvailabilityStatus(w http.ResponseWriter, r *http.Request) {
 	payload := &payloads.AvailabilityStatusRequest{}
 	if err := render.Bind(r, payload); err != nil {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), err))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "availability status", err))
 		return
 	}
 

@@ -2,14 +2,16 @@ package clients
 
 import (
 	"errors"
+	"fmt"
 )
 
 var (
 	// Common errors
-	NotFoundErr       = errors.New("backend service returned not found (404) or no data")
-	UnauthorizedErr   = errors.New("backend service returned unauthorized (401)")
-	ForbiddenErr      = errors.New("backend service returned forbidden (403)")
-	Non2xxResponseErr = errors.New("backend service did not return 2xx")
+	HttpClientErr     = errors.New("HTTP client")
+	NotFoundErr       = fmt.Errorf("%w: backend service returned not found (404) or no data", HttpClientErr)
+	UnauthorizedErr   = fmt.Errorf("%w: backend service returned unauthorized (401)", HttpClientErr)
+	ForbiddenErr      = fmt.Errorf("%w: backend service returned forbidden (403)", HttpClientErr)
+	Non2xxResponseErr = fmt.Errorf("%w: backend service did not return 2xx", HttpClientErr)
 
 	// Sources errors (some others are defined in http package too)
 	UnknownAuthenticationTypeErr = errors.New("unknown authentication type")

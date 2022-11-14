@@ -5,7 +5,6 @@ import (
 	stdhttp "net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -22,21 +21,13 @@ func SourcesStatus(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
-		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "can't init sources client", err))
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
 	}
 
 	auth, err := sourcesClient.GetAuthentication(r.Context(), sourceId)
 	if err != nil {
-		if errors.Is(err, http.ApplicationNotFoundErr) {
-			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: application not found", err, 404))
-			return
-		}
-		if errors.Is(err, http.AuthenticationForSourcesNotFoundErr) {
-			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: authentication not found", err, 404))
-			return
-		}
-		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 500))
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
 	}
 

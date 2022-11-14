@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -33,13 +34,13 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 	case models.ProviderTypeAWS:
 		CreateAWSReservation(w, r)
 	case models.ProviderTypeAzure:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "azure reservation is not implemented", ProviderTypeNotImplementedError))
 	case models.ProviderTypeGCP:
 		CreateGCPReservation(w, r)
 	case models.ProviderTypeUnknown:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), UnknownProviderTypeError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", UnknownProviderTypeError))
 	default:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), UnknownProviderTypeError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", UnknownProviderTypeError))
 	}
 }
 
@@ -76,7 +77,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 
 	providerType := models.ProviderTypeFromString(provider)
 	if providerType != models.ProviderTypeUnknown && reservation.Provider != providerType {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeMismatchError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider type", ProviderTypeMismatchError))
 		return
 	}
 
@@ -89,13 +90,15 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 	case models.ProviderTypeAWS:
 		reservation, err := rDao.GetAWSById(r.Context(), id)
 		if err != nil {
-			renderNotFoundOrDAOError(w, r, err, "get reservation detail")
+			message := fmt.Sprintf("get AWS reservation with id %d", id)
+			renderNotFoundOrDAOError(w, r, err, message)
 			return
 		}
 
 		instances, err := rDao.ListInstances(r.Context(), id)
 		if err != nil {
-			renderNotFoundOrDAOError(w, r, err, "get reservation detail")
+			message := fmt.Sprintf("get reservation with id id %d", id)
+			renderNotFoundOrDAOError(w, r, err, message)
 			return
 		}
 
@@ -103,10 +106,10 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		}
 	case models.ProviderTypeAzure:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "azure reservation is not implemented", ProviderTypeNotImplementedError))
 	case models.ProviderTypeGCP:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "gcp reservation is not implemented", ProviderTypeNotImplementedError))
 	default:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ProviderTypeNotImplementedError))
 	}
 }

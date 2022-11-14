@@ -129,7 +129,7 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.
 	// Sources API currently does not provide a good server-side filtering.
 	auth, err := filterSourceAuthentications(*resp.JSON200.Data)
 	if err != nil {
-		logger.Warn().Msgf("Sources replied with more then one authentications for source: %s", sourceId)
+		logger.Warn().Msgf("Sources replied with more than one authentications for source: %s", sourceId)
 		return nil, err
 	}
 
