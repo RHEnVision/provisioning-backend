@@ -33,8 +33,7 @@ func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
 func NewInvalidRequestError(ctx context.Context, err error) *ResponseError {
 	msg := "invalid request error"
 	if logger := ctxval.Logger(ctx); logger != nil {
-		// TODO we should also call .Err(err) to log error
-		logger.Warn().Msg(msg)
+		logger.Warn().Err(err).Msg(msg)
 	}
 	return &ResponseError{
 		HTTPStatusCode: 400,
