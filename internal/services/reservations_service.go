@@ -14,6 +14,7 @@ import (
 
 var (
 	UnknownProviderTypeError         = errors.New("unknown provider type parameter")
+	ProviderTypeMismatchError        = errors.New("reservation type does not match requested provider type")
 	ProviderTypeNotImplementedError  = errors.New("provider type not yet implemented")
 	InvalidRequestPubkeyNewError     = errors.New("provide either existing (via NewName/NewBody) or new pubkey (ExistingID)")
 	InvalidRequestPubkeyMissingError = errors.New("provide both NewName and NewBody for pubkey")
@@ -58,6 +59,7 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
+	provider := chi.URLParam(r, "TYPE")
 	id, err := ParseInt64(r, "ID")
 	if err != nil {
 		renderError(w, r, payloads.NewURLParsingError(r.Context(), "unable to parse ID parameter", err))
@@ -72,7 +74,18 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	switch reservation.Provider {
+	providerType := models.ProviderTypeFromString(provider)
+	if providerType != models.ProviderTypeUnknown && reservation.Provider != providerType {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeMismatchError))
+		return
+	}
+
+	switch providerType {
+	// Generic reservation request will have provider == "" and thus render this
+	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
+		if err := render.Render(w, r, payloads.NewReservationResponse(reservation)); err != nil {
+			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
+		}
 	case models.ProviderTypeAWS:
 		reservation, err := rDao.GetAWSById(r.Context(), id)
 		if err != nil {
@@ -87,10 +100,6 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation, instances)); err != nil {
-			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
-		}
-	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
-		if err := render.Render(w, r, payloads.NewReservationResponse(reservation)); err != nil {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		}
 	case models.ProviderTypeAzure:
