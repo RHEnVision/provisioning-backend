@@ -45,11 +45,21 @@ func (stub *reservationDaoStub) CreateInstance(ctx context.Context, reservation 
 }
 
 func (stub *reservationDaoStub) GetById(ctx context.Context, id int64) (*models.Reservation, error) {
-	return nil, nil
+	for _, awsReservation := range stub.store {
+		if awsReservation.AccountID == ctxAccountId(ctx) && awsReservation.ID == id {
+			return &awsReservation.Reservation, nil
+		}
+	}
+	return nil, dao.ErrNoRows
 }
 
 func (stub *reservationDaoStub) GetAWSById(ctx context.Context, id int64) (*models.AWSReservation, error) {
-	return nil, nil
+	for _, awsReservation := range stub.store {
+		if awsReservation.AccountID == ctxAccountId(ctx) && awsReservation.ID == id {
+			return awsReservation, nil
+		}
+	}
+	return nil, dao.ErrNoRows
 }
 
 func (stub *reservationDaoStub) List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error) {
