@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -19,17 +18,13 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
-		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "can't init sources client", err))
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
 	}
 
 	authentication, err := sourcesClient.GetAuthentication(r.Context(), sourceId)
 	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 404))
-			return
-		}
-		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", err, 500))
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
 	}
 

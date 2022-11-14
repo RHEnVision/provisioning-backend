@@ -1628,7 +1628,6 @@ func NewListApplicationTypesRequest(server string, params *ListApplicationTypesP
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1640,11 +1639,9 @@ func NewListApplicationTypesRequest(server string, params *ListApplicationTypesP
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1656,11 +1653,9 @@ func NewListApplicationTypesRequest(server string, params *ListApplicationTypesP
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1672,11 +1667,9 @@ func NewListApplicationTypesRequest(server string, params *ListApplicationTypesP
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1688,7 +1681,6 @@ func NewListApplicationTypesRequest(server string, params *ListApplicationTypesP
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -1764,7 +1756,6 @@ func NewListApplicationTypeAppMetaDataRequest(server string, id ID, params *List
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1776,11 +1767,9 @@ func NewListApplicationTypeAppMetaDataRequest(server string, id ID, params *List
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1792,11 +1781,9 @@ func NewListApplicationTypeAppMetaDataRequest(server string, id ID, params *List
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1808,11 +1795,9 @@ func NewListApplicationTypeAppMetaDataRequest(server string, id ID, params *List
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1824,7 +1809,6 @@ func NewListApplicationTypeAppMetaDataRequest(server string, id ID, params *List
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -1866,7 +1850,6 @@ func NewListApplicationTypeSourcesRequest(server string, id ID, params *ListAppl
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1878,11 +1861,9 @@ func NewListApplicationTypeSourcesRequest(server string, id ID, params *ListAppl
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1894,11 +1875,9 @@ func NewListApplicationTypeSourcesRequest(server string, id ID, params *ListAppl
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1910,11 +1889,9 @@ func NewListApplicationTypeSourcesRequest(server string, id ID, params *ListAppl
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1926,7 +1903,6 @@ func NewListApplicationTypeSourcesRequest(server string, id ID, params *ListAppl
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -1961,7 +1937,6 @@ func NewListApplicationsRequest(server string, params *ListApplicationsParams) (
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1973,11 +1948,9 @@ func NewListApplicationsRequest(server string, params *ListApplicationsParams) (
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -1989,11 +1962,9 @@ func NewListApplicationsRequest(server string, params *ListApplicationsParams) (
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2005,11 +1976,9 @@ func NewListApplicationsRequest(server string, params *ListApplicationsParams) (
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2021,7 +1990,6 @@ func NewListApplicationsRequest(server string, params *ListApplicationsParams) (
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -2218,7 +2186,6 @@ func NewListApplicationAuthenticationsRequest(server string, id ID, params *List
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2230,11 +2197,9 @@ func NewListApplicationAuthenticationsRequest(server string, id ID, params *List
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2246,11 +2211,9 @@ func NewListApplicationAuthenticationsRequest(server string, id ID, params *List
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2262,11 +2225,9 @@ func NewListApplicationAuthenticationsRequest(server string, id ID, params *List
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2278,7 +2239,6 @@ func NewListApplicationAuthenticationsRequest(server string, id ID, params *List
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -2421,7 +2381,6 @@ func NewListSourcesRequest(server string, params *ListSourcesParams) (*http.Requ
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2433,11 +2392,9 @@ func NewListSourcesRequest(server string, params *ListSourcesParams) (*http.Requ
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2449,11 +2406,9 @@ func NewListSourcesRequest(server string, params *ListSourcesParams) (*http.Requ
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2465,11 +2420,9 @@ func NewListSourcesRequest(server string, params *ListSourcesParams) (*http.Requ
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2481,7 +2434,6 @@ func NewListSourcesRequest(server string, params *ListSourcesParams) (*http.Requ
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -2678,7 +2630,6 @@ func NewListSourceApplicationTypesRequest(server string, id ID, params *ListSour
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2690,11 +2641,9 @@ func NewListSourceApplicationTypesRequest(server string, id ID, params *ListSour
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2706,11 +2655,9 @@ func NewListSourceApplicationTypesRequest(server string, id ID, params *ListSour
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2722,11 +2669,9 @@ func NewListSourceApplicationTypesRequest(server string, id ID, params *ListSour
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2738,7 +2683,6 @@ func NewListSourceApplicationTypesRequest(server string, id ID, params *ListSour
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -2780,7 +2724,6 @@ func NewListSourceApplicationsRequest(server string, id ID, params *ListSourceAp
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2792,11 +2735,9 @@ func NewListSourceApplicationsRequest(server string, id ID, params *ListSourceAp
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2808,11 +2749,9 @@ func NewListSourceApplicationsRequest(server string, id ID, params *ListSourceAp
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2824,11 +2763,9 @@ func NewListSourceApplicationsRequest(server string, id ID, params *ListSourceAp
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2840,7 +2777,6 @@ func NewListSourceApplicationsRequest(server string, id ID, params *ListSourceAp
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -2882,7 +2818,6 @@ func NewListSourceAuthenticationsRequest(server string, id ID, params *ListSourc
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2894,11 +2829,9 @@ func NewListSourceAuthenticationsRequest(server string, id ID, params *ListSourc
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2910,11 +2843,9 @@ func NewListSourceAuthenticationsRequest(server string, id ID, params *ListSourc
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2926,11 +2857,9 @@ func NewListSourceAuthenticationsRequest(server string, id ID, params *ListSourc
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -2942,7 +2871,6 @@ func NewListSourceAuthenticationsRequest(server string, id ID, params *ListSourc
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -3018,7 +2946,6 @@ func NewListSourceEndpointsRequest(server string, id ID, params *ListSourceEndpo
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -3030,11 +2957,9 @@ func NewListSourceEndpointsRequest(server string, id ID, params *ListSourceEndpo
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -3046,11 +2971,9 @@ func NewListSourceEndpointsRequest(server string, id ID, params *ListSourceEndpo
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -3062,11 +2985,9 @@ func NewListSourceEndpointsRequest(server string, id ID, params *ListSourceEndpo
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -3078,7 +2999,6 @@ func NewListSourceEndpointsRequest(server string, id ID, params *ListSourceEndpo
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()
@@ -3154,7 +3074,6 @@ func NewGetSourcesRhcConnectionRequest(server string, id ID, params *GetSourcesR
 	queryValues := queryURL.Query()
 
 	if params.Limit != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -3166,11 +3085,9 @@ func NewGetSourcesRhcConnectionRequest(server string, id ID, params *GetSourcesR
 				}
 			}
 		}
-
 	}
 
 	if params.Offset != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -3182,11 +3099,9 @@ func NewGetSourcesRhcConnectionRequest(server string, id ID, params *GetSourcesR
 				}
 			}
 		}
-
 	}
 
 	if params.Filter != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -3198,11 +3113,9 @@ func NewGetSourcesRhcConnectionRequest(server string, id ID, params *GetSourcesR
 				}
 			}
 		}
-
 	}
 
 	if params.SortBy != nil {
-
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
@@ -3214,7 +3127,6 @@ func NewGetSourcesRhcConnectionRequest(server string, id ID, params *GetSourcesR
 				}
 			}
 		}
-
 	}
 
 	queryURL.RawQuery = queryValues.Encode()

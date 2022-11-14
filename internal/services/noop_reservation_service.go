@@ -32,7 +32,7 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	// create reservation in the database
 	err := rDao.CreateNoop(r.Context(), reservation)
 	if err != nil {
-		renderError(w, r, payloads.NewDAOError(r.Context(), "create reservation", err))
+		renderError(w, r, payloads.NewDAOError(r.Context(), "create noop reservation", err))
 		return
 	}
 	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)

@@ -19,7 +19,7 @@ func ListBuiltinInstanceTypes(typeFunc InstanceTypesForZoneFunc) func(w http.Res
 		zone := strings.ToLower(r.URL.Query().Get("zone"))
 		supported, err := ParseBool(r.URL.Query().Get("supported"))
 		if err != nil {
-			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), err))
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "parameter 'supported' could not be parsed", err))
 			return
 		}
 
@@ -33,7 +33,7 @@ func ListBuiltinInstanceTypes(typeFunc InstanceTypesForZoneFunc) func(w http.Res
 		logger := ctxval.Logger(r.Context())
 		logger.Trace().TimeDiff("duration", time.Now(), start).Msg("Listed instance types")
 		if err != nil {
-			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), err))
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "instance types not found for selected region and zone", err))
 			return
 		}
 

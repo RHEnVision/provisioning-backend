@@ -41,7 +41,7 @@ func renderError(w http.ResponseWriter, r *http.Request, renderer render.Rendere
 
 func renderNotFoundOrDAOError(w http.ResponseWriter, r *http.Request, err error, resource string) {
 	if errors.Is(err, dao.ErrNoRows) {
-		renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
+		renderError(w, r, payloads.NewNotFoundError(r.Context(), resource, err))
 	} else {
 		renderError(w, r, payloads.NewDAOError(r.Context(), resource, err))
 	}
