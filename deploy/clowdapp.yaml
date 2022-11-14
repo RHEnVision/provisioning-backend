@@ -165,6 +165,7 @@ objects:
         - sources-api
       optionalDependencies:
         - image-builder
+        - rhsm-api-proxy
 
 # possible application ENV variables are in config/api.env.example
 parameters:
