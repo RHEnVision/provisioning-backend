@@ -26,7 +26,7 @@ func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
 	case "sources":
 		client, err := clients.GetSourcesClient(r.Context())
 		if err != nil {
-			renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client", err))
+			renderError(w, r, payloads.SourcesError(r.Context(), err))
 			return
 		}
 		err = client.Ready(r.Context())
@@ -37,7 +37,7 @@ func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
 	case "ib", "image_builder", "imagebuilder":
 		client, err := clients.GetImageBuilderClient(r.Context())
 		if err != nil {
-			renderError(w, r, payloads.NewClientInitializationError(r.Context(), "image builder client", err))
+			renderNewErrorFromClientErr(w, r, err)
 			return
 		}
 		err = client.Ready(r.Context())

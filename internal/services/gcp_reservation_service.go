@@ -1,7 +1,7 @@
 package services
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -23,7 +23,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	payload := &payloads.GCPReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), err))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "GCP reservation", err))
 		return
 	}
 
@@ -51,7 +51,8 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
 	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
 	if err != nil {
-		renderNotFoundOrDAOError(w, r, err, "get pubkey by id")
+		message := fmt.Sprintf("get pubkey with id %d", reservation.PubkeyID)
+		renderNotFoundOrDAOError(w, r, err, message)
 		return
 	}
 	logger.Debug().Msgf("Found pubkey %d named '%s'", pk.ID, pk.Name)
@@ -67,23 +68,19 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	// Get Sources client
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
-		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client v2", err))
+		renderNewErrorFromClientErr(w, r, err)
 		return
 	}
 
 	// Fetch project id from Sources
 	authentication, err := sourcesClient.GetAuthentication(r.Context(), payload.SourceID)
 	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch project id from sources", err, 404))
-			return
-		}
-		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch project id from sources", err, 500))
+		renderNewErrorFromClientErr(w, r, err)
 		return
 	}
 
 	if typeErr := authentication.MustBe(models.ProviderTypeGCP); typeErr != nil {
-		renderError(w, r, payloads.ClientError(r.Context(), "Sources", "unexpected source type", typeErr, 500))
+		renderNewErrorFromClientErr(w, r, typeErr)
 		return
 	}
 
@@ -93,14 +90,14 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	IBClient, ibErr := clients.GetImageBuilderClient(r.Context())
 	logger.Trace().Msg("Creating IB client")
 	if ibErr != nil {
-		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "image builder client", ibErr))
+		renderNewErrorFromClientErr(w, r, ibErr)
 		return
 	}
 
 	// Get Image Name
 	name, ibErr := IBClient.GetGCPImageName(r.Context(), reservation.ImageID)
 	if ibErr != nil {
-		renderError(w, r, payloads.ClientError(r.Context(), "Image Builder", "can't get name from image builder", ibErr, 500))
+		renderNewErrorFromClientErr(w, r, ibErr)
 		return
 	}
 

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -10,13 +11,12 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
-	"github.com/pkg/errors"
 )
 
 func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 	payload := &payloads.PubkeyRequest{}
 	if err := render.Bind(r, payload); err != nil {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), err))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "create pubkey", err))
 		return
 	}
 
@@ -63,7 +63,8 @@ func GetPubkey(w http.ResponseWriter, r *http.Request) {
 
 	pubkey, err := pubkeyDao.GetById(r.Context(), id)
 	if err != nil {
-		renderNotFoundOrDAOError(w, r, err, "get pubkey by id")
+		message := fmt.Sprintf("get pubkey with id %d", id)
+		renderNotFoundOrDAOError(w, r, err, message)
 		return
 	}
 
@@ -76,7 +77,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 	logger := ctxval.Logger(r.Context())
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
-		renderError(w, r, payloads.NewClientInitializationError(r.Context(), "sources client v2", err))
+		renderNewErrorFromClientErr(w, r, err)
 		return
 	}
 
@@ -90,13 +91,15 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 
 	pubkey, err := pubkeyDao.GetById(r.Context(), id)
 	if err != nil {
-		renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
+		message := fmt.Sprintf("get pubkey with id %d", id)
+		renderNotFoundOrDAOError(w, r, err, message)
 		return
 	}
 
 	resources, err := pubkeyDao.UnscopedListResourcesByPubkeyId(r.Context(), pubkey.ID)
 	if err != nil {
-		renderError(w, r, payloads.NewDAOError(r.Context(), "delete pubkey", err))
+		message := fmt.Sprintf("list resources by pubkey id %d", pubkey.ID)
+		renderNotFoundOrDAOError(w, r, err, message)
 		return
 	}
 
@@ -106,11 +109,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 				logger.Info().Msgf("Deleting pubkey resource ID %v with handle %s", res.ID, res.Handle)
 				authentication, errAuth := sourcesClient.GetAuthentication(r.Context(), res.SourceID)
 				if errAuth != nil {
-					if errors.Is(err, clients.NotFoundErr) {
-						renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources: application not found", errAuth, 404))
-						return
-					}
-					renderError(w, r, payloads.ClientError(r.Context(), "Sources", "can't fetch arn from sources", errAuth, 500))
+					renderNewErrorFromClientErr(w, r, errAuth)
 					return
 				}
 
@@ -129,17 +128,14 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 				logger.Warn().Msgf("Pubkey resource with empty handle: resource ID %d", res.ID)
 			}
 		} else {
-			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ProviderTypeNotImplementedError))
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "delete not implemented for this provider", ProviderTypeNotImplementedError))
 		}
 	}
 
 	err = pubkeyDao.Delete(r.Context(), id)
 	if err != nil {
-		if errors.Is(err, dao.ErrAffectedMismatch) {
-			renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
-		} else {
-			renderError(w, r, payloads.NewDAOError(r.Context(), "delete pubkey", err))
-		}
+		message := fmt.Sprintf("pubkey with id %d", id)
+		renderNotFoundOrDAOError(w, r, err, message)
 		return
 	}
 

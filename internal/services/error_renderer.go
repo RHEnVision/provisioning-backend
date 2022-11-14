@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	clientshttp "github.com/RHEnVision/provisioning-backend/internal/clients/http"
+
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -41,9 +44,25 @@ func renderError(w http.ResponseWriter, r *http.Request, renderer render.Rendere
 
 func renderNotFoundOrDAOError(w http.ResponseWriter, r *http.Request, err error, resource string) {
 	if errors.Is(err, dao.ErrNoRows) {
-		renderError(w, r, payloads.NewNotFoundError(r.Context(), err))
+		renderError(w, r, payloads.NewNotFoundError(r.Context(), resource, err))
 	} else {
 		renderError(w, r, payloads.NewDAOError(r.Context(), resource, err))
+	}
+}
+
+func renderNewErrorFromClientErr(w http.ResponseWriter, r *http.Request, err error) {
+	var sourceError clientshttp.SourceError
+	var ibError clientshttp.ImageBuilderError
+	if errors.As(err, &sourceError) {
+		renderError(w, r, payloads.SourcesError(r.Context(), err))
+	} else if errors.As(err, &ibError) {
+		renderError(w, r, payloads.NewImageBuilderError(r.Context(), err))
+	} else if errors.Is(err, clients.UnknownAuthenticationTypeErr) {
+		renderError(w, r, payloads.NewUnknownAuthenticationType(r.Context(), err))
+	} else if errors.Is(err, clients.ClientErr) {
+		renderError(w, r, payloads.ClientError(r.Context(), err))
+	} else {
+		renderError(w, r, payloads.GeneralError(r.Context(), "client side error", err))
 	}
 }
 
