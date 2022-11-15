@@ -160,6 +160,10 @@ objects:
       database:
         name: provisioning
         version: 13
+      kafkaTopics:
+        - topicName: platform.provisioning.internal.availability-check
+          partitions: 1
+          replicas: 3
       inMemoryDb: true
       dependencies:
         - sources-api

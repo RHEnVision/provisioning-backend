@@ -1,3 +1,3 @@
 package kafka
 
-var AvailabilityStatusRequestTopic = "platform_provisioning_internal_availability_status_request"
+var AvailabilityStatusRequestTopic = "platform.provisioning.internal.availability-check"
