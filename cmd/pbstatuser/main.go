@@ -11,6 +11,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
@@ -20,6 +21,10 @@ import (
 )
 
 func processMessage(ctx context.Context, message *kafka.GenericMessage) {
+	logger := ctxval.Logger(ctx)
+	// This is just a test to see if Kafka is configured properly in ephemeral
+	logger.Warn().Msg("RECEIVED KAFKA MESSAGE")
+
 	// TODO: implement the source checking for AWS, Azure, GCP
 
 	// This needs to be done in 4 goroutines.
