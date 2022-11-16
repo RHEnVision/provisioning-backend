@@ -167,6 +167,8 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, handler func(ct
 		msg, err := r.ReadMessage(ctx)
 		if err != nil && errors.Is(err, io.EOF) {
 			break
+		} else if err != nil && errors.Is(err, context.Canceled) {
+			break
 		} else if err != nil {
 			logger.Warn().Err(err).Msgf("Error when reading message: %s", err.Error())
 		} else {
