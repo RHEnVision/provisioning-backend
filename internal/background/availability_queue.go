@@ -58,8 +58,9 @@ func sendAvailabilityRequestMessages(ctx context.Context, batchSize int, tickDur
 			if length > 0 {
 				logger.Trace().Int("messages", length).Msgf("Sent %d availability request messages (cancel)", length)
 				send(ctx, messageBuffer...)
-				messageBuffer = messageBuffer[:0]
 			}
+
+			return
 		}
 	}
 }
