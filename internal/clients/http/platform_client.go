@@ -9,13 +9,14 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
+// Shared HTTP transport for all platform clients to utilize connection caching
+var transport = &http.Transport{}
+
 // NewPlatformClient returns new HTTP client (doer) with W3C Trace Context, logging tracing
 // and/or HTTP proxy (non-clowder environment only) according to application configuration.
 // Use this function to create HTTP clients for communication with all platform services.
 func NewPlatformClient(ctx context.Context, proxy string) HttpRequestDoer {
-	var rt http.RoundTripper
-	transport := &http.Transport{}
-	rt = transport
+	var rt http.RoundTripper = transport
 
 	if proxy != "" {
 		if config.InClowder() {
