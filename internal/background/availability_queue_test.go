@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
 
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
@@ -15,6 +16,8 @@ import (
 
 func TestQueueNormalSend(t *testing.T) {
 	ctx := context.Background()
+	ctx = identity.WithIdentity(t, ctx)
+
 	_ = kafka.InitializeStubBroker(16)
 
 	wg := sync.WaitGroup{}
@@ -28,7 +31,7 @@ func TestQueueNormalSend(t *testing.T) {
 		wg.Done()
 	})
 
-	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage()
+	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage(ctx)
 	EnqueueAvailabilityStatusRequest(&msg)
 	EnqueueAvailabilityStatusRequest(&msg)
 	wg.Wait()
@@ -36,6 +39,7 @@ func TestQueueNormalSend(t *testing.T) {
 
 func TestFullQueueSend(t *testing.T) {
 	ctx := context.Background()
+	ctx = identity.WithIdentity(t, ctx)
 	_ = kafka.InitializeStubBroker(16)
 
 	wg := sync.WaitGroup{}
@@ -50,7 +54,7 @@ func TestFullQueueSend(t *testing.T) {
 		wg.Done()
 	})
 
-	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage()
+	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage(ctx)
 	EnqueueAvailabilityStatusRequest(&msg)
 	EnqueueAvailabilityStatusRequest(&msg)
 	time.Sleep(100 * time.Millisecond)
@@ -60,12 +64,15 @@ func TestFullQueueSend(t *testing.T) {
 
 func TestQueueCancelSend(t *testing.T) {
 	ctx := context.Background()
+	ctx = identity.WithIdentity(t, ctx)
 	_ = kafka.InitializeStubBroker(16)
 
 	// enqueue message to be sent first
-	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage()
+	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage(ctx)
 	EnqueueAvailabilityStatusRequest(&msg)
-
+	// set the receiving message function up
+	wg := sync.WaitGroup{}
+	wg.Add(2)
 	// start sending messages
 	senderCtx, senderCancel := context.WithCancel(ctx)
 	go sendAvailabilityRequestMessages(senderCtx, 2, 5*time.Second)
@@ -73,9 +80,6 @@ func TestQueueCancelSend(t *testing.T) {
 	// allow the other goroutine to put the message into the buffer
 	runtime.Gosched()
 
-	// set the receiving message function up
-	wg := sync.WaitGroup{}
-	wg.Add(1)
 	consumeCtx, consumeCancel := context.WithCancel(ctx)
 	defer consumeCancel()
 	go kafka.Consume(consumeCtx, kafka.AvailabilityStatusRequestTopic, func(ctx context.Context, msg *kafka.GenericMessage) {
@@ -88,6 +92,8 @@ func TestQueueCancelSend(t *testing.T) {
 	time.Sleep(20 * time.Millisecond)
 
 	// cancel the sender before the 5 seconds timeout (so cancel branch is triggered)
+	msg, _ = kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage(ctx)
+	EnqueueAvailabilityStatusRequest(&msg)
 	senderCancel()
 
 	// wait until the message is consumed

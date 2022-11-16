@@ -1,8 +1,12 @@
 package kafka
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
 type AvailabilityStatusMessage struct {
@@ -19,15 +23,27 @@ func NewAvailabilityStatusMessage(msg *GenericMessage) (*AvailabilityStatusMessa
 	return &asm, nil
 }
 
-func (m AvailabilityStatusMessage) GenericMessage() (GenericMessage, error) {
+func (m AvailabilityStatusMessage) GenericMessage(ctx context.Context) (GenericMessage, error) {
+	return genericMessage(ctx, m, m.SourceID, AvailabilityStatusRequestTopic)
+}
+
+func genericMessage(ctx context.Context, m any, key string, topic string) (GenericMessage, error) {
 	payload, err := json.Marshal(m)
 	if err != nil {
 		return GenericMessage{}, fmt.Errorf("unable to marshal message: %w", err)
 	}
 
+	id := ctxval.Identity(ctx)
+
 	return GenericMessage{
-		Topic: AvailabilityStatusRequestTopic,
-		Key:   []byte(m.SourceID),
+		Topic: topic,
+		Key:   []byte(key),
 		Value: payload,
+		Headers: map[string]string{
+			"Content-Type":                "application/json",
+			"x-RH-Identity":               identity.GetIdentityHeader(ctx),
+			"X-RH-Sources-Org-Id":         id.Identity.OrgID,
+			"X-RH-Sources-Account-Number": id.Identity.AccountNumber,
+		},
 	}, nil
 }

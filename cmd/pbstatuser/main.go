@@ -7,11 +7,22 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
+	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/redhatinsights/platform-go-middlewares/identity"
+
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
@@ -20,25 +31,193 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const ChannelBuffer = 32
+
+type SourceInfo struct {
+	Authentication clients.Authentication
+
+	SourceID string
+
+	Identity identity.XRHID
+}
+
+var (
+	chAws        = make(chan SourceInfo, ChannelBuffer)
+	chAzure      = make(chan SourceInfo, ChannelBuffer)
+	chGcp        = make(chan SourceInfo, ChannelBuffer)
+	chSend       = make(chan kafka.SourceResult, ChannelBuffer)
+	receiverWG   = sync.WaitGroup{}
+	processingWG = sync.WaitGroup{}
+	senderWG     = sync.WaitGroup{}
+)
+
 func processMessage(ctx context.Context, message *kafka.GenericMessage) {
 	logger := ctxval.Logger(ctx)
-	// This is just a test to see if Kafka is configured properly in ephemeral
-	logger.Warn().Msg("RECEIVED KAFKA MESSAGE")
 
-	// TODO: implement the source checking for AWS, Azure, GCP
+	// Get source id
+	asm, err := kafka.NewAvailabilityStatusMessage(message)
+	if err != nil {
+		logger.Warn().Msgf("could not get availability status message %s", err)
+		return
+	}
 
-	// This needs to be done in 4 goroutines.
-	// 1) Reads messages, calls sources to get auth type and ARN and then enqueue the work
-	// in one of three channels (AWS, Azure, GCP)
-	// 2) Reads from AWS channel, performs availability check, has configurable throttling.
-	// 3) Reads from Azure channel, performs availability check, has configurable throttling.
-	// 4) Reads from GCP channel, performs availability check, has configurable throttling.
+	sourceId := asm.SourceID
 
-	// Beware there is no database connection, no job queue, most of what api/worker processes have
-	// is not available because it should not be needed. The worker will simply use SDKs to check
-	// statuses and send out results via kafka.Send function to Sources.
-	// Also make sure that all goroutines are closed correctly on context cancel. A WaitGroup
-	// would be a really good here: https://gist.github.com/fracasula/b579d52daf15426e58aa133d0340ccb0
+	// Get sources client
+	sourcesClient, err := clients.GetSourcesClient(ctx)
+	if err != nil {
+		logger.Warn().Msgf("Could not get sources client %s", err)
+		return
+	}
+
+	// Fetch authentication from Sources
+	authentication, err := sourcesClient.GetAuthentication(ctx, sourceId)
+	if err != nil {
+		if errors.Is(err, clients.NotFoundErr) {
+			logger.Warn().Msgf("Not found error: %s", err)
+			return
+		}
+		logger.Warn().Msgf("Could not get authentication: %s", err)
+		return
+	}
+
+	s := SourceInfo{
+		Authentication: *authentication,
+		SourceID:       sourceId,
+		Identity:       ctxval.Identity(ctx),
+	}
+
+	switch authentication.ProviderType {
+	case models.ProviderTypeAWS:
+		chAws <- s
+	case models.ProviderTypeAzure:
+		chAzure <- s
+	case models.ProviderTypeGCP:
+		chGcp <- s
+	case models.ProviderTypeNoop:
+	case models.ProviderTypeUnknown:
+		logger.Warn().Msg("Authentication provider type is unknown")
+	}
+}
+
+func checkSourceAvailabilityAzure(ctx context.Context) {
+	defer processingWG.Done()
+
+	for s := range chAzure {
+		sr := kafka.SourceResult{
+			SourceID: s.SourceID,
+			Identity: s.Identity,
+		}
+		// TODO: check if source is avavliable - WIP
+		sr.Status = kafka.StatusAvaliable
+		chSend <- sr
+	}
+}
+
+func checkSourceAvailabilityAWS(ctx context.Context) {
+	logger := ctxval.Logger(ctx)
+	defer processingWG.Done()
+
+	for s := range chAws {
+		sr := kafka.SourceResult{
+			SourceID: s.SourceID,
+			Identity: s.Identity,
+		}
+		_, err := clients.GetEC2Client(ctx, &s.Authentication, "")
+		if err != nil {
+			sr.Status = kafka.StatusUnavailable
+			sr.Err = err
+			logger.Warn().Msgf("Could not get aws assumed client %s", err)
+			chSend <- sr
+		} else {
+			sr.Status = kafka.StatusAvaliable
+			chSend <- sr
+		}
+	}
+}
+
+func checkSourceAvailabilityGCP(ctx context.Context) {
+	logger := ctxval.Logger(ctx)
+	defer processingWG.Done()
+
+	for s := range chGcp {
+		sr := kafka.SourceResult{
+			SourceID: s.SourceID,
+			Identity: s.Identity,
+		}
+		gcpClient, err := clients.GetGCPClient(ctx, &s.Authentication)
+		if err != nil {
+			sr.Status = kafka.StatusUnavailable
+			sr.Err = err
+			logger.Warn().Msgf("Could not get gcp client %s", err)
+			chSend <- sr
+			continue
+		}
+		_, err = gcpClient.ListAllRegions(ctx)
+		if err != nil {
+			sr.Status = kafka.StatusUnavailable
+			sr.Err = err
+			logger.Warn().Msgf("Could not list gcp regions %s", err)
+			chSend <- sr
+		} else {
+			sr.Status = kafka.StatusAvaliable
+			chSend <- sr
+		}
+	}
+}
+
+func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration) {
+	logger := ctxval.Logger(ctx)
+	messages := make([]*kafka.GenericMessage, 0, batchSize)
+	ticker := time.NewTicker(tickDuration)
+	defer senderWG.Done()
+
+	for {
+		select {
+
+		case sr := <-chSend:
+			ctx = ctxval.WithIdentity(ctx, sr.Identity)
+			msg, err := sr.GenericMessage(ctx)
+			if err != nil {
+				logger.Warn().Msgf("Could not generate generic message %s", err)
+				continue
+			}
+			messages = append(messages, &msg)
+			length := len(messages)
+
+			if length >= batchSize {
+				logger.Trace().Int("messages", length).Msgf("Sending %d source availability status messages (full buffer)", length)
+				err := kafka.Send(ctx, messages...)
+				if err != nil {
+					logger.Warn().Msgf("Could not send source availability status messages (full buffer) %s", err)
+				}
+				messages = messages[:0]
+			}
+		case <-ticker.C:
+			length := len(messages)
+			if length > 0 {
+				logger.Trace().Int("messages", length).Msgf("Sending %d source availability status messages (tick)", length)
+				err := kafka.Send(ctx, messages...)
+				if err != nil {
+					logger.Warn().Msgf("Could not send source availability status messages (tick) %s", err)
+				}
+				messages = messages[:0]
+			}
+		case <-ctx.Done():
+			ticker.Stop()
+			length := len(messages)
+
+			if length > 0 {
+				logger.Trace().Int("messages", length).Msgf("Sending %d source availability status messages (cancel)", length)
+				err := kafka.Send(ctx, messages...)
+				if err != nil {
+					logger.Warn().Msgf("Could not send source availability status messages (cancel) %s", err)
+				}
+			}
+
+			return
+		}
+	}
 }
 
 func main() {
@@ -81,8 +260,22 @@ func main() {
 	}
 
 	// start the consumer
+	receiverWG.Add(1)
 	cancelCtx, consumerCancelFunc := context.WithCancel(ctx)
-	go kafka.Consume(cancelCtx, kafka.AvailabilityStatusRequestTopic, processMessage)
+	go func() {
+		defer receiverWG.Done()
+		kafka.Consume(cancelCtx, kafka.AvailabilityStatusRequestTopic, processMessage)
+	}()
+
+	// start processing goroutines
+	processingWG.Add(3)
+
+	go checkSourceAvailabilityAWS(cancelCtx)
+	go checkSourceAvailabilityGCP(cancelCtx)
+	go checkSourceAvailabilityAzure(cancelCtx)
+
+	senderWG.Add(1)
+	go sendResults(cancelCtx, 1024, 5*time.Second)
 
 	// metrics
 	logger.Info().Msgf("Starting new instance on port %d with prometheus on %d", config.Application.Port, config.Prometheus.Port)
@@ -96,7 +289,7 @@ func main() {
 	waitForSignal := make(chan struct{})
 	go func() {
 		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)
+		signal.Notify(sigint, syscall.SIGINT, syscall.SIGTERM)
 		<-sigint
 		if err := metricsServer.Shutdown(context.Background()); err != nil {
 			logger.Fatal().Err(err).Msg("Metrics service shutdown error")
@@ -117,6 +310,21 @@ func main() {
 
 	logger.Info().Msg("Worker started")
 	<-waitForSignal
+
+	// stop kafka receiver (can take up to 10 seconds) and wait until it returns
+	consumerCancelFunc()
+	receiverWG.Wait()
+
+	// close all processors and wait until it exits the range loop
+	close(chAws)
+	close(chAzure)
+	close(chGcp)
+	processingWG.Wait()
+
+	// close the sending channel and wait until it exits the range loop
+	close(chSend)
+	senderWG.Wait()
+
 	logger.Info().Msg("Consumer shutdown initiated")
 	consumerCancelFunc()
 	logger.Info().Msg("Shutdown finished, exiting")
