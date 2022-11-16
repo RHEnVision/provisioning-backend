@@ -11,3 +11,4 @@ $BASEDIR/kafka/bin/kafka-server-start.sh $BASEDIR/kafka/config/kraft/server.prop
 
 echo "Creating topics..."
 $BASEDIR/kafka/bin/kafka-topics.sh --create --topic platform.provisioning.internal.availability-check --bootstrap-server $KAFKA_HOST
+$BASEDIR/kafka/bin/kafka-topics.sh --create --topic platform.sources.event-stream --bootstrap-server $KAFKA_HOST

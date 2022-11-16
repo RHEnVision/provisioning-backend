@@ -14,6 +14,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/protocol"
 	"github.com/segmentio/kafka-go/sasl"
 	"github.com/segmentio/kafka-go/sasl/plain"
 	"github.com/segmentio/kafka-go/sasl/scram"
@@ -171,9 +172,22 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, handler func(ct
 			logger.Warn().Err(err).Msgf("Error when reading message: %s", err.Error())
 		} else {
 			logger.Trace().Bytes("payload", msg.Value).Msgf("Received message with key: %s", msg.Key)
+			ctx, err = ctxval.WithIdentityFrom64(ctx, LookupKafkaHeader(ctx, msg.Headers))
+			if err != nil {
+				logger.Trace().Msgf("Could not extract identity from context to Kafka message: %s", err)
+			}
 			handler(ctx, NewMessageFromKafka(&msg))
 		}
 	}
+}
+
+func LookupKafkaHeader(ctx context.Context, headers []protocol.Header) string {
+	for _, h := range headers {
+		if strings.EqualFold(h.Key, "X-RH-Identity") {
+			return string(h.Value)
+		}
+	}
+	return ""
 }
 
 // Send one or more generic messages with the same topic. If there is a message with

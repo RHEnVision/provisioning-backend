@@ -1,6 +1,8 @@
 package kafka
 
 import (
+	"context"
+
 	"github.com/segmentio/kafka-go"
 )
 
@@ -22,7 +24,7 @@ type GenericMessage struct {
 // NativeMessage represents a native (kafka) message. It can be converted to GenericMessage.
 type NativeMessage interface {
 	// GenericMessage returns a generic message that is platform independent.
-	GenericMessage() (GenericMessage, error)
+	GenericMessage(ctx context.Context) (GenericMessage, error)
 }
 
 // NewMessageFromKafka converts generic message to native message

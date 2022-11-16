@@ -17,7 +17,7 @@ func AvailabilityStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	asm := kafka.AvailabilityStatusMessage{SourceID: payload.SourceID}
-	msg, err := asm.GenericMessage()
+	msg, err := asm.GenericMessage(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "cannot construct message", err))
 		return
