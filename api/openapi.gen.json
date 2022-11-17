@@ -479,7 +479,9 @@
                 "$ref": "#/components/schemas/v1.AWSReservationRequest"
               }
             }
-          }
+          },
+          "description": "aws request body",
+          "required": true
         },
         "responses": {
           "200": {
