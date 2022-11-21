@@ -127,7 +127,7 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.
 
 	// Filter authentications to include only auth where resource_type == "Application". We do this because
 	// Sources API currently does not provide a good server-side filtering.
-	auth, err := filterSourceAuthentications(resp.JSON200.Data)
+	auth, err := filterSourceAuthentications(*resp.JSON200.Data)
 	if err != nil {
 		logger.Warn().Msgf("Sources replied with more then one authentications for source: %s", sourceId)
 		return nil, err
@@ -211,17 +211,11 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 	return "", http.ApplicationTypeNotFoundErr
 }
 
-func filterSourceAuthentications(authentications *[]AuthenticationRead) (AuthenticationRead, error) {
-	auths := *authentications
-	list := make([]AuthenticationRead, len(auths))
-	for i, auth := range auths {
+func filterSourceAuthentications(authentications []AuthenticationRead) (AuthenticationRead, error) {
+	for _, auth := range authentications {
 		if *auth.ResourceType == "Application" {
-			list[i] = auth
+			return auth, nil
 		}
 	}
-	// Assumption: each source has one authentication linked to it
-	if len(list) > 1 {
-		return AuthenticationRead{}, http.MoreThanOneAuthenticationForSourceErr
-	}
-	return list[0], nil
+	return AuthenticationRead{}, http.ApplicationReadErr
 }
