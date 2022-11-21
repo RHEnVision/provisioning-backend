@@ -148,6 +148,8 @@ objects:
                     optional: false
               - name: APP_INSTANCE_PREFIX
                 value: ${APP_INSTANCE_PREFIX}
+              - name: APP_CACHE_TYPE
+                value: ${APP_CACHE_TYPE}
               - name: WORKER_QUEUE
                 value: ${WORKER_QUEUE}
             resources:
