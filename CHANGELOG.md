@@ -1,3 +1,31 @@
+<a name="0.11.0"></a>
+## [0.11.0](https://github.com/RHEnVision/provisioning-backend/compare/0.10.0...0.11.0) (2022-11-21)
+
+### Bug Fixes
+- **config:** correct Unleash URL prefix ([bd6ab5a](https://github.com/RHEnVision/provisioning-backend/commit/bd6ab5a02d317a51e9a5a7ca742bbd372b2807bf))
+- **config:** guard for non-exixtend kafka config ([a5b3d9c](https://github.com/RHEnVision/provisioning-backend/commit/a5b3d9c552953f3ddb7824c67712719b7a83bd27))
+- **config:** unleash token as bearer header ([3bb424c](https://github.com/RHEnVision/provisioning-backend/commit/3bb424c889b8b84d8b982cae6e24ea9af1a927ba))
+- **logging:** Disable middlewares for status routes ([811905d](https://github.com/RHEnVision/provisioning-backend/commit/811905dcf89335174a173f4362892c0f0931dce3))
+- **reservation:** generic reservation by id ([5131c7b](https://github.com/RHEnVision/provisioning-backend/commit/5131c7b08c4164dcb11cb93ecb55916665132ccc))
+- missing cache type variable for api ([0ed8c1b](https://github.com/RHEnVision/provisioning-backend/commit/0ed8c1bc8ade1d3b8346240855adcb76d5ab5a3f))
+- null for aws_reservation_id when pending ([eb5e353](https://github.com/RHEnVision/provisioning-backend/commit/eb5e353d2d17541331bc460d587b95c48c15a75d))
+- print full errors in logs ([7cc2e10](https://github.com/RHEnVision/provisioning-backend/commit/7cc2e10181bd623549b6ff78d03480e82c47bff3))
+
+### Build
+- **clowder:** Add image builder as clowder dependency ([01b1c06](https://github.com/RHEnVision/provisioning-backend/commit/01b1c06a9d59ff1334035699f46ae0915e4ac430))
+
+### Chore
+- add direnv.net to gitignore ([9ea4d84](https://github.com/RHEnVision/provisioning-backend/commit/9ea4d84764eb44e56716a07d6a2d478956d7b94d))
+- update all deps ([e3f5b54](https://github.com/RHEnVision/provisioning-backend/commit/e3f5b54d505217e12b1a49077651215d80a21fc5))
+- version 0.10.0 and changelog ([b7314fd](https://github.com/RHEnVision/provisioning-backend/commit/b7314fdc007cc7c4fc94dfde4871bb5c868a59d5))
+
+### Features
+- **kafka:** setup, configuration, availability check ([971c64d](https://github.com/RHEnVision/provisioning-backend/commit/971c64d37d62787778e4ed476cbcc3255ba8f6bd))
+- **refactor:** Add required true post aws in apispec ([73f3956](https://github.com/RHEnVision/provisioning-backend/commit/73f3956b2a08914d3adb2628b4addb6836a85941))
+- availability check kafka topic ([cea9ea0](https://github.com/RHEnVision/provisioning-backend/commit/cea9ea0e6aaac9a71f9d2171d38fb73ab1c27eb6))
+- reservation detail returns instance ids ([30a1f8e](https://github.com/RHEnVision/provisioning-backend/commit/30a1f8ec766a2da552c27da70c39c2b7b8863111))
+
+
 <a name="0.10.0"></a>
 ## [0.10.0](https://github.com/RHEnVision/provisioning-backend/compare/0.9.0...0.10.0) (2022-11-02)
 
