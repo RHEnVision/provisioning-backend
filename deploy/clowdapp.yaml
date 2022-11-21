@@ -81,6 +81,51 @@ objects:
               requests:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
+        - name: statuser
+          minReplicas: ${{STATUSER_REPLICAS}}
+          maxReplicas: ${{STATUSER_REPLICAS}}
+          podSpec:
+            image: ${IMAGE}:${IMAGE_TAG}
+            command:
+              - /pbstatuser
+            env:
+              - name: LOGGING_LEVEL
+                value: ${LOGGING_LEVEL}
+              - name: DATABASE_LOGGING_LEVEL
+                value: ${DATABASE_LOGGING_LEVEL}
+              - name: TELEMETRY_ENABLED
+                value: ${TELEMETRY_ENABLED}
+              - name: TELEMETRY_LOGGER_ENABLED
+                value: ${TELEMETRY_LOGGER_ENABLED}
+              - name: CLOWDER_ENABLED
+                value: ${CLOWDER_ENABLED}
+              - name: CLOUDWATCH_ENABLED
+                value: ${CLOUDWATCH_ENABLED}
+              - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
+                value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
+              - name: AWS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-aws-acc
+                    key: aws_access_key_id
+                    optional: false
+              - name: AWS_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-aws-acc
+                    key: aws_secret_access_key
+                    optional: false
+              - name: APP_INSTANCE_PREFIX
+                value: ${APP_INSTANCE_PREFIX}
+              - name: APP_CACHE_TYPE
+                value: ${APP_CACHE_TYPE}
+            resources:
+              limits:
+                cpu: ${{CPU_LIMIT}}
+                memory: ${MEMORY_LIMIT}
+              requests:
+                cpu: ${CPU_REQUESTS}
+                memory: ${MEMORY_REQUESTS}
         - name: api
           minReplicas: ${{MIN_REPLICAS}}
           webServices:
@@ -190,6 +235,8 @@ parameters:
   - name: MIN_REPLICAS
     value: "1"
   - name: WORKER_MIN_REPLICAS
+    value: "1"
+  - name: STATUSER_REPLICAS
     value: "1"
   - description: Image tag
     name: IMAGE_TAG
