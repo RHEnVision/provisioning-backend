@@ -30,7 +30,11 @@ Scope is typically the most significant Go package that was changed, or the main
 * changelog
 * scripts
 
-For WIP branches, start commit message with `WIP` and it will pass on CI.
+Or the scope can be [HMSPROV](https://issues.redhat.com/projects/HMSPROV) Jira issue.
+
+For **feat** and **fix** types Jira issue is required.
+Please use **feat(HMSPROV-XXX): subject**
+or put the issue reference in commit body as `Fixes: HMSPROV-XXX` or `Refs: HMSPROV-XXX`
 
 Use `make check-commits` to check commit message locally.
 

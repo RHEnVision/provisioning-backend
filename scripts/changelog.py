@@ -18,6 +18,15 @@ GitHub.REF["issues"] = RefDef(
                            url_string=(JIRA_URL + "/browse/" + JIRA_PROJECT + "-{ref}"),
                        )
 
+class SingleCommitLog(Changelog):
+  def get_log(self) -> str:
+    """Get the `git log` output limited to single commit.
+
+    Returns:
+        The output of the `git log` command, with a particular format.
+    """
+    return self.run_git("log", "-1", "--date=unix", "--format=" + self.FORMAT)
+
 def main(args: Optional[List[str]] = None) -> int:
   provider = GitHub("RHEnVision", "provisioning-backend", url="https://github.com")
   path = Path(os.path.abspath(__file__))
@@ -32,5 +41,36 @@ def main(args: Optional[List[str]] = None) -> int:
 
   return 0
 
+def check_commit(length_limit = 70) -> int:
+  provider = GitHub("RHEnVision", "provisioning-backend", url="https://github.com")
+  path = Path(os.path.abspath(__file__))
+  repo = path.parent.parent
+  changelog = SingleCommitLog(repo, provider=provider, style="angular")
+
+  commit = changelog.commits[0]
+  if len(commit.subject) > length_limit:
+    sys.stderr.write("ERROR: Commit message length too long (limit is " + 70 + "): " + commit.subject)
+    return 1
+
+  if commit.style["type"] == "":
+    sys.stderr.write("ERROR: Commit message must have a type 'type: subject': " + commit.subject)
+    return 2
+
+  if commit.style["type"] in ["Features", "Bug Fixes"]:
+    if commit.style["scope"] == "":
+      sys.stderr.write("ERROR: Feature and bug fix must have a scope 'feat(scope): subject': " + commit.subject)
+      return 2
+
+    if "issues" not in commit.text_refs or len(commit.text_refs["issues"]) == 0:
+      sys.stderr.write("ERROR: Feature and bug fix must have a Jira issue linked")
+      sys.stderr.write("ERROR: You can link the issue either in subject as 'feat(HMSPROV-XXX): subject': " + commit.subject)
+      sys.stderr.write("ERROR: or anywhere in the body preferably as 'Fixes: HMSPROV-XXX' or Refs: HMSPROV-XXX")
+      return 3
+
+  return 0
+
 if __name__ == '__main__':
-  sys.exit(main(sys.argv[1:]))
+  if sys.argv[1] == 'commit-check':
+    sys.exit(check_commit())
+  else:
+    sys.exit(main(sys.argv[1:]))
