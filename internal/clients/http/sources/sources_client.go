@@ -31,7 +31,13 @@ func logger(ctx context.Context) zerolog.Logger {
 }
 
 func newSourcesClient(ctx context.Context) (clients.Sources, error) {
-	c, err := NewClientWithResponses(config.Sources.URL, func(c *Client) error {
+	return NewSourcesClientWithUrl(ctx, config.Sources.URL)
+}
+
+// NewSourcesClientWithUrl allows customization of the URL for the underlying client.
+// It is meant for testing only, for production please use clients.GetSourcesClient.
+func NewSourcesClientWithUrl(ctx context.Context, url string) (clients.Sources, error) {
+	c, err := NewClientWithResponses(url, func(c *Client) error {
 		c.Client = http.NewPlatformClient(ctx, config.Sources.Proxy.URL)
 		return nil
 	})
