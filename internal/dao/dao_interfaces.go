@@ -79,6 +79,9 @@ type ReservationDao interface {
 	// UpdateStatus sets status field and increment step counter by addSteps. UNSCOPED.
 	UpdateStatus(ctx context.Context, id int64, status string, addSteps int32) error
 
+	// UnscopedUpdateAWSDetail updates details of the AWS reservation. UNSCOPED.
+	UnscopedUpdateAWSDetail(ctx context.Context, id int64, awsDetail *models.AWSDetail) error
+
 	// UpdateReservationIDForAWS updates AWS reservation id field. UNSCOPED.
 	UpdateReservationIDForAWS(ctx context.Context, id int64, awsReservationId string) error
 

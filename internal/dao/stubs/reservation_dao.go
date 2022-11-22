@@ -2,14 +2,15 @@ package stubs
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 )
 
 type reservationDaoStub struct {
-	lastId int64
-	store  []*models.AWSReservation
+	lastId   int64
+	storeAWS []*models.AWSReservation
 }
 
 func init() {
@@ -18,7 +19,7 @@ func init() {
 
 func ReservationStubCount(ctx context.Context) int {
 	pkdao := getReservationDaoStub(ctx)
-	return len(pkdao.store)
+	return len(pkdao.storeAWS)
 }
 
 func getReservationDao(ctx context.Context) dao.ReservationDao {
@@ -27,7 +28,7 @@ func getReservationDao(ctx context.Context) dao.ReservationDao {
 
 func (stub *reservationDaoStub) CreateAWS(ctx context.Context, reservation *models.AWSReservation) error {
 	reservation.ID = stub.lastId + 1
-	stub.store = append(stub.store, reservation)
+	stub.storeAWS = append(stub.storeAWS, reservation)
 	stub.lastId++
 	return nil
 }
@@ -45,7 +46,7 @@ func (stub *reservationDaoStub) CreateInstance(ctx context.Context, reservation 
 }
 
 func (stub *reservationDaoStub) GetById(ctx context.Context, id int64) (*models.Reservation, error) {
-	for _, awsReservation := range stub.store {
+	for _, awsReservation := range stub.storeAWS {
 		if awsReservation.AccountID == ctxAccountId(ctx) && awsReservation.ID == id {
 			return &awsReservation.Reservation, nil
 		}
@@ -54,7 +55,7 @@ func (stub *reservationDaoStub) GetById(ctx context.Context, id int64) (*models.
 }
 
 func (stub *reservationDaoStub) GetAWSById(ctx context.Context, id int64) (*models.AWSReservation, error) {
-	for _, awsReservation := range stub.store {
+	for _, awsReservation := range stub.storeAWS {
 		if awsReservation.AccountID == ctxAccountId(ctx) && awsReservation.ID == id {
 			return awsReservation, nil
 		}
@@ -71,6 +72,15 @@ func (stub *reservationDaoStub) ListInstances(ctx context.Context, reservationId
 }
 
 func (stub *reservationDaoStub) UpdateStatus(ctx context.Context, id int64, status string, addSteps int32) error {
+	return nil
+}
+
+func (stub *reservationDaoStub) UnscopedUpdateAWSDetail(ctx context.Context, id int64, awsDetail *models.AWSDetail) error {
+	res, err := stub.GetAWSById(ctx, id)
+	if err != nil {
+		return fmt.Errorf("stubbed lookup of AWS reservation failed: %w", err)
+	}
+	res.Detail = awsDetail
 	return nil
 }
 

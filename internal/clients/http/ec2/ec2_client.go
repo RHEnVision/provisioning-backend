@@ -23,7 +23,7 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-const TraceName = "github.com/EnVision/provisioning/internal/clients/http/ec2"
+const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 
 type ec2Client struct {
 	ec2     *ec2.Client
@@ -133,7 +133,8 @@ func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*
 	return output.Credentials, nil
 }
 
-// ImportPubkey imports a key and returns AWS ID
+// ImportPubkey imports a key and returns AWS KeyPair name.
+// The AWS name will be set to value of models.Pubkey Name.
 func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "ImportPubkey")
 	defer span.End()
@@ -170,6 +171,33 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 	}
 
 	return *output.KeyPairId, nil
+}
+
+func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (string, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "fetchPubkeyName")
+	defer span.End()
+
+	if !c.assumed {
+		return "", http.ServiceAccountUnsupportedOperationErr
+	}
+	logger := logger(ctx)
+	logger.Trace().Msgf("Fetching AWS key with fingerprint '%s' to get its name", fingerprint)
+	input := &ec2.DescribeKeyPairsInput{}
+	input.Filters = []types.Filter{{Name: ptr.To("fingerprint"), Values: []string{fingerprint}}}
+	output, err := c.ec2.DescribeKeyPairs(ctx, input)
+	if err != nil {
+		if isAWSUnauthorizedError(err) {
+			err = clients.UnauthorizedErr
+		}
+		span.SetStatus(codes.Error, err.Error())
+		return "", fmt.Errorf("cannot fetch SSH key to update its tag %s: %w", fingerprint, err)
+	}
+
+	if len(output.KeyPairs) == 0 {
+		span.SetStatus(codes.Error, fmt.Sprintf("no KeyPair with fingerpring (%s) found", fingerprint))
+		return "", fmt.Errorf("SSH key not found by its fingerprint (%s): %w", fingerprint, http.PubkeyNotFoundErr)
+	}
+	return *output.KeyPairs[0].KeyName, nil
 }
 
 func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {

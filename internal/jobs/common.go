@@ -10,7 +10,7 @@ import (
 )
 
 func decodeJob(ctx context.Context, job dejq.Job, argInterface interface{}) error {
-	err := job.Decode(&argInterface)
+	err := job.Decode(argInterface)
 	if err != nil {
 		ctxval.Logger(ctx).Error().Err(err).Msgf("Unable to decode arguments for job '%s'", job.Type())
 		return fmt.Errorf("decode error: %w", err)

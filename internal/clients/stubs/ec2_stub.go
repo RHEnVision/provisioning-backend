@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
@@ -12,7 +13,9 @@ type ec2CtxKeyType string
 
 var ec2CtxKey ec2CtxKeyType = "ec2-interface"
 
-type EC2ClientStub struct{}
+type EC2ClientStub struct {
+	Imported []*models.Pubkey
+}
 
 func init() {
 	clients.GetEC2Client = newEC2CustomerClientStubWithRegion
@@ -41,7 +44,15 @@ func (mock *EC2ClientStub) Status(ctx context.Context) error {
 }
 
 func (mock *EC2ClientStub) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
-	return "", nil
+	mock.Imported = append(mock.Imported, key)
+	return "key-12345678912345678", nil
+}
+
+func (mock *EC2ClientStub) GetPubkeyName(ctx context.Context, fingerprint string) (string, error) {
+	if fingerprint == "existing" {
+		return "awsKeyPairName", nil
+	}
+	return "", http.PubkeyNotFoundErr
 }
 
 func (mock *EC2ClientStub) DeleteSSHKey(ctx context.Context, handle string) error {

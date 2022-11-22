@@ -43,7 +43,7 @@ func WithReservationDao(parent context.Context) context.Context {
 		panic(dao.ErrStubContextAlreadySet)
 	}
 
-	ctx := context.WithValue(parent, reservationCtxKey, &reservationDaoStub{lastId: 0, store: []*models.AWSReservation{}})
+	ctx := context.WithValue(parent, reservationCtxKey, &reservationDaoStub{lastId: 0, storeAWS: []*models.AWSReservation{}})
 	return ctx
 }
 

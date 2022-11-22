@@ -8,8 +8,9 @@ import (
 )
 
 type pubkeyDaoStub struct {
-	lastId int64
-	store  []*models.Pubkey
+	lastId        int64
+	store         []*models.Pubkey
+	resourceStore []*models.PubkeyResource
 }
 
 func init() {
@@ -92,10 +93,17 @@ func (stub *pubkeyDaoStub) Delete(ctx context.Context, id int64) error {
 }
 
 func (stub *pubkeyDaoStub) UnscopedGetResourceBySourceAndRegion(ctx context.Context, pubkeyId int64, sourceId string, region string) (*models.PubkeyResource, error) {
-	return nil, nil
+	for _, pkr := range stub.resourceStore {
+		if pkr.PubkeyID == pubkeyId && pkr.SourceID == sourceId && pkr.Region == region {
+			return pkr, nil
+		}
+	}
+	return nil, dao.ErrNoRows
 }
 
 func (stub *pubkeyDaoStub) UnscopedCreateResource(ctx context.Context, pkr *models.PubkeyResource) error {
+	pkr.ID = int64(len(stub.resourceStore)) + 1
+	stub.resourceStore = append(stub.resourceStore, pkr)
 	return nil
 }
 
@@ -104,5 +112,11 @@ func (stub *pubkeyDaoStub) UnscopedDeleteResource(ctx context.Context, id int64)
 }
 
 func (stub *pubkeyDaoStub) UnscopedListResourcesByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error) {
-	return nil, nil
+	var result []*models.PubkeyResource
+	for _, pkr := range stub.resourceStore {
+		if pkr.PubkeyID == pkId {
+			result = append(result, pkr)
+		}
+	}
+	return result, nil
 }

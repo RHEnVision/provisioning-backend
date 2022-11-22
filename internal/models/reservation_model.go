@@ -59,6 +59,9 @@ type AWSDetail struct {
 
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff"`
+
+	// PubkeyName on AWS in given region. Found by the EnsurePubkey job.
+	PubkeyName string `json:"pubkey_name"`
 }
 
 type AWSReservation struct {

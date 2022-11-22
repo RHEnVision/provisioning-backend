@@ -91,8 +91,8 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	// Prepare jobs
 	logger.Debug().Msgf("Enqueuing upload key job for pubkey %d", pk.ID)
 	uploadPubkeyJob := dejq.PendingJob{
-		Type: queue.TypePubkeyUploadAws,
-		Body: &jobs.PubkeyUploadAWSTaskArgs{
+		Type: queue.TypeEnsurePubkeyOnAws,
+		Body: &jobs.EnsurePubkeyOnAWSTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			Region:        reservation.Detail.Region,
@@ -131,6 +131,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 			ReservationID: reservation.ID,
 			Region:        reservation.Detail.Region,
 			PubkeyID:      pk.ID,
+			SourceID:      reservation.SourceID,
 			Detail:        reservation.Detail,
 			AMI:           ami,
 			ARN:           authentication,
