@@ -21,6 +21,7 @@ func newPubkeyResourceNoop() *models.PubkeyResource {
 		Tag:      "tag1",
 		PubkeyID: 1,
 		Provider: models.ProviderTypeNoop,
+		SourceID: "1",
 		Handle:   factories.GetSequenceName("handle"),
 		Region:   "us-west-1",
 	}
@@ -78,13 +79,13 @@ func TestPubkeyResourceGetByProviderType(t *testing.T) {
 		err := pubkeyDao.UnscopedCreateResource(ctx, resource)
 		require.NoError(t, err)
 
-		createdResource, err := pubkeyDao.UnscopedGetResourceByProviderType(ctx, resource.PubkeyID, resource.Provider)
+		createdResource, err := pubkeyDao.UnscopedGetResourceBySourceAndRegion(ctx, resource.PubkeyID, resource.SourceID, resource.Region)
 		require.NoError(t, err)
 		assert.Equal(t, resource, createdResource)
 	})
 
 	t.Run("no rows", func(t *testing.T) {
-		_, err := pubkeyDao.UnscopedGetResourceByProviderType(ctx, math.MaxInt64, models.ProviderTypeUnknown)
+		_, err := pubkeyDao.UnscopedGetResourceBySourceAndRegion(ctx, math.MaxInt64, "1234", "us-east-1")
 		require.ErrorIs(t, err, dao.ErrNoRows)
 	})
 }
