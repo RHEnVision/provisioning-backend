@@ -30,7 +30,7 @@ func init() {
 func RegisterJobs(logger *zerolog.Logger) {
 	logger.Debug().Msg("Registering job queue handlers")
 	dejqQueue.RegisterHandler(queue.TypeNoop, jobs.HandleNoop)
-	dejqQueue.RegisterHandler(queue.TypePubkeyUploadAws, jobs.HandlePubkeyUploadAWS)
+	dejqQueue.RegisterHandler(queue.TypeEnsurePubkeyOnAws, jobs.HandleEnsurePubkeyOnAWS)
 	dejqQueue.RegisterHandler(queue.TypeLaunchInstanceAws, jobs.HandleLaunchInstanceAWS)
 	dejqQueue.RegisterHandler(queue.TypeLaunchInstanceGcp, jobs.HandleLaunchInstanceGCP)
 }

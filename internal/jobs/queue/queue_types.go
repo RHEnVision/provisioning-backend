@@ -2,7 +2,7 @@ package queue
 
 const (
 	TypeNoop              = "no_operation"
-	TypePubkeyUploadAws   = "pubkey_upload_aws"
+	TypeEnsurePubkeyOnAws = "ensure_pubkey_on_aws"
 	TypeLaunchInstanceAws = "launch_instances_aws"
 	TypeLaunchInstanceGcp = "launch_instances_gcp"
 )

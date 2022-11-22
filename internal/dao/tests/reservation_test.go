@@ -175,6 +175,32 @@ func TestReservationList(t *testing.T) {
 	})
 }
 
+func TestUnscopedUpdateAWSDetail(t *testing.T) {
+	reservationDao, ctx := setupReservation(t)
+	defer teardownReservation(t)
+
+	t.Run("updates detail field", func(t *testing.T) {
+		reservation := newAWSReservation()
+		reservation.Detail = &models.AWSDetail{
+			Region: "us-east-1",
+			Amount: 1,
+		}
+		err := reservationDao.CreateAWS(ctx, reservation)
+		require.NoError(t, err)
+		newDetail := &models.AWSDetail{
+			Region:     "us-east-1",
+			Amount:     1,
+			PubkeyName: "AWS name",
+		}
+		err = reservationDao.UnscopedUpdateAWSDetail(ctx, reservation.ID, newDetail)
+		require.NoError(t, err, "failed to update reservation")
+
+		reservationAfter, err := reservationDao.GetAWSById(ctx, reservation.ID)
+		require.NoError(t, err)
+		assert.Equal(t, "AWS name", reservationAfter.Detail.PubkeyName)
+	})
+}
+
 func TestReservationUpdateIDForAWS(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer teardownReservation(t)

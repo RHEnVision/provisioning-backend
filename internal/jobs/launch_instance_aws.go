@@ -26,6 +26,9 @@ type LaunchInstanceAWSTaskArgs struct {
 	// Associated public key
 	PubkeyID int64 `json:"pubkey_id"`
 
+	// Source ID that was used to get the ARN
+	SourceID string
+
 	// Detail information
 	Detail *models.AWSDetail `json:"detail"`
 
@@ -64,11 +67,11 @@ func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArg
 	updateStatusBefore(ctx, args.ReservationID, "Launching instance(s)")
 	defer updateStatusAfter(ctx, args.ReservationID, "Launched instance(s)", 1)
 
-	pkD := dao.GetPubkeyDao(ctx)
+	resD := dao.GetReservationDao(ctx)
 
-	pk, err := pkD.GetById(ctx, args.PubkeyID)
+	reservation, err := resD.GetAWSById(ctx, args.ReservationID)
 	if err != nil {
-		return fmt.Errorf("cannot get pubkey by id: %w", err)
+		return fmt.Errorf("cannot get aws reservation by id: %w", err)
 	}
 
 	// Generate user data
@@ -87,12 +90,10 @@ func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArg
 	}
 
 	logger.Trace().Msg("Executing RunInstances")
-	instances, awsReservationId, err := ec2Client.RunInstances(ctx, args.Detail.Name, args.Detail.Amount, types.InstanceType(args.Detail.InstanceType), args.AMI, pk.Name, userData)
+	instances, awsReservationId, err := ec2Client.RunInstances(ctx, args.Detail.Name, args.Detail.Amount, types.InstanceType(args.Detail.InstanceType), args.AMI, reservation.Detail.PubkeyName, userData)
 	if err != nil {
 		return fmt.Errorf("cannot run instances: %w", err)
 	}
-
-	resD := dao.GetReservationDao(ctx)
 
 	// For each instance that was created in AWS, add it as a DB record
 	for _, instanceId := range instances {

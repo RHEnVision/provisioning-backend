@@ -210,6 +210,19 @@ func (x *reservationDao) UpdateStatus(ctx context.Context, id int64, status stri
 	return nil
 }
 
+func (x *reservationDao) UnscopedUpdateAWSDetail(ctx context.Context, id int64, awsDetail *models.AWSDetail) error {
+	query := `UPDATE aws_reservation_details SET detail = $2 WHERE reservation_id = $1`
+
+	tag, err := db.Pool.Exec(ctx, query, id, awsDetail)
+	if err != nil {
+		return fmt.Errorf("pgx error: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+	}
+	return nil
+}
+
 func (x *reservationDao) UpdateReservationIDForAWS(ctx context.Context, id int64, awsReservationId string) error {
 	query := `UPDATE aws_reservation_details SET aws_reservation_id = $2 WHERE reservation_id = $1`
 

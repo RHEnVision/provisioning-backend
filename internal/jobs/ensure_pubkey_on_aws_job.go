@@ -13,7 +13,7 @@ import (
 	"github.com/lzap/dejq"
 )
 
-type PubkeyUploadAWSTaskArgs struct {
+type EnsurePubkeyOnAWSTaskArgs struct {
 	AccountID     int64                   `json:"account_id"`
 	ReservationID int64                   `json:"reservation_id"`
 	Region        string                  `json:"region"`
@@ -22,23 +22,25 @@ type PubkeyUploadAWSTaskArgs struct {
 	ARN           *clients.Authentication `json:"arn"`
 }
 
-// Unmarshall arguments and handle error
-func HandlePubkeyUploadAWS(ctx context.Context, job dejq.Job) error {
-	args := PubkeyUploadAWSTaskArgs{}
+// HandleEnsurePubkeyOnAWS takes pubkey and ensures the pubkey is present on AWS in requested region.
+// It saves the name of the pubkey in models.AWSReservation in models.AWSDetail.
+// This only unmarshall arguments and handles error, processing function is not exported.
+func HandleEnsurePubkeyOnAWS(ctx context.Context, job dejq.Job) error {
+	args := EnsurePubkeyOnAWSTaskArgs{}
 	err := decodeJob(ctx, job, &args)
 	if err != nil {
 		return err
 	}
 	ctx = contextLogger(ctx, job.Type(), args, args.AccountID, args.ReservationID)
 
-	jobErr := handlePubkeyUploadAWS(ctx, &args)
+	jobErr := handleEnsurePubkeyOnAWS(ctx, &args)
 
 	finishJob(ctx, args.ReservationID, jobErr)
 	return jobErr
 }
 
 // Job logic, when error is returned the job status is updated accordingly
-func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) error {
+func handleEnsurePubkeyOnAWS(ctx context.Context, args *EnsurePubkeyOnAWSTaskArgs) error {
 	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started pubkey upload AWS job")
 
@@ -51,56 +53,66 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 	defer updateStatusAfter(ctx, args.ReservationID, "Uploaded public key", 1)
 
 	pkDao := dao.GetPubkeyDao(ctx)
+	resDao := dao.GetReservationDao(ctx)
+	awsReservation, err := resDao.GetAWSById(ctx, args.ReservationID)
+	if err != nil {
+		return fmt.Errorf("cannot upload aws pubkey: %w", err)
+	}
 
 	pubkey, err := pkDao.GetById(ctx, args.PubkeyID)
 	if err != nil {
 		return fmt.Errorf("cannot upload aws pubkey: %w", err)
 	}
 
-	// check presence first
-	skip := true
-	pkrCheck, errDao := pkDao.UnscopedGetResourceBySourceAndRegion(ctx, args.PubkeyID, args.SourceID, args.Region)
+	// Fetch our DB record for the resource to update if necessary
+	pkr, errDao := pkDao.UnscopedGetResourceBySourceAndRegion(ctx, args.PubkeyID, args.SourceID, args.Region)
 	if errDao != nil {
 		if errors.Is(errDao, dao.ErrNoRows) {
-			skip = false
+			pkr = &models.PubkeyResource{
+				PubkeyID: pubkey.ID,
+				Provider: models.ProviderTypeAWS,
+				SourceID: args.SourceID,
+				Region:   args.Region,
+			}
 		} else {
 			return fmt.Errorf("unable to check pubkey resource: %w", errDao)
 		}
 	}
 
-	if skip {
-		logger.Info().Msgf("SSH key-pair '%s' already present, no upload needed", pkrCheck.Handle)
-		return nil
-	}
-
-	// create new resource with randomized tag
-	pkr := models.PubkeyResource{
-		PubkeyID: pubkey.ID,
-		Provider: models.ProviderTypeAWS,
-		SourceID: args.SourceID,
-		Region:   args.Region,
-	}
-	pkr.RandomizeTag()
-
-	// upload to cloud with a tag
 	ec2Client, err := clients.GetEC2Client(ctx, args.ARN, args.Region)
 	if err != nil {
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
 
-	pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
+	// check presence on AWS first
+	ec2Name, err := ec2Client.GetPubkeyName(ctx, pubkey.Fingerprint)
 	if err != nil {
-		if errors.Is(err, http.DuplicatePubkeyErr) {
-			return fmt.Errorf("cannot upload aws pubkey, pubkey '%s' already present: %w", pubkey.Name, err)
+		// if not found on AWS, import
+		if errors.Is(err, http.PubkeyNotFoundErr) {
+			pkr.Tag = ""
+			pkr.RandomizeTag()
+			pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
+			if err != nil {
+				return fmt.Errorf("cannot upload aws pubkey: %w", err)
+			}
+			ec2Name = pubkey.Name
 		} else {
-			return fmt.Errorf("cannot upload aws pubkey: %w", err)
+			return fmt.Errorf("cannot fetch name of pubkey with fingerpring (%s): %w", pubkey.Fingerprint, err)
 		}
 	}
 
-	// create resource with handle
-	err = pkDao.UnscopedCreateResource(ctx, &pkr)
+	// update the AWS key name in reservation details
+	awsReservation.Detail.PubkeyName = ec2Name
+	err = resDao.UnscopedUpdateAWSDetail(ctx, awsReservation.Reservation.ID, awsReservation.Detail)
 	if err != nil {
-		return fmt.Errorf("cannot upload aws pubkey: %w", err)
+		return fmt.Errorf("failed to save AWS pubkey name to DB: %w", err)
+	}
+
+	if pkr.ID == 0 {
+		err = pkDao.UnscopedCreateResource(ctx, pkr)
+		if err != nil {
+			return fmt.Errorf("cannot create resource for aws pubkey: %w", err)
+		}
 	}
 
 	return nil
