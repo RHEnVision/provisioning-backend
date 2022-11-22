@@ -7,8 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -75,14 +73,10 @@ func NewKafkaBroker() (Broker, error) {
 
 	// configure TLS when CA certificate was provided
 	if config.Kafka.CACert != "" {
-		cleanCAPath := filepath.Clean(config.Kafka.CACert)
-		pemCerts, err := ioutil.ReadFile(cleanCAPath)
-		if err != nil {
-			return nil, fmt.Errorf("unable to read kafka CA cert: %w", err)
-		}
+		pemCerts := config.Kafka.CACert
 
 		pool := x509.NewCertPool()
-		pool.AppendCertsFromPEM(pemCerts)
+		pool.AppendCertsFromPEM([]byte(pemCerts))
 
 		tlsConfig = &tls.Config{
 			MinVersion: tls.VersionTLS13,
