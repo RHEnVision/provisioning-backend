@@ -59,7 +59,7 @@ func handlePubkeyUploadAWS(ctx context.Context, args *PubkeyUploadAWSTaskArgs) e
 
 	// check presence first
 	skip := true
-	pkrCheck, errDao := pkDao.UnscopedGetResourceByProviderType(ctx, args.PubkeyID, models.ProviderTypeAWS)
+	pkrCheck, errDao := pkDao.UnscopedGetResourceBySourceAndRegion(ctx, args.PubkeyID, args.SourceID, args.Region)
 	if errDao != nil {
 		if errors.Is(errDao, dao.ErrNoRows) {
 			skip = false

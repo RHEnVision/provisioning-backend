@@ -129,11 +129,11 @@ func (x *pubkeyDao) UnscopedCreateResource(ctx context.Context, pkr *models.Pubk
 	return nil
 }
 
-func (x *pubkeyDao) UnscopedGetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error) {
-	query := `SELECT * FROM pubkey_resources WHERE pubkey_id = $1 AND provider = $2`
+func (x *pubkeyDao) UnscopedGetResourceBySourceAndRegion(ctx context.Context, pubkeyId int64, sourceId string, region string) (*models.PubkeyResource, error) {
+	query := `SELECT * FROM pubkey_resources WHERE pubkey_id = $1 AND source_id = $2 AND region = $3`
 	result := &models.PubkeyResource{}
 
-	err := pgxscan.Get(ctx, db.Pool, result, query, pubkeyId, provider)
+	err := pgxscan.Get(ctx, db.Pool, result, query, pubkeyId, sourceId, region)
 	if err != nil {
 		return nil, fmt.Errorf("pgx error: %w", err)
 	}

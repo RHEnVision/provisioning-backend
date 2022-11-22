@@ -91,7 +91,7 @@ func (stub *pubkeyDaoStub) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (stub *pubkeyDaoStub) UnscopedGetResourceByProviderType(ctx context.Context, pubkeyId int64, provider models.ProviderType) (*models.PubkeyResource, error) {
+func (stub *pubkeyDaoStub) UnscopedGetResourceBySourceAndRegion(ctx context.Context, pubkeyId int64, sourceId string, region string) (*models.PubkeyResource, error) {
 	return nil, nil
 }
 
