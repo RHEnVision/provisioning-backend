@@ -25,7 +25,7 @@ check-migrations: ## Check migration files for changes
 
 .PHONY: check-commits
 check-commits: ## Check commit format
-	@scripts/check_commits.sh
+	@scripts/changelog.py commit-check
 
 .PHONY: fmt ## Alias to perform all code formatting and linting
 fmt: check-commits check-migrations format imports lint

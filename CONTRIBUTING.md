@@ -5,7 +5,7 @@
 Make sure your commit message follows this subject style:
 
         type: brief summary up to 70 characters or
-        type(scope): brief summary up to 70 characters
+        type(HMSPROV-XXX): brief summary up to 70 characters
 
 Type must be one of the following:
 
@@ -20,17 +20,11 @@ Type must be one of the following:
 * **test**: Adding missing tests or correcting existing tests
 * **revert**: A commit revert
 
-Scope is typically the most significant Go package that was changed, or the main component. Typical scopes:
+The scope must be [HMSPROV](https://issues.redhat.com/projects/HMSPROV) Jira issue.
 
-* dao
-* cache
-* clients
-* oapi
-* readme
-* changelog
-* scripts
-
-For WIP branches, start commit message with `WIP` and it will pass on CI.
+For **feat** and **fix** types a Jira issue link is required.
+Please use the scope like `feat(HMSPROV-XXX): subject`
+or put the issue reference in commit body as `Fixes: HMSPROV-XXX` or `Refs: HMSPROV-XXX`
 
 Use `make check-commits` to check commit message locally.
 

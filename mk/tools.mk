@@ -11,4 +11,4 @@ install-tools: ## Install required Go commands
 .PHONY: generate-changelog
 generate-changelog: ## Generate CHANGELOG.md from git history
 	@echo "Required tool: pip3 install git-changelog"
-	git-changelog --style angular --template angular --output CHANGELOG.md .
+	scripts/changelog.py
