@@ -1,1 +1,1 @@
-Upstream.dockerfile
+RedHat.dockerfile
