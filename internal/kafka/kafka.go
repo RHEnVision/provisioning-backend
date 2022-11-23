@@ -180,7 +180,6 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, handler func(ct
 // different topic than the first one, DifferentTopicErr is returned.
 func (b *kafkaBroker) Send(ctx context.Context, messages ...*GenericMessage) error {
 	logger := ctxval.Logger(ctx)
-	logger.Trace().Msgf("Sending %d messages to Kafka", len(messages))
 
 	if len(messages) == 0 {
 		return nil
@@ -189,6 +188,8 @@ func (b *kafkaBroker) Send(ctx context.Context, messages ...*GenericMessage) err
 	commonTopic := messages[0].Topic
 	w := b.NewWriter(ctx)
 	defer w.Close()
+
+	logger.Trace().Str("topic", commonTopic).Msgf("Sending %d messages to Kafka", len(messages))
 
 	kMessages := make([]kafka.Message, len(messages))
 	for i, m := range messages {
