@@ -57,9 +57,9 @@ func createSASLMechanism(saslMechanismName string, username string, password str
 	}
 }
 
-func InitializeKafkaBroker() error {
+func InitializeKafkaBroker(ctx context.Context) error {
 	var err error
-	broker, err = NewKafkaBroker()
+	broker, err = NewKafkaBroker(ctx)
 	if err != nil {
 		return fmt.Errorf("unable to initialize kafka: %w", err)
 	}
@@ -67,9 +67,13 @@ func InitializeKafkaBroker() error {
 	return nil
 }
 
-func NewKafkaBroker() (Broker, error) {
+func NewKafkaBroker(ctx context.Context) (Broker, error) {
 	var tlsConfig *tls.Config
 	var saslMechanism sasl.Mechanism
+
+	logger := ctxval.Logger(ctx)
+	logger.Debug().Msgf("Setting up Kafka transport: %v CA:%v SASL:%v", config.Kafka.Brokers,
+		config.Kafka.CACert != "", config.Kafka.SASL.SaslMechanism != "" && config.Kafka.SASL.SaslMechanism != "none")
 
 	// configure TLS when CA certificate was provided
 	if config.Kafka.CACert != "" {
@@ -175,6 +179,9 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, handler func(ct
 // Send one or more generic messages with the same topic. If there is a message with
 // different topic than the first one, DifferentTopicErr is returned.
 func (b *kafkaBroker) Send(ctx context.Context, messages ...*GenericMessage) error {
+	logger := ctxval.Logger(ctx)
+	logger.Trace().Msgf("Sending %d messages to Kafka", len(messages))
+
 	if len(messages) == 0 {
 		return nil
 	}
