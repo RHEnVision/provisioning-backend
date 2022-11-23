@@ -224,7 +224,7 @@ func Initialize(configFiles ...string) {
 		if cfg.Kafka != nil {
 			config.Kafka.Brokers = make([]string, len(cfg.Kafka.Brokers))
 			for i, b := range cfg.Kafka.Brokers {
-				config.Kafka.Brokers[i] = fmt.Sprintf("%s:%d", b.Hostname, b.Port)
+				config.Kafka.Brokers[i] = fmt.Sprintf("%s:%d", b.Hostname, *b.Port)
 
 				// assumption: TLS/SASL credentials are always the same for all nodes in a cluster
 				if b.Authtype != nil && *b.Authtype != "" {
