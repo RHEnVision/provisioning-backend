@@ -87,7 +87,7 @@ func main() {
 
 	// initialize platform kafka
 	if config.Kafka.Enabled {
-		err = kafka.InitializeKafkaBroker()
+		err = kafka.InitializeKafkaBroker(ctx)
 		if err != nil {
 			logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
 		}

@@ -39,7 +39,7 @@ func sendAvailabilityRequestMessages(ctx context.Context, batchSize int, tickDur
 			length := len(messageBuffer)
 
 			if length >= batchSize {
-				logger.Trace().Int("messages", length).Msgf("Sent %d availability request messages (full buffer)", length)
+				logger.Trace().Int("messages", length).Msgf("Sending %d availability request messages (full buffer)", length)
 				send(ctx, messageBuffer...)
 				messageBuffer = messageBuffer[:0]
 			}
@@ -47,7 +47,7 @@ func sendAvailabilityRequestMessages(ctx context.Context, batchSize int, tickDur
 			length := len(messageBuffer)
 
 			if length > 0 {
-				logger.Trace().Int("messages", length).Msgf("Sent %d availability request messages (tick)", length)
+				logger.Trace().Int("messages", length).Msgf("Sending %d availability request messages (tick)", length)
 				send(ctx, messageBuffer...)
 				messageBuffer = messageBuffer[:0]
 			}
@@ -56,7 +56,7 @@ func sendAvailabilityRequestMessages(ctx context.Context, batchSize int, tickDur
 			length := len(messageBuffer)
 
 			if length > 0 {
-				logger.Trace().Int("messages", length).Msgf("Sent %d availability request messages (cancel)", length)
+				logger.Trace().Int("messages", length).Msgf("Sending %d availability request messages (cancel)", length)
 				send(ctx, messageBuffer...)
 			}
 
