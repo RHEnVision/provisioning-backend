@@ -248,10 +248,10 @@ parameters:
     value: quay.io/cloudservices/provisioning-backend
   - description: Logging level (trace, debug, info, warn, error, fatal, panic)
     name: LOGGING_LEVEL
-    value: "info"
+    value: "debug"
   - description: Postgres driver logging level (trace, debug, info, warn, error, fatal, panic)
     name: DATABASE_LOGGING_LEVEL
-    value: "info"
+    value: "debug"
   - description: OpenTelemetry collecting
     name: TELEMETRY_ENABLED
     value: "true"
