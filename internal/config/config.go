@@ -222,6 +222,7 @@ func Initialize(configFiles ...string) {
 
 		// kafka
 		if cfg.Kafka != nil {
+			config.Kafka.Enabled = true
 			config.Kafka.Brokers = make([]string, len(cfg.Kafka.Brokers))
 			for i, b := range cfg.Kafka.Brokers {
 				config.Kafka.Brokers[i] = fmt.Sprintf("%s:%d", b.Hostname, *b.Port)
