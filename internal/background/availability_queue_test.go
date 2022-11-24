@@ -2,6 +2,7 @@ package background
 
 import (
 	"context"
+	"runtime"
 	"sync"
 	"testing"
 	"time"
@@ -61,20 +62,34 @@ func TestQueueCancelSend(t *testing.T) {
 	ctx := context.Background()
 	_ = kafka.InitializeStubBroker(16)
 
+	// enqueue message to be sent first
+	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage()
+	EnqueueAvailabilityStatusRequest(&msg)
+
+	// start sending messages
+	senderCtx, senderCancel := context.WithCancel(ctx)
+	go sendAvailabilityRequestMessages(senderCtx, 2, 5*time.Second)
+
+	// allow the other goroutine to put the message into the buffer
+	runtime.Gosched()
+
+	// set the receiving message function up
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	consumeCtx, consumeCancel := context.WithCancel(ctx)
-	senderCtx, senderCancel := context.WithCancel(ctx)
 	defer consumeCancel()
-	go sendAvailabilityRequestMessages(senderCtx, 2, 5*time.Second)
 	go kafka.Consume(consumeCtx, kafka.AvailabilityStatusRequestTopic, func(ctx context.Context, msg *kafka.GenericMessage) {
 		asm, _ := kafka.NewAvailabilityStatusMessage(msg)
 		require.EqualValues(t, "1", asm.SourceID)
 		wg.Done()
 	})
 
-	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage()
-	EnqueueAvailabilityStatusRequest(&msg)
+	// at this point hopefully the message was already buffered but just in case :-)
+	time.Sleep(20 * time.Millisecond)
+
+	// cancel the sender before the 5 seconds timeout (so cancel branch is triggered)
 	senderCancel()
+
+	// wait until the message is consumed
 	wg.Wait()
 }
