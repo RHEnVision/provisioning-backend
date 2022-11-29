@@ -58,8 +58,8 @@ def check_commit(length_limit = 70) -> int:
     return 2
 
   if commit.style["type"] in ["Features", "Bug Fixes"]:
-    if commit.style["scope"] == "" or JIRA_ISSUE_SYMBOL not in commit.style["scope"]:
-      sys.stderr.write("ERROR: Feature and bug fix must have a scope 'feat("+JIRA_ISSUE_SYMBOL+"XXX): subject': " + commit.subject)
+    if commit.style["scope"] is not None and JIRA_ISSUE_SYMBOL not in commit.style["scope"]:
+      sys.stderr.write("ERROR: Scope for Feature and Bug fix needs to be Jira issue in format '"+JIRA_ISSUE_SYMBOL+"XXX': " + commit.style["scope"])
       return 2
 
     if "issues" not in commit.text_refs or len(commit.text_refs["issues"]) == 0:
