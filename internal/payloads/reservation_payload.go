@@ -64,7 +64,7 @@ type AWSReservationResponsePayload struct {
 	AWSReservationID string `json:"aws_reservation_id,omitempty"`
 
 	// Optional name of the instance(s).
-	Name *string `json:"name"`
+	Name string `json:"name"`
 
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff"`
@@ -116,7 +116,7 @@ type AWSReservationRequestPayload struct {
 	Region string `json:"region"`
 
 	// Optional name of the instance(s).
-	Name *string `json:"name"`
+	Name string `json:"name"`
 
 	// AWS Instance type.
 	InstanceType string `json:"instance_type"`
@@ -196,7 +196,7 @@ func NewAWSReservationResponse(reservation *models.AWSReservation, instances []*
 		Amount:       reservation.Detail.Amount,
 		InstanceType: reservation.Detail.InstanceType,
 		ID:           reservation.ID,
-		Name:         reservation.Detail.Name,
+		Name:         StringNullToEmpty(reservation.Detail.Name),
 		PowerOff:     reservation.Detail.PowerOff,
 		Instances:    instanceIds,
 	}

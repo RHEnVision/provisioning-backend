@@ -9,3 +9,10 @@ func SqlNullToStringPtr(s sql.NullString) *string {
 	str := s.String
 	return &str
 }
+
+func StringNullToEmpty(str *string) string {
+	if str == nil {
+		return ""
+	}
+	return *str
+}

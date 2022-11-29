@@ -48,10 +48,8 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.Status = "Created"
 	reservation.Provider = models.ProviderTypeAWS
 	reservation.Steps = 2
-	if payload.Name != nil {
-		newName := config.Application.InstancePrefix + *payload.Name
-		reservation.Detail.Name = &newName
-	}
+	newName := config.Application.InstancePrefix + payload.Name
+	reservation.Detail.Name = &newName
 
 	// validate pubkey
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
