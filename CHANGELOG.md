@@ -1,3 +1,41 @@
+<a name="0.12.0"></a>
+## [0.12.0](https://github.com/RHEnVision/provisioning-backend/compare/0.11.0...0.12.0) (2022-12-01)
+
+### Bug Fixes
+- **kafka:** CA config from string ([34f4c59](https://github.com/RHEnVision/provisioning-backend/commit/34f4c59af28b52087e52dc2f12d8273bc0966f6a))
+- **sources:** handle source without application type correctly ([75bc847](https://github.com/RHEnVision/provisioning-backend/commit/75bc8471cff0ffbb30908ad0bfec125fba3216e6))
+- break availability queue sender loop on context cancel ([0ec4201](https://github.com/RHEnVision/provisioning-backend/commit/0ec420179b2372e875d829910123efcf5203fdd9))
+- break consume look on context cancel ([4795c58](https://github.com/RHEnVision/provisioning-backend/commit/4795c58aac69e0e8dc262f53382428715ad06a9f))
+- create topics in kafka startup script ([f7b2fab](https://github.com/RHEnVision/provisioning-backend/commit/f7b2fabce583884a94df6aa9974254c5ee20b42d))
+- enable Kafka in Clowder ([8ea9023](https://github.com/RHEnVision/provisioning-backend/commit/8ea90236707a4f0cd080b48bd0f6aec6a2368deb))
+- intermittent failures on CI for ASM queue test ([656ee05](https://github.com/RHEnVision/provisioning-backend/commit/656ee05b8d9634d671aff0067ea7b1dc8336a48d))
+- kafka port is a pointer ([4ca3076](https://github.com/RHEnVision/provisioning-backend/commit/4ca30768ed981a938f6d8d1de7d2142597ef29a9))
+- log topic alongside trace send message ([4f9a62a](https://github.com/RHEnVision/provisioning-backend/commit/4f9a62ac3c75612c4495615f641321ce9c7567ab))
+- payload name not nullable ([996251d](https://github.com/RHEnVision/provisioning-backend/commit/996251d0c17dbf1b120d4c473a74f61854f77a61)), related to [HMSPROV-373](https://issues.redhat.com/browse/HMSPROV-373)
+- scope existing pubkey search by source id ([af89244](https://github.com/RHEnVision/provisioning-backend/commit/af892449955be50118150015a6cf483c7d2ae97b)), related to [HMSPROV-366](https://issues.redhat.com/browse/HMSPROV-366)
+- share HTTP transport across platform clients ([dcf7c38](https://github.com/RHEnVision/provisioning-backend/commit/dcf7c3894bfaac7d391437c175af0f75b9f31ead))
+
+### Build
+- **changelog:** Add support for Jira issues ([1235b4a](https://github.com/RHEnVision/provisioning-backend/commit/1235b4a29d7fe41ce66068eb53364ff7cb0bab2e))
+- **changelog:** allow empty scope in changelog for feat and fix ([99c4e69](https://github.com/RHEnVision/provisioning-backend/commit/99c4e69175ad7e0583a48df4a7bfadf55325c638))
+- **container:** Switch back to oficial go-tool build ([9930373](https://github.com/RHEnVision/provisioning-backend/commit/99303730cc564f2d8d702d02723833ccde6c3d33)), related to [HMSPROV-365](https://issues.redhat.com/browse/HMSPROV-365)
+
+### Chore
+- version 0.11.0 ([274ec81](https://github.com/RHEnVision/provisioning-backend/commit/274ec81ae0a48bccdcbfde8c6069f031aa0073f8))
+
+### Code Refactoring
+- Error payload with messages ([fa9ae9b](https://github.com/RHEnVision/provisioning-backend/commit/fa9ae9b553fff5e2543cf497108ff1008ec2e792))
+
+### Features
+- **HMSPROV-368:** add Version and BuildTime to ResponseError ([07e16ad](https://github.com/RHEnVision/provisioning-backend/commit/07e16adb1c4e17341cd4ff186e24bcd204531af0))
+- better Kafka logging ([21d2f06](https://github.com/RHEnVision/provisioning-backend/commit/21d2f065976101ed20a0c69d5628f18cb35af959))
+- increase default logging level to debug ([0e16d72](https://github.com/RHEnVision/provisioning-backend/commit/0e16d720f0102dfe88eb6455d610b9cb1bcdee31))
+- statuser clowder deployment ([71c208a](https://github.com/RHEnVision/provisioning-backend/commit/71c208a3e7d1911e3049fc04371055a42e489841))
+
+### Tests
+- add unit test for Authentication failure ([99e4819](https://github.com/RHEnVision/provisioning-backend/commit/99e4819945dade484eeba7bb1443bebefb4b40e0)), related to [HMSPROV-347](https://issues.redhat.com/browse/HMSPROV-347)
+
+
 <a name="0.11.0"></a>
 ## [0.11.0](https://github.com/RHEnVision/provisioning-backend/compare/0.10.0...0.11.0) (2022-11-21)
 

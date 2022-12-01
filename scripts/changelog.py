@@ -71,7 +71,7 @@ def check_commit(length_limit = 70) -> int:
   return 0
 
 if __name__ == '__main__':
-  if sys.argv[1] == 'commit-check':
+  if len(sys.argv) > 1 and sys.argv[1] == 'commit-check':
     sys.exit(check_commit())
   else:
     sys.exit(main(sys.argv[1:]))
