@@ -447,10 +447,14 @@ components:
       type: object
     v1.ResponseError:
       properties:
+        build_time:
+          type: string
         error: {}
         msg:
           type: string
         trace_id:
+          type: string
+        version:
           type: string
       type: object
     v1.SourceResponse:

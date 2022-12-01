@@ -4,7 +4,7 @@
 
 Make sure your commit message follows this subject style:
 
-        type: brief summary up to 70 characters or
+        type: HMSPROV-XXX brief summary up to 70 characters or
         type(HMSPROV-XXX): brief summary up to 70 characters
 
 Type must be one of the following:
