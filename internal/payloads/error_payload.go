@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-
 	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/go-chi/render"
 )
 
@@ -26,6 +26,12 @@ type ResponseError struct {
 
 	// full root cause
 	Error error `json:"error"`
+
+	// API version
+	Version string `json:"version"`
+
+	// build time
+	BuildTime string `json:"build_time"`
 }
 
 func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
@@ -43,6 +49,8 @@ func NewInvalidRequestError(ctx context.Context, message string, err error) *Res
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -54,6 +62,8 @@ func NewMissingRequestParameterError(ctx context.Context, message string) *Respo
 		HTTPStatusCode: 400,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -66,6 +76,8 @@ func PubkeyDuplicateError(ctx context.Context, message string, err error) *Respo
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -123,6 +135,8 @@ func Response(ctx context.Context, status int, message string, err error) *Respo
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -152,6 +166,8 @@ func NewNotFoundError(ctx context.Context, message string, err error) *ResponseE
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -164,6 +180,8 @@ func NewEnqueueTaskError(ctx context.Context, message string, err error) *Respon
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -177,6 +195,8 @@ func NewDAOError(ctx context.Context, message string, err error) *ResponseError 
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -189,6 +209,8 @@ func NewRenderError(ctx context.Context, message string, err error) *ResponseErr
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -201,6 +223,8 @@ func NewURLParsingError(ctx context.Context, message string, err error) *Respons
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -213,6 +237,8 @@ func NewStatusError(ctx context.Context, message string, err error) *ResponseErr
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -225,6 +251,8 @@ func NewAWSError(ctx context.Context, message string, err error) *ResponseError 
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -237,6 +265,8 @@ func NewAzureError(ctx context.Context, message string, err error) *ResponseErro
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
 
@@ -249,5 +279,7 @@ func NewGCPError(ctx context.Context, message string, err error) *ResponseError 
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
 		Error:          err,
+		Version:        version.APIPathVersion,
+		BuildTime:      version.BuildTime,
 	}
 }
