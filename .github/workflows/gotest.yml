@@ -13,9 +13,15 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 2
-      - run: pip install git-changelog
+          path: code
+      - uses: actions/checkout@v3
+        with:
+          repository: "RHEnVision/changelog"
+          path: changelog
+      - run: pip3 install ./changelog
       - run: |
           make check-commits
+        working-directory: code
 
   linting:
     name: "🎯 Code format, imports and style"
