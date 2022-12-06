@@ -175,8 +175,6 @@ objects:
                 value: ${CLOUDWATCH_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
-              - name: OPEN_API_FILEPATH
-                value: ${OPEN_API_FILEPATH}
               - name: APP_COMPRESSION
                 value: ${APP_COMPRESSION}
               - name: AWS_KEY
@@ -289,5 +287,3 @@ parameters:
   - description: Internal queue beat threshold. Now many times the beat can be updated until job is cancelled. Not used in 'redis' mode.
     name: WORKER_MAX_BEATS
     value: "10"
-  - name: OPEN_API_FILEPATH
-    value: /var/tmp/openapi.json
