@@ -27,5 +27,5 @@ type SourceResult struct {
 }
 
 func (sr SourceResult) GenericMessage(ctx context.Context) (GenericMessage, error) {
-	return genericMessage(ctx, sr, sr.SourceID, SourcesEventStreamTopic)
+	return genericMessage(ctx, sr, sr.SourceID, SourcesStatusTopic)
 }
