@@ -86,7 +86,9 @@ func MountAPI(r *chi.Mux) {
 		})
 
 		r.Route("/availability_status", func(r chi.Router) {
-			r.Post("/", s.AvailabilityStatus)
+			r.Route("/sources", func(r chi.Router) {
+				r.Post("/", s.AvailabilityStatus)
+			})
 		})
 
 		// Unsupported routes are not published through OpenAPI, they are documented

@@ -289,6 +289,26 @@ paths:
                 $ref: '#/components/schemas/v1.NoopReservationResponse'
         "500":
           $ref: '#/components/responses/InternalError'
+  /availability_status/sources:
+    post:
+      operationId: availabilityStatus
+      description: >
+        Schedules a background operation of Sources availability check. These checks are
+        are performed in separate process at it's own pace. Results are sent via Kafka
+        to Sources. There is no output from this REST operation available, no tracking
+        of jobs is possible.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1.AvailabilityStatusRequest'
+        description: availability status request with source id
+        required: true
+      responses:
+        '200':
+          description: 'Returned on success, empty response.'
+        "500":
+          $ref: '#/components/responses/InternalError'
 components:
   responses:
     BadRequest:
@@ -358,6 +378,11 @@ components:
         reservation_id:
           format: int64
           type: integer
+        source_id:
+          type: string
+      type: object
+    v1.AvailabilityStatusRequest:
+      properties:
         source_id:
           type: string
       type: object
