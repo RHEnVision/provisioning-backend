@@ -108,6 +108,14 @@
         },
         "type": "object"
       },
+      "v1.AvailabilityStatusRequest": {
+        "properties": {
+          "source_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "v1.InstanceTypeResponse": {
         "properties": {
           "architecture": {
@@ -278,6 +286,31 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/availability_status/sources": {
+      "post": {
+        "description": "Schedules a background operation of Sources availability check. These checks are are performed in separate process at it's own pace. Results are sent via Kafka to Sources. There is no output from this REST operation available, no tracking of jobs is possible.\n",
+        "operationId": "availabilityStatus",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/v1.AvailabilityStatusRequest"
+              }
+            }
+          },
+          "description": "availability status request with source id",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returned on success, empty response."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
     "/instance_types/{PROVIDER}": {
       "get": {
         "description": "Return a list of instance types for particular provider. A region must be provided. A zone must be provided for Azure.\n",

@@ -57,6 +57,7 @@ func main() {
 	gen.addSchema("v1.NoopReservationResponse", &payloads.NoopReservationResponsePayload{})
 	gen.addSchema("v1.AWSReservationRequest", &payloads.AWSReservationRequestPayload{})
 	gen.addSchema("v1.AWSReservationResponse", &payloads.AWSReservationResponsePayload{})
+	gen.addSchema("v1.AvailabilityStatusRequest", &payloads.AvailabilityStatusRequest{})
 
 	// error payloads
 	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})

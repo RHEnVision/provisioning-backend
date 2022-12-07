@@ -1,5 +1,5 @@
 // @no-log
-POST http://{{hostname}}:{{port}}/{{prefix}}/availability_status HTTP/1.1
+POST http://{{hostname}}:{{port}}/{{prefix}}/availability_status/sources HTTP/1.1
 Content-Type: application/json
 X-Rh-Identity: {{identity}}
 
