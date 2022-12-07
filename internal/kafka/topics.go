@@ -1,21 +1,25 @@
 package kafka
 
-import "github.com/RHEnVision/provisioning-backend/internal/config"
+import (
+	"context"
+
+	"github.com/RHEnVision/provisioning-backend/internal/config"
+)
 
 // topic requests
 var (
 	availabilityStatusRequestTopicReq = "platform.provisioning.internal.availability-check"
-	sendEventsToSourcesTopicReq       = "platform.sources.event-stream"
+	sendStatusToSourcesTopicReq       = "platform.sources.status"
 )
 
 // topics after clowder mapping
 var (
 	AvailabilityStatusRequestTopic string
-	SourcesEventStreamTopic        string
+	SourcesStatusTopic             string
 )
 
 // InitializeTopicRequests performs clowder mapping of topics.
-func InitializeTopicRequests() {
-	AvailabilityStatusRequestTopic = config.TopicName(availabilityStatusRequestTopicReq)
-	SourcesEventStreamTopic = config.TopicName(sendEventsToSourcesTopicReq)
+func InitializeTopicRequests(ctx context.Context) {
+	AvailabilityStatusRequestTopic = config.TopicName(ctx, availabilityStatusRequestTopicReq)
+	SourcesStatusTopic = config.TopicName(ctx, sendStatusToSourcesTopicReq)
 }

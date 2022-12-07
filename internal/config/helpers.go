@@ -1,10 +1,12 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strings"
 
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/rs/zerolog"
 )
@@ -35,9 +37,12 @@ func InProdClowder() bool {
 }
 
 // TopicName returns mapped topic from Clowder. When not running in Clowder mode, it returns the input topic name.
-func TopicName(topic string) string {
+func TopicName(ctx context.Context, topic string) string {
 	if t, ok := clowder.KafkaTopics[topic]; ok {
 		return t.Name
+	}
+	if InClowder() {
+		ctxval.Logger(ctx).Warn().Msgf("Tried to get TopicName for %s, but clowder doesn't know such topic", topic)
 	}
 
 	return topic

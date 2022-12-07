@@ -65,7 +65,7 @@ func InitializeKafkaBroker(ctx context.Context) error {
 		return fmt.Errorf("unable to initialize kafka: %w", err)
 	}
 
-	InitializeTopicRequests()
+	InitializeTopicRequests(ctx)
 
 	return nil
 }
