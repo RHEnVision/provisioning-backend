@@ -34,6 +34,15 @@ func InProdClowder() bool {
 	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-stage")
 }
 
+// TopicName returns mapped topic from Clowder. When not running in Clowder mode, it returns the input topic name.
+func TopicName(topic string) string {
+	if t, ok := clowder.KafkaTopics[topic]; ok {
+		return t.Name
+	}
+
+	return topic
+}
+
 func StringToURL(urlStr string) *url.URL {
 	if urlStr == "" {
 		return nil
