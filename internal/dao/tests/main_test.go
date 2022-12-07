@@ -27,7 +27,7 @@ func teardown() {
 }
 
 func initEnvironment() {
-	config.Initialize("config/test.env")
+	config.Initialize("../../../config/test.env")
 
 	err := db.Initialize(context.Background(), "integration")
 	if err != nil {
