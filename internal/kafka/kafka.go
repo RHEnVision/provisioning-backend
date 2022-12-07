@@ -65,6 +65,8 @@ func InitializeKafkaBroker(ctx context.Context) error {
 		return fmt.Errorf("unable to initialize kafka: %w", err)
 	}
 
+	InitializeTopicRequests()
+
 	return nil
 }
 
@@ -78,10 +80,13 @@ func NewKafkaBroker(ctx context.Context) (Broker, error) {
 
 	// configure TLS when CA certificate was provided
 	if config.Kafka.CACert != "" {
-		pemCerts := config.Kafka.CACert
+		logger.Debug().Str("cert", config.Kafka.CACert).Msg("Adding CA certificates to the pool")
 
+		pemCerts := config.Kafka.CACert
 		pool := x509.NewCertPool()
-		pool.AppendCertsFromPEM([]byte(pemCerts))
+		if ok := pool.AppendCertsFromPEM([]byte(pemCerts)); !ok {
+			logger.Warn().Msg("Could not add an CA cert to the pool")
+		}
 
 		tlsConfig = &tls.Config{
 			MinVersion: tls.VersionTLS13,
