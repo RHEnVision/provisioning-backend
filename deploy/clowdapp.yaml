@@ -209,6 +209,8 @@ objects:
         - topicName: platform.provisioning.internal.availability-check
           partitions: 1
           replicas: 3
+        - topicName: platform.sources.event-stream
+        - topicName: platform.sources.status
       inMemoryDb: true
       dependencies:
         - sources-api
