@@ -70,12 +70,20 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 		ctx := prepareContext(t)
 
 		pk := &models.Pubkey{
-			Name: factories.GetSequenceName("pubkey"),
+			Name: "provisioningName",
 			Body: factories.GenerateRSAPubKey(t),
 		}
 		err := daoStubs.AddPubkey(ctx, pk)
-		pk.Fingerprint = "existing"
 		require.NoError(t, err, "failed to add stubbed key")
+
+		authentication := clients.Authentication{ProviderType: models.ProviderTypeAWS, Payload: "arn:aws:123123123123"}
+
+		ec2Client, err := clients.GetEC2Client(ctx, &authentication, "us-east-1")
+		require.NoError(t, err, "failed to get stubbed EC2 client")
+		pk.Name = "awsName" // change the name to get imported in the stub under
+		_, err = ec2Client.ImportPubkey(ctx, pk, "some-tag")
+		require.NoError(t, err, "failed to ImportPubkey to the stub")
+		pk.Name = "provisioningName" // change the name back
 
 		reservation := prepareReservation(t, ctx, pk)
 		rDao := dao.GetReservationDao(ctx)
@@ -89,7 +97,7 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 				Region:        reservation.Detail.Region,
 				PubkeyID:      pk.ID,
 				SourceID:      reservation.SourceID,
-				ARN:           &clients.Authentication{ProviderType: models.ProviderTypeAWS, Payload: "arn:aws:123123123123"},
+				ARN:           &authentication,
 			},
 		}
 
@@ -98,7 +106,7 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 
 		resAfter, err := rDao.GetAWSById(ctx, reservation.ID)
 		require.NoError(t, err, "failed to add stubbed reservation")
-		assert.Equal(t, "awsKeyPairName", resAfter.Detail.PubkeyName)
+		assert.Equal(t, "awsName", resAfter.Detail.PubkeyName)
 
 		pkDao := dao.GetPubkeyDao(ctx)
 		pkrList, err := pkDao.UnscopedListResourcesByPubkeyId(ctx, pk.ID)
