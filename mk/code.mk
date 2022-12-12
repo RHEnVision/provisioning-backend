@@ -28,5 +28,8 @@ check-commits: ## Check commit format
 	python -m rhenvision_changelog commit-check
 
 .PHONY: fmt ## Alias to perform all code formatting and linting
-fmt: check-commits check-migrations format imports lint
+fmt: format imports lint
+
+.PHONY: check ## Alias to perform all checking (commits, migrations)
+check: check-commits check-migrations
 
