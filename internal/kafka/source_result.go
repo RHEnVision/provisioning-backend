@@ -17,7 +17,7 @@ type SourceResult struct {
 	SourceID string `json:"resource_id"`
 
 	// Resource type of the source
-	ResourceType string `json:"resource_type" default:"source"`
+	ResourceType string `json:"resource_type"`
 
 	Status StatusType `json:"status"`
 
