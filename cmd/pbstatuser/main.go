@@ -107,7 +107,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 		sr := kafka.SourceResult{
 			SourceID:     s.SourceID,
 			Identity:     s.Identity,
-			ResourceType: "source",
+			ResourceType: "Source",
 		}
 		// TODO: check if source is avavliable - WIP
 		sr.Status = kafka.StatusAvaliable
@@ -123,7 +123,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 		sr := kafka.SourceResult{
 			SourceID:     s.SourceID,
 			Identity:     s.Identity,
-			ResourceType: "source",
+			ResourceType: "Source",
 		}
 		_, err := clients.GetEC2Client(ctx, &s.Authentication, "")
 		if err != nil {
@@ -146,7 +146,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 		sr := kafka.SourceResult{
 			SourceID:     s.SourceID,
 			Identity:     s.Identity,
-			ResourceType: "source",
+			ResourceType: "Source",
 		}
 		gcpClient, err := clients.GetGCPClient(ctx, &s.Authentication)
 		if err != nil {
