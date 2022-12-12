@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"strings"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -18,7 +19,30 @@ type GenericMessage struct {
 	Value []byte
 
 	// List of key-value pairs for each message.
-	Headers map[string]string
+	Headers []GenericHeader
+}
+
+type GenericHeader struct {
+	Key   string
+	Value string
+}
+
+// GenericHeaders returns slice of headers
+func GenericHeaders(args ...string) []GenericHeader {
+	if len(args)%2 != 0 {
+		panic("generic headers: odd amount of arguments")
+	}
+
+	result := make([]GenericHeader, 0, len(args)/2)
+	for i := 0; i < len(args); i += 2 {
+		gh := GenericHeader{
+			Key:   args[i],
+			Value: args[i+1],
+		}
+		result = append(result, gh)
+	}
+
+	return result
 }
 
 // NativeMessage represents a native (kafka) message. It can be converted to GenericMessage.
@@ -29,9 +53,13 @@ type NativeMessage interface {
 
 // NewMessageFromKafka converts generic message to native message
 func NewMessageFromKafka(km *kafka.Message) *GenericMessage {
-	headers := make(map[string]string, len(km.Headers))
-	for _, h := range km.Headers {
-		headers[h.Key] = string(h.Value)
+	headers := make([]GenericHeader, len(km.Headers))
+	for i, h := range km.Headers {
+		gh := GenericHeader{
+			Key:   h.Key,
+			Value: string(h.Value),
+		}
+		headers[i] = gh
 	}
 
 	return &GenericMessage{
@@ -45,11 +73,10 @@ func NewMessageFromKafka(km *kafka.Message) *GenericMessage {
 // KafkaMessage converts from generic to native message.
 func (m GenericMessage) KafkaMessage() kafka.Message {
 	headers := make([]kafka.Header, len(m.Headers))
-	i := 0
-	for k, v := range m.Headers {
+	for i, gh := range m.Headers {
 		header := kafka.Header{
-			Key:   k,
-			Value: []byte(v),
+			Key:   gh.Key,
+			Value: []byte(gh.Value),
 		}
 		headers[i] = header
 		i += 1
@@ -61,4 +88,13 @@ func (m GenericMessage) KafkaMessage() kafka.Message {
 		Value:   m.Value,
 		Headers: headers,
 	}
+}
+
+func (m GenericMessage) Header(name string) string {
+	for _, h := range m.Headers {
+		if strings.EqualFold(h.Key, name) {
+			return h.Value
+		}
+	}
+	return ""
 }

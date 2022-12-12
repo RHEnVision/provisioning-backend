@@ -177,7 +177,7 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, handler func(ct
 			logger.Warn().Err(err).Msgf("Error when reading message: %s", err.Error())
 		} else {
 			logger.Trace().Bytes("payload", msg.Value).Msgf("Received message with key: %s", msg.Key)
-			ctx, err = ctxval.WithIdentityFrom64(ctx, LookupKafkaHeader(ctx, msg.Headers))
+			ctx, err = ctxval.WithIdentityFrom64(ctx, header("x-rh-identity", msg.Headers))
 			if err != nil {
 				logger.Trace().Msgf("Could not extract identity from context to Kafka message: %s", err)
 			}
@@ -186,9 +186,9 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, handler func(ct
 	}
 }
 
-func LookupKafkaHeader(ctx context.Context, headers []protocol.Header) string {
+func header(name string, headers []protocol.Header) string {
 	for _, h := range headers {
-		if strings.EqualFold(h.Key, "X-RH-Identity") {
+		if strings.EqualFold(h.Key, name) {
 			return string(h.Value)
 		}
 	}
