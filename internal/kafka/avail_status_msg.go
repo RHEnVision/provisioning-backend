@@ -39,11 +39,13 @@ func genericMessage(ctx context.Context, m any, key string, topic string) (Gener
 		Topic: topic,
 		Key:   []byte(key),
 		Value: payload,
+		// Keep headers written in lowercase to match sources comparison.
 		Headers: map[string]string{
-			"Content-Type":                "application/json",
-			"x-RH-Identity":               identity.GetIdentityHeader(ctx),
-			"X-RH-Sources-Org-Id":         id.Identity.OrgID,
-			"X-RH-Sources-Account-Number": id.Identity.AccountNumber,
+			"content-type":                "application/json",
+			"x-rh-identity":               identity.GetIdentityHeader(ctx),
+			"x-rh-sources-org-id":         id.Identity.OrgID,
+			"x-rh-sources-account-number": id.Identity.AccountNumber,
+			"event_type":                  "availability_status",
 		},
 	}, nil
 }
