@@ -154,6 +154,19 @@ func (x *pubkeyDao) UnscopedGetResourceBySourceAndRegion(ctx context.Context, pu
 	return result, nil
 }
 
+func (x *pubkeyDao) UnscopedUpdateHandle(ctx context.Context, id int64, handle string) error {
+	query := `UPDATE pubkey_resources SET handle = $2 WHERE id = $1`
+
+	tag, err := db.Pool.Exec(ctx, query, id, handle)
+	if err != nil {
+		return fmt.Errorf("pgx error: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+	}
+	return nil
+}
+
 func (x *pubkeyDao) UnscopedListResourcesByPubkeyId(ctx context.Context, id int64) ([]*models.PubkeyResource, error) {
 	query := `SELECT * FROM pubkey_resources WHERE pubkey_id = $1`
 	var result []*models.PubkeyResource

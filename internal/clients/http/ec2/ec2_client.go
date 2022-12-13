@@ -180,12 +180,12 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 	return *output.KeyPairId, nil
 }
 
-func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (string, error) {
+func (c *ec2Client) GetKeyPairByFingerprint(ctx context.Context, fingerprint string) (*clients.EC2KeyPairInfo, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "fetchPubkeyName")
 	defer span.End()
 
 	if !c.assumed {
-		return "", http.ServiceAccountUnsupportedOperationErr
+		return nil, http.ServiceAccountUnsupportedOperationErr
 	}
 	logger := logger(ctx)
 	logger.Trace().Msgf("Fetching AWS key with fingerprint '%s' to get its name", fingerprint)
@@ -197,14 +197,23 @@ func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (stri
 			err = clients.UnauthorizedErr
 		}
 		span.SetStatus(codes.Error, err.Error())
-		return "", fmt.Errorf("cannot fetch SSH key to update its tag %s: %w", fingerprint, err)
+		return nil, fmt.Errorf("cannot fetch SSH key to update its tag %s: %w", fingerprint, err)
 	}
 
 	if len(output.KeyPairs) == 0 {
 		span.SetStatus(codes.Error, fmt.Sprintf("no KeyPair with fingerpring (%s) found", fingerprint))
-		return "", fmt.Errorf("SSH key not found by its fingerprint (%s): %w", fingerprint, http.PubkeyNotFoundErr)
+		return nil, fmt.Errorf("SSH key not found by its fingerprint (%s): %w", fingerprint, http.PubkeyNotFoundErr)
 	}
-	return *output.KeyPairs[0].KeyName, nil
+
+	k := &clients.EC2KeyPairInfo{
+		KeyPairId:      output.KeyPairs[0].KeyPairId,
+		KeyName:        output.KeyPairs[0].KeyName,
+		KeyFingerprint: output.KeyPairs[0].KeyFingerprint,
+	}
+	for _, t := range output.KeyPairs[0].Tags {
+		k.Tags = append(k.Tags, clients.EC2Tag{Key: t.Key, Value: t.Value})
+	}
+	return k, nil
 }
 
 func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {

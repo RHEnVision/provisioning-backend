@@ -2,6 +2,7 @@ package stubs
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -64,9 +65,11 @@ func (stub *pubkeyDaoStub) Update(ctx context.Context, pubkey *models.Pubkey) er
 }
 
 func (stub *pubkeyDaoStub) GetById(ctx context.Context, id int64) (*models.Pubkey, error) {
+	var resultPk models.Pubkey
 	for _, pk := range stub.store {
 		if pk.AccountID == ctxAccountId(ctx) && pk.ID == id {
-			return pk, nil
+			resultPk = *pk // shallow copy of the struct
+			return &resultPk, nil
 		}
 	}
 	return nil, dao.ErrNoRows
@@ -115,8 +118,19 @@ func (stub *pubkeyDaoStub) UnscopedListResourcesByPubkeyId(ctx context.Context, 
 	var result []*models.PubkeyResource
 	for _, pkr := range stub.resourceStore {
 		if pkr.PubkeyID == pkId {
-			result = append(result, pkr)
+			shallowCopy := *pkr
+			result = append(result, &shallowCopy)
 		}
 	}
 	return result, nil
+}
+
+func (stub *pubkeyDaoStub) UnscopedUpdateHandle(ctx context.Context, id int64, handle string) error {
+	for _, pkr := range stub.resourceStore {
+		if pkr.ID == id {
+			pkr.Handle = handle
+			return nil
+		}
+	}
+	return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
 }

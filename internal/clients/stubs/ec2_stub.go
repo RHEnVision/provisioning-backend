@@ -34,6 +34,9 @@ func AddStubbedEC2KeyPair(ctx context.Context, info *types.KeyPairInfo) error {
 	if err != nil {
 		return err
 	}
+	if info.KeyPairId == nil {
+		info.KeyPairId = ptr.To(fmt.Sprintf("key-%d", len(si.Imported)+1))
+	}
 	si.Imported = append(si.Imported, info)
 	return nil
 }
@@ -61,31 +64,41 @@ func (mock *EC2ClientStub) Status(ctx context.Context) error {
 }
 
 func (mock *EC2ClientStub) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
-	ec2KeyID := fmt.Sprintf("key-%d", len(mock.Imported))
+	ec2KeyID := fmt.Sprintf("key-%d", len(mock.Imported)+1)
 	fingerprint := key.FindAwsFingerprint(ctx)
 	keyName := key.Name // copy the name
+	var tags []types.Tag
+	if tag != "" {
+		tags = append(tags, types.Tag{Key: ptr.To("rhhc:id"), Value: &tag})
+	}
+
 	ec2Key := &types.KeyPairInfo{
 		KeyName: &keyName,
 
 		KeyFingerprint: &fingerprint,
 		KeyPairId:      &ec2KeyID,
 		PublicKey:      &key.Body,
-		Tags: []types.Tag{{
-			Key:   ptr.To("rhhc:id"),
-			Value: &tag,
-		}},
+		Tags:           tags,
 	}
 	mock.Imported = append(mock.Imported, ec2Key)
 	return *ec2Key.KeyPairId, nil
 }
 
-func (mock *EC2ClientStub) GetPubkeyName(ctx context.Context, fingerprint string) (string, error) {
+func (mock *EC2ClientStub) GetKeyPairByFingerprint(ctx context.Context, fingerprint string) (*clients.EC2KeyPairInfo, error) {
 	for _, key := range mock.Imported {
 		if *key.KeyFingerprint == fingerprint {
-			return *key.KeyName, nil
+			k := &clients.EC2KeyPairInfo{
+				KeyPairId:      key.KeyPairId,
+				KeyName:        key.KeyName,
+				KeyFingerprint: key.KeyFingerprint,
+			}
+			for _, t := range key.Tags {
+				k.Tags = append(k.Tags, clients.EC2Tag{Key: t.Key, Value: t.Value})
+			}
+			return k, nil
 		}
 	}
-	return "", http.PubkeyNotFoundErr
+	return nil, http.PubkeyNotFoundErr
 }
 
 func (mock *EC2ClientStub) DeleteSSHKey(ctx context.Context, handle string) error {

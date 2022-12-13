@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
@@ -111,7 +112,18 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 
 	// check presence on AWS first
 	fingerprint := pubkey.FindAwsFingerprint(ctx)
-	ec2Name, err := ec2Client.GetPubkeyName(ctx, fingerprint)
+	var ec2Name string
+	ec2Key, err := ec2Client.GetKeyPairByFingerprint(ctx, fingerprint)
+	if ec2Key != nil {
+		pkr.Handle = *ec2Key.KeyPairId
+		ec2Name = *ec2Key.KeyName
+		pkr.Tag = ""
+		for _, tag := range ec2Key.Tags {
+			if *tag.Key == "rhhc:id" {
+				pkr.Tag = strings.TrimPrefix(*tag.Value, "pk-")
+			}
+		}
+	}
 	if err != nil {
 		// if not found on AWS, import
 		if errors.Is(err, http.PubkeyNotFoundErr) {
@@ -144,6 +156,13 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 		err = pkDao.UnscopedCreateResource(ctx, pkr)
 		if err != nil {
 			return fmt.Errorf("cannot create resource for aws pubkey: %w", err)
+		}
+	} else {
+		// make sure to update the new info in case the key was imported
+		// TODO: we should also update the Tag
+		err = pkDao.UnscopedUpdateHandle(ctx, pkr.ID, pkr.Handle)
+		if err != nil {
+			return err
 		}
 	}
 

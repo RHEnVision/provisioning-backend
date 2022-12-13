@@ -84,6 +84,9 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 				KeyFingerprint: ptr.To(pkt.FindAwsFingerprint(ctx)),
 				KeyType:        types.KeyType(testKey.KeyType),
 				PublicKey:      &pk.Body,
+				Tags: []types.Tag{
+					{Key: ptr.To("rhhc:id"), Value: ptr.To("awsPreviouslyImportedTag")},
+				},
 			})
 			require.NoError(t, err, "failed to add stubbed key to ec2 stub")
 
@@ -150,5 +153,62 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 		pkrList, err := pkDao.UnscopedListResourcesByPubkeyId(ctx, pk.ID)
 		require.NoError(t, err)
 		assert.Equal(t, 1, len(pkrList))
+	})
+
+	t.Run("Pubkey on AWS and resource exists - should copy the Handle and Tag", func(t *testing.T) {
+		ctx := prepareContext(t)
+
+		pk := &models.Pubkey{
+			Name: factories.SeqNameWithPrefix("pubkey"),
+			Body: factories.GenerateRSAPubKey(t),
+		}
+		pk = factories.PubkeyWithTrans(t, ctx, pk)
+		err := daoStubs.AddPubkey(ctx, pk)
+		require.NoError(t, err, "failed to add stubbed key")
+
+		pkDao := dao.GetPubkeyDao(ctx)
+		err = pkDao.UnscopedCreateResource(ctx, &models.PubkeyResource{
+			PubkeyID: pk.ID,
+			Tag:      "veryRandom",
+			Provider: models.ProviderTypeAWS,
+			Handle:   "someAwsHandle",
+			Region:   "us-east-1",
+		})
+		require.NoError(t, err, "failed to create stubbed pubkey resource")
+
+		err = clientStubs.AddStubbedEC2KeyPair(ctx, &types.KeyPairInfo{
+			KeyPairId:      ptr.To("veryCoolAwsId"),
+			KeyName:        ptr.To("awsName"),
+			KeyFingerprint: ptr.To(pk.FindAwsFingerprint(ctx)),
+			KeyType:        "rsa",
+			PublicKey:      &pk.Body,
+			Tags: []types.Tag{
+				{Key: ptr.To("rhhc:id"), Value: ptr.To("awsPreviouslyImportedTag")},
+			},
+		})
+		require.NoError(t, err, "failed to add stubbed key to ec2 stub")
+
+		reservation := prepareReservation(t, ctx, pk)
+		rDao := dao.GetReservationDao(ctx)
+		err = rDao.CreateAWS(ctx, reservation)
+		require.NoError(t, err, "failed to add stubbed reservation")
+
+		args := &jobs.LaunchInstanceAWSTaskArgs{
+			ReservationID: reservation.ID,
+			Region:        reservation.Detail.Region,
+			PubkeyID:      pk.ID,
+			SourceID:      reservation.SourceID,
+			Detail:        reservation.Detail,
+			ARN:           &clients.Authentication{ProviderType: models.ProviderTypeAWS, Payload: "arn:aws:123123123123"},
+		}
+
+		err = jobs.DoEnsurePubkeyOnAWS(ctx, args)
+		require.NoError(t, err, "the ensure pubkey job failed to run")
+
+		pkrList, err := pkDao.UnscopedListResourcesByPubkeyId(ctx, pk.ID)
+		require.NoError(t, err)
+		assert.Equal(t, 1, len(pkrList))
+		assert.Equal(t, "awsPreviouslyImportedTag", pkrList[0].Tag)
+		assert.Equal(t, "veryCoolAwsId", pkrList[0].Handle)
 	})
 }

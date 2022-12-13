@@ -42,6 +42,7 @@ type PubkeyDao interface {
 	UnscopedCreateResource(ctx context.Context, pkr *models.PubkeyResource) error
 	UnscopedGetResourceBySourceAndRegion(ctx context.Context, pubkeyId int64, sourceId string, region string) (*models.PubkeyResource, error)
 	UnscopedListResourcesByPubkeyId(ctx context.Context, pkId int64) ([]*models.PubkeyResource, error)
+	UnscopedUpdateHandle(ctx context.Context, id int64, handle string) error
 	UnscopedDeleteResource(ctx context.Context, id int64) error
 }
 

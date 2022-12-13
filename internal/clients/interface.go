@@ -67,8 +67,8 @@ type EC2 interface {
 	// ImportPubkey imports new ssh key-pair with given tag returning its AWS ID
 	ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error)
 
-	// GetPubkeyName fetches the AWS key name using given pubkey fingerprint
-	GetPubkeyName(ctx context.Context, fingerprint string) (string, error)
+	// GetKeyPairByFingerprint fetches the AWS key pair using given pubkey fingerprint
+	GetKeyPairByFingerprint(ctx context.Context, fingerprint string) (*EC2KeyPairInfo, error)
 
 	// DeleteSSHKey deletes a given ssh key-pair found by AWS ID
 	DeleteSSHKey(ctx context.Context, handle string) error
