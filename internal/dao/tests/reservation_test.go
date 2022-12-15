@@ -19,10 +19,12 @@ import (
 func newNoopReservation() *models.NoopReservation {
 	return &models.NoopReservation{
 		Reservation: models.Reservation{
-			ID:        10,
-			Provider:  models.ProviderTypeNoop,
-			AccountID: 1,
-			Status:    "Created",
+			ID:         10,
+			Steps:      1,
+			StepTitles: []string{"Test step"},
+			Provider:   models.ProviderTypeNoop,
+			AccountID:  1,
+			Status:     "Created",
 		},
 	}
 }

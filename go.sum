@@ -478,6 +478,8 @@ github.com/lzap/cloudwatchwriter2 v1.0.0 h1:10galxReSfwfDyLZQzW6t5iX/YVehOJfYynY
 github.com/lzap/cloudwatchwriter2 v1.0.0/go.mod h1:5G2xdbsdTbMcC21C8KV6gvdGB8yAHiCS2+CxTMkQx1o=
 github.com/lzap/dejq v1.1.0 h1:fWVUONhESSjxA/NiY/biF8qUwlxMDXWmqIureIFpqYo=
 github.com/lzap/dejq v1.1.0/go.mod h1:CsPywwlI1sFzZq/1y9iF6qZ6qydjNtaiaX4po3/5f+8=
+github.com/lzap/dejq v1.2.0 h1:rrM75v5a128TDM+eZl4POsDFBCbOKM7DHFIycogyDcE=
+github.com/lzap/dejq v1.2.0/go.mod h1:CsPywwlI1sFzZq/1y9iF6qZ6qydjNtaiaX4po3/5f+8=
 github.com/mailru/easyjson v0.0.0-20190614124828-94de47d64c63/go.mod h1:C1wdFJiN94OJF2b5HbByQZoLdCWB1Yqtg26g4irojpc=
 github.com/mailru/easyjson v0.0.0-20190626092158-b2ccc519800e/go.mod h1:C1wdFJiN94OJF2b5HbByQZoLdCWB1Yqtg26g4irojpc=
 github.com/mailru/easyjson v0.7.6/go.mod h1:xzfreul335JAWq5oZzymOObrkdz5UnU4kGfJJLY9Nlc=

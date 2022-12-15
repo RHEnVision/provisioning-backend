@@ -22,10 +22,11 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	rDao := dao.GetReservationDao(r.Context())
 	reservation := &models.NoopReservation{
 		Reservation: models.Reservation{
-			Provider:  models.ProviderTypeNoop,
-			AccountID: accountId,
-			Status:    "Created",
-			Steps:     1,
+			Provider:   models.ProviderTypeNoop,
+			AccountID:  accountId,
+			Status:     "Created",
+			Steps:      1,
+			StepTitles: []string{"A test step"},
 		},
 	}
 

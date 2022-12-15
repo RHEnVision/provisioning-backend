@@ -23,7 +23,7 @@ func getReservationDao(ctx context.Context) dao.ReservationDao {
 }
 
 func (x *reservationDao) CreateNoop(ctx context.Context, reservation *models.NoopReservation) error {
-	query := `INSERT INTO reservations (provider, account_id, steps, status) VALUES ($1, $2, $3, $4) RETURNING id, created_at`
+	query := `INSERT INTO reservations (provider, account_id, steps, status, step_titles) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
 
 	reservation.AccountID = ctxval.AccountId(ctx)
 
@@ -31,7 +31,8 @@ func (x *reservationDao) CreateNoop(ctx context.Context, reservation *models.Noo
 		reservation.Provider,
 		reservation.AccountID,
 		reservation.Steps,
-		reservation.Status).Scan(&reservation.ID, &reservation.CreatedAt)
+		reservation.Status,
+		reservation.StepTitles).Scan(&reservation.ID, &reservation.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("pgx error: %w", err)
 	}
@@ -43,13 +44,14 @@ func (x *reservationDao) CreateAWS(ctx context.Context, reservation *models.AWSR
 	txErr := dao.WithTransaction(ctx, func(tx pgx.Tx) error {
 		reservation.AccountID = ctxval.AccountId(ctx)
 
-		reservationQuery := `INSERT INTO reservations (provider, account_id, steps, status)
-		VALUES ($1, $2, $3, $4) RETURNING id, created_at`
+		reservationQuery := `INSERT INTO reservations (provider, account_id, steps, status, step_titles)
+		VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
 		err := db.Pool.QueryRow(ctx, reservationQuery,
 			reservation.Provider,
 			reservation.AccountID,
 			reservation.Steps,
-			reservation.Status).Scan(&reservation.ID, &reservation.CreatedAt)
+			reservation.Status,
+			reservation.StepTitles).Scan(&reservation.ID, &reservation.CreatedAt)
 		if err != nil {
 			return fmt.Errorf("pgx error: %w", err)
 		}

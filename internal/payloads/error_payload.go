@@ -25,7 +25,7 @@ type ResponseError struct {
 	TraceId string `json:"trace_id,omitempty"`
 
 	// full root cause
-	Error error `json:"error"`
+	Error string `json:"error"`
 
 	// build commit
 	Version string `json:"version"`
@@ -48,7 +48,7 @@ func NewInvalidRequestError(ctx context.Context, message string, err error) *Res
 		HTTPStatusCode: 400,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -75,7 +75,7 @@ func PubkeyDuplicateError(ctx context.Context, message string, err error) *Respo
 		HTTPStatusCode: 422,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -134,7 +134,7 @@ func Response(ctx context.Context, status int, message string, err error) *Respo
 		HTTPStatusCode: status,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -165,7 +165,7 @@ func NewNotFoundError(ctx context.Context, message string, err error) *ResponseE
 		HTTPStatusCode: 404,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -179,7 +179,7 @@ func NewEnqueueTaskError(ctx context.Context, message string, err error) *Respon
 		HTTPStatusCode: 500,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -194,7 +194,7 @@ func NewDAOError(ctx context.Context, message string, err error) *ResponseError 
 		HTTPStatusCode: 500,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -208,7 +208,7 @@ func NewRenderError(ctx context.Context, message string, err error) *ResponseErr
 		HTTPStatusCode: 500,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -222,7 +222,7 @@ func NewURLParsingError(ctx context.Context, message string, err error) *Respons
 		HTTPStatusCode: 400,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -236,7 +236,7 @@ func NewStatusError(ctx context.Context, message string, err error) *ResponseErr
 		HTTPStatusCode: 500,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -250,7 +250,7 @@ func NewAWSError(ctx context.Context, message string, err error) *ResponseError 
 		HTTPStatusCode: 500,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -264,7 +264,7 @@ func NewAzureError(ctx context.Context, message string, err error) *ResponseErro
 		HTTPStatusCode: 500,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
@@ -278,7 +278,7 @@ func NewGCPError(ctx context.Context, message string, err error) *ResponseError 
 		HTTPStatusCode: 500,
 		Message:        message,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err,
+		Error:          err.Error(),
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}

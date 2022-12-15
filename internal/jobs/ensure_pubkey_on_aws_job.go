@@ -44,6 +44,12 @@ func handleEnsurePubkeyOnAWS(ctx context.Context, args *EnsurePubkeyOnAWSTaskArg
 	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started pubkey upload AWS job")
 
+	// skip job if reservation already contains errors
+	err := checkExistingError(ctx, args.ReservationID)
+	if err != nil {
+		return fmt.Errorf("step skipped: %w", err)
+	}
+
 	ctx = ctxval.WithAccountId(ctx, args.AccountID)
 	logger := ctxLogger.With().Int64("reservation", args.ReservationID).Logger()
 	logger.Info().Interface("args", args).Msg("Processing pubkey upload AWS job")
