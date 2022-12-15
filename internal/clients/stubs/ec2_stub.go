@@ -29,11 +29,26 @@ func WithEC2Client(parent context.Context) context.Context {
 	return ctx
 }
 
+func AddStubbedEC2KeyPair(ctx context.Context, info *types.KeyPairInfo) error {
+	si, err := getEC2StubFromContext(ctx)
+	if err != nil {
+		return err
+	}
+	si.Imported = append(si.Imported, info)
+	return nil
+}
+
 func newEC2ServiceClientStubWithRegion(ctx context.Context, region string) (clients.EC2, error) {
 	return nil, nil
 }
 
 func newEC2CustomerClientStubWithRegion(ctx context.Context, _ *clients.Authentication, _ string) (si clients.EC2, err error) {
+	return getEC2StubFromContext(ctx)
+}
+
+func getEC2StubFromContext(ctx context.Context) (*EC2ClientStub, error) {
+	var si *EC2ClientStub
+	var err error
 	var ok bool
 	if si, ok = ctx.Value(ec2CtxKey).(*EC2ClientStub); !ok {
 		err = &contextReadError{}
@@ -47,10 +62,14 @@ func (mock *EC2ClientStub) Status(ctx context.Context) error {
 
 func (mock *EC2ClientStub) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
 	ec2KeyID := fmt.Sprintf("key-%d", len(mock.Imported))
+	fingerprint, err := key.FingerprintAWS()
+	if err != nil {
+		return "", fmt.Errorf("failed to calculate MD5 fingerprint: %w", err)
+	}
 	keyName := key.Name // copy the name
 	ec2Key := &types.KeyPairInfo{
 		KeyName:        &keyName,
-		KeyFingerprint: &key.Fingerprint,
+		KeyFingerprint: &fingerprint,
 		KeyPairId:      &ec2KeyID,
 		PublicKey:      &key.Body,
 		Tags: []types.Tag{{
