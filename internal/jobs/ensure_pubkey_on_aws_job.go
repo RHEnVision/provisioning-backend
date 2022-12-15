@@ -85,7 +85,11 @@ func handleEnsurePubkeyOnAWS(ctx context.Context, args *EnsurePubkeyOnAWSTaskArg
 	}
 
 	// check presence on AWS first
-	ec2Name, err := ec2Client.GetPubkeyName(ctx, pubkey.Fingerprint)
+	fingerprint, err := pubkey.FingerprintAWS()
+	if err != nil {
+		return fmt.Errorf("failed to calculate MD5 fingerprint: %w", err)
+	}
+	ec2Name, err := ec2Client.GetPubkeyName(ctx, fingerprint)
 	if err != nil {
 		// if not found on AWS, import
 		if errors.Is(err, http.PubkeyNotFoundErr) {
@@ -93,12 +97,15 @@ func handleEnsurePubkeyOnAWS(ctx context.Context, args *EnsurePubkeyOnAWSTaskArg
 			pkr.RandomizeTag()
 			pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
 			if err != nil {
+				// TODO: this can be http.DuplicatePubkeyErr for cases when importing with name that already exists
 				return fmt.Errorf("cannot upload aws pubkey: %w", err)
 			}
 			ec2Name = pubkey.Name
 		} else {
-			return fmt.Errorf("cannot fetch name of pubkey with fingerpring (%s): %w", pubkey.Fingerprint, err)
+			return fmt.Errorf("cannot fetch name of pubkey with fingerpring (%s): %w", fingerprint, err)
 		}
+	} else {
+		logger.Debug().Msgf("Found pubkey by fingerprint (%s) with name '%s'", fingerprint, ec2Name)
 	}
 
 	// update the AWS key name in reservation details
