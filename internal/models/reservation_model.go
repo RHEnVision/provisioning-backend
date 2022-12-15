@@ -24,6 +24,9 @@ type Reservation struct {
 	// Total number of job steps for this reservation.
 	Steps int32 `db:"steps" json:"steps"`
 
+	// User-facing step descriptions for each step. Length of StepTitles must be equal to Steps.
+	StepTitles []string `db:"step_titles" json:"step_titles"`
+
 	// Active job step for this reservation. See Status for more details.
 	Step int32 `db:"step" json:"step"`
 
@@ -31,7 +34,9 @@ type Reservation struct {
 	// it should not contain error details. See Error field for more details.
 	Status string `db:"status" json:"status"`
 
-	// Error message when reservation was not successful. Only set when Success if false.
+	// Error contains error message from the last step. When a job returns an error, execution of
+	// reservation should stop, Success flag should be set to false and Error will contain the error
+	// message.
 	Error string `db:"error" json:"error,omitempty"`
 
 	// Time when reservation was finished or nil when it's still processing.

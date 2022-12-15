@@ -21,16 +21,19 @@ type GenericReservationResponsePayload struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	// Total number of job steps for this reservation.
-	Steps int32 `db:"steps" json:"steps"`
+	Steps int32 `json:"steps"`
+
+	// User-facing step descriptions for each step. Length of StepTitles must be equal to Steps.
+	StepTitles []string `json:"step_titles"`
 
 	// Active job step for this reservation. See Status for more details.
-	Step int32 `db:"step" json:"step"`
+	Step int32 `json:"step"`
 
 	// Textual status of the reservation or error when there was a failure
 	Status string `json:"status"`
 
 	// Error message when reservation was not successful. Only set when Success if false.
-	Error string `db:"error" json:"error,omitempty"`
+	Error string `json:"error"`
 
 	// Time when reservation was finished or nil when it's still processing.
 	FinishedAt *time.Time `json:"finished_at"`
@@ -253,6 +256,7 @@ func reservationResponseMapper(reservation *models.Reservation) *GenericReservat
 		Success:    success,
 		Steps:      reservation.Steps,
 		Step:       reservation.Step,
+		StepTitles: reservation.StepTitles,
 		Error:      reservation.Error,
 	}
 }

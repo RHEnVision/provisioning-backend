@@ -464,6 +464,10 @@ components:
         step:
           format: int32
           type: integer
+        step_titles:
+          items:
+            type: string
+          type: array
         steps:
           format: int32
           type: integer
@@ -474,7 +478,8 @@ components:
       properties:
         build_time:
           type: string
-        error: {}
+        error:
+          type: string
         msg:
           type: string
         trace_id:

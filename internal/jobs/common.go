@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -38,7 +39,10 @@ func finishJob(ctx context.Context, reservationId int64, jobErr error) {
 }
 
 func finishWithSuccess(ctx context.Context, reservationId int64) {
-	ctxLogger := ctxval.Logger(ctx).With().Int64("reservation_id", reservationId).Logger()
+	accountId := ctxval.AccountId(ctx)
+	ctxLogger := ctxval.Logger(ctx).With().
+		Int64("reservation_id", reservationId).
+		Int64("account_id", accountId).Logger()
 
 	rDao := dao.GetReservationDao(ctx)
 
@@ -87,4 +91,19 @@ func updateStatusAfter(ctx context.Context, id int64, status string, addSteps in
 	if err != nil {
 		ctxLogger.Warn().Err(err).Msg("unable to update step number: update")
 	}
+}
+
+// nolint: goerr113
+func checkExistingError(ctx context.Context, reservationId int64) error {
+	resDao := dao.GetReservationDao(ctx)
+	reservation, err := resDao.GetById(ctx, reservationId)
+	if err != nil {
+		return fmt.Errorf("cannot find reservation: %w", err)
+	}
+	if reservation.Error != "" {
+		ctxval.Logger(ctx).Warn().Msg("Reservation already contains error, skipping job")
+		return errors.New(reservation.Error)
+	}
+
+	return nil
 }

@@ -48,6 +48,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.Status = "Created"
 	reservation.Provider = models.ProviderTypeAWS
 	reservation.Steps = 2
+	reservation.StepTitles = []string{"Upload public key", "Launch instance(s)"}
 	newName := config.Application.InstancePrefix + payload.Name
 	reservation.Detail.Name = &newName
 
