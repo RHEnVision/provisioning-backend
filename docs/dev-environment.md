@@ -75,6 +75,12 @@ Installation and configuration of Postgres is not covered neither in this articl
 
 Tip: On MacOS, you can install Postgres on a remote Linux (or a small VM) and configure the application to connect there, instead of localhost.
 
+## Kafka
+
+In order to work on Kafka integrated services (statuser, sources), Kafka local deployment is needed. We do simply use the official Kafka binary that can be simply extracted and started.
+
+The [scripts](../scripts) directory contains README with further instructions and scripts which can download, extract, configure and start Kafka for local development.
+
 ## Compilation and startup
 
 Use `make` command to compile the main application, use `make run` or start it manually via `./pbapi`.
@@ -88,7 +94,23 @@ Notable records created via seed script:
 
 ## Backend services
 
-The application integrates with multiple backend services which are required to be available for most HTTP request to complete successfully.
+The application integrates with multiple backend services:
+
+## Worker
+
+Worker processes (`pbworker`) are responsible for running background jobs. There must be one or more processes running in order to pick up background jobs (e.g. launch reservations). There are multiple configuration options available via `WORKER_QUEUE`:
+
+* `redis` - uses queue via Redis
+* `postgres` - uses jobqueue implementation for the queue
+* `memory` - in-memory worker (default option)
+
+The default behavior is the in-memory worker, which spawns a single goroutine within the main application which picks up all jobs sequentially. This is only meant for development setups so that no extra worker process is required when testing background jobs.
+
+In stage/prod, we currently use `redis`.
+
+## Statuser
+
+Statuser process (`pbstatuser`) is a custom executable that runs in a single instance responsible for performing sources availability checks. These are requested over HTTP from the Sources app (see below), messages are enqueued in Kafka where the statuser instance picks them up in batches, performs checking, and sends the results back to Kafka to Sources.
 
 ## Sources
 
