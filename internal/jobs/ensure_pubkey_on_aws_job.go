@@ -102,8 +102,11 @@ func handleEnsurePubkeyOnAWS(ctx context.Context, args *EnsurePubkeyOnAWSTaskArg
 			pkr.Tag = ""
 			pkr.RandomizeTag()
 			pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
-			if err != nil {
-				// TODO: this can be http.DuplicatePubkeyErr for cases when importing with name that already exists
+
+			if errors.Is(err, http.DuplicatePubkeyErr) {
+				// key not found by fingerprint but importing failed for duplicate err so fingerprints do not match
+				return fmt.Errorf("key with fingerprint %s not found on AWS, but importing the key failed: %w", pubkey.Fingerprint, err)
+			} else if err != nil {
 				return fmt.Errorf("cannot upload aws pubkey: %w", err)
 			}
 			ec2Name = pubkey.Name
