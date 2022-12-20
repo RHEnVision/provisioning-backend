@@ -22,7 +22,7 @@ func newPubkeyResourceNoop() *models.PubkeyResource {
 		PubkeyID: 1,
 		Provider: models.ProviderTypeNoop,
 		SourceID: "1",
-		Handle:   factories.GetSequenceName("handle"),
+		Handle:   factories.SeqNameWithPrefix("handle"),
 		Region:   "us-west-1",
 	}
 }
@@ -32,25 +32,20 @@ func newPubkeyResourceAzure() *models.PubkeyResource {
 		Tag:      "tag1",
 		PubkeyID: 1,
 		Provider: models.ProviderTypeAzure,
-		Handle:   factories.GetSequenceName("handle"),
+		Handle:   factories.SeqNameWithPrefix("handle"),
 		Region:   "us-east-1",
 	}
 }
 
 func setupPubkeyResource(t *testing.T) (dao.PubkeyDao, context.Context) {
-	setup()
 	ctx := identity.WithTenant(t, context.Background())
 	pubkeyDao := dao.GetPubkeyDao(ctx)
 	return pubkeyDao, ctx
 }
 
-func teardownPubkeyResource(_ *testing.T) {
-	teardown()
-}
-
 func TestPubkeyResourceCreate(t *testing.T) {
 	pubkeyDao, ctx := setupPubkeyResource(t)
-	defer teardownPubkeyResource(t)
+	defer reset()
 
 	t.Run("empty", func(t *testing.T) {
 		resources, err := pubkeyDao.UnscopedListResourcesByPubkeyId(ctx, 1)
@@ -93,7 +88,7 @@ func TestPubkeyResourceCreate(t *testing.T) {
 
 func TestPubkeyResourceGetByProviderType(t *testing.T) {
 	pubkeyDao, ctx := setupPubkeyResource(t)
-	defer teardownPubkeyResource(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		resource := newPubkeyResourceNoop()
@@ -113,7 +108,7 @@ func TestPubkeyResourceGetByProviderType(t *testing.T) {
 
 func TestPubkeyResourceListByPubkeyId(t *testing.T) {
 	pubkeyDao, ctx := setupPubkeyResource(t)
-	defer teardownPubkeyResource(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		resourcesBefore, err := pubkeyDao.UnscopedListResourcesByPubkeyId(ctx, 1)
@@ -138,7 +133,7 @@ func TestPubkeyResourceListByPubkeyId(t *testing.T) {
 
 func TestPubkeyResourceDelete(t *testing.T) {
 	pubkeyDao, ctx := setupPubkeyResource(t)
-	defer teardownPubkeyResource(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		resource := newPubkeyResourceNoop()

@@ -1,18 +1,17 @@
 package models
 
 import (
-	"crypto/md5" //#nosec
-	"crypto/rsa"
-	"crypto/x509"
-	"encoding/hex"
-	"fmt"
-	"strings"
+	"context"
 
-	"golang.org/x/crypto/ssh"
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/ssh"
 )
 
 // Pubkey represents SSH public key that can be deployed to clients.
 type Pubkey struct {
+	// Set to true to skip model validation and transformation during save.
+	SkipValidation bool
+
 	// Required auto-generated PK.
 	ID int64 `db:"id" json:"id"`
 
@@ -25,42 +24,35 @@ type Pubkey struct {
 	// Public key body encoded in base64 (.pub format). Required.
 	Body string `db:"body" json:"body" validate:"required,sshPubkey"`
 
-	// Public key SHA256 fingerprint. Generated (read-only).
-	Fingerprint string `db:"fingerprint" json:"fingerprint"`
+	// Key type: "ssh-ed25519" or "ssh-rsa".
+	Type string `db:"type" json:"type" validate:"omitempty,oneof=test ssh-rsa ssh-ed25519"`
+
+	// SHA256 base64 encoded fingerprint with padding without any prefix. Note OpenSSH
+	// typically prints the fingerprint without padding: ssh-keygen -l -f $HOME/.ssh/key.pub
+	// The length is exactly 45 characters including the padding.
+	// Example: "gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk="
+	Fingerprint string `db:"fingerprint" json:"fingerprint" validate:"omitempty,len=44"`
+
+	// MD5 fingerprint stored as hexadecimal with colons without any prefix. To generate
+	// such fingerprint: ssh-keygen -l -E md5 -f $HOME/.ssh/key.pub
+	// Example: "89:c5:99:b5:33:48:1c:84:be:da:cb:97:45:b0:4a:ee"
+	FingerprintLegacy string `db:"fingerprint_legacy" json:"fingerprint_legacy" validate:"omitempty,len=47"`
 }
 
-// FingerprintAWS calculates fingerprint used by AWS.
-// AWS calculates MD5 sums differently then all the other tools and use format DER as the base for the sub.
-// see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/verify-keys.html for more details.
-func (pk *Pubkey) FingerprintAWS() (string, error) {
-	pkey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(pk.Body))
-	if err != nil {
-		return "", fmt.Errorf("failed to calculate fingerprint for %s: %w", pk.Name, err)
-	}
-	// when rsa key
-	if pkey.Type() == "ssh-rsa" {
-		return fingerprintRsaAWS(pkey)
-	}
-	// when ed25519 key
-	// this is the same as what we store, but better be sure here
-	return strings.TrimLeft(ssh.FingerprintSHA256(pkey), "SHA256:") + "=", nil
-}
+// FindAwsFingerprint returns suitable fingerprint for searching AWS key-pairs.
+func (pk *Pubkey) FindAwsFingerprint(ctx context.Context) string {
+	switch pk.Type {
+	case "ssh-rsa":
+		fp, err := ssh.GenerateAWSFingerprint([]byte(pk.Body))
+		if err != nil {
+			ctxval.Logger(ctx).Warn().Err(err).Msgf("Unable to generate AWS fingerprint for pubkey %s: %s", pk.Name, err.Error())
+			return ""
+		}
+		return string(fp)
+	case "ssh-ed25519":
+		return pk.Fingerprint
+	default:
+		return ""
 
-// fingerprintRsaAWS calculates fingerprint for rsa keys
-func fingerprintRsaAWS(key ssh.PublicKey) (string, error) {
-	parsedCryptoKey := key.(ssh.CryptoPublicKey)
-
-	// Finally, we can convert back to an *rsa.PublicKey
-	pub := parsedCryptoKey.CryptoPublicKey().(*rsa.PublicKey)
-
-	der, err := x509.MarshalPKIXPublicKey(pub)
-	if err != nil {
-		return "", fmt.Errorf("failed to calculate rsa key fingerprint: %w", err)
 	}
-	md5sum := md5.Sum(der) //#nosec
-	hexarray := make([]string, len(md5sum))
-	for i, c := range md5sum {
-		hexarray[i] = hex.EncodeToString([]byte{c})
-	}
-	return strings.Join(hexarray, ":"), nil
 }

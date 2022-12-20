@@ -24,12 +24,12 @@ func TestListPubkeysHandler(t *testing.T) {
 	ctx = identity.WithTenant(t, ctx)
 	ctx = stubs.WithPubkeyDao(ctx)
 	err := stubs.AddPubkey(ctx, &models.Pubkey{
-		Name: factories.GetSequenceName("pubkey"),
+		Name: factories.SeqNameWithPrefix("pubkey"),
 		Body: factories.GenerateRSAPubKey(t),
 	})
 	require.NoError(t, err, "failed to add stubbed key")
 	err = stubs.AddPubkey(ctx, &models.Pubkey{
-		Name: factories.GetSequenceName("pubkey"),
+		Name: factories.SeqNameWithPrefix("pubkey"),
 		Body: factories.GenerateRSAPubKey(t),
 	})
 	require.NoError(t, err, "failed to add stubbed key")
@@ -61,7 +61,7 @@ func TestCreatePubkeyHandler(t *testing.T) {
 	values := map[string]interface{}{
 		"account_id": 1,
 		"name":       "very cool key",
-		"body":       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
+		"body":       factories.NewPubkeyED25519().Body,
 	}
 
 	if json_data, err = json.Marshal(values); err != nil {

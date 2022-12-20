@@ -18,7 +18,7 @@ import (
 
 func TestReservationNoopOneSuccess(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	type test struct {
 		name   string

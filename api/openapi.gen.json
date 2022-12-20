@@ -187,11 +187,17 @@
           "fingerprint": {
             "type": "string"
           },
+          "fingerprint_legacy": {
+            "type": "string"
+          },
           "id": {
             "format": "int64",
             "type": "integer"
           },
           "name": {
+            "type": "string"
+          },
+          "type": {
             "type": "string"
           }
         },
@@ -205,11 +211,17 @@
           "fingerprint": {
             "type": "string"
           },
+          "fingerprint_legacy": {
+            "type": "string"
+          },
           "id": {
             "format": "int64",
             "type": "integer"
           },
           "name": {
+            "type": "string"
+          },
+          "type": {
             "type": "string"
           }
         },

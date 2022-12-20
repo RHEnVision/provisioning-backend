@@ -59,19 +59,14 @@ func newGCPReservation() *models.GCPReservation {
 }
 
 func setupReservation(t *testing.T) (dao.ReservationDao, context.Context) {
-	setup()
 	ctx := identity.WithTenant(t, context.Background())
 	reservationDao := dao.GetReservationDao(ctx)
 	return reservationDao, ctx
 }
 
-func teardownReservation(_ *testing.T) {
-	teardown()
-}
-
 func TestReservationCreateNoop(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		res := newNoopReservation()
@@ -86,7 +81,7 @@ func TestReservationCreateNoop(t *testing.T) {
 
 func TestReservationGetById(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		res := newNoopReservation()
@@ -106,7 +101,7 @@ func TestReservationGetById(t *testing.T) {
 
 func TestReservationCreateAWS(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		res := newAWSReservation()
@@ -121,7 +116,7 @@ func TestReservationCreateAWS(t *testing.T) {
 
 func TestReservationCreateGCP(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		res := newGCPReservation()
@@ -136,7 +131,7 @@ func TestReservationCreateGCP(t *testing.T) {
 
 func TestReservationCreateAWSInstance(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		reservation := newAWSReservation()
@@ -154,7 +149,7 @@ func TestReservationCreateAWSInstance(t *testing.T) {
 
 func TestReservationList(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("empty", func(t *testing.T) {
 		reservations, err := reservationDao.List(ctx, 10, 0)
@@ -179,7 +174,7 @@ func TestReservationList(t *testing.T) {
 
 func TestUnscopedUpdateAWSDetail(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("updates detail field", func(t *testing.T) {
 		reservation := newAWSReservation()
@@ -205,7 +200,7 @@ func TestUnscopedUpdateAWSDetail(t *testing.T) {
 
 func TestReservationUpdateIDForAWS(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		reservation := newAWSReservation()
@@ -231,7 +226,7 @@ func TestReservationUpdateIDForAWS(t *testing.T) {
 
 func TestReservationUpdateStatus(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("status text", func(t *testing.T) {
 		res := newNoopReservation()
@@ -263,7 +258,7 @@ func TestReservationUpdateStatus(t *testing.T) {
 
 func TestReservationDelete(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		res := newNoopReservation()
@@ -285,7 +280,7 @@ func TestReservationDelete(t *testing.T) {
 
 func TestReservationFinish(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
-	defer teardownReservation(t)
+	defer reset()
 
 	t.Run("with success", func(t *testing.T) {
 		res := newNoopReservation()

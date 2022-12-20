@@ -22,9 +22,14 @@ func getPubkeyDao(ctx context.Context) dao.PubkeyDao {
 }
 
 func (x *pubkeyDao) validate(ctx context.Context, pubkey *models.Pubkey) error {
+	if pubkey.SkipValidation {
+		return nil
+	}
+
 	if vError := models.Validate(ctx, pubkey); vError != nil {
 		return fmt.Errorf("validate: %w", vError)
 	}
+
 	if tError := models.Transform(ctx, pubkey); tError != nil {
 		return fmt.Errorf("transform: %w", tError)
 	}
@@ -33,7 +38,9 @@ func (x *pubkeyDao) validate(ctx context.Context, pubkey *models.Pubkey) error {
 }
 
 func (x *pubkeyDao) Create(ctx context.Context, pubkey *models.Pubkey) error {
-	query := `INSERT INTO pubkeys (account_id, name, body, fingerprint) VALUES ($1, $2, $3, $4) RETURNING id`
+	query := `
+		INSERT INTO pubkeys (account_id, type, name, body, fingerprint, fingerprint_legacy)
+		VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
 
 	pubkey.AccountID = ctxval.AccountId(ctx)
 
@@ -41,7 +48,7 @@ func (x *pubkeyDao) Create(ctx context.Context, pubkey *models.Pubkey) error {
 		return fmt.Errorf("pubkey validation: %w", vError)
 	}
 
-	err := db.Pool.QueryRow(ctx, query, pubkey.AccountID, pubkey.Name, pubkey.Body, pubkey.Fingerprint).Scan(&pubkey.ID)
+	err := db.Pool.QueryRow(ctx, query, pubkey.AccountID, pubkey.Type, pubkey.Name, pubkey.Body, pubkey.Fingerprint, pubkey.FingerprintLegacy).Scan(&pubkey.ID)
 	if err != nil {
 		return fmt.Errorf("pgx error: %w", err)
 	}
@@ -62,14 +69,21 @@ func (x *pubkeyDao) GetById(ctx context.Context, id int64) (*models.Pubkey, erro
 }
 
 func (x *pubkeyDao) Update(ctx context.Context, pubkey *models.Pubkey) error {
-	query := `UPDATE pubkeys SET name = $3, body = $4, fingerprint = $5 WHERE account_id = $1 AND id = $2`
+	query := `
+		UPDATE pubkeys SET
+			type = $3,
+			name = $4,
+			body = $5,
+			fingerprint = $6,
+			fingerprint_legacy = $7
+		WHERE account_id = $1 AND id = $2`
 	accountId := ctxval.AccountId(ctx)
 
 	if vError := x.validate(ctx, pubkey); vError != nil {
 		return fmt.Errorf("pubkey validation: %w", vError)
 	}
 
-	tag, err := db.Pool.Exec(ctx, query, accountId, pubkey.ID, pubkey.Name, pubkey.Body, pubkey.Fingerprint)
+	tag, err := db.Pool.Exec(ctx, query, accountId, pubkey.ID, pubkey.Type, pubkey.Name, pubkey.Body, pubkey.Fingerprint, pubkey.FingerprintLegacy)
 	if err != nil {
 		return fmt.Errorf("pgx error: %w", err)
 	}

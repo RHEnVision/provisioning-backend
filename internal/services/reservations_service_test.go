@@ -27,7 +27,7 @@ func TestGetReservationDetail(t *testing.T) {
 		ctx = stubs.WithPubkeyDao(ctx)
 		ctx = stubs.WithReservationDao(ctx)
 		pk := &models.Pubkey{
-			Name: factories.GetSequenceName("pubkey"),
+			Name: factories.SeqNameWithPrefix("pubkey"),
 			Body: factories.GenerateRSAPubKey(t),
 		}
 		err = stubs.AddPubkey(ctx, pk)

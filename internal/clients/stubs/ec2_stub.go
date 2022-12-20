@@ -62,13 +62,11 @@ func (mock *EC2ClientStub) Status(ctx context.Context) error {
 
 func (mock *EC2ClientStub) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
 	ec2KeyID := fmt.Sprintf("key-%d", len(mock.Imported))
-	fingerprint, err := key.FingerprintAWS()
-	if err != nil {
-		return "", fmt.Errorf("failed to calculate MD5 fingerprint: %w", err)
-	}
+	fingerprint := key.FindAwsFingerprint(ctx)
 	keyName := key.Name // copy the name
 	ec2Key := &types.KeyPairInfo{
-		KeyName:        &keyName,
+		KeyName: &keyName,
+
 		KeyFingerprint: &fingerprint,
 		KeyPairId:      &ec2KeyID,
 		PublicKey:      &key.Body,
