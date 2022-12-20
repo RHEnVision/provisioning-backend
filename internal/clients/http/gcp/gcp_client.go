@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
+	"cloud.google.com/go/compute/apiv1/computepb"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
-	computepb "google.golang.org/genproto/googleapis/cloud/compute/v1"
 
 	compute "cloud.google.com/go/compute/apiv1"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
