@@ -1,4 +1,4 @@
-package db
+package migrations
 
 import (
 	"context"
@@ -11,8 +11,9 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/db/migrations"
+	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/db/seeds"
+	"github.com/RHEnVision/provisioning-backend/internal/migrations/sql"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/tern/v2/migrate"
 	"github.com/rs/zerolog/log"
@@ -66,7 +67,7 @@ func fmtDetailedError(sql string, mgErr *pgconn.PgError) string {
 	}
 
 	if mgErr.Position != 0 {
-		ele, err := ExtractErrorLine(sql, int(mgErr.Position))
+		ele, err := db.ExtractErrorLine(sql, int(mgErr.Position))
 		if err != nil {
 			errb.WriteString(err.Error())
 			return errb.String()
@@ -84,7 +85,7 @@ func fmtDetailedError(sql string, mgErr *pgconn.PgError) string {
 	}
 
 	if mgErr.InternalPosition != 0 {
-		ele, err := ExtractErrorLine(mgErr.InternalQuery, int(mgErr.InternalPosition))
+		ele, err := db.ExtractErrorLine(mgErr.InternalQuery, int(mgErr.InternalPosition))
 		if err != nil {
 			errb.WriteString(err.Error())
 			return errb.String()
@@ -116,13 +117,13 @@ func Migrate(ctx context.Context, schema string) error {
 		schema = "public"
 	}
 
-	conn, connErr := Pool.Acquire(ctx)
+	conn, connErr := db.Pool.Acquire(ctx)
 	if connErr != nil {
 		return fmt.Errorf("error acquiring connection from the pool: %w", connErr)
 	}
 	defer conn.Release()
 
-	mfs := NewEmbeddedFS(&migrations.EmbeddedMigrations)
+	mfs := NewEmbeddedFS(&sql.EmbeddedSQLMigrations)
 	table := fmt.Sprintf("%s.schema_version", schema)
 	migrator, err := migrate.NewMigrator(ctx, conn.Conn(), table)
 	if err != nil {
@@ -138,6 +139,14 @@ func Migrate(ctx context.Context, schema string) error {
 
 	migrator.OnStart = func(sequence int32, name, direction, sql string) {
 		logger.Info().Str("sql", sql).Msgf("Executing migration %s %s", name, direction)
+		if HasCallback(sequence) {
+			logger.Info().Msgf("Migration callback for %s %s", name, direction)
+			callErr := CallCallback(ctx, sequence)
+			if callErr != nil {
+				logger.Error().Err(callErr).Msgf("Error during execution of callback script before %s, cannot continue: %s", name, callErr.Error())
+				panic(callErr)
+			}
+		}
 	}
 
 	err = migrator.Migrate(ctx)
@@ -152,7 +161,7 @@ func Migrate(ctx context.Context, schema string) error {
 	}
 
 	// Print some additional info
-	rows, err := Pool.Query(ctx, "SELECT version, applied_at FROM schema_migrations_history")
+	rows, err := db.Pool.Query(ctx, "SELECT version, applied_at FROM schema_migrations_history")
 	if err != nil {
 		logger.Fatal().Err(err).Msg("Error querying schema history")
 	}
@@ -192,7 +201,7 @@ func Seed(ctx context.Context, seedScript string) error {
 	if err != nil {
 		return fmt.Errorf("unable to read seed script %s: %w", seedScript, err)
 	}
-	_, err = Pool.Exec(ctx, string(buffer))
+	_, err = db.Pool.Exec(ctx, string(buffer))
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {

@@ -87,6 +87,10 @@ Use `make` command to compile the main application, use `make run` or start it m
 
 The application performs automatic migration of database tables and keeps the schema up-to-date. In addition, it maintains initial data ([seed data](../internal/db/seeds/dev_small.sql)) in the database. If you delete such data, it will attempt to create it again.
 
+Migration files reside in the [migrations/sql](../internal/migrations/sql) directory, for each migration a new file prefixed with sequence integer must be present. These are "up" migrations, we do not have any "down" migrations at the moment.
+
+It is possible to create a Go function that will be executed before a SQL migration, in that case create a function in [migrations/code](../internal/migrations/code) directory and update map in [migrations/callbacks.go](../internal/migrations/callbacks.go) with the sequence number of a SQL file. The code will be executed BEFORE the SQL in a transaction. If the function returns an error, the program panics and SQL migration does not start executing. In case only code migration is needed, create an empty SQL file with a number and use the number to create a function.
+
 Notable records created via seed script:
 
 * Account number 13 with organization id 000013. This account is the first account (ID=1) and it is very often used on many examples (including this document). For [example](../scripts/rest_examples/http-client.env.json), RH-Identity-Header is an HTTP header that MUST be present in ALL requests, it is a base64-encoded JSON string which includes account number.

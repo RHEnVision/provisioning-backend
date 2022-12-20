@@ -38,19 +38,14 @@ func newAccountNull() *models.Account {
 }
 
 func setupAccount(t *testing.T) (dao.AccountDao, context.Context) {
-	setup()
 	ctx := identity.WithTenant(t, context.Background())
 	accDao := dao.GetAccountDao(ctx)
 	return accDao, ctx
 }
 
-func teardownAccount(_ *testing.T) {
-	teardown()
-}
-
 func TestAccountCreate(t *testing.T) {
 	accDao, ctx := setupAccount(t)
-	defer teardownAccount(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		acc := newAccount2()
@@ -75,7 +70,7 @@ func TestAccountCreate(t *testing.T) {
 
 func TestAccountList(t *testing.T) {
 	accDao, ctx := setupAccount(t)
-	defer teardownAccount(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		acc := newAccount2()
@@ -104,7 +99,7 @@ func TestAccountList(t *testing.T) {
 
 func TestAccountGetById(t *testing.T) {
 	accDao, ctx := setupAccount(t)
-	defer teardownAccount(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		account, err := accDao.GetById(ctx, 1)
@@ -120,7 +115,7 @@ func TestAccountGetById(t *testing.T) {
 
 func TestAccountGetByAccountNumber(t *testing.T) {
 	accDao, ctx := setupAccount(t)
-	defer teardownAccount(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		account, err := accDao.GetByAccountNumber(ctx, "1")
@@ -136,7 +131,7 @@ func TestAccountGetByAccountNumber(t *testing.T) {
 
 func TestAccountGetByOrgId(t *testing.T) {
 	accDao, ctx := setupAccount(t)
-	defer teardownAccount(t)
+	defer reset()
 
 	t.Run("success", func(t *testing.T) {
 		account, err := accDao.GetByOrgId(ctx, "1")
@@ -153,7 +148,7 @@ func TestAccountGetByOrgId(t *testing.T) {
 
 func TestAccountGetOrCreateByIdentity(t *testing.T) {
 	accDao, ctx := setupAccount(t)
-	defer teardownAccount(t)
+	defer reset()
 
 	t.Run("new record", func(t *testing.T) {
 		account, err := accDao.GetOrCreateByIdentity(ctx, "101", "101")

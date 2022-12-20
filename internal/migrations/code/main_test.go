@@ -1,9 +1,7 @@
 //go:build integration
 // +build integration
 
-// To override application configuration for integration tests, create config/test.env file.
-
-package tests
+package code_test
 
 import (
 	"context"

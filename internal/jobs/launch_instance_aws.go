@@ -114,10 +114,7 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	}
 
 	// check presence on AWS first
-	fingerprint, err := pubkey.FingerprintAWS()
-	if err != nil {
-		return fmt.Errorf("failed to calculate MD5 fingerprint: %w", err)
-	}
+	fingerprint := pubkey.FindAwsFingerprint(ctx)
 	ec2Name, err := ec2Client.GetPubkeyName(ctx, fingerprint)
 	if err != nil {
 		// if not found on AWS, import

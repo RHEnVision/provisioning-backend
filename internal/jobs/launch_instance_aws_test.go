@@ -53,37 +53,35 @@ func prepareReservation(t *testing.T, ctx context.Context, pk *models.Pubkey) *m
 
 func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 	keys := []struct {
-		KeyType        string
-		Body           string
-		AwsFingerprint string
+		KeyType string
+		Pubkey  *models.Pubkey
 	}{
 		{
 			"rsa",
-			"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDABkLdmd4mnZTOKcZpi0cu+YWbnVbbJSjHW5FDc4p9AgeVZA2WKx2f2x4YPOdB9NtAuVuFUpDAvBiV96Coy0747I2RXrR5abzVWbW+bIJOJXqCCBLHlUEj13CduIs40pHwVXGRdlwLZk4rChWKzg+C6sNBq5lXxtBLfKmf5S2LbhWKTfZje7OI2We2pZXiRZg58IVIA2mpvNr3MxaoMlEK92VwiVzlwOaCKbG4Ere5M1ug/5RRSXXLQjPBc6ePqg1PiVHrx2DP2jDJsGETQGj13zzqI4nvXbcu7EM/TiCJpreHZIxDgn97AtYj2IJbscz+6/aWyBlZG0be8oaLLlYN",
-			"93:fb:9e:04:da:6e:5d:37:5d:2e:f4:0b:39:ef:6a:08",
+			factories.NewPubkeyRSA(),
 		},
 		{
 			"ed25519",
-			"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
-			"gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk=",
+			factories.NewPubkeyED25519(),
 		},
 	}
 
 	for _, testKey := range keys {
-		t.Run("KeyPair exists on AWS", func(t *testing.T) {
+		t.Run("exists_"+testKey.KeyType, func(t *testing.T) {
 			ctx := prepareContext(t)
+			pkt := factories.PubkeyWithTrans(t, ctx, testKey.Pubkey)
 
 			// using a static key for which we know it's real AWS fingerprint
 			pk := &models.Pubkey{
 				Name: "provisioningName",
-				Body: testKey.Body,
+				Body: pkt.Body,
 			}
 			err := daoStubs.AddPubkey(ctx, pk)
 			require.NoError(t, err, "failed to add stubbed key")
 
 			err = clientStubs.AddStubbedEC2KeyPair(ctx, &types.KeyPairInfo{
 				KeyName:        ptr.To("awsName"),
-				KeyFingerprint: &testKey.AwsFingerprint,
+				KeyFingerprint: ptr.To(pkt.FindAwsFingerprint(ctx)),
 				KeyType:        types.KeyType(testKey.KeyType),
 				PublicKey:      &pk.Body,
 			})
@@ -118,11 +116,11 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 		})
 	}
 
-	t.Run("pubkey not on AWS", func(t *testing.T) {
+	t.Run("not_exists", func(t *testing.T) {
 		ctx := prepareContext(t)
 
 		pk := &models.Pubkey{
-			Name: factories.GetSequenceName("pubkey"),
+			Name: factories.SeqNameWithPrefix("pubkey"),
 			Body: factories.GenerateRSAPubKey(t),
 		}
 		err := daoStubs.AddPubkey(ctx, pk)

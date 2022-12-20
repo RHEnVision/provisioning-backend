@@ -6,15 +6,15 @@ import (
 	"reflect"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/ssh"
 	"github.com/go-playground/mold/v4"
-	"golang.org/x/crypto/ssh"
 )
 
 var transform *mold.Transformer
 
 func init() {
 	transform = mold.New()
-	transform.RegisterStructLevel(generateFingerprint, Pubkey{})
+	transform.RegisterStructLevel(generateFingerprints, Pubkey{})
 }
 
 func Transform(ctx context.Context, model interface{}) error {
@@ -25,15 +25,40 @@ func Transform(ctx context.Context, model interface{}) error {
 	return nil
 }
 
-func generateFingerprint(ctx context.Context, sl mold.StructLevel) error {
-	logger := ctxval.Logger(ctx)
+// generates fingerprint fields or returns an error for unsupported keys: "x509: unsupported public key"
+func generateFingerprints(ctx context.Context, sl mold.StructLevel) error {
 	pk := sl.Struct().Interface().(Pubkey)
-	pkey, _, _, _, err := ssh.ParseAuthorizedKey([]byte(pk.Body))
+
+	pkf, err := ssh.GenerateOpenSSHFingerprints([]byte(pk.Body))
 	if err != nil {
-		return fmt.Errorf("unable to calculate fingerprint for %s: %w", pk.Name, err)
+		ctxval.Logger(ctx).Warn().Err(err).Str("pubkey", pk.Body).Msg("OpenSSH fingerprint generation error")
+		return fmt.Errorf("key generate error %s: %w", pk.Name, err)
 	}
-	pk.Fingerprint = ssh.FingerprintSHA256(pkey)
+
+	pk.Type = pkf.Type
+	pk.Fingerprint = pkf.SHA256
+	pk.FingerprintLegacy = pkf.MD5
 	sl.Struct().Set(reflect.ValueOf(pk))
-	logger.Trace().Msgf("Calculated SSH fingerprint for %s: %s", pk.Name, pk.Fingerprint)
+
+	err = validateAWS(ctx, sl)
+	if err != nil {
+		return fmt.Errorf("key error %s: %w", pk.Name, err)
+	}
+
+	return nil
+}
+
+// validateAWS tries to generate AWS PEM key during key save because the fingerprint is generated
+// on the fly and can fail later.
+func validateAWS(ctx context.Context, sl mold.StructLevel) error {
+	pk := sl.Struct().Interface().(Pubkey)
+
+	_, err := ssh.GenerateAWSFingerprint([]byte(pk.Body))
+	if err != nil {
+		ctxval.Logger(ctx).Warn().Err(err).Str("pubkey", pk.Body).Msg("AWS fingerprint validation error")
+		return fmt.Errorf("invalid public key type (only ed25519 and rsa keys are supported): %w", err)
+	}
+	sl.Struct().Set(reflect.ValueOf(pk))
+
 	return nil
 }

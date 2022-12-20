@@ -4,9 +4,13 @@ import (
 	"context"
 	"os"
 
+	// DAO implementation, must be initialized before any database packages.
+	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
+
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
+	"github.com/RHEnVision/provisioning-backend/internal/migrations"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 	"github.com/rs/zerolog/log"
 )
@@ -32,7 +36,7 @@ func main() {
 
 	if len(os.Args[1:]) > 0 && os.Args[1] == "purgedb" {
 		logger.Warn().Msg("Database purge: all data is being dropped")
-		err = db.Seed(ctx, "drop_all")
+		err = migrations.Seed(ctx, "drop_all")
 		if err != nil {
 			logger.Fatal().Err(err).Msg("Error purging the database")
 			return
@@ -40,14 +44,14 @@ func main() {
 		logger.Info().Msgf("Database %s has been purged to blank state", config.Database.Name)
 	}
 
-	err = db.Migrate(ctx, "public")
+	err = migrations.Migrate(ctx, "public")
 	if err != nil {
 		logger.Fatal().Err(err).Msg("Error running migration")
 		return
 	}
 
 	if config.Database.SeedScript != "" {
-		err = db.Seed(ctx, config.Database.SeedScript)
+		err = migrations.Seed(ctx, config.Database.SeedScript)
 		if err != nil {
 			logger.Fatal().Err(err).Msg("Error running migration")
 			return
