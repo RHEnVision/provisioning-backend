@@ -147,3 +147,7 @@ func (mock *EC2ClientStub) ListInstanceTypesWithPaginator(ctx context.Context) (
 func (mock *EC2ClientStub) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
 	return nil, nil, nil
 }
+
+func (mock *EC2ClientStub) GetAccountId(ctx context.Context) (string, error) {
+	return "", nil
+}

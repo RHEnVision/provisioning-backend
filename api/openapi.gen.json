@@ -108,6 +108,19 @@
         },
         "type": "object"
       },
+      "v1.AccountIDTypeResponse": {
+        "properties": {
+          "aws": {
+            "properties": {
+              "account_id": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
       "v1.AvailabilityStatusRequest": {
         "properties": {
           "source_id": {
@@ -657,6 +670,40 @@
               }
             },
             "description": "Returned on success."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/sources/{ID}/account_identity": {
+      "get": {
+        "parameters": [
+          {
+            "description": "Source ID from Sources Database",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.AccountIDTypeResponse"
+                }
+              }
+            },
+            "description": "Return on success."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           },
           "500": {
             "$ref": "#/components/responses/InternalError"

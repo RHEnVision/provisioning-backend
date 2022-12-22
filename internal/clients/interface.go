@@ -77,6 +77,8 @@ type EC2 interface {
 
 	// RunInstances launches one or more instances
 	RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error)
+
+	GetAccountId(ctx context.Context) (string, error)
 }
 
 // GetAzureClient returns an Azure client with customer's subscription ID.

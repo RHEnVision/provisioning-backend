@@ -61,6 +61,8 @@ func MountAPI(r *chi.Mux) {
 
 				// TODO move this to outside of /sources (see below)
 				r.Get("/instance_types", s.ListInstanceTypes)
+
+				r.Get("/account_identity", s.GetAccountIdentity)
 			})
 		})
 
