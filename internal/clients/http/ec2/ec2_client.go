@@ -27,6 +27,7 @@ const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/h
 
 type ec2Client struct {
 	ec2     *ec2.Client
+	sts     *sts.Client
 	assumed bool
 }
 
@@ -62,6 +63,10 @@ func awsConfig(ctx context.Context, region string, optFns ...func(*awsCfg.LoadOp
 }
 
 func newEC2ClientWithRegion(ctx context.Context, region string) (clients.EC2, error) {
+	if region == "" {
+		region = config.AWS.DefaultRegion
+	}
+
 	cfg, err := awsConfig(ctx, region,
 		awsCfg.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(config.AWS.Key, config.AWS.Secret, config.AWS.Session)))
 	if err != nil {
@@ -70,6 +75,7 @@ func newEC2ClientWithRegion(ctx context.Context, region string) (clients.EC2, er
 
 	return &ec2Client{
 		ec2:     ec2.NewFromConfig(*cfg),
+		sts:     sts.NewFromConfig(*cfg),
 		assumed: false,
 	}, nil
 }
@@ -99,6 +105,7 @@ func newAssumedEC2ClientWithRegion(ctx context.Context, auth *clients.Authentica
 
 	return &ec2Client{
 		ec2:     ec2.NewFromConfig(*cfg),
+		sts:     sts.NewFromConfig(*cfg),
 		assumed: true,
 	}, nil
 }
@@ -357,4 +364,17 @@ func (c *ec2Client) parseRunInstancesResponse(respAWS *ec2.RunInstancesOutput) [
 		list[i] = instance.InstanceId
 	}
 	return list
+}
+
+func (c *ec2Client) GetAccountId(ctx context.Context) (string, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetAccountId")
+	defer span.End()
+
+	input := &sts.GetCallerIdentityInput{}
+	out, err := c.sts.GetCallerIdentity(ctx, input)
+	if err != nil {
+		return "", fmt.Errorf("cannot get caller's identity: %w", err)
+	}
+
+	return *out.Account, nil
 }

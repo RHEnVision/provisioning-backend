@@ -112,6 +112,30 @@ paths:
                   $ref: '#/components/schemas/v1.SourceResponse'
         '500':
           $ref: "#/components/responses/InternalError"
+  /sources/{ID}/account_identity:
+    get:
+        description: >
+          Return details needed to identify a hyperscaler account associated with a certain
+          source. The image builder service uses this to share an image with a specific source.
+        parameters:
+        - in: path
+          name: ID
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: 'Source ID from Sources Database'
+        responses:
+          '200':
+            description: Return on success.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/v1.AccountIDTypeResponse'
+          '404':
+            $ref: "#/components/responses/NotFound"
+          '500':
+            $ref: "#/components/responses/InternalError"
   /sources/{ID}/instance_types:
       get:
         description: 'Return a list of instance types (DEPRECATED: use /instance_types)'
@@ -380,6 +404,14 @@ components:
           type: integer
         source_id:
           type: string
+      type: object
+    v1.AccountIDTypeResponse:
+      properties:
+        aws:
+          properties:
+            account_id:
+              type: string
+          type: object
       type: object
     v1.AvailabilityStatusRequest:
       properties:
