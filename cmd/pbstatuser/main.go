@@ -24,6 +24,8 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
+
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/go-chi/chi/v5"
@@ -112,6 +114,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 		// TODO: check if source is avavliable - WIP
 		sr.Status = kafka.StatusAvaliable
 		chSend <- sr
+		metrics.IncTotalAvailablilityCheckReqs(models.ProviderTypeAzure, "statuser", sr.Status, nil)
 	}
 }
 
@@ -135,6 +138,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 			sr.Status = kafka.StatusAvaliable
 			chSend <- sr
 		}
+		metrics.IncTotalAvailablilityCheckReqs(models.ProviderTypeAWS, "statuser", sr.Status, err)
 	}
 }
 
@@ -166,6 +170,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 			sr.Status = kafka.StatusAvaliable
 			chSend <- sr
 		}
+		metrics.IncTotalAvailablilityCheckReqs(models.ProviderTypeGCP, "statuser", sr.Status, err)
 	}
 }
 
@@ -262,24 +267,6 @@ func main() {
 		logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
 	}
 
-	// start the consumer
-	receiverWG.Add(1)
-	cancelCtx, consumerCancelFunc := context.WithCancel(ctx)
-	go func() {
-		defer receiverWG.Done()
-		kafka.Consume(cancelCtx, kafka.AvailabilityStatusRequestTopic, processMessage)
-	}()
-
-	// start processing goroutines
-	processingWG.Add(3)
-
-	go checkSourceAvailabilityAWS(cancelCtx)
-	go checkSourceAvailabilityGCP(cancelCtx)
-	go checkSourceAvailabilityAzure(cancelCtx)
-
-	senderWG.Add(1)
-	go sendResults(cancelCtx, 1024, 5*time.Second)
-
 	// metrics
 	logger.Info().Msgf("Starting new instance on port %d with prometheus on %d", config.Application.Port, config.Prometheus.Port)
 	metricsRouter := chi.NewRouter()
@@ -310,6 +297,25 @@ func main() {
 			}
 		}
 	}()
+
+	// start the consumer
+	receiverWG.Add(1)
+	cancelCtx, consumerCancelFunc := context.WithCancel(ctx)
+	go func() {
+		defer receiverWG.Done()
+		kafka.Consume(cancelCtx, kafka.AvailabilityStatusRequestTopic, processMessage)
+	}()
+
+	metrics.RegisterTotalAvailablilityCheckReqs()
+	// start processing goroutines
+	processingWG.Add(3)
+
+	go checkSourceAvailabilityAWS(cancelCtx)
+	go checkSourceAvailabilityGCP(cancelCtx)
+	go checkSourceAvailabilityAzure(cancelCtx)
+
+	senderWG.Add(1)
+	go sendResults(cancelCtx, 1024, 5*time.Second)
 
 	logger.Info().Msg("Worker started")
 	<-waitForSignal
