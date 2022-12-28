@@ -108,15 +108,20 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chAzure {
-		sr := kafka.SourceResult{
-			SourceID:     s.SourceID,
-			Identity:     s.Identity,
-			ResourceType: "Source",
-		}
-		// TODO: check if source is avavliable - WIP
-		sr.Status = kafka.StatusAvaliable
-		chSend <- sr
-		metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeAzure, "statuser", sr.Status, nil)
+		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAzure, func() error {
+			var err error
+			sr := kafka.SourceResult{
+				SourceID:     s.SourceID,
+				Identity:     s.Identity,
+				ResourceType: "Source",
+			}
+			// TODO: check if source is avavliable - WIP
+			sr.Status = kafka.StatusAvaliable
+			chSend <- sr
+			metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeAzure, sr.Status, nil)
+
+			return fmt.Errorf("error during check %w:", err)
+		})
 	}
 }
 
@@ -125,22 +130,26 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chAws {
-		sr := kafka.SourceResult{
-			SourceID:     s.SourceID,
-			Identity:     s.Identity,
-			ResourceType: "Source",
-		}
-		_, err := clients.GetEC2Client(ctx, &s.Authentication, "")
-		if err != nil {
-			sr.Status = kafka.StatusUnavailable
-			sr.Err = err
-			logger.Warn().Msgf("Could not get aws assumed client %s", err)
-			chSend <- sr
-		} else {
-			sr.Status = kafka.StatusAvaliable
-			chSend <- sr
-		}
-		metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeAWS, "statuser", sr.Status, err)
+		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAWS, func() error {
+			var err error
+			sr := kafka.SourceResult{
+				SourceID:     s.SourceID,
+				Identity:     s.Identity,
+				ResourceType: "Source",
+			}
+			_, err = clients.GetEC2Client(ctx, &s.Authentication, "")
+			if err != nil {
+				sr.Status = kafka.StatusUnavailable
+				sr.Err = err
+				logger.Warn().Msgf("Could not get aws assumed client %s", err)
+				chSend <- sr
+			} else {
+				sr.Status = kafka.StatusAvaliable
+				chSend <- sr
+			}
+			metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeAWS, sr.Status, err)
+			return fmt.Errorf("error during check %w:", err)
+		})
 	}
 }
 
@@ -149,30 +158,34 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chGcp {
-		sr := kafka.SourceResult{
-			SourceID:     s.SourceID,
-			Identity:     s.Identity,
-			ResourceType: "Source",
-		}
-		gcpClient, err := clients.GetGCPClient(ctx, &s.Authentication)
-		if err != nil {
-			sr.Status = kafka.StatusUnavailable
-			sr.Err = err
-			logger.Warn().Msgf("Could not get gcp client %s", err)
-			chSend <- sr
-			continue
-		}
-		_, err = gcpClient.ListAllRegions(ctx)
-		if err != nil {
-			sr.Status = kafka.StatusUnavailable
-			sr.Err = err
-			logger.Warn().Msgf("Could not list gcp regions %s", err)
-			chSend <- sr
-		} else {
-			sr.Status = kafka.StatusAvaliable
-			chSend <- sr
-		}
-		metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeGCP, "statuser", sr.Status, err)
+		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeGCP, func() error {
+			var err error
+			sr := kafka.SourceResult{
+				SourceID:     s.SourceID,
+				Identity:     s.Identity,
+				ResourceType: "Source",
+			}
+			gcpClient, err := clients.GetGCPClient(ctx, &s.Authentication)
+			if err != nil {
+				sr.Status = kafka.StatusUnavailable
+				sr.Err = err
+				logger.Warn().Msgf("Could not get gcp client %s", err)
+				chSend <- sr
+			}
+			_, err = gcpClient.ListAllRegions(ctx)
+			if err != nil {
+				sr.Status = kafka.StatusUnavailable
+				sr.Err = err
+				logger.Warn().Msgf("Could not list gcp regions %s", err)
+				chSend <- sr
+			} else {
+				sr.Status = kafka.StatusAvaliable
+				chSend <- sr
+			}
+			metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeGCP, sr.Status, err)
+
+			return fmt.Errorf("error during check %w:", err)
+		})
 	}
 }
 
