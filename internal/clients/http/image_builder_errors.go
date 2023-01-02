@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	CloneNotFoundErr        = fmt.Errorf("image clone not found: %w", clients.NotFoundErr)
 	ComposeNotFoundErr      = fmt.Errorf("image compose not found: %w", clients.NotFoundErr)
 	ImageStatusErr          = errors.New("build of requested image has not finished yet")
 	UnknownImageTypeErr     = errors.New("unknown image type")

@@ -105,8 +105,25 @@ func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (strin
 }
 
 func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "fetchImageStatus")
+	defer span.End()
 	logger := logger(ctx)
 	logger.Trace().Msgf("Fetching image status %v", composeID)
+
+	composeResp, err := c.checkCompose(ctx, composeID)
+	if err != nil {
+		cloneResp, err := c.checkClone(ctx, composeID)
+		if err != nil {
+			return nil, fmt.Errorf("could not find image neither in compose nor in clones: %w", err)
+		}
+		return cloneResp, nil
+	}
+	return composeResp, nil
+}
+
+func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadStatus, error) {
+	logger := logger(ctx)
+	logger.Trace().Msgf("Fetching image status %v from composes", composeID)
 
 	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader)
 	if err != nil {
@@ -123,8 +140,35 @@ func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*Upl
 	}
 
 	if resp.JSON200.ImageStatus.Status != ImageStatusStatusSuccess {
-		logger.Warn().Msg("Image status in not ready")
+		logger.Warn().Msg("Compose status is not ready")
 		return nil, http.ImageStatusErr
 	}
+
 	return resp.JSON200.ImageStatus.UploadStatus, nil
+}
+
+func (c *ibClient) checkClone(ctx context.Context, composeID string) (*UploadStatus, error) {
+	logger := logger(ctx)
+	logger.Trace().Msgf("Fetching image status %v from clones", composeID)
+
+	resp, err := c.client.GetCloneStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader)
+	if err != nil {
+		logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
+		return nil, fmt.Errorf("cannot get compose status: %w", err)
+	}
+
+	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
+	if err != nil {
+		if errors.Is(err, clients.NotFoundErr) {
+			return nil, fmt.Errorf("fetch image status call: %w", http.CloneNotFoundErr)
+		}
+		return nil, fmt.Errorf("fetch image status call: %w", err)
+	}
+
+	if ImageStatusStatus(resp.JSON200.Status) != ImageStatusStatusSuccess {
+		logger.Warn().Msg("Clone status is not ready")
+		return nil, http.ImageStatusErr
+	}
+
+	return resp.JSON200, nil
 }
