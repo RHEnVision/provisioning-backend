@@ -11,11 +11,9 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
-	"github.com/lzap/dejq"
 )
 
 func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
@@ -90,23 +88,19 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Prepare jobs
-	logger.Debug().Msgf("Enqueuing upload key job for pubkey %d", pk.ID)
-	uploadPubkeyJob := dejq.PendingJob{
-		Type: queue.TypeEnsurePubkeyOnAws,
-		Body: &jobs.EnsurePubkeyOnAWSTaskArgs{
-			AccountID:     accountId,
-			ReservationID: reservation.ID,
-			Region:        reservation.Detail.Region,
-			PubkeyID:      pk.ID,
-			ARN:           authentication,
-			SourceID:      reservation.SourceID,
-		},
+	logger.Debug().Msg("Enqueuing launch AWS job")
+	args := jobs.LaunchInstanceAWSTaskArgs{
+		AccountID:     accountId,
+		ReservationID: reservation.ID,
+		Region:        reservation.Detail.Region,
+		PubkeyID:      pk.ID,
+		ARN:           authentication,
+		SourceID:      reservation.SourceID,
 	}
 
-	var ami string
 	if strings.HasPrefix(reservation.ImageID, "ami-") {
 		// Direct AMI ID was provided, no need to call image builder
-		ami = reservation.ImageID
+		args.AMI = reservation.ImageID
 	} else {
 		// Get Image builder client
 		IBClient, ibErr := clients.GetImageBuilderClient(r.Context())
@@ -117,34 +111,16 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Get AMI
-		ami, ibErr = IBClient.GetAWSAmi(r.Context(), reservation.ImageID)
+		args.AMI, ibErr = IBClient.GetAWSAmi(r.Context(), reservation.ImageID)
 		if ibErr != nil {
 			renderError(w, r, payloads.NewClientError(r.Context(), ibErr))
 			return
 		}
 	}
 
-	logger.Debug().Msgf("Enqueuing launch instance job for source %s", reservation.SourceID)
-	launchJob := dejq.PendingJob{
-		Type: queue.TypeLaunchInstanceAws,
-		Body: &jobs.LaunchInstanceAWSTaskArgs{
-			AccountID:     accountId,
-			ReservationID: reservation.ID,
-			Region:        reservation.Detail.Region,
-			PubkeyID:      pk.ID,
-			SourceID:      reservation.SourceID,
-			Detail:        reservation.Detail,
-			AMI:           ami,
-			ARN:           authentication,
-		},
-	}
-
-	startJobs := []dejq.PendingJob{uploadPubkeyJob, launchJob}
-
-	// Enqueue all jobs
-	err = queue.GetEnqueuer().Enqueue(r.Context(), startJobs...)
+	err = jobs.EnqueueLaunchInstanceAWS(r.Context(), args)
 	if err != nil {
-		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueing task AWS reservation error", err))
+		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueuing task AWS reservation error", err))
 		return
 	}
 

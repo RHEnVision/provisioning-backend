@@ -70,10 +70,6 @@ objects:
                 value: ${WORKER_QUEUE}
               - name: WORKER_CONCURRENCY
                 value: ${WORKER_CONCURRENCY}
-              - name: WORKER_HEARTBEAT
-                value: ${WORKER_HEARTBEAT}
-              - name: WORKER_MAX_BEATS
-                value: ${WORKER_MAX_BEATS}
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}
@@ -283,9 +279,3 @@ parameters:
   - description: Internal queue concurrency, how many goroutines to run in parallel. Not used in 'redis' mode.
     name: WORKER_CONCURRENCY
     value: "100"
-  - description: Internal queue heartbeat interval. How often to update job liveness information. Not used in 'redis' mode.
-    name: WORKER_HEARTBEAT
-    value: "30s"
-  - description: Internal queue beat threshold. Now many times the beat can be updated until job is cancelled. Not used in 'redis' mode.
-    name: WORKER_MAX_BEATS
-    value: "10"

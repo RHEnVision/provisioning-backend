@@ -2,15 +2,17 @@ package jobs
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
-	"github.com/lzap/dejq"
 )
 
 type LaunchInstanceAWSTaskArgs struct {
@@ -39,23 +41,122 @@ type LaunchInstanceAWSTaskArgs struct {
 	ARN *clients.Authentication `json:"arn"`
 }
 
-// Unmarshall arguments and handle error
-func HandleLaunchInstanceAWS(ctx context.Context, job dejq.Job) error {
-	args := LaunchInstanceAWSTaskArgs{}
-	err := decodeJob(ctx, job, &args)
+var LaunchInstanceAWSTask = queue.RegisterTask("launch_instance_aws", func(ctx context.Context, args LaunchInstanceAWSTaskArgs) error {
+	ctx = prepareContext(ctx, "launch_instance_aws", args, args.AccountID, args.ReservationID)
+	err := HandleEnsurePubkeyOnAWS(ctx, args)
+	finishStep(ctx, args.ReservationID, err)
 	if err != nil {
 		return err
 	}
-	ctx = contextLogger(ctx, job.Type(), args, args.AccountID, args.ReservationID)
 
-	jobErr := handleLaunchInstanceAWS(ctx, &args)
+	err = HandleLaunchInstanceAWS(ctx, args)
+	finishStep(ctx, args.ReservationID, err)
+	return err
+})
 
-	finishJob(ctx, args.ReservationID, jobErr)
-	return jobErr
+func EnqueueLaunchInstanceAWS(ctx context.Context, args LaunchInstanceAWSTaskArgs) error {
+	ctxLogger := ctxval.Logger(ctx)
+
+	t := LaunchInstanceAWSTask.WithArgs(ctx, args)
+	ctxLogger.Debug().Str("tid", t.ID).Msg("Adding launch AWS job task")
+	err := queue.JobQueue.Add(t)
+	if err != nil {
+		return fmt.Errorf("unable to enqueue task: %w", err)
+	}
+
+	return nil
 }
 
-// Job logic, when error is returned the job status is updated accordingly
-func handleLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
+func HandleEnsurePubkeyOnAWS(ctx context.Context, args LaunchInstanceAWSTaskArgs) error {
+	ctxLogger := ctxval.Logger(ctx)
+	ctxLogger.Debug().Msg("Started pubkey upload AWS job")
+
+	ctx = ctxval.WithAccountId(ctx, args.AccountID)
+	logger := ctxLogger.With().Int64("reservation", args.ReservationID).Logger()
+	logger.Info().Interface("args", args).Msg("Processing pubkey upload AWS job")
+
+	// status updates before and after the code logic
+	updateStatusBefore(ctx, args.ReservationID, "Uploading public key")
+	defer updateStatusAfter(ctx, args.ReservationID, "Uploaded public key", 1)
+
+	pkDao := dao.GetPubkeyDao(ctx)
+	resDao := dao.GetReservationDao(ctx)
+	awsReservation, err := resDao.GetAWSById(ctx, args.ReservationID)
+	if err != nil {
+		return fmt.Errorf("cannot upload aws pubkey: %w", err)
+	}
+
+	pubkey, err := pkDao.GetById(ctx, args.PubkeyID)
+	if err != nil {
+		return fmt.Errorf("cannot upload aws pubkey: %w", err)
+	}
+
+	// Fetch our DB record for the resource to update if necessary
+	pkr, errDao := pkDao.UnscopedGetResourceBySourceAndRegion(ctx, args.PubkeyID, args.SourceID, args.Region)
+	if errDao != nil {
+		if errors.Is(errDao, dao.ErrNoRows) {
+			pkr = &models.PubkeyResource{
+				PubkeyID: pubkey.ID,
+				Provider: models.ProviderTypeAWS,
+				SourceID: args.SourceID,
+				Region:   args.Region,
+			}
+		} else {
+			return fmt.Errorf("unable to check pubkey resource: %w", errDao)
+		}
+	}
+
+	ec2Client, err := clients.GetEC2Client(ctx, args.ARN, args.Region)
+	if err != nil {
+		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
+	}
+
+	// check presence on AWS first
+	fingerprint, err := pubkey.FingerprintAWS()
+	if err != nil {
+		return fmt.Errorf("failed to calculate MD5 fingerprint: %w", err)
+	}
+	ec2Name, err := ec2Client.GetPubkeyName(ctx, fingerprint)
+	if err != nil {
+		// if not found on AWS, import
+		if errors.Is(err, http.PubkeyNotFoundErr) {
+			pkr.Tag = ""
+			pkr.RandomizeTag()
+			pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
+
+			if errors.Is(err, http.DuplicatePubkeyErr) {
+				// key not found by fingerprint but importing failed for duplicate err so fingerprints do not match
+				return fmt.Errorf("key with fingerprint %s not found on AWS, but importing the key failed: %w", pubkey.Fingerprint, err)
+			} else if err != nil {
+				return fmt.Errorf("cannot upload aws pubkey: %w", err)
+			}
+			ec2Name = pubkey.Name
+		} else {
+			return fmt.Errorf("cannot fetch name of pubkey with fingerpring (%s): %w", fingerprint, err)
+		}
+	} else {
+		logger.Debug().Msgf("Found pubkey by fingerprint (%s) with name '%s'", fingerprint, ec2Name)
+	}
+
+	// TODO this do not need to be in the DB anymore since we switched from separate jobs into a single job.
+	// Update the AWS key name in reservation details:
+	awsReservation.Detail.PubkeyName = ec2Name
+	err = resDao.UnscopedUpdateAWSDetail(ctx, awsReservation.Reservation.ID, awsReservation.Detail)
+	if err != nil {
+		return fmt.Errorf("failed to save AWS pubkey name to DB: %w", err)
+	}
+
+	if pkr.ID == 0 {
+		err = pkDao.UnscopedCreateResource(ctx, pkr)
+		if err != nil {
+			return fmt.Errorf("cannot create resource for aws pubkey: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func HandleLaunchInstanceAWS(ctx context.Context, args LaunchInstanceAWSTaskArgs) error {
 	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started launch instance AWS job")
 

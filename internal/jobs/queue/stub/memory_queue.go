@@ -1,37 +1,32 @@
-// Import this package in all Go tests which need to enqueue a job. The implementation
-// is to silently enqueue all incoming jobs without any effects. No jobs will be actually
-// executed. Tests for job execution must use the dejq package (memory driver).
+// Import this package in all Go tests which need to enqueue a job. Tasks are enqueued, however,
+// no tasks are being picked up. This is only useful in unit tests.
 package stub
 
 import (
-	"context"
-
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
-	"github.com/go-logr/zerologr"
-	"github.com/lzap/dejq"
-	"github.com/lzap/dejq/mem"
+	"github.com/vmihailenco/taskq/v3"
+	"github.com/vmihailenco/taskq/v3/memqueue"
 )
 
-// memQueue is the main job stub memQueue
-var memQueue dejq.Jobs
-
-func getEnqueuer() queue.Enqueuer {
-	return memQueue
-}
-
 func init() {
-	InitializeStub(context.Background())
-	queue.GetEnqueuer = getEnqueuer
-}
+	factory := memqueue.NewFactory()
 
-func InitializeStub(ctx context.Context) {
-	var err error
+	// create stub queue
+	queue.JobQueue = factory.RegisterQueue(&taskq.QueueOptions{
+		Name:        "stub-queue",
+		WorkerLimit: 1,
+	})
 
-	logger := ctxval.Logger(ctx)
-	memQueue, err = mem.NewClient(ctx, zerologr.New(logger))
-	if err != nil {
-		panic(err)
+	// override the registration function to create noop handlers
+	queue.RegisterTask = func(_ string, _ any) *taskq.Task {
+		return taskq.RegisterTask(&taskq.TaskOptions{
+			Name: "stub",
+			Handler: func(_ *taskq.Message) error {
+				return nil
+			},
+		})
 	}
-	memQueue.DequeueLoop(ctx)
+
+	// unregister already registered handlers
+	taskq.Tasks.Reset()
 }

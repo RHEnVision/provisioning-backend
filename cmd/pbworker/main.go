@@ -7,8 +7,10 @@ import (
 	"syscall"
 
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
+
 	// Job queue implementation
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/taskq"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
@@ -71,12 +73,8 @@ func main() {
 	defer db.Close()
 
 	// initialize the job queue
-	err = dejq.Initialize(ctx, &logger)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error initializing dejq queue")
-	}
-	dejq.RegisterJobs(&logger)
-	dejq.StartDequeueLoop(ctx, &logger)
+	taskq.Initialize(ctx, &logger)
+	queue.StartQueues(ctx, &logger)
 
 	// wait for term signal
 	c := make(chan os.Signal, 1)
@@ -84,6 +82,6 @@ func main() {
 	<-c
 
 	logger.Info().Msg("Graceful shutdown initiated - waiting for jobs to finish")
-	dejq.StopDequeueLoop()
+	queue.StopQueues(&logger)
 	logger.Info().Msg("Graceful shutdown finished - exiting")
 }

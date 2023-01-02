@@ -6,11 +6,9 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
-	"github.com/lzap/dejq"
 )
 
 // CreateNoopReservation is used to create empty reservation that is processed without any operation
@@ -39,17 +37,13 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
 
 	// create a new job
-	pj := dejq.PendingJob{
-		Type: queue.TypeNoop,
-		Body: &jobs.NoopJobArgs{
-			AccountID:     accountId,
-			ReservationID: reservation.ID,
-		},
+	args := jobs.NoopJobArgs{
+		AccountID:     accountId,
+		ReservationID: reservation.ID,
 	}
-	logger.Debug().Interface("arg", pj.Body).Msgf("Enqueuing no operation job: %+v", pj.Body)
-	err = queue.GetEnqueuer().Enqueue(r.Context(), pj)
+	err = jobs.EnqueueNoop(r.Context(), args)
 	if err != nil {
-		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueing task Noop reservation error", err))
+		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueuing noop reservation error", err))
 		return
 	}
 

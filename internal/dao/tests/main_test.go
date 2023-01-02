@@ -13,7 +13,8 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/taskq"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	_ "github.com/RHEnVision/provisioning-backend/internal/logging/testing"
 	"github.com/rs/zerolog/log"
@@ -34,9 +35,8 @@ func initEnvironment() {
 	config.Initialize("config/test.env", "../../../config/test.env")
 	logging.InitializeStdout()
 	ctx := ctxval.WithLogger(context.Background(), &log.Logger)
-	dejq.Initialize(ctx, &log.Logger)
-	dejq.RegisterJobs(&log.Logger)
-	dejq.StartDequeueLoop(ctx, &log.Logger)
+	taskq.Initialize(ctx, &log.Logger)
+	queue.StartQueues(ctx, &log.Logger)
 
 	err := db.Initialize(context.Background(), "integration")
 	if err != nil {
@@ -68,7 +68,7 @@ func dbSeed() {
 func TestMain(t *testing.M) {
 	initEnvironment()
 	defer db.Close()
-	defer dejq.StopDequeueLoop()
+	defer queue.StopQueues(&log.Logger)
 
 	dbDrop()
 	dbMigrate()

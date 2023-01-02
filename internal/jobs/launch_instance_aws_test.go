@@ -18,22 +18,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type stubAWSJob struct {
-	body *jobs.EnsurePubkeyOnAWSTaskArgs
-}
-
-func (s stubAWSJob) Type() string { return "stub AWS pubkey job" }
-func (s stubAWSJob) Decode(out interface{}) error {
-	typed := out.(*jobs.EnsurePubkeyOnAWSTaskArgs)
-	typed.ARN = s.body.ARN
-	typed.AccountID = s.body.AccountID
-	typed.ReservationID = s.body.ReservationID
-	typed.SourceID = s.body.SourceID
-	typed.PubkeyID = s.body.PubkeyID
-	typed.Region = s.body.Region
-	return nil
-}
-
 func prepareContext(t *testing.T) context.Context {
 	t.Helper()
 
@@ -110,18 +94,16 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 			err = rDao.CreateAWS(ctx, reservation)
 			require.NoError(t, err, "failed to add stubbed reservation")
 
-			stubbedEnsureJob := stubAWSJob{
-				body: &jobs.EnsurePubkeyOnAWSTaskArgs{
-					AccountID:     1,
-					ReservationID: reservation.ID,
-					Region:        reservation.Detail.Region,
-					PubkeyID:      pk.ID,
-					SourceID:      reservation.SourceID,
-					ARN:           &clients.Authentication{ProviderType: models.ProviderTypeAWS, Payload: "arn:aws:123123123123"},
-				},
+			args := jobs.LaunchInstanceAWSTaskArgs{
+				AccountID:     1,
+				ReservationID: reservation.ID,
+				Region:        reservation.Detail.Region,
+				PubkeyID:      pk.ID,
+				SourceID:      reservation.SourceID,
+				ARN:           &clients.Authentication{ProviderType: models.ProviderTypeAWS, Payload: "arn:aws:123123123123"},
 			}
 
-			err = jobs.HandleEnsurePubkeyOnAWS(ctx, stubbedEnsureJob)
+			err = jobs.HandleEnsurePubkeyOnAWS(ctx, args)
 			require.NoError(t, err, "the ensure pubkey job failed to run")
 
 			resAfter, err := rDao.GetAWSById(ctx, reservation.ID)
@@ -150,18 +132,16 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 		err = rDao.CreateAWS(ctx, reservation)
 		require.NoError(t, err, "failed to add stubbed reservation")
 
-		stubbedEnsureJob := stubAWSJob{
-			body: &jobs.EnsurePubkeyOnAWSTaskArgs{
-				AccountID:     1,
-				ReservationID: reservation.ID,
-				Region:        reservation.Detail.Region,
-				PubkeyID:      pk.ID,
-				SourceID:      reservation.SourceID,
-				ARN:           &clients.Authentication{ProviderType: models.ProviderTypeAWS, Payload: "arn:aws:123123123123"},
-			},
+		args := jobs.LaunchInstanceAWSTaskArgs{
+			AccountID:     1,
+			ReservationID: reservation.ID,
+			Region:        reservation.Detail.Region,
+			PubkeyID:      pk.ID,
+			SourceID:      reservation.SourceID,
+			ARN:           &clients.Authentication{ProviderType: models.ProviderTypeAWS, Payload: "arn:aws:123123123123"},
 		}
 
-		err = jobs.HandleEnsurePubkeyOnAWS(ctx, stubbedEnsureJob)
+		err = jobs.HandleEnsurePubkeyOnAWS(ctx, args)
 		require.NoError(t, err, "the ensure pubkey job failed to run")
 
 		resAfter, err := rDao.GetAWSById(ctx, reservation.ID)

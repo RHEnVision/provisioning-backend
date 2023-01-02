@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/go-redis/redis/v8"
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/rs/zerolog"
 )
@@ -26,6 +27,16 @@ func RedisHostAndPort() string {
 	return fmt.Sprintf("%s:%d", Application.Cache.Redis.Host, Application.Cache.Redis.Port)
 }
 
+func RedisDB() *redis.Client {
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     RedisHostAndPort(),
+		Username: Application.Cache.Redis.User,
+		Password: Application.Cache.Redis.Password,
+		DB:       Application.Cache.Redis.DB,
+	})
+	return rdb
+}
+
 // InStageClowder returns true, when the app is running in stage clowder environment.
 func InStageClowder() bool {
 	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-stage")
@@ -34,6 +45,17 @@ func InStageClowder() bool {
 // InProdClowder returns true, when the app is running in production clowder environment.
 func InProdClowder() bool {
 	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-stage")
+}
+
+// QueueName returns task job queue name.
+func QueueName() string {
+	if InStageClowder() {
+		return "provisioning-job-queue-stage"
+	} else if InProdClowder() {
+		return "provisioning-job-queue-prod"
+	} else {
+		return "provisioning-job-queue"
+	}
 }
 
 // TopicName returns mapped topic from Clowder. When not running in Clowder mode, it returns the input topic name.

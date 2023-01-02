@@ -4,16 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/go-chi/render"
-	"github.com/lzap/dejq"
-
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
+	"github.com/go-chi/render"
 )
 
 func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
@@ -104,25 +101,19 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	logger.Trace().Msgf("Image Name is %s", name)
 
 	logger.Debug().Msgf("Enqueuing launch instance job for source %s", reservation.SourceID)
-	launchJob := dejq.PendingJob{
-		Type: queue.TypeLaunchInstanceGcp,
-		Body: &jobs.LaunchInstanceGCPTaskArgs{
-			AccountID:     accountId,
-			ReservationID: reservation.ID,
-			Zone:          reservation.Detail.Zone,
-			PubkeyID:      reservation.PubkeyID,
-			Detail:        reservation.Detail,
-			ImageName:     name,
-			ProjectID:     authentication,
-		},
+	args := jobs.LaunchInstanceGCPTaskArgs{
+		AccountID:     accountId,
+		ReservationID: reservation.ID,
+		Zone:          reservation.Detail.Zone,
+		PubkeyID:      reservation.PubkeyID,
+		Detail:        reservation.Detail,
+		ImageName:     name,
+		ProjectID:     authentication,
 	}
 
-	startJobs := []dejq.PendingJob{launchJob}
-
-	// Enqueue all jobs
-	err = queue.GetEnqueuer().Enqueue(r.Context(), startJobs...)
+	err = jobs.EnqueueLaunchInstanceGCP(r.Context(), args)
 	if err != nil {
-		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueing task GCP reservation error", err))
+		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueuing task GCP reservation error", err))
 		return
 	}
 

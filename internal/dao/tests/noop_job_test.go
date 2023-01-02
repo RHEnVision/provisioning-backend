@@ -4,14 +4,13 @@
 package tests
 
 import (
-	"context"
 	"testing"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/lzap/dejq"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -28,12 +27,12 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 
 	tests := []test{
 		{
-			name: "SingleStepNoError",
+			name: "SingleStepSuccess",
 			action: func() *models.NoopReservation {
 				// create new reservation
 				res := &models.NoopReservation{
 					Reservation: models.Reservation{
-						AccountID:  1,
+						AccountID:  ctxval.AccountId(ctx),
 						Steps:      1,
 						StepTitles: []string{"Test step"},
 						Provider:   models.ProviderTypeNoop,
@@ -44,22 +43,19 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 				require.NoError(t, err)
 				require.NotZero(t, res.ID)
 
-				// create new job
-				successJob := dejq.PendingJob{
-					Type: queue.TypeNoop,
-					Body: &jobs.NoopJobArgs{
-						AccountID:     1,
-						ReservationID: res.ID,
-						Fail:          false,
-					},
+				args := jobs.NoopJobArgs{
+					AccountID:     ctxval.AccountId(ctx),
+					ReservationID: res.ID,
+					Fail:          false,
 				}
-
-				err = queue.GetEnqueuer().Enqueue(context.Background(), successJob)
+				task := jobs.NoopJobTask.WithArgs(ctx, args)
+				err = queue.JobQueue.Add(task)
 				require.NoError(t, err)
 
 				return res
 			},
 			checks: func(updatedRes *models.Reservation) {
+				require.True(t, updatedRes.Success.Valid)
 				require.True(t, updatedRes.Success.Bool)
 				require.Empty(t, updatedRes.Error)
 				require.Equal(t, int32(1), updatedRes.Step)
@@ -73,7 +69,7 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 				// create new reservation
 				res := &models.NoopReservation{
 					Reservation: models.Reservation{
-						AccountID:  1,
+						AccountID:  ctxval.AccountId(ctx),
 						Steps:      1,
 						StepTitles: []string{"Test step"},
 						Provider:   models.ProviderTypeNoop,
@@ -84,22 +80,19 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 				require.NoError(t, err)
 				require.NotZero(t, res.ID)
 
-				// create new job
-				successJob := dejq.PendingJob{
-					Type: queue.TypeNoop,
-					Body: &jobs.NoopJobArgs{
-						AccountID:     1,
-						ReservationID: res.ID,
-						Fail:          true,
-					},
+				args := jobs.NoopJobArgs{
+					AccountID:     ctxval.AccountId(ctx),
+					ReservationID: res.ID,
+					Fail:          true,
 				}
-
-				err = queue.GetEnqueuer().Enqueue(context.Background(), successJob)
+				task := jobs.NoopJobTask.WithArgs(ctx, args)
+				err = queue.JobQueue.Add(task)
 				require.NoError(t, err)
 
 				return res
 			},
 			checks: func(updatedRes *models.Reservation) {
+				require.True(t, updatedRes.Success.Valid)
 				require.False(t, updatedRes.Success.Bool)
 				require.Equal(t, "job failed on request", updatedRes.Error)
 				require.Equal(t, int32(1), updatedRes.Step)
@@ -108,14 +101,13 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 			},
 		},
 		{
-			name: "ThreeStepsNoError",
+			name: "TwoStepsSuccess",
 			action: func() *models.NoopReservation {
-				// create new reservation
 				res := &models.NoopReservation{
 					Reservation: models.Reservation{
-						AccountID:  1,
-						Steps:      3,
-						StepTitles: []string{"Step one", "Step two", "Step three"},
+						AccountID:  ctxval.AccountId(ctx),
+						Steps:      2,
+						StepTitles: []string{"Step one", "Step two"},
 						Provider:   models.ProviderTypeNoop,
 						Status:     "Created",
 					},
@@ -124,37 +116,35 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 				require.NoError(t, err)
 				require.NotZero(t, res.ID)
 
-				// create new job
-				successJob := dejq.PendingJob{
-					Type: queue.TypeNoop,
-					Body: &jobs.NoopJobArgs{
-						AccountID:     1,
-						ReservationID: res.ID,
-						Fail:          false,
-					},
+				args := jobs.NoopTwoArgs{
+					AccountID:     ctxval.AccountId(ctx),
+					ReservationID: res.ID,
+					Fail1:         false,
+					Fail2:         false,
 				}
-				err = queue.GetEnqueuer().Enqueue(context.Background(), successJob, successJob, successJob)
+				task := jobs.NoopTwoTask.WithArgs(ctx, args)
+				err = queue.JobQueue.Add(task)
 				require.NoError(t, err)
 
 				return res
 			},
 			checks: func(updatedRes *models.Reservation) {
+				require.True(t, updatedRes.Success.Valid)
 				require.True(t, updatedRes.Success.Bool)
 				require.Empty(t, updatedRes.Error)
-				require.Equal(t, int32(3), updatedRes.Step)
-				require.Equal(t, int32(3), updatedRes.Steps)
-				require.Equal(t, "No operation finished", updatedRes.Status)
+				require.Equal(t, int32(2), updatedRes.Step)
+				require.Equal(t, int32(2), updatedRes.Steps)
+				require.Equal(t, "Operation two finished", updatedRes.Status)
 			},
 		},
 		{
-			name: "ThreeStepsFirstFails",
+			name: "TwoStepsFirstFail",
 			action: func() *models.NoopReservation {
-				// create new reservation
 				res := &models.NoopReservation{
 					Reservation: models.Reservation{
-						AccountID:  1,
-						Steps:      3,
-						StepTitles: []string{"Step one", "Step two", "Step three"},
+						AccountID:  ctxval.AccountId(ctx),
+						Steps:      2,
+						StepTitles: []string{"Step one", "Step two"},
 						Provider:   models.ProviderTypeNoop,
 						Status:     "Created",
 					},
@@ -163,34 +153,62 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 				require.NoError(t, err)
 				require.NotZero(t, res.ID)
 
-				// create new job
-				successJob := dejq.PendingJob{
-					Type: queue.TypeNoop,
-					Body: &jobs.NoopJobArgs{
-						AccountID:     1,
-						ReservationID: res.ID,
-						Fail:          false,
-					},
+				args := jobs.NoopTwoArgs{
+					AccountID:     ctxval.AccountId(ctx),
+					ReservationID: res.ID,
+					Fail1:         true,
+					Fail2:         false,
 				}
-				failureJob := dejq.PendingJob{
-					Type: queue.TypeNoop,
-					Body: &jobs.NoopJobArgs{
-						AccountID:     1,
-						ReservationID: res.ID,
-						Fail:          true,
-					},
-				}
-				err = queue.GetEnqueuer().Enqueue(context.Background(), failureJob, successJob, successJob)
+				task := jobs.NoopTwoTask.WithArgs(ctx, args)
+				err = queue.JobQueue.Add(task)
 				require.NoError(t, err)
 
 				return res
 			},
 			checks: func(updatedRes *models.Reservation) {
+				require.True(t, updatedRes.Success.Valid)
 				require.False(t, updatedRes.Success.Bool)
-				require.Equal(t, "step skipped: step skipped: job failed on request", updatedRes.Error)
-				require.Equal(t, int32(3), updatedRes.Step)
-				require.Equal(t, int32(3), updatedRes.Steps)
-				require.Equal(t, "No operation finished", updatedRes.Status)
+				require.Equal(t, "job failed on request", updatedRes.Error)
+				require.Equal(t, int32(1), updatedRes.Step)
+				require.Equal(t, int32(2), updatedRes.Steps)
+				require.Equal(t, "Operation one finished", updatedRes.Status)
+			},
+		},
+		{
+			name: "TwoStepsSecondFail",
+			action: func() *models.NoopReservation {
+				res := &models.NoopReservation{
+					Reservation: models.Reservation{
+						AccountID:  ctxval.AccountId(ctx),
+						Steps:      2,
+						StepTitles: []string{"Step one", "Step two"},
+						Provider:   models.ProviderTypeNoop,
+						Status:     "Created",
+					},
+				}
+				err := reservationDao.CreateNoop(ctx, res)
+				require.NoError(t, err)
+				require.NotZero(t, res.ID)
+
+				args := jobs.NoopTwoArgs{
+					AccountID:     ctxval.AccountId(ctx),
+					ReservationID: res.ID,
+					Fail1:         false,
+					Fail2:         true,
+				}
+				task := jobs.NoopTwoTask.WithArgs(ctx, args)
+				err = queue.JobQueue.Add(task)
+				require.NoError(t, err)
+
+				return res
+			},
+			checks: func(updatedRes *models.Reservation) {
+				require.True(t, updatedRes.Success.Valid)
+				require.False(t, updatedRes.Success.Bool)
+				require.Equal(t, "job failed on request", updatedRes.Error)
+				require.Equal(t, int32(2), updatedRes.Step)
+				require.Equal(t, int32(2), updatedRes.Steps)
+				require.Equal(t, "Operation two finished", updatedRes.Status)
 			},
 		},
 	}

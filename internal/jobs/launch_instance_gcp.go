@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
-	"github.com/RHEnVision/provisioning-backend/internal/ptr"
-
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/lzap/dejq"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 )
 
 type LaunchInstanceGCPTaskArgs struct {
@@ -37,24 +36,27 @@ type LaunchInstanceGCPTaskArgs struct {
 	ProjectID *clients.Authentication `json:"project_id"`
 }
 
-// Unmarshall arguments and handle error
-func HandleLaunchInstanceGCP(ctx context.Context, job dejq.Job) error {
-	args := LaunchInstanceGCPTaskArgs{}
-	err := decodeJob(ctx, job, &args)
+var LaunchInstanceGCPTask = queue.RegisterTask("launch_instance_gcp", func(ctx context.Context, args LaunchInstanceGCPTaskArgs) error {
+	ctx = prepareContext(ctx, "launch_instance_gcp", args, args.AccountID, args.ReservationID)
+	err := HandleLaunchInstanceGCP(ctx, args)
+	finishStep(ctx, args.ReservationID, err)
+	return err
+})
+
+func EnqueueLaunchInstanceGCP(ctx context.Context, args LaunchInstanceGCPTaskArgs) error {
+	ctxLogger := ctxval.Logger(ctx)
+
+	t := LaunchInstanceGCPTask.WithArgs(ctx, args)
+	ctxLogger.Debug().Str("tid", t.ID).Msg("Adding launch GCP job task")
+	err := queue.JobQueue.Add(t)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to enqueue task: %w", err)
 	}
 
-	ctx = contextLogger(ctx, job.Type(), args, args.AccountID, args.ReservationID)
-
-	jobErr := handleLaunchInstanceGCP(ctx, &args)
-
-	finishJob(ctx, args.ReservationID, jobErr)
-	return jobErr
+	return nil
 }
 
-// Job logic, when error is returned the job status is updated accordingly
-func handleLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
+func HandleLaunchInstanceGCP(ctx context.Context, args LaunchInstanceGCPTaskArgs) error {
 	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started launch instance GCP job")
 

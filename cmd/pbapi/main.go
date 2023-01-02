@@ -14,9 +14,11 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
+	"github.com/go-chi/chi/v5"
 
 	// HTTP client implementations
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
@@ -25,7 +27,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 
 	// Job queue implementation
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/taskq"
 
 	// DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
@@ -36,7 +38,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
 	"github.com/RHEnVision/provisioning-backend/internal/routes"
-	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -99,14 +100,11 @@ func main() {
 	defer bgCancel()
 
 	// initialize job queue
-	err = dejq.Initialize(ctx, &logger)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error initializing dejq queue")
-	}
+	taskq.Initialize(ctx, &logger)
 	if config.Worker.Queue == "memory" {
-		dejq.RegisterJobs(&logger)
+		// start also workers (development setup scenario)
+		queue.StartQueues(ctx, &logger)
 	}
-	dejq.StartDequeueLoop(ctx, &logger)
 
 	// Setup routes
 	rootRouter := chi.NewRouter()
@@ -190,7 +188,7 @@ func main() {
 	<-waitForSignal
 
 	if config.Worker.Queue == "memory" {
-		dejq.StopDequeueLoop()
+		queue.StopQueues(&logger)
 	}
 	log.Info().Msg("Shutdown finished, exiting")
 }
