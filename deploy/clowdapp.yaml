@@ -235,9 +235,9 @@ parameters:
     name: MEMORY_REQUESTS
     value: 100Mi
   - name: MIN_REPLICAS
-    value: "1"
+    value: "2"
   - name: WORKER_MIN_REPLICAS
-    value: "1"
+    value: "2"
   - name: STATUSER_REPLICAS
     value: "1"
   - description: Image tag
