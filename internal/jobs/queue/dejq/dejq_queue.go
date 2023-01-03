@@ -77,3 +77,13 @@ func StartDequeueLoop(ctx context.Context, logger *zerolog.Logger) {
 func StopDequeueLoop() {
 	dejqQueue.Stop()
 }
+
+func Stats(ctx context.Context) dejq.Stats {
+	stats, err := dejqQueue.Stats(ctx)
+	if err != nil {
+		ctxval.Logger(ctx).Error().Err(err).Msg("Unable to get queue stats")
+		return dejq.Stats{}
+	}
+
+	return stats
+}

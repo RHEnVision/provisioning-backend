@@ -16,12 +16,14 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 
+	// Clients
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
+
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
@@ -114,7 +116,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 		// TODO: check if source is avavliable - WIP
 		sr.Status = kafka.StatusAvaliable
 		chSend <- sr
-		metrics.IncTotalAvailablilityCheckReqs(models.ProviderTypeAzure, "statuser", sr.Status, nil)
+		metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeAzure, "statuser", sr.Status, nil)
 	}
 }
 
@@ -138,7 +140,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 			sr.Status = kafka.StatusAvaliable
 			chSend <- sr
 		}
-		metrics.IncTotalAvailablilityCheckReqs(models.ProviderTypeAWS, "statuser", sr.Status, err)
+		metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeAWS, "statuser", sr.Status, err)
 	}
 }
 
@@ -170,7 +172,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 			sr.Status = kafka.StatusAvaliable
 			chSend <- sr
 		}
-		metrics.IncTotalAvailablilityCheckReqs(models.ProviderTypeGCP, "statuser", sr.Status, err)
+		metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeGCP, "statuser", sr.Status, err)
 	}
 }
 
@@ -306,7 +308,8 @@ func main() {
 		kafka.Consume(cancelCtx, kafka.AvailabilityStatusRequestTopic, processMessage)
 	}()
 
-	metrics.RegisterTotalAvailablilityCheckReqs()
+	metrics.RegisterStatuserMetrics()
+
 	// start processing goroutines
 	processingWG.Add(3)
 
