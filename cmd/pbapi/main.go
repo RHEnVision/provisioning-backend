@@ -15,6 +15,7 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 
@@ -74,6 +75,7 @@ func main() {
 	// initialize telemetry
 	tel := telemetry.Initialize(&log.Logger)
 	defer tel.Close(ctx)
+	metrics.RegisterApiMetrics()
 
 	// initialize the rest
 	err = db.Initialize(ctx, "public")
