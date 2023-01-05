@@ -1042,6 +1042,87 @@ c6id.xlarge:
     supported: true
     arch: x86_64
     azure: null
+c6in.2xlarge:
+    name: c6in.2xlarge
+    vcpus: 8
+    cores: 4
+    memory_mib: 16384
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c6in.4xlarge:
+    name: c6in.4xlarge
+    vcpus: 16
+    cores: 8
+    memory_mib: 32768
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c6in.8xlarge:
+    name: c6in.8xlarge
+    vcpus: 32
+    cores: 16
+    memory_mib: 65536
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c6in.12xlarge:
+    name: c6in.12xlarge
+    vcpus: 48
+    cores: 24
+    memory_mib: 98304
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c6in.16xlarge:
+    name: c6in.16xlarge
+    vcpus: 64
+    cores: 32
+    memory_mib: 131072
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c6in.24xlarge:
+    name: c6in.24xlarge
+    vcpus: 96
+    cores: 48
+    memory_mib: 196608
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c6in.32xlarge:
+    name: c6in.32xlarge
+    vcpus: 128
+    cores: 64
+    memory_mib: 262144
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c6in.large:
+    name: c6in.large
+    vcpus: 2
+    cores: 1
+    memory_mib: 4096
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c6in.xlarge:
+    name: c6in.xlarge
+    vcpus: 4
+    cores: 2
+    memory_mib: 8192
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
 c7g.2xlarge:
     name: c7g.2xlarge
     vcpus: 8
@@ -1615,6 +1696,15 @@ hpc6a.48xlarge:
     cores: 96
     memory_mib: 393216
     storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+hpc6id.32xlarge:
+    name: hpc6id.32xlarge
+    vcpus: 64
+    cores: 64
+    memory_mib: 1048576
+    storage_gb: 15200
     supported: true
     arch: x86_64
     azure: null
@@ -3130,23 +3220,167 @@ m6id.xlarge:
     supported: true
     arch: x86_64
     azure: null
-mac1.metal:
-    name: mac1.metal
-    vcpus: 12
-    cores: 6
+m6idn.2xlarge:
+    name: m6idn.2xlarge
+    vcpus: 8
+    cores: 4
+    memory_mib: 32768
+    storage_gb: 474
+    supported: true
+    arch: x86_64
+    azure: null
+m6idn.4xlarge:
+    name: m6idn.4xlarge
+    vcpus: 16
+    cores: 8
+    memory_mib: 65536
+    storage_gb: 950
+    supported: true
+    arch: x86_64
+    azure: null
+m6idn.8xlarge:
+    name: m6idn.8xlarge
+    vcpus: 32
+    cores: 16
+    memory_mib: 131072
+    storage_gb: 1900
+    supported: true
+    arch: x86_64
+    azure: null
+m6idn.12xlarge:
+    name: m6idn.12xlarge
+    vcpus: 48
+    cores: 24
+    memory_mib: 196608
+    storage_gb: 2850
+    supported: true
+    arch: x86_64
+    azure: null
+m6idn.16xlarge:
+    name: m6idn.16xlarge
+    vcpus: 64
+    cores: 32
+    memory_mib: 262144
+    storage_gb: 3800
+    supported: true
+    arch: x86_64
+    azure: null
+m6idn.24xlarge:
+    name: m6idn.24xlarge
+    vcpus: 96
+    cores: 48
+    memory_mib: 393216
+    storage_gb: 5700
+    supported: true
+    arch: x86_64
+    azure: null
+m6idn.32xlarge:
+    name: m6idn.32xlarge
+    vcpus: 128
+    cores: 64
+    memory_mib: 524288
+    storage_gb: 7600
+    supported: true
+    arch: x86_64
+    azure: null
+m6idn.large:
+    name: m6idn.large
+    vcpus: 2
+    cores: 1
+    memory_mib: 8192
+    storage_gb: 118
+    supported: true
+    arch: x86_64
+    azure: null
+m6idn.xlarge:
+    name: m6idn.xlarge
+    vcpus: 4
+    cores: 2
+    memory_mib: 16384
+    storage_gb: 237
+    supported: true
+    arch: x86_64
+    azure: null
+m6in.2xlarge:
+    name: m6in.2xlarge
+    vcpus: 8
+    cores: 4
     memory_mib: 32768
     storage_gb: 0
     supported: true
-    arch: apple-x86_64
+    arch: x86_64
     azure: null
-mac2.metal:
-    name: mac2.metal
-    vcpus: 8
-    cores: 4
+m6in.4xlarge:
+    name: m6in.4xlarge
+    vcpus: 16
+    cores: 8
+    memory_mib: 65536
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m6in.8xlarge:
+    name: m6in.8xlarge
+    vcpus: 32
+    cores: 16
+    memory_mib: 131072
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m6in.12xlarge:
+    name: m6in.12xlarge
+    vcpus: 48
+    cores: 24
+    memory_mib: 196608
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m6in.16xlarge:
+    name: m6in.16xlarge
+    vcpus: 64
+    cores: 32
+    memory_mib: 262144
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m6in.24xlarge:
+    name: m6in.24xlarge
+    vcpus: 96
+    cores: 48
+    memory_mib: 393216
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m6in.32xlarge:
+    name: m6in.32xlarge
+    vcpus: 128
+    cores: 64
+    memory_mib: 524288
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m6in.large:
+    name: m6in.large
+    vcpus: 2
+    cores: 1
+    memory_mib: 8192
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m6in.xlarge:
+    name: m6in.xlarge
+    vcpus: 4
+    cores: 2
     memory_mib: 16384
     storage_gb: 0
     supported: true
-    arch: apple-arm64
+    arch: x86_64
     azure: null
 p2.8xlarge:
     name: p2.8xlarge
@@ -4309,6 +4543,168 @@ r6id.xlarge:
     supported: true
     arch: x86_64
     azure: null
+r6idn.2xlarge:
+    name: r6idn.2xlarge
+    vcpus: 8
+    cores: 4
+    memory_mib: 65536
+    storage_gb: 474
+    supported: true
+    arch: x86_64
+    azure: null
+r6idn.4xlarge:
+    name: r6idn.4xlarge
+    vcpus: 16
+    cores: 8
+    memory_mib: 131072
+    storage_gb: 950
+    supported: true
+    arch: x86_64
+    azure: null
+r6idn.8xlarge:
+    name: r6idn.8xlarge
+    vcpus: 32
+    cores: 16
+    memory_mib: 262144
+    storage_gb: 1900
+    supported: true
+    arch: x86_64
+    azure: null
+r6idn.12xlarge:
+    name: r6idn.12xlarge
+    vcpus: 48
+    cores: 24
+    memory_mib: 393216
+    storage_gb: 2850
+    supported: true
+    arch: x86_64
+    azure: null
+r6idn.16xlarge:
+    name: r6idn.16xlarge
+    vcpus: 64
+    cores: 32
+    memory_mib: 524288
+    storage_gb: 3800
+    supported: true
+    arch: x86_64
+    azure: null
+r6idn.24xlarge:
+    name: r6idn.24xlarge
+    vcpus: 96
+    cores: 48
+    memory_mib: 786432
+    storage_gb: 5700
+    supported: true
+    arch: x86_64
+    azure: null
+r6idn.32xlarge:
+    name: r6idn.32xlarge
+    vcpus: 128
+    cores: 64
+    memory_mib: 1048576
+    storage_gb: 7600
+    supported: true
+    arch: x86_64
+    azure: null
+r6idn.large:
+    name: r6idn.large
+    vcpus: 2
+    cores: 1
+    memory_mib: 16384
+    storage_gb: 118
+    supported: true
+    arch: x86_64
+    azure: null
+r6idn.xlarge:
+    name: r6idn.xlarge
+    vcpus: 4
+    cores: 2
+    memory_mib: 32768
+    storage_gb: 237
+    supported: true
+    arch: x86_64
+    azure: null
+r6in.2xlarge:
+    name: r6in.2xlarge
+    vcpus: 8
+    cores: 4
+    memory_mib: 65536
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+r6in.4xlarge:
+    name: r6in.4xlarge
+    vcpus: 16
+    cores: 8
+    memory_mib: 131072
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+r6in.8xlarge:
+    name: r6in.8xlarge
+    vcpus: 32
+    cores: 16
+    memory_mib: 262144
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+r6in.12xlarge:
+    name: r6in.12xlarge
+    vcpus: 48
+    cores: 24
+    memory_mib: 393216
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+r6in.16xlarge:
+    name: r6in.16xlarge
+    vcpus: 64
+    cores: 32
+    memory_mib: 524288
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+r6in.24xlarge:
+    name: r6in.24xlarge
+    vcpus: 96
+    cores: 48
+    memory_mib: 786432
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+r6in.32xlarge:
+    name: r6in.32xlarge
+    vcpus: 128
+    cores: 64
+    memory_mib: 1048576
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+r6in.large:
+    name: r6in.large
+    vcpus: 2
+    cores: 1
+    memory_mib: 16384
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+r6in.xlarge:
+    name: r6in.xlarge
+    vcpus: 4
+    cores: 2
+    memory_mib: 32768
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
 t1.micro:
     name: t1.micro
     vcpus: 1
@@ -4570,6 +4966,24 @@ t4g.xlarge:
     supported: true
     arch: arm64
     azure: null
+trn1.2xlarge:
+    name: trn1.2xlarge
+    vcpus: 8
+    cores: 4
+    memory_mib: 32768
+    storage_gb: 474
+    supported: true
+    arch: x86_64
+    azure: null
+trn1.32xlarge:
+    name: trn1.32xlarge
+    vcpus: 128
+    cores: 64
+    memory_mib: 524288
+    storage_gb: 7600
+    supported: true
+    arch: x86_64
+    azure: null
 u-3tb1.56xlarge:
     name: u-3tb1.56xlarge
     vcpus: 224
@@ -4611,6 +5025,24 @@ u-12tb1.112xlarge:
     vcpus: 448
     cores: 224
     memory_mib: 12582912
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+u-18tb1.112xlarge:
+    name: u-18tb1.112xlarge
+    vcpus: 448
+    cores: 224
+    memory_mib: 18874368
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+u-24tb1.112xlarge:
+    name: u-24tb1.112xlarge
+    vcpus: 448
+    cores: 224
+    memory_mib: 25165824
     storage_gb: 0
     supported: true
     arch: x86_64
