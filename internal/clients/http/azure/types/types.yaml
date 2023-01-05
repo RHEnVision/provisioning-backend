@@ -6125,138 +6125,6 @@ Standard_GS5-16:
     azure:
         gen_v1: true
         gen_v2: true
-Standard_H8:
-    name: Standard_H8
-    vcpus: 8
-    cores: 8
-    memory_mib: 56000
-    storage_gb: 1024
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H8m:
-    name: Standard_H8m
-    vcpus: 8
-    cores: 8
-    memory_mib: 112000
-    storage_gb: 1024
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H8m_Promo:
-    name: Standard_H8m_Promo
-    vcpus: 8
-    cores: 8
-    memory_mib: 112000
-    storage_gb: 1024
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H8_Promo:
-    name: Standard_H8_Promo
-    vcpus: 8
-    cores: 8
-    memory_mib: 56000
-    storage_gb: 1024
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H16:
-    name: Standard_H16
-    vcpus: 16
-    cores: 16
-    memory_mib: 112000
-    storage_gb: 2048
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H16m:
-    name: Standard_H16m
-    vcpus: 16
-    cores: 16
-    memory_mib: 224000
-    storage_gb: 2048
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H16m_Promo:
-    name: Standard_H16m_Promo
-    vcpus: 16
-    cores: 16
-    memory_mib: 224000
-    storage_gb: 2048
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H16mr:
-    name: Standard_H16mr
-    vcpus: 16
-    cores: 16
-    memory_mib: 224000
-    storage_gb: 2048
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H16mr_Promo:
-    name: Standard_H16mr_Promo
-    vcpus: 16
-    cores: 16
-    memory_mib: 224000
-    storage_gb: 2048
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H16r:
-    name: Standard_H16r
-    vcpus: 16
-    cores: 16
-    memory_mib: 112000
-    storage_gb: 2048
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H16r_Promo:
-    name: Standard_H16r_Promo
-    vcpus: 16
-    cores: 16
-    memory_mib: 112000
-    storage_gb: 2048
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
-Standard_H16_Promo:
-    name: Standard_H16_Promo
-    vcpus: 16
-    cores: 16
-    memory_mib: 112000
-    storage_gb: 2048
-    supported: true
-    arch: x86_64
-    azure:
-        gen_v1: true
-        gen_v2: false
 Standard_HB60rs:
     name: Standard_HB60rs
     vcpus: 60
@@ -6327,8 +6195,8 @@ Standard_HB120-16rs_v2:
     name: Standard_HB120-16rs_v2
     vcpus: 120
     cores: 120
-    memory_mib: 445310
-    storage_gb: 960
+    memory_mib: 456000
+    storage_gb: 491
     supported: true
     arch: x86_64
     azure:
@@ -6349,8 +6217,8 @@ Standard_HB120-32rs_v2:
     name: Standard_HB120-32rs_v2
     vcpus: 120
     cores: 120
-    memory_mib: 445310
-    storage_gb: 960
+    memory_mib: 456000
+    storage_gb: 491
     supported: true
     arch: x86_64
     azure:
@@ -6371,8 +6239,8 @@ Standard_HB120-64rs_v2:
     name: Standard_HB120-64rs_v2
     vcpus: 120
     cores: 120
-    memory_mib: 445310
-    storage_gb: 960
+    memory_mib: 456000
+    storage_gb: 491
     supported: true
     arch: x86_64
     azure:
@@ -6393,8 +6261,8 @@ Standard_HB120-96rs_v2:
     name: Standard_HB120-96rs_v2
     vcpus: 120
     cores: 120
-    memory_mib: 445310
-    storage_gb: 960
+    memory_mib: 456000
+    storage_gb: 491
     supported: true
     arch: x86_64
     azure:
@@ -7791,7 +7659,7 @@ Standard_NV36ads_A10_v5:
     vcpus: 36
     cores: 18
     memory_mib: 440000
-    storage_gb: 1468
+    storage_gb: 1474
     supported: true
     arch: x86_64
     azure:

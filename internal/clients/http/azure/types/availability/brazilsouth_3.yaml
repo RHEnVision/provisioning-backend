@@ -389,6 +389,14 @@
 - Standard_F8
 - Standard_F8s
 - Standard_F8s_v2
+- Standard_HB120-16rs_v2
+- Standard_HB120-32rs_v2
+- Standard_HB120-64rs_v2
+- Standard_HB120-96rs_v2
+- Standard_HB120rs_v2
+- Standard_HC44-16rs
+- Standard_HC44-32rs
+- Standard_HC44rs
 - Standard_L16s_v3
 - Standard_L32s_v3
 - Standard_L48s_v3
@@ -403,3 +411,9 @@
 - Standard_NC64as_T4_v3
 - Standard_NC6s_v3
 - Standard_NC8as_T4_v3
+- Standard_NV12ads_A10_v5
+- Standard_NV18ads_A10_v5
+- Standard_NV36adms_A10_v5
+- Standard_NV36ads_A10_v5
+- Standard_NV6ads_A10_v5
+- Standard_NV72ads_A10_v5
