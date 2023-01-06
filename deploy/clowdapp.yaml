@@ -24,7 +24,7 @@ objects:
         iqePlugin: provisioning
       deployments:
         - name: worker
-          minReplicas: ${{WORKER_MIN_REPLICAS}}
+          replicas: 1
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
@@ -82,8 +82,8 @@ objects:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
         - name: statuser
-          minReplicas: ${{STATUSER_REPLICAS}}
-          maxReplicas: ${{STATUSER_REPLICAS}}
+          # statuser pod must have exactly one replicas
+          replicas: 1
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
@@ -127,7 +127,7 @@ objects:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
         - name: api
-          minReplicas: ${{MIN_REPLICAS}}
+          replicas: 1
           webServices:
             public:
               enabled: true
@@ -234,12 +234,6 @@ parameters:
   - description: memory request increment
     name: MEMORY_REQUESTS
     value: 100Mi
-  - name: MIN_REPLICAS
-    value: "1"
-  - name: WORKER_MIN_REPLICAS
-    value: "2"
-  - name: STATUSER_REPLICAS
-    value: "1"
   - description: Image tag
     name: IMAGE_TAG
     required: true
