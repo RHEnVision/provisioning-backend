@@ -142,7 +142,12 @@ Create a new policy for the Tenant account:
 * Click on Roles - Create role.
 * Select **AWS account** as the entity type.
 * Select trusted AWS account, click Another AWS account and enter account number of the Service account.
-  * If using only single account (for development/testing), select This account instead.
+  * For a single account scenario (development/testing), select This account instead.
+  * For a Red Hat Stage/Production scenario, enter *appropriate account number*:
+    * Red Hat Ephemeral environment account number: XXXXX7895069
+    * Red Hat Stage environment account number: XXXXX6922033
+    * For other environments, ask a peer to get the info from the project wiki.
+  * To enter multiple account numbers, save the role first and then edit the role JSON.
 * Click Next.
 * Find `redhat-provisioning-policy-1` policy and select it, click Next.
 * Enter role name: `redhat-provisioning-role-1`.
