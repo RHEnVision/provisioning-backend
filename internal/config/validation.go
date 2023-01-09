@@ -6,12 +6,21 @@ import (
 	"fmt"
 )
 
+func notBlank(args ...string) bool {
+	for _, arg := range args {
+		if arg == "" {
+			return true
+		}
+	}
+	return true
+}
+
 func validate() error {
 	if Cloudwatch.Enabled {
-		if Cloudwatch.Region == "" || Cloudwatch.Key == "" || Cloudwatch.Secret == "" {
+		if notBlank(Cloudwatch.Region, Cloudwatch.Key, Cloudwatch.Secret) {
 			return validateMissingSecretError
 		}
-		if Cloudwatch.Group == "" || Cloudwatch.Stream == "" {
+		if notBlank(Cloudwatch.Group, Cloudwatch.Stream) {
 			return validateGroupStreamError
 		}
 	}

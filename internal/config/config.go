@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
@@ -64,7 +65,7 @@ var config struct {
 		} `env-prefix:"LOGGER_"`
 	} `env-prefix:"TELEMETRY_"`
 	Cloudwatch struct {
-		Enabled bool   `env:"ENABLED" env-default:"false" env-description:"cloudwatch logging exporter"`
+		Enabled bool   `env:"ENABLED" env-default:"false" env-description:"cloudwatch logging exporter (enabled in clowder)"`
 		Region  string `env:"REGION" env-default:"" env-description:"cloudwatch logging AWS region"`
 		Key     string `env:"KEY" env-default:"" env-description:"cloudwatch logging key"`
 		Secret  string `env:"SECRET" env-default:"" env-description:"cloudwatch logging secret"`
@@ -250,6 +251,17 @@ func Initialize(configFiles ...string) {
 					}
 				}
 			}
+		}
+
+		// cloudwatch (is blank in ephemeral)
+		cw := cfg.Logging.Cloudwatch
+		if notBlank(cw.Region, cw.AccessKeyId, cw.SecretAccessKey, cw.LogGroup) {
+			config.Cloudwatch.Enabled = true
+			config.Cloudwatch.Key = cw.AccessKeyId
+			config.Cloudwatch.Secret = cw.SecretAccessKey
+			config.Cloudwatch.Region = cw.Region
+			config.Cloudwatch.Group = cw.LogGroup
+			config.Cloudwatch.Stream = path.Base(os.Args[0])
 		}
 
 		// HTTP proxies are not allowed in clowder environment
