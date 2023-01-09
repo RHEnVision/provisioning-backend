@@ -3,6 +3,7 @@
 /.vscode/
 /.fleet/
 /cmd/*/__debug_bin
+/generate_*_types
 
 # universal-ctags
 tags

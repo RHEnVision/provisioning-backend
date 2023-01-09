@@ -54,6 +54,21 @@ func NewInvalidRequestError(ctx context.Context, message string, err error) *Res
 	}
 }
 
+func NewWrongArchitectureUserError(ctx context.Context, err error) *ResponseError {
+	msg := "Image and type architecture mismatch"
+	if logger := ctxval.Logger(ctx); logger != nil {
+		logger.Warn().Err(err).Msg(msg)
+	}
+	return &ResponseError{
+		HTTPStatusCode: 400,
+		Message:        msg,
+		TraceId:        ctxval.TraceId(ctx),
+		Error:          err.Error(),
+		Version:        version.BuildCommit,
+		BuildTime:      version.BuildTime,
+	}
+}
+
 func NewMissingRequestParameterError(ctx context.Context, message string) *ResponseError {
 	if logger := ctxval.Logger(ctx); logger != nil {
 		logger.Warn().Msg(message)
