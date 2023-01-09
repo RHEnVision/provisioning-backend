@@ -14,11 +14,11 @@ import (
 )
 
 var (
-	UnknownProviderTypeError         = errors.New("unknown provider type parameter")
-	ProviderTypeMismatchError        = errors.New("reservation type does not match requested provider type")
-	ProviderTypeNotImplementedError  = errors.New("provider type not yet implemented")
-	InvalidRequestPubkeyNewError     = errors.New("provide either existing (via NewName/NewBody) or new pubkey (ExistingID)")
-	InvalidRequestPubkeyMissingError = errors.New("provide both NewName and NewBody for pubkey")
+	UnknownProviderTypeError        = errors.New("unknown provider type parameter")
+	ProviderTypeMismatchError       = errors.New("reservation type does not match requested provider type")
+	ProviderTypeNotImplementedError = errors.New("provider type not yet implemented")
+	UnknownInstanceTypeNameError    = errors.New("unknown instance type")
+	ArchitectureMismatch            = errors.New("instance type and image architecture mismatch")
 )
 
 // CreateReservation dispatches requests to type provider specific handlers

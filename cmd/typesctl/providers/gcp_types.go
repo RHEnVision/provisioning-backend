@@ -42,12 +42,12 @@ func generateTypesGCP() error {
 
 	err = instanceTypes.Save("internal/clients/http/gcp/types/types.yaml")
 	if err != nil {
-		return fmt.Errorf("unable to generate types: %w", err)
+		return fmt.Errorf("unable to save types: %w", err)
 	}
 
 	err = regionalTypes.Save("internal/clients/http/gcp/types/availability")
 	if err != nil {
-		return fmt.Errorf("unable to generate types: %w", err)
+		return fmt.Errorf("unable to save regional types: %w", err)
 	}
 
 	return nil
