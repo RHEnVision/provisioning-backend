@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"os"
+	"path"
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -97,5 +99,5 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.Azure.ClientSecret = replacement
 	configCopy.GCP.JSON = replacement
 	configCopy.Unleash.Token = replacement
-	logger.Info().Msgf("Configuration: %+v", configCopy)
+	logger.Info().Str("binary", path.Base(os.Args[0])).Msgf("Configuration: %+v", configCopy)
 }

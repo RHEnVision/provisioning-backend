@@ -156,9 +156,10 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	startJobs := []dejq.PendingJob{uploadPubkeyJob, launchJob}
 
 	// Enqueue all jobs
-	err = queue.GetEnqueuer().Enqueue(r.Context(), startJobs...)
+	ids, err := queue.GetEnqueuer().Enqueue(r.Context(), startJobs...)
 	if err != nil {
-		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueing task AWS reservation error", err))
+		err = fmt.Errorf("job(s) %s error: %w", strings.Join(ids, ","), err)
+		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
 	}
 

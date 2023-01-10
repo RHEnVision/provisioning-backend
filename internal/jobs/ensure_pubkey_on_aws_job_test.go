@@ -23,6 +23,9 @@ type stubAWSJob struct {
 }
 
 func (s stubAWSJob) Type() string { return "stub AWS pubkey job" }
+
+func (s stubAWSJob) Id() string { return "12345" }
+
 func (s stubAWSJob) Decode(out interface{}) error {
 	typed := out.(*jobs.EnsurePubkeyOnAWSTaskArgs)
 	typed.ARN = s.body.ARN

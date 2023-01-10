@@ -3,6 +3,7 @@ package dejq
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -45,7 +46,8 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 	case "redis":
 		dejqQueue, err = redis.NewClient(ctx, zerologr.New(logger), config.RedisHostAndPort(),
 			config.Application.Cache.Redis.User, config.Application.Cache.Redis.Password,
-			config.Application.Cache.Redis.DB, "provisioning-job-queue")
+			config.Application.Cache.Redis.DB, "provisioning-job-queue",
+			5*time.Second)
 	case "postgres":
 		// TODO dejq must be refactored to use PGX too
 		dejqQueue, err = postgres.NewClient(ctx, zerologr.New(logger), nil,

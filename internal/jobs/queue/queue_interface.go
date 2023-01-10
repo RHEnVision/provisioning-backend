@@ -7,7 +7,7 @@ import (
 )
 
 type Enqueuer interface {
-	Enqueue(ctx context.Context, jobs ...dejq.PendingJob) error
+	Enqueue(ctx context.Context, jobs ...dejq.PendingJob) ([]string, error)
 }
 
 var GetEnqueuer func() Enqueuer

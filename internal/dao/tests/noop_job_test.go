@@ -54,7 +54,7 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 					},
 				}
 
-				err = queue.GetEnqueuer().Enqueue(context.Background(), successJob)
+				_, err = queue.GetEnqueuer().Enqueue(context.Background(), successJob)
 				require.NoError(t, err)
 
 				return res
@@ -94,7 +94,7 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 					},
 				}
 
-				err = queue.GetEnqueuer().Enqueue(context.Background(), successJob)
+				_, err = queue.GetEnqueuer().Enqueue(context.Background(), successJob)
 				require.NoError(t, err)
 
 				return res
@@ -133,7 +133,7 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 						Fail:          false,
 					},
 				}
-				err = queue.GetEnqueuer().Enqueue(context.Background(), successJob, successJob, successJob)
+				_, err = queue.GetEnqueuer().Enqueue(context.Background(), successJob, successJob, successJob)
 				require.NoError(t, err)
 
 				return res
@@ -180,7 +180,7 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 						Fail:          true,
 					},
 				}
-				err = queue.GetEnqueuer().Enqueue(context.Background(), failureJob, successJob, successJob)
+				_, err = queue.GetEnqueuer().Enqueue(context.Background(), failureJob, successJob, successJob)
 				require.NoError(t, err)
 
 				return res
