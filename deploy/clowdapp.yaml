@@ -24,7 +24,7 @@ objects:
         iqePlugin: provisioning
       deployments:
         - name: worker
-          replicas: 1
+          replicas: 2
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
@@ -46,8 +46,6 @@ objects:
                 value: ${TELEMETRY_LOGGER_ENABLED}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
-              - name: CLOUDWATCH_ENABLED
-                value: ${CLOUDWATCH_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
               - name: AWS_KEY
@@ -99,8 +97,6 @@ objects:
                 value: ${TELEMETRY_LOGGER_ENABLED}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
-              - name: CLOUDWATCH_ENABLED
-                value: ${CLOUDWATCH_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
               - name: AWS_KEY
@@ -127,7 +123,7 @@ objects:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
         - name: api
-          replicas: 1
+          replicas: 2
           webServices:
             public:
               enabled: true
@@ -171,8 +167,6 @@ objects:
                 value: ${TELEMETRY_LOGGER_ENABLED}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
-              - name: CLOUDWATCH_ENABLED
-                value: ${CLOUDWATCH_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
               - name: APP_COMPRESSION
@@ -258,9 +252,6 @@ parameters:
   - description: Determines Clowder deployment
     name: CLOWDER_ENABLED
     value: "true"
-  - description: AWS CloudWatch logging integration
-    name: CLOUDWATCH_ENABLED
-    value: "false"
   - description: ImageBuilder service URL
     name: IMAGEBUILDER_URL
     required: false

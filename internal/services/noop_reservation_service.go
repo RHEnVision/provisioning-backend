@@ -1,7 +1,9 @@
 package services
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -47,9 +49,10 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	logger.Debug().Interface("arg", pj.Body).Msgf("Enqueuing no operation job: %+v", pj.Body)
-	err = queue.GetEnqueuer().Enqueue(r.Context(), pj)
+	ids, err := queue.GetEnqueuer().Enqueue(r.Context(), pj)
 	if err != nil {
-		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "enqueing task Noop reservation error", err))
+		err = fmt.Errorf("job(s) %s error: %w", strings.Join(ids, ","), err)
+		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
 	}
 

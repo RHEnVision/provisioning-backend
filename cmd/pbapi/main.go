@@ -105,8 +105,8 @@ func main() {
 	}
 	if config.Worker.Queue == "memory" {
 		dejq.RegisterJobs(&logger)
+		dejq.StartDequeueLoop(ctx, &logger)
 	}
-	dejq.StartDequeueLoop(ctx, &logger)
 
 	// Setup routes
 	rootRouter := chi.NewRouter()

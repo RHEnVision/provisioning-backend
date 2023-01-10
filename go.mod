@@ -34,7 +34,7 @@ require (
 	github.com/jackc/pgx/v5 v5.0.4
 	github.com/jackc/tern/v2 v2.0.0-beta.3
 	github.com/lzap/cloudwatchwriter2 v1.1.0
-	github.com/lzap/dejq v1.3.2
+	github.com/lzap/dejq v1.4.1
 	github.com/prometheus/client_golang v1.14.0
 	github.com/redhatinsights/app-common-go v1.6.4
 	github.com/redhatinsights/platform-go-middlewares v0.20.0
