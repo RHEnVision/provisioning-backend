@@ -17,7 +17,7 @@ import (
 )
 
 func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
-	logger := ctxval.Logger(r.Context())
+	logger := *ctxval.Logger(r.Context())
 
 	var accountId int64 = ctxval.AccountId(r.Context())
 
@@ -63,6 +63,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewDAOError(r.Context(), "create reservation", err))
 		return
 	}
+	logger = logger.With().Int64("reservation_id", reservation.ID).Logger()
 	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
 
 	// Get Sources client
@@ -103,7 +104,6 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	logger.Trace().Msgf("Image Name is %s", name)
 
-	logger.Debug().Msgf("Enqueuing launch instance job for source %s", reservation.SourceID)
 	launchJob := dejq.PendingJob{
 		Type: queue.TypeLaunchInstanceGcp,
 		Body: &jobs.LaunchInstanceGCPTaskArgs{
@@ -116,6 +116,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 			ProjectID:     authentication,
 		},
 	}
+	logger.Debug().Interface("job", launchJob).Msgf("Enqueuing launch instance job for source %s", reservation.SourceID)
 
 	startJobs := []dejq.PendingJob{launchJob}
 

@@ -255,7 +255,7 @@ func Initialize(configFiles ...string) {
 
 		// cloudwatch (is blank in ephemeral)
 		cw := cfg.Logging.Cloudwatch
-		if notBlank(cw.Region, cw.AccessKeyId, cw.SecretAccessKey, cw.LogGroup) {
+		if !blank(cw.Region, cw.AccessKeyId, cw.SecretAccessKey, cw.LogGroup) {
 			config.Cloudwatch.Enabled = true
 			config.Cloudwatch.Key = cw.AccessKeyId
 			config.Cloudwatch.Secret = cw.SecretAccessKey
