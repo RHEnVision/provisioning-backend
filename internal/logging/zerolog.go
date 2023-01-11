@@ -94,6 +94,7 @@ func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error)
 		}
 	}
 
+	log.Trace().Msg("Cloudwatch not enabled")
 	return logger, func() {}, nil
 }
 

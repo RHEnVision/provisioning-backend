@@ -33,7 +33,7 @@ func InStageClowder() bool {
 
 // InProdClowder returns true, when the app is running in production clowder environment.
 func InProdClowder() bool {
-	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-stage")
+	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-prod")
 }
 
 // TopicName returns mapped topic from Clowder. When not running in Clowder mode, it returns the input topic name.
@@ -70,6 +70,7 @@ func DumpClowder(logger zerolog.Logger) {
 		brokers[i] = b.Hostname
 	}
 
+	logger.Info().Msgf("Clowder environment: %s", *cfg.Metadata.EnvName)
 	logger.Info().Msgf("Clowder database hostname: %s", cfg.Database.Hostname)
 	logger.Info().Msgf("Clowder kafka brokers: %s", strings.Join(brokers, ","))
 	logger.Info().Msgf("Clowder logging type: %s, region: %s, group: %s",
