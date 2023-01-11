@@ -31,7 +31,6 @@ import (
 	// DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
@@ -54,7 +53,6 @@ func main() {
 
 	// initialize stdout logging and AWS clients first
 	logging.InitializeStdout()
-	cloudwatchlogs.Initialize()
 
 	// initialize cloudwatch using the AWS clients
 	logger, clsFunc, err := logging.InitializeCloudwatch(log.Logger)

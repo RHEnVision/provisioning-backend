@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
@@ -22,7 +21,6 @@ func main() {
 
 	// initialize stdout logging and AWS clients first
 	logging.InitializeStdout()
-	cloudwatchlogs.Initialize()
 
 	// initialize cloudwatch using the AWS clients
 	logger, clsFunc, err := logging.InitializeCloudwatch(log.Logger)

@@ -6,7 +6,6 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/cloudwatchlogs"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	cww "github.com/lzap/cloudwatchwriter2"
@@ -74,14 +73,17 @@ func InitializeStdout() {
 
 func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error) {
 	if config.Cloudwatch.Enabled {
-		log.Debug().Msg("Initializing cloudwatch logger")
-		cloudWatchWriter, err := cww.NewWithClient(cloudwatchlogs.CWL, 500*time.Millisecond, config.Cloudwatch.Group, config.Cloudwatch.Stream)
+		log.Debug().Msgf("Initializing cloudwatch logger key %s group %s stream %s region %s",
+			config.Cloudwatch.Key, config.Cloudwatch.Group, config.Cloudwatch.Stream, config.Cloudwatch.Region)
+
+		cwClient := newCloudwatchClient()
+		cloudWatchWriter, err := cww.NewWithClient(cwClient, 500*time.Millisecond, config.Cloudwatch.Group, config.Cloudwatch.Stream)
 		if err != nil {
 			return logger, nil, fmt.Errorf("cannot initialize cloudwatch: %w", err)
 		}
 
-		if config.Logging.Stdout {
-			// stdout and cloudwatch
+		if !config.InClowder() && config.Logging.Stdout {
+			// stdout and cloudwatch during local development
 			consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
 			newLogger := decorate(zerolog.New(zerolog.MultiLevelWriter(consoleWriter, cloudWatchWriter)))
 			return newLogger, cloudWatchWriter.Close, nil
@@ -96,7 +98,9 @@ func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error)
 }
 
 func DumpConfigForDevelopment() {
-	if !config.InClowder() {
+	// safe dump of app config
+	if !config.InProdClowder() {
+		config.DumpClowder(log.Logger)
 		config.DumpConfig(log.Logger)
 	}
 }

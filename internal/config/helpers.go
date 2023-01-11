@@ -59,12 +59,28 @@ func StringToURL(urlStr string) *url.URL {
 	return urlProxy
 }
 
+// DumpClowder writes safely some information from clowder config.
+func DumpClowder(logger zerolog.Logger) {
+	if !InClowder() {
+		return
+	}
+	cfg := clowder.LoadedConfig
+	brokers := make([]string, len(cfg.Kafka.Brokers))
+	for i, b := range cfg.Kafka.Brokers {
+		brokers[i] = b.Hostname
+	}
+
+	logger.Info().Msgf("Clowder database hostname: %s", cfg.Database.Hostname)
+	logger.Info().Msgf("Clowder kafka brokers: %s", strings.Join(brokers, ","))
+	logger.Info().Msgf("Clowder logging type: %s, region: %s, group: %s",
+		cfg.Logging.Type,
+		cfg.Logging.Cloudwatch.Region,
+		cfg.Logging.Cloudwatch.LogGroup)
+}
+
 // DumpConfig writes configuration to a logger. It removes all secrets, however, it is never
 // recommended to call this function in production environments.
 func DumpConfig(logger zerolog.Logger) {
-	if InClowder() {
-		logger.Warn().Msg("Dumping configuration in production mode!")
-	}
 	replacement := "****"
 	configCopy := config
 	configCopy.Database.Password = replacement

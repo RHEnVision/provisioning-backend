@@ -1,4 +1,4 @@
-package cloudwatchlogs
+package logging
 
 import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -7,15 +7,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 )
 
-// CWL is Cloudwatch AWS client
-var CWL *cloudwatchlogs.Client
-
-func Initialize() {
+func newCloudwatchClient() *cloudwatchlogs.Client {
 	cache := aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(
 		config.Cloudwatch.Key, config.Cloudwatch.Secret, config.Cloudwatch.Session))
 
-	CWL = cloudwatchlogs.New(cloudwatchlogs.Options{
+	cwClient := cloudwatchlogs.New(cloudwatchlogs.Options{
 		Region:      config.Cloudwatch.Region,
 		Credentials: cache,
 	})
+
+	return cwClient
 }
