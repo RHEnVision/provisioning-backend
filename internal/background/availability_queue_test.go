@@ -25,7 +25,7 @@ func TestQueueNormalSend(t *testing.T) {
 	cct, cancel := context.WithCancel(ctx)
 	defer cancel()
 	go sendAvailabilityRequestMessages(cct, 8, 10*time.Millisecond)
-	go kafka.Consume(cct, kafka.AvailabilityStatusRequestTopic, func(ctx context.Context, msg *kafka.GenericMessage) {
+	go kafka.Consume(cct, kafka.AvailabilityStatusRequestTopic, "", func(ctx context.Context, msg *kafka.GenericMessage) {
 		asm, _ := kafka.NewAvailabilityStatusMessage(msg)
 		require.EqualValues(t, "1", asm.SourceID)
 		wg.Done()
@@ -48,7 +48,7 @@ func TestFullQueueSend(t *testing.T) {
 	senderCtx, senderCancel := context.WithCancel(ctx)
 	defer consumeCancel()
 	go sendAvailabilityRequestMessages(senderCtx, 2, time.Second)
-	go kafka.Consume(consumeCtx, kafka.AvailabilityStatusRequestTopic, func(ctx context.Context, msg *kafka.GenericMessage) {
+	go kafka.Consume(consumeCtx, kafka.AvailabilityStatusRequestTopic, "", func(ctx context.Context, msg *kafka.GenericMessage) {
 		asm, _ := kafka.NewAvailabilityStatusMessage(msg)
 		require.EqualValues(t, "1", asm.SourceID)
 		wg.Done()
@@ -82,7 +82,7 @@ func TestQueueCancelSend(t *testing.T) {
 
 	consumeCtx, consumeCancel := context.WithCancel(ctx)
 	defer consumeCancel()
-	go kafka.Consume(consumeCtx, kafka.AvailabilityStatusRequestTopic, func(ctx context.Context, msg *kafka.GenericMessage) {
+	go kafka.Consume(consumeCtx, kafka.AvailabilityStatusRequestTopic, "", func(ctx context.Context, msg *kafka.GenericMessage) {
 		asm, _ := kafka.NewAvailabilityStatusMessage(msg)
 		require.EqualValues(t, "1", asm.SourceID)
 		wg.Done()

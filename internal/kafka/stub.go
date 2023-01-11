@@ -40,7 +40,7 @@ func (s *stubBroker) find(topic string) chan *GenericMessage {
 	}
 }
 
-func (s *stubBroker) Consume(ctx context.Context, topic string, handler func(ctx context.Context, message *GenericMessage)) {
+func (s *stubBroker) Consume(ctx context.Context, topic string, group string, handler func(ctx context.Context, message *GenericMessage)) {
 	ch := s.find(topic)
 
 	for {
