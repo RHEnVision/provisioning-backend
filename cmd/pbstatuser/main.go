@@ -316,7 +316,7 @@ func main() {
 	cancelCtx, consumerCancelFunc := context.WithCancel(ctx)
 	go func() {
 		defer receiverWG.Done()
-		kafka.Consume(cancelCtx, kafka.AvailabilityStatusRequestTopic, processMessage)
+		kafka.Consume(cancelCtx, kafka.AvailabilityStatusRequestTopic, "statuser", processMessage)
 	}()
 
 	metrics.RegisterStatuserMetrics()
