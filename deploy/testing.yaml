@@ -1,0 +1,29 @@
+---
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: provisioning-stage-test
+objects:
+- apiVersion: cloud.redhat.com/v1alpha1
+  kind: ClowdJobInvocation
+  metadata:
+    name: provisioning-stage-test-${IMAGE_TAG}-${UID}
+    annotations:
+      "ignore-check.kube-linter.io/no-liveness-probe": "probes not required on Job pods"
+      "ignore-check.kube-linter.io/no-readiness-probe": "probes not required on Job pods"
+  spec:
+    appName: provisioning-backend  # component for envparser
+    testing:
+      iqe:
+        debug: false
+        dynaconfEnvName: stage_post_deploy
+        filter: ''
+        marker: 'smoke and api'
+parameters:
+- name: IMAGE_TAG
+  value: ''
+  required: true
+- name: UID
+  description: "Unique CJI name suffix"
+  generate: expression
+  from: "[a-z0-9]{6}"
