@@ -6,9 +6,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/version"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 type memCache struct {
@@ -26,14 +23,6 @@ func NewMemoryCache() *memCache {
 	c := memCache{
 		accountId: newMemoryCache[accountKey, *models.Account](config.Application.Cache.Memory.CleanupInterval),
 	}
-
-	_ = promauto.NewGaugeFunc(prometheus.GaugeOpts{
-		Name:        "app_cache_account_items",
-		Help:        "The total number of cache items for account ID",
-		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName},
-	}, func() float64 {
-		return float64(c.accountId.Count())
-	})
 
 	return &c
 }
