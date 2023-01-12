@@ -51,7 +51,7 @@ func handleEnsurePubkeyOnAWS(ctx context.Context, args *EnsurePubkeyOnAWSTaskArg
 	}
 
 	ctx = ctxval.WithAccountId(ctx, args.AccountID)
-	logger := ctxLogger.With().Int64("reservation", args.ReservationID).Logger()
+	logger := ctxLogger.With().Int64("reservation_id", args.ReservationID).Logger()
 	logger.Info().Interface("args", args).Msg("Processing pubkey upload AWS job")
 
 	// status updates before and after the code logic
