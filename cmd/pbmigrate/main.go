@@ -19,19 +19,12 @@ func main() {
 	ctx := context.Background()
 	config.Initialize("config/api.env", "config/migrate.env")
 
-	// initialize stdout logging and AWS clients first
+	// initialize stdout logging and AWS clients first (cloudwatch is not available in init containers)
 	logging.InitializeStdout()
-
-	// initialize cloudwatch using the AWS clients
-	logger, clsFunc, err := logging.InitializeCloudwatch(log.Logger)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error initializing cloudwatch")
-	}
-	defer clsFunc()
-	log.Logger = logger
 	logging.DumpConfigForDevelopment()
+	logger := log.Logger
 
-	err = db.Initialize(ctx, "public")
+	err := db.Initialize(ctx, "public")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
