@@ -59,7 +59,7 @@ func handleLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArg
 	ctxLogger.Debug().Msg("Started launch instance GCP job")
 
 	ctx = ctxval.WithAccountId(ctx, args.AccountID)
-	logger := ctxLogger.With().Int64("reservation", args.ReservationID).Logger()
+	logger := ctxLogger.With().Int64("reservation_id", args.ReservationID).Logger()
 	logger.Info().Interface("args", args).Msg("Processing launch instance GCP job")
 
 	// status updates before and after the code logic
