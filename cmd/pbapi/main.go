@@ -74,6 +74,7 @@ func main() {
 	tel := telemetry.Initialize(&log.Logger)
 	defer tel.Close(ctx)
 	metrics.RegisterApiMetrics()
+	metrics.RegisterApiStatistics()
 
 	// initialize the rest
 	err = db.Initialize(ctx, "public")

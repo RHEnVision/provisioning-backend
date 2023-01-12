@@ -320,6 +320,7 @@ func main() {
 	}()
 
 	metrics.RegisterStatuserMetrics()
+	metrics.RegisterStatuserStatistics()
 
 	// start processing goroutines
 	processingWG.Add(3)

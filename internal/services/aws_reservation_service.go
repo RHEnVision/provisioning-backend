@@ -13,6 +13,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
@@ -162,6 +163,9 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
 	}
+
+	// Statistics
+	metrics.LaunchUsageStats(r.Context(), it.Name, models.ProviderTypeAWS, int(payload.Amount))
 
 	// Return response payload
 	unused := make([]*models.ReservationInstance, 0, 0)

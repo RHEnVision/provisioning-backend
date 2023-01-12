@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2/types"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp/types"
 )
 
 func init() {

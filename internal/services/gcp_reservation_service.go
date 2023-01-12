@@ -5,16 +5,17 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/go-chi/render"
-	"github.com/lzap/dejq"
-
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp/types"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
+	"github.com/go-chi/render"
+	"github.com/lzap/dejq"
 )
 
 func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +31,18 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	rDao := dao.GetReservationDao(r.Context())
 	pkDao := dao.GetPubkeyDao(r.Context())
+
+	// validate architecture match (hardcoded since image builder currently only supports x86_64)
+	supportedArch := "x86_64"
+	it := types.FindInstanceType(clients.InstanceTypeName(payload.MachineType))
+	if it == nil {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown type: %s", payload.MachineType), UnknownInstanceTypeNameError))
+		return
+	}
+	if it.Architecture.String() != supportedArch {
+		renderError(w, r, payloads.NewWrongArchitectureUserError(r.Context(), ArchitectureMismatch))
+		return
+	}
 
 	detail := &models.GCPDetail{
 		Zone:        payload.Zone,
@@ -128,6 +141,9 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
 	}
+
+	// Statistics
+	metrics.LaunchUsageStats(r.Context(), it.Name, models.ProviderTypeAWS, int(payload.Amount))
 
 	// Return response payload
 	if err := render.Render(w, r, payloads.NewGCPReservationResponse(reservation)); err != nil {
