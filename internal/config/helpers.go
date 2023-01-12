@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"os"
-	"path"
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -30,12 +28,12 @@ func RedisHostAndPort() string {
 
 // InStageClowder returns true, when the app is running in stage clowder environment.
 func InStageClowder() bool {
-	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-stage")
+	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "stage")
 }
 
 // InProdClowder returns true, when the app is running in production clowder environment.
 func InProdClowder() bool {
-	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-prod")
+	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "prod")
 }
 
 // TopicName returns mapped topic from Clowder. When not running in Clowder mode, it returns the input topic name.
@@ -99,5 +97,5 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.Azure.ClientSecret = replacement
 	configCopy.GCP.JSON = replacement
 	configCopy.Unleash.Token = replacement
-	logger.Info().Str("binary", path.Base(os.Args[0])).Msgf("Configuration: %+v", configCopy)
+	logger.Info().Msgf("Configuration: %+v", configCopy)
 }

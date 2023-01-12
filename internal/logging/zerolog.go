@@ -3,6 +3,7 @@ package logging
 import (
 	"fmt"
 	"os"
+	"path"
 	"time"
 	"unicode/utf8"
 
@@ -68,7 +69,7 @@ func InitializeStdout() {
 		FormatFieldValue: func(i interface{}) string {
 			return truncateText(fmt.Sprintf("%s", i), config.Logging.MaxField)
 		},
-	}))
+	})).With().Str("binary", path.Base(os.Args[0])).Logger()
 }
 
 func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error) {

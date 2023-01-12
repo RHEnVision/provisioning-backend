@@ -6,10 +6,11 @@ import (
 	"fmt"
 )
 
-func blank(args ...string) bool {
+// present checks if all arguments are not blank
+func present(args ...string) bool {
 	for _, arg := range args {
 		if arg == "" {
-			return true
+			return false
 		}
 	}
 	return true
@@ -17,10 +18,10 @@ func blank(args ...string) bool {
 
 func validate() error {
 	if Cloudwatch.Enabled {
-		if !blank(Cloudwatch.Region, Cloudwatch.Key, Cloudwatch.Secret) {
+		if present(Cloudwatch.Region, Cloudwatch.Key, Cloudwatch.Secret) {
 			return validateMissingSecretError
 		}
-		if !blank(Cloudwatch.Group, Cloudwatch.Stream) {
+		if present(Cloudwatch.Group, Cloudwatch.Stream) {
 			return validateGroupStreamError
 		}
 	}
