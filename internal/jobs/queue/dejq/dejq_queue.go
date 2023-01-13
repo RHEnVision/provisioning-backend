@@ -12,7 +12,6 @@ import (
 	"github.com/go-logr/zerologr"
 	"github.com/lzap/dejq"
 	"github.com/lzap/dejq/mem"
-	"github.com/lzap/dejq/postgres"
 	"github.com/lzap/dejq/redis"
 	"github.com/rs/zerolog"
 )
@@ -48,14 +47,8 @@ func Initialize(ctx context.Context, logger *zerolog.Logger) error {
 			config.Application.Cache.Redis.User, config.Application.Cache.Redis.Password,
 			config.Application.Cache.Redis.DB, "provisioning-job-queue",
 			5*time.Second)
-	case "postgres":
-		// TODO dejq must be refactored to use PGX too
-		dejqQueue, err = postgres.NewClient(ctx, zerologr.New(logger), nil,
-			config.Worker.Concurrency,
-			config.Worker.Heartbeat,
-			config.Worker.MaxBeats)
 	default:
-		panic("unknown WORKER_QUEUE setting, expected values: memory, redis, postgres")
+		panic("unknown WORKER_QUEUE setting, expected values: memory, redis")
 	}
 
 	if err != nil {

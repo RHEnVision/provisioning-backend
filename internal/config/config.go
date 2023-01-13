@@ -112,7 +112,7 @@ var config struct {
 		TraceData bool `env:"TRACE_DATA" env-default:"true" env-description:"open telemetry HTTP context pass and trace"`
 	} `env-prefix:"REST_ENDPOINTS_"`
 	Worker struct {
-		Queue       string        `env:"QUEUE" env-default:"memory" env-description:"job worker implementation (memory, redis, sqs, postgres)"`
+		Queue       string        `env:"QUEUE" env-default:"memory" env-description:"job worker implementation (memory, redis)"`
 		Concurrency int           `env:"CONCURRENCY" env-default:"50" env-description:"number of goroutines handling jobs"`
 		Heartbeat   time.Duration `env:"HEARTBEAT" env-default:"30s" env-description:"heartbeat interval (time interval syntax)"`
 		MaxBeats    int           `env:"MAX_BEATS" env-default:"10" env-description:"maximum amount of heartbeats allowed"`
