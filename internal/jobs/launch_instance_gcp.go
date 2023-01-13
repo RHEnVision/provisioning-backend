@@ -6,55 +6,54 @@ import (
 
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/lzap/dejq"
 )
 
 type LaunchInstanceGCPTaskArgs struct {
 	// Associated reservation
-	ReservationID int64 `json:"reservation_id"`
+	ReservationID int64
 
 	// Associated account
-	AccountID int64 `json:"account_id"`
+	AccountID int64
 
 	// Zone to provision the instances into
-	Zone string `json:"zone"`
+	Zone string
 
 	// Associated public key
-	PubkeyID int64 `json:"pubkey_id"`
+	PubkeyID int64
 
 	// Detail information
-	Detail *models.GCPDetail `json:"detail"`
+	Detail *models.GCPDetail
 
 	// GCP image name as fetched from image builder
-	ImageName string `json:"image_name"`
+	ImageName string
 
 	// The project id from Sources which is linked to a specific source
-	ProjectID *clients.Authentication `json:"project_id"`
+	ProjectID *clients.Authentication
 }
 
 // Unmarshall arguments and handle error
-func HandleLaunchInstanceGCP(ctx context.Context, job dejq.Job) error {
-	args := LaunchInstanceGCPTaskArgs{}
-	err := decodeJob(ctx, job, &args)
-	if err != nil {
-		return err
+func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
+	args, ok := job.Args.(LaunchInstanceGCPTaskArgs)
+	if !ok {
+		ctxval.Logger(ctx).Error().Msgf("Type assertion error for job %s, unable to finish reservation: %#v", job.ID, job.Args)
+		return
 	}
 
-	ctx = contextLogger(ctx, job.Type(), args, args.AccountID, args.ReservationID)
+	ctx = contextLogger(ctx, job, args.AccountID, args.ReservationID)
 
-	jobErr := handleLaunchInstanceGCP(ctx, &args)
+	jobErr := DoLaunchInstanceGCP(ctx, &args)
 
 	finishJob(ctx, args.ReservationID, jobErr)
-	return jobErr
 }
 
 // Job logic, when error is returned the job status is updated accordingly
-func handleLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
+func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
 	ctxLogger := ctxval.Logger(ctx)
 	ctxLogger.Debug().Msg("Started launch instance GCP job")
 

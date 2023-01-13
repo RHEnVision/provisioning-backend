@@ -7,23 +7,26 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
-	"github.com/lzap/dejq"
+	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 )
 
-func decodeJob(ctx context.Context, job dejq.Job, argInterface interface{}) error {
-	err := job.Decode(argInterface)
-	if err != nil {
-		ctxval.Logger(ctx).Error().Err(err).Msgf("Unable to decode arguments for job '%s'", job.Type())
-		return fmt.Errorf("decode error: %w", err)
-		// TODO: increase counter of failed jobs in Prometheus
-	}
-	return nil
-}
+func contextLogger(ctx context.Context, job *worker.Job, accountId, reservationId int64) context.Context {
+	logger := ctxval.Logger(ctx).With().
+		Str("job_id", job.ID.String()).
+		Int64("reservation_id", reservationId).
+		Int64("account_id", accountId).Logger()
 
-func contextLogger(ctx context.Context, jobName string, args interface{}, accountId, reservationId int64) context.Context {
+	ad := dao.GetAccountDao(ctx)
+	account, err := ad.GetById(ctx, accountId)
+	if err != nil {
+		logger.Warn().Msgf("Unable to fetch account info for: %d", accountId)
+	} else {
+		logger = logger.With().
+			Str("account_number", account.AccountNumber.String).
+			Str("org_id", account.OrgID).Logger()
+	}
+
 	newContext := ctxval.WithAccountId(ctx, accountId)
-	logger := ctxval.Logger(newContext).With().Int64("reservation_id", reservationId).Logger()
-	logger.Info().Interface("args", args).Msgf("Processing job: '%s'", jobName)
 	newContext = ctxval.WithLogger(newContext, &logger)
 	return newContext
 }
@@ -39,38 +42,35 @@ func finishJob(ctx context.Context, reservationId int64, jobErr error) {
 }
 
 func finishWithSuccess(ctx context.Context, reservationId int64) {
-	accountId := ctxval.AccountId(ctx)
-	ctxLogger := ctxval.Logger(ctx).With().
-		Int64("reservation_id", reservationId).
-		Int64("account_id", accountId).Logger()
+	logger := ctxval.Logger(ctx)
 
 	rDao := dao.GetReservationDao(ctx)
 
 	reservation, err := rDao.GetById(ctx, reservationId)
 	if err != nil {
-		ctxLogger.Warn().Err(err).Msg("unable to update job status: get by id")
+		logger.Warn().Err(err).Msg("unable to update job status: get by id")
 		return
 	}
-	ctxLogger.Debug().Msgf("Job step: %d/%d", reservation.Step, reservation.Steps)
+	logger.Debug().Msgf("Job step: %d/%d", reservation.Step, reservation.Steps)
 
 	// if this was the last step, set the success flag
 	if reservation.Step >= reservation.Steps {
-		ctxLogger.Info().Msgf("All jobs executed, marking job as success")
+		logger.Info().Msgf("All jobs executed, marking job as success")
 		err = rDao.FinishWithSuccess(ctx, reservationId)
 		if err != nil {
-			ctxLogger.Warn().Err(err).Msg("unable to update job status: finish")
+			logger.Warn().Err(err).Msg("unable to update job status: finish")
 		}
 	}
 }
 
 func finishWithError(ctx context.Context, reservationId int64, jobError error) {
-	ctxLogger := ctxval.Logger(ctx).With().Int64("reservation_id", reservationId).Logger()
-	ctxLogger.Warn().Err(jobError).Msgf("Job returned an error: %s", jobError.Error())
+	logger := ctxval.Logger(ctx)
+	logger.Warn().Err(jobError).Msgf("Job returned an error: %s", jobError.Error())
 
 	rDao := dao.GetReservationDao(ctx)
 	err := rDao.FinishWithError(ctx, reservationId, jobError.Error())
 	if err != nil {
-		ctxLogger.Warn().Err(err).Msg("unable to update job status: finish")
+		logger.Warn().Err(err).Msg("unable to update job status: finish")
 	}
 }
 
@@ -79,17 +79,17 @@ func updateStatusBefore(ctx context.Context, id int64, status string) {
 }
 
 func updateStatusAfter(ctx context.Context, id int64, status string, addSteps int) {
-	ctxLogger := ctxval.Logger(ctx).With().Int64("reservation_id", id).Logger()
-	ctxLogger.Debug().Bool("step", true).Msgf("Reservation status change: '%s'", status)
+	logger := ctxval.Logger(ctx)
+	logger.Debug().Bool("step", true).Msgf("Reservation status change: '%s'", status)
 	if addSteps != 0 {
-		ctxLogger.Trace().Bool("step", true).Msgf("Increased step number by: %d", addSteps)
+		logger.Trace().Bool("step", true).Msgf("Increased step number by: %d", addSteps)
 	}
 
 	rDao := dao.GetReservationDao(ctx)
 
 	err := rDao.UpdateStatus(ctx, id, status, int32(addSteps))
 	if err != nil {
-		ctxLogger.Warn().Err(err).Msg("unable to update step number: update")
+		logger.Warn().Err(err).Msg("unable to update step number: update")
 	}
 }
 

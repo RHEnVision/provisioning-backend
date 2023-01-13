@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -25,7 +25,7 @@ var JobQueueSize = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
 	Help:        "background job queue size (pending tasks total)",
 	ConstLabels: prometheus.Labels{"service": "provisioning"},
 }, func() float64 {
-	return float64(dejq.Stats(context.Background()).EnqueuedJobs)
+	return float64(jq.Stats(context.Background()).EnqueuedJobs)
 })
 
 var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(

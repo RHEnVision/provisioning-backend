@@ -16,6 +16,7 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
+	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 
@@ -24,9 +25,6 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
-
-	// Job queue implementation
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
 
 	// DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
@@ -99,13 +97,13 @@ func main() {
 	defer bgCancel()
 
 	// initialize job queue
-	err = dejq.Initialize(ctx, &logger)
+	err = jq.Initialize(ctx, &logger)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error initializing dejq queue")
+		log.Fatal().Err(err).Msg("Error initializing job queue")
 	}
+	jq.RegisterJobs(&logger)
 	if config.Worker.Queue == "memory" {
-		dejq.RegisterJobs(&logger)
-		dejq.StartDequeueLoop(ctx, &logger)
+		jq.StartDequeueLoop(ctx)
 	}
 
 	// Setup routes
@@ -190,7 +188,7 @@ func main() {
 	<-waitForSignal
 
 	if config.Worker.Queue == "memory" {
-		dejq.StopDequeueLoop()
+		jq.StopDequeueLoop(ctx)
 	}
 	log.Info().Msg("Shutdown finished, exiting")
 }

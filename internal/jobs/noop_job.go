@@ -7,36 +7,36 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-	"github.com/lzap/dejq"
+	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 )
 
 type NoopJobArgs struct {
-	AccountID     int64 `json:"account_id"`
-	ReservationID int64 `json:"reservation_id"`
+	AccountID     int64
+	ReservationID int64
 
 	// Indicates that the test should fail, used only in tests.
-	Fail bool `json:"fail"`
+	Fail bool
 }
 
 var NoOperationFailure = errors.New("job failed on request")
 
 // Unmarshall arguments and handle error
-func HandleNoop(ctx context.Context, job dejq.Job) error {
-	args := NoopJobArgs{}
-	err := decodeJob(ctx, job, &args)
-	if err != nil {
-		return err
+func HandleNoop(ctx context.Context, job *worker.Job) {
+	args, ok := job.Args.(NoopJobArgs)
+	if !ok {
+		ctxval.Logger(ctx).Error().Msgf("Type assertion error for job %s, unable to finish reservation: %#v", job.ID, job.Args)
+		return
 	}
-	ctx = contextLogger(ctx, job.Type(), args, args.AccountID, args.ReservationID)
 
-	jobErr := handleNoop(ctx, &args)
+	ctx = contextLogger(ctx, job, args.AccountID, args.ReservationID)
+
+	jobErr := DoNoop(ctx, &args)
 
 	finishJob(ctx, args.ReservationID, jobErr)
-	return jobErr
 }
 
 // Job logic, when error is returned the job status is updated accordingly
-func handleNoop(ctx context.Context, args *NoopJobArgs) error {
+func DoNoop(ctx context.Context, args *NoopJobArgs) error {
 	logger := ctxval.Logger(ctx)
 
 	// status updates before and after the code logic

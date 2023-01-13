@@ -12,7 +12,7 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 
 	// Job queue stub
-	_ "github.com/RHEnVision/provisioning-backend/internal/jobs/queue/stub"
+	_ "github.com/RHEnVision/provisioning-backend/internal/queue/stub"
 
 	"github.com/rs/zerolog/log"
 )

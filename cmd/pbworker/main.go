@@ -7,8 +7,7 @@ import (
 	"syscall"
 
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
-	// Job queue implementation
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
+	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -21,7 +20,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
-	"github.com/rs/xid"
 	"github.com/rs/zerolog/log"
 )
 
@@ -53,7 +51,6 @@ func main() {
 	logger = logger.With().
 		Timestamp().
 		Str("hostname", hostname).
-		Str("worker_id", xid.New().String()).
 		Logger()
 	logger.Info().Msg("Worker starting")
 
@@ -69,12 +66,12 @@ func main() {
 	defer db.Close()
 
 	// initialize the job queue
-	err = dejq.Initialize(ctx, &logger)
+	err = jq.Initialize(ctx, &logger)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error initializing dejq queue")
+		log.Fatal().Err(err).Msg("Error initializing job queue")
 	}
-	dejq.RegisterJobs(&logger)
-	dejq.StartDequeueLoop(ctx, &logger)
+	jq.RegisterJobs(&logger)
+	jq.StartDequeueLoop(ctx)
 
 	// wait for term signal
 	c := make(chan os.Signal, 1)
@@ -82,6 +79,6 @@ func main() {
 	<-c
 
 	logger.Info().Msg("Graceful shutdown initiated - waiting for jobs to finish")
-	dejq.StopDequeueLoop()
+	jq.StopDequeueLoop(ctx)
 	logger.Info().Msg("Graceful shutdown finished - exiting")
 }
