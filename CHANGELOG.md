@@ -1,3 +1,68 @@
+<a name="0.13.0"></a>
+## [0.13.0](https://github.com/RHEnVision/provisioning-backend/compare/0.12.0...0.13.0) (2023-01-12)
+
+### Bug Fixes
+- **HMSPROV-170:** change topic to platform.sources.status ([b63ff7a](https://github.com/RHEnVision/provisioning-backend/commit/b63ff7aaffd16b546e2f7b3c8fc7183977deab09))
+- **HMSPROV-340:** nice error on arch mismatch ([ca5d32e](https://github.com/RHEnVision/provisioning-backend/commit/ca5d32e61105a77ce86ba783a240afad4340e701))
+- **HMSPROV-345:** Add event_type header and resource type to kafka msg ([28a69da](https://github.com/RHEnVision/provisioning-backend/commit/28a69da29e676801de84ff15d978ddb9103ba4fd))
+- **HMSPROV-345:** change to Source ([559bcfe](https://github.com/RHEnVision/provisioning-backend/commit/559bcfe2ad607e37875906db225229af64359821))
+- **HMSPROV-345:** remove default tag ([5659d0d](https://github.com/RHEnVision/provisioning-backend/commit/5659d0d520402b721d5c6a3b2a20f95dbc285183))
+- **HMSPROV-352:** error out jobs early ([a85152a](https://github.com/RHEnVision/provisioning-backend/commit/a85152a747535acdd94d4b784fdd3f7600918d73))
+- **HMSPROV-352:** improve error message ([0dd032f](https://github.com/RHEnVision/provisioning-backend/commit/0dd032fa183edba623f47a24f62aa11e67e59b63))
+- **HMSPROV-368:** change version to BuildCommit ([f3991bb](https://github.com/RHEnVision/provisioning-backend/commit/f3991bb90a76034a9aa29d141f0f0ed340253a1e))
+- **HMSPROV-387:** set consumer group for statuser ([bd800fa](https://github.com/RHEnVision/provisioning-backend/commit/bd800fa8769b8abaed84cea944c42d1a07135803))
+- **HMSPROV-389:** drop memcache count ([bfc9a00](https://github.com/RHEnVision/provisioning-backend/commit/bfc9a00c1229fc3d64fdfe129e402edc4569e6de))
+- **HMSPROV-390:** calculate fingerprint for AWS ([df98843](https://github.com/RHEnVision/provisioning-backend/commit/df988435e24621496e170e5fe349b6af8b4096f6))
+- **HMSPROV-392:** Check if image is an original or a shared one ([a03bde2](https://github.com/RHEnVision/provisioning-backend/commit/a03bde289659702e504335f5d837f50914a9a1f3))
+- **HMSPROV-399:** add dejq job queue size metric ([6e49fcc](https://github.com/RHEnVision/provisioning-backend/commit/6e49fcc78c016c5e5b74e29430151773fed0bae6))
+- **HMSPROV-407:** disable cw for migrations ([dbc1ea4](https://github.com/RHEnVision/provisioning-backend/commit/dbc1ea48c24d32da5c0590c11c0bb1a1aa763873))
+- **HMSPROV-407:** enable cloudwatch in clowder ([cf5663b](https://github.com/RHEnVision/provisioning-backend/commit/cf5663bfe00677a84e3c4bff5ad05f6b520e5fae))
+- **HMSPROV-407:** enable cloudwatch in clowder ([e4a0083](https://github.com/RHEnVision/provisioning-backend/commit/e4a0083fd6a3a9d7a32f644af5230b9e6d9cdbc7))
+- **HMSPROV-407:** fix blank logic in cw initialization ([9de1b76](https://github.com/RHEnVision/provisioning-backend/commit/9de1b76abab17175fde3c7ae786376ba1e50d1e3))
+- **HMSPROV-407:** fix cw config validation ([e661ac8](https://github.com/RHEnVision/provisioning-backend/commit/e661ac8f46fc314765ed383e0ddac853112c8961))
+- **HMSPROV-407:** further improve logging of cw config ([681ccb0](https://github.com/RHEnVision/provisioning-backend/commit/681ccb0d76aa3781e600197510b3dc67ce419a09))
+- **HMSPROV-407:** improve logging of cw config ([7598917](https://github.com/RHEnVision/provisioning-backend/commit/7598917111d67c696cccb1de51bcda29e03fe900))
+- **HMSPROV-414:** start dequeue loop in api only for memory ([3b2eaae](https://github.com/RHEnVision/provisioning-backend/commit/3b2eaae6411a8b90342da7dc30d54924bedf2c3a))
+- ensure pubkey is always present on AWS ([2c310dd](https://github.com/RHEnVision/provisioning-backend/commit/2c310dd338b929619fee437a6da44f731f68e81e)), related to [HMSPROV-339](https://issues.redhat.com/browse/HMSPROV-339)
+- Kafka headers are slice now ([5fdc3eb](https://github.com/RHEnVision/provisioning-backend/commit/5fdc3eb88ff827e8f28347829018fb6fe238bc7d)), related to [/HMSPROV-337](https://issues.redhat.com/browse/HMSPROV-337)
+- Use correct topic for sources availability check ([3e7f820](https://github.com/RHEnVision/provisioning-backend/commit/3e7f8208394010c2ecada463f44284245f8470a6)), related to [HMSPROV-170](https://issues.redhat.com/browse/HMSPROV-170)
+- utilize clowder topic mapping ([8c2ef77](https://github.com/RHEnVision/provisioning-backend/commit/8c2ef7752b5331e5fc456781428bd2398328cf3d)), related to [HMSPROV-343](https://issues.redhat.com/browse/HMSPROV-343)
+
+### Build
+- add sources kafka topics in clowdapp ([d279a89](https://github.com/RHEnVision/provisioning-backend/commit/d279a893196aeb583d6e768fae7f065abfd48f33))
+- drop OpenAPI filepath env var ([7dce9ac](https://github.com/RHEnVision/provisioning-backend/commit/7dce9ac83e2073407d1fde29f03d06f7c7cd699c))
+- Use external changelog module ([0cb3b3e](https://github.com/RHEnVision/provisioning-backend/commit/0cb3b3ee37a79a479536ee4f250ee529488480ae))
+
+### Chore
+- bump dejq version and use 2 workers ([b58ef29](https://github.com/RHEnVision/provisioning-backend/commit/b58ef292b8087e629be2924de6308adb7276d484))
+- regenerate Azure types ([ea671bb](https://github.com/RHEnVision/provisioning-backend/commit/ea671bb43865fd1bc46fdd8bfe8e916e7ff1ba08))
+- regenerate EC2 types ([3eb68a9](https://github.com/RHEnVision/provisioning-backend/commit/3eb68a9452c953df4807616e1a399a20e8e35f24))
+- simplify replica config and set all back to 1 ([6621e0a](https://github.com/RHEnVision/provisioning-backend/commit/6621e0a3fa5c192a1480b7428286f559a446536d))
+- update all dependencies ([2eadb7c](https://github.com/RHEnVision/provisioning-backend/commit/2eadb7c857af335b1b3f81a779db79ca6a9c3cef))
+- update dependencies ([0de9ebb](https://github.com/RHEnVision/provisioning-backend/commit/0de9ebb3e761b640da4e3917f3ed187991da84d2))
+- use one API worker ([c01814f](https://github.com/RHEnVision/provisioning-backend/commit/c01814f435449e7c44497015b853fcd5de465d0b))
+- version 0.12.0 ([01c1cf7](https://github.com/RHEnVision/provisioning-backend/commit/01c1cf76f80dba38ea2a37645bd0595d28d92ea2))
+
+### CI
+- make fmt does not check commits ([3e22126](https://github.com/RHEnVision/provisioning-backend/commit/3e22126799e73657520c10dc202e206b48eee863))
+- Update iqe markers for backend ([4e871fa](https://github.com/RHEnVision/provisioning-backend/commit/4e871fa48d17d85ec086daeab30afbf0d4a90d10))
+
+### Docs
+- adding info about trust relationship ([70fe8ed](https://github.com/RHEnVision/provisioning-backend/commit/70fe8eddc44624430d68774ece10215809a2b1e1))
+- kafka and worker info ([c9ece9a](https://github.com/RHEnVision/provisioning-backend/commit/c9ece9a6b822286aa729def339e2593e71f1fd67))
+
+### Features
+- **HMSPROV-177:** Add availability check request duration metric ([5944953](https://github.com/RHEnVision/provisioning-backend/commit/594495321ddaa55f6802bdaeeefc7cb1b776c888))
+- **HMSPROV-177:** Add total availability check request metric ([13d508d](https://github.com/RHEnVision/provisioning-backend/commit/13d508db6870a3ed93c1d8123f622cead6f22013))
+- **HMSPROV-345:** Add source check availability per each provider ([c20ef14](https://github.com/RHEnVision/provisioning-backend/commit/c20ef14924e8c5599eebed364092574f0e875f0c))
+- add account identity endpoint ([3df28fb](https://github.com/RHEnVision/provisioning-backend/commit/3df28fbbfc9ffc7ecfa4fa39deb00245d826b303)), related to [HMSPROV-357](https://issues.redhat.com/browse/HMSPROV-357)
+- introduce availability status endpoint ([272f577](https://github.com/RHEnVision/provisioning-backend/commit/272f577b69852dbb4bd8a13a3e37fa81bf2c2e87)), related to [/HMSPROV-337](https://issues.redhat.com/browse/HMSPROV-337)
+
+### Tests
+- Add EC2 pubkey stub ([447d686](https://github.com/RHEnVision/provisioning-backend/commit/447d686d687559c0dd466ef6e4bd3c27e66b3374))
+- use path to the main config dir ([1f4907d](https://github.com/RHEnVision/provisioning-backend/commit/1f4907d5200c01d81ae0dda3ce8ec87d765c9582))
+
+
 <a name="0.12.0"></a>
 ## [0.12.0](https://github.com/RHEnVision/provisioning-backend/compare/0.11.0...0.12.0) (2022-12-01)
 
