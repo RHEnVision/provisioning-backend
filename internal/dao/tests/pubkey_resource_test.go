@@ -67,6 +67,27 @@ func TestPubkeyResourceCreate(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 1, len(resources))
 		assert.Equal(t, resource, resources[0])
+
+		// Allows same resource with different region
+		resource2 := newPubkeyResourceNoop()
+		resource2.Region = "us-east-2"
+		err = pubkeyDao.UnscopedCreateResource(ctx, resource2)
+		require.NoError(t, err)
+
+		// Allows same resource with different source
+		resource3 := newPubkeyResourceNoop()
+		resource3.SourceID = "5"
+		err = pubkeyDao.UnscopedCreateResource(ctx, resource3)
+		require.NoError(t, err)
+
+		// Does not allow identical resource
+		resource4 := newPubkeyResourceNoop()
+		err = pubkeyDao.UnscopedCreateResource(ctx, resource4)
+		require.Error(t, err)
+
+		resources, err = pubkeyDao.UnscopedListResourcesByPubkeyId(ctx, resource.PubkeyID)
+		require.NoError(t, err)
+		assert.Equal(t, 3, len(resources))
 	})
 }
 
