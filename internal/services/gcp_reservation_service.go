@@ -3,18 +3,16 @@ package services
 import (
 	"fmt"
 	"net/http"
-	"strings"
-
-	"github.com/go-chi/render"
-	"github.com/lzap/dejq"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
+	"github.com/RHEnVision/provisioning-backend/internal/queue"
+	"github.com/RHEnVision/provisioning-backend/pkg/worker"
+	"github.com/go-chi/render"
 )
 
 func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +62,6 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewDAOError(r.Context(), "create reservation", err))
 		return
 	}
-	logger = logger.With().Int64("reservation_id", reservation.ID).Logger()
 	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
 
 	// Get Sources client
@@ -105,9 +102,9 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	logger.Trace().Msgf("Image Name is %s", name)
 
-	launchJob := dejq.PendingJob{
-		Type: queue.TypeLaunchInstanceGcp,
-		Body: &jobs.LaunchInstanceGCPTaskArgs{
+	launchJob := worker.Job{
+		Type: jobs.TypeLaunchInstanceGcp,
+		Args: &jobs.LaunchInstanceGCPTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			Zone:          reservation.Detail.Zone,
@@ -117,14 +114,9 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 			ProjectID:     authentication,
 		},
 	}
-	logger.Debug().Interface("job", launchJob).Msgf("Enqueuing launch instance job for source %s", reservation.SourceID)
 
-	startJobs := []dejq.PendingJob{launchJob}
-
-	// Enqueue all jobs
-	ids, err := queue.GetEnqueuer().Enqueue(r.Context(), startJobs...)
+	err = queue.GetEnqueuer().Enqueue(r.Context(), &launchJob)
 	if err != nil {
-		err = fmt.Errorf("job(s) %s error: %w", strings.Join(ids, ","), err)
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
 	}

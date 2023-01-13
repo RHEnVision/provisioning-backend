@@ -12,11 +12,11 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
+	"github.com/RHEnVision/provisioning-backend/internal/queue"
+	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
-	"github.com/lzap/dejq"
 )
 
 func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
@@ -81,7 +81,6 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewDAOError(r.Context(), "create reservation", err))
 		return
 	}
-	logger = logger.With().Int64("reservation_id", reservation.ID).Logger()
 	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
 
 	// Get Sources client
@@ -101,20 +100,6 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	if typeErr := authentication.MustBe(models.ProviderTypeAWS); typeErr != nil {
 		renderError(w, r, payloads.NewClientError(r.Context(), typeErr))
 		return
-	}
-
-	// Prepare jobs
-	logger.Debug().Msgf("Enqueuing upload key job for pubkey %d", pk.ID)
-	uploadPubkeyJob := dejq.PendingJob{
-		Type: queue.TypeEnsurePubkeyOnAws,
-		Body: &jobs.EnsurePubkeyOnAWSTaskArgs{
-			AccountID:     accountId,
-			ReservationID: reservation.ID,
-			Region:        reservation.Detail.Region,
-			PubkeyID:      pk.ID,
-			ARN:           authentication,
-			SourceID:      reservation.SourceID,
-		},
 	}
 
 	var ami string
@@ -138,9 +123,9 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	launchJob := dejq.PendingJob{
-		Type: queue.TypeLaunchInstanceAws,
-		Body: &jobs.LaunchInstanceAWSTaskArgs{
+	launchJob := worker.Job{
+		Type: jobs.TypeLaunchInstanceAws,
+		Args: &jobs.LaunchInstanceAWSTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			Region:        reservation.Detail.Region,
@@ -151,14 +136,9 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 			ARN:           authentication,
 		},
 	}
-	logger.Debug().Interface("job", launchJob).Msgf("Enqueuing launch instance job for source %s", reservation.SourceID)
 
-	startJobs := []dejq.PendingJob{uploadPubkeyJob, launchJob}
-
-	// Enqueue all jobs
-	ids, err := queue.GetEnqueuer().Enqueue(r.Context(), startJobs...)
+	err = queue.GetEnqueuer().Enqueue(r.Context(), &launchJob)
 	if err != nil {
-		err = fmt.Errorf("job(s) %s error: %w", strings.Join(ids, ","), err)
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
 	}

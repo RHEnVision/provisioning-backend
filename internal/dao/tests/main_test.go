@@ -13,9 +13,9 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
-	"github.com/RHEnVision/provisioning-backend/internal/jobs/queue/dejq"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	_ "github.com/RHEnVision/provisioning-backend/internal/logging/testing"
+	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/rs/zerolog/log"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -30,18 +30,19 @@ func teardown() {
 	// nothing
 }
 
-func initEnvironment() {
+func initEnvironment() context.Context {
 	config.Initialize("config/test.env", "../../../config/test.env")
 	logging.InitializeStdout()
 	ctx := ctxval.WithLogger(context.Background(), &log.Logger)
-	dejq.Initialize(ctx, &log.Logger)
-	dejq.RegisterJobs(&log.Logger)
-	dejq.StartDequeueLoop(ctx, &log.Logger)
+	jq.Initialize(ctx, &log.Logger)
+	jq.RegisterJobs(&log.Logger)
+	jq.StartDequeueLoop(ctx)
 
 	err := db.Initialize(context.Background(), "integration")
 	if err != nil {
 		panic(fmt.Errorf("cannot connect to database: %v", err))
 	}
+	return ctx
 }
 
 func dbDrop() {
@@ -66,9 +67,9 @@ func dbSeed() {
 }
 
 func TestMain(t *testing.M) {
-	initEnvironment()
+	ctx := initEnvironment()
 	defer db.Close()
-	defer dejq.StopDequeueLoop()
+	defer jq.StopDequeueLoop(ctx)
 
 	dbDrop()
 	dbMigrate()

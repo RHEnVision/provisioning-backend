@@ -75,7 +75,7 @@ Installation and configuration of Postgres is not covered neither in this articl
 
 Tip: On MacOS, you can install Postgres on a remote Linux (or a small VM) and configure the application to connect there, instead of localhost.
 
-## Kafka
+## Kafka
 
 In order to work on Kafka integrated services (statuser, sources), Kafka local deployment is needed. We do simply use the official Kafka binary that can be simply extracted and started.
 
@@ -101,7 +101,6 @@ The application integrates with multiple backend services:
 Worker processes (`pbworker`) are responsible for running background jobs. There must be one or more processes running in order to pick up background jobs (e.g. launch reservations). There are multiple configuration options available via `WORKER_QUEUE`:
 
 * `redis` - uses queue via Redis
-* `postgres` - uses jobqueue implementation for the queue
 * `memory` - in-memory worker (default option)
 
 The default behavior is the in-memory worker, which spawns a single goroutine within the main application which picks up all jobs sequentially. This is only meant for development setups so that no extra worker process is required when testing background jobs.
