@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"time"
 )
 
 type Broker interface {
@@ -9,7 +10,7 @@ type Broker interface {
 	Send(ctx context.Context, messages ...*GenericMessage) error
 
 	// Consume messages of a single topic in a loop. Blocking call, use context cancellation to stop.
-	Consume(ctx context.Context, topic string, group string, handler func(ctx context.Context, message *GenericMessage))
+	Consume(ctx context.Context, topic string, since time.Time, handler func(ctx context.Context, message *GenericMessage))
 }
 
 var broker Broker = &noopBroker{}
@@ -19,6 +20,6 @@ func Send(ctx context.Context, messages ...*GenericMessage) error {
 	return broker.Send(ctx, messages...)
 }
 
-func Consume(ctx context.Context, topic string, group string, handler func(ctx context.Context, message *GenericMessage)) {
-	broker.Consume(ctx, topic, group, handler)
+func Consume(ctx context.Context, topic string, since time.Time, handler func(ctx context.Context, message *GenericMessage)) {
+	broker.Consume(ctx, topic, since, handler)
 }
