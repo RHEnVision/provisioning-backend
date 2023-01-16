@@ -138,12 +138,11 @@ func newContextErrLogger(ctx context.Context) func(msg string, a ...interface{})
 }
 
 // NewReader creates a reader. Use Close() function to close the reader.
-func (b *kafkaBroker) NewReader(ctx context.Context, topic, group string) *kafka.Reader {
+func (b *kafkaBroker) NewReader(ctx context.Context, topic string) *kafka.Reader {
 	return kafka.NewReader(kafka.ReaderConfig{
 		Brokers:     config.Kafka.Brokers,
 		Dialer:      b.dialer,
 		Topic:       topic,
-		GroupID:     group,
 		StartOffset: kafka.LastOffset,
 		Logger:      kafka.LoggerFunc(newContextLogger(ctx)),
 		ErrorLogger: kafka.LoggerFunc(newContextErrLogger(ctx)),
@@ -163,10 +162,15 @@ func (b *kafkaBroker) NewWriter(ctx context.Context) *kafka.Writer {
 
 // Consume reads messages in batches up to 1 MB with up to 10 seconds delay. It blocks, therefore
 // it should be called from a separate goroutine. Use context cancellation to stop the loop.
-func (b *kafkaBroker) Consume(ctx context.Context, topic string, group string, handler func(ctx context.Context, message *GenericMessage)) {
+func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time, handler func(ctx context.Context, message *GenericMessage)) {
 	logger := ctxval.Logger(ctx)
-	r := b.NewReader(ctx, topic, group)
+	r := b.NewReader(ctx, topic)
 	defer r.Close()
+
+	err := r.SetOffsetAt(ctx, since)
+	if err != nil {
+		logger.Warn().Err(err).Msg("Unable to set initial offset")
+	}
 
 	for {
 		msg, err := r.ReadMessage(ctx)

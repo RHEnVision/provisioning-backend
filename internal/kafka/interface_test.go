@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 	"testing"
+	"time"
 
 	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
 
@@ -28,7 +29,7 @@ func TestSendAndConsume(t *testing.T) {
 	cct, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	go bus.Consume(cct, "topic", "", func(ctx context.Context, msg *GenericMessage) {
+	go bus.Consume(cct, "topic", time.Now(), func(ctx context.Context, msg *GenericMessage) {
 		require.EqualValues(t, "key", msg.Key)
 		require.EqualValues(t, "value", msg.Value)
 		wg.Done()
@@ -47,13 +48,13 @@ func TestMultipleTopics(t *testing.T) {
 	cct, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	go bus.Consume(cct, "topic1", "", func(ctx context.Context, msg *GenericMessage) {
+	go bus.Consume(cct, "topic1", time.Now(), func(ctx context.Context, msg *GenericMessage) {
 		require.EqualValues(t, "key1", msg.Key)
 		require.EqualValues(t, "value", msg.Value)
 		wg.Done()
 	})
 
-	go bus.Consume(cct, "topic2", "", func(ctx context.Context, msg *GenericMessage) {
+	go bus.Consume(cct, "topic2", time.Now(), func(ctx context.Context, msg *GenericMessage) {
 		require.EqualValues(t, "key2", msg.Key)
 		require.EqualValues(t, "value", msg.Value)
 		wg.Done()
