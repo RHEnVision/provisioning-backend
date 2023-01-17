@@ -12,7 +12,6 @@ import (
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
 	redoc "github.com/go-openapi/runtime/middleware"
-	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog/log"
 )
 
@@ -50,7 +49,7 @@ func MountAPI(r *chi.Mux) {
 		r.Get("/", api.ServeOpenAPISpec)
 	})
 	r.Group(func(r chi.Router) {
-		r.Use(identity.EnforceIdentity)
+		r.Use(middleware.EnforceIdentity)
 		r.Use(middleware.AccountMiddleware)
 
 		// OpenAPI documented and supported routes
