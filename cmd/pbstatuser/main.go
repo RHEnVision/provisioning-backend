@@ -289,7 +289,7 @@ func main() {
 		Handler: metricsRouter,
 	}
 
-	waitForSignal := make(chan struct{})
+	signalNotify := make(chan struct{})
 	go func() {
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint, syscall.SIGINT, syscall.SIGTERM)
@@ -297,7 +297,7 @@ func main() {
 		if err := metricsServer.Shutdown(context.Background()); err != nil {
 			logger.Fatal().Err(err).Msg("Metrics service shutdown error")
 		}
-		close(waitForSignal)
+		close(signalNotify)
 	}()
 
 	go func() {
@@ -314,9 +314,11 @@ func main() {
 	// start the consumer
 	receiverWG.Add(1)
 	cancelCtx, consumerCancelFunc := context.WithCancel(ctx)
+	consumerNotify := make(chan struct{})
 	go func() {
 		defer receiverWG.Done()
 		kafka.Consume(cancelCtx, kafka.AvailabilityStatusRequestTopic, time.Now(), processMessage)
+		close(consumerNotify)
 	}()
 
 	metrics.RegisterStatuserMetrics()
@@ -332,7 +334,12 @@ func main() {
 	go sendResults(cancelCtx, 1024, 5*time.Second)
 
 	logger.Info().Msg("Worker started")
-	<-waitForSignal
+	select {
+	case <-signalNotify:
+		logger.Info().Msg("Exiting due to signal")
+	case <-consumerNotify:
+		logger.Warn().Msg("Exiting due to closed consumer")
+	}
 
 	// stop kafka receiver (can take up to 10 seconds) and wait until it returns
 	consumerCancelFunc()
