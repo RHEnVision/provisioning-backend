@@ -255,7 +255,7 @@ parameters:
   - description: ImageBuilder service URL
     name: IMAGEBUILDER_URL
     required: false
-    value: "http://image-builder:8080"
+    value: "http://image-builder-service:8080"
   - description: Instance prefix adds string to all instance names, leave blank for production
     name: APP_INSTANCE_PREFIX
     value: ""
