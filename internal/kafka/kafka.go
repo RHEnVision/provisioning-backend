@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 	"time"
 
@@ -123,8 +124,22 @@ func NewKafkaBroker(ctx context.Context) (Broker, error) {
 	}, nil
 }
 
+// kafka library has some noisy debug messages
+var ignoredMsg *regexp.Regexp
+
+func init() {
+	var err error
+	ignoredMsg, err = regexp.Compile("^no messages received from kafka within the allocated time.*")
+	if err != nil {
+		panic(err)
+	}
+}
+
 func newContextLogger(ctx context.Context) func(msg string, a ...interface{}) {
 	return func(msg string, a ...interface{}) {
+		if ignoredMsg.MatchString(msg) {
+			return
+		}
 		logger := ctxval.Logger(ctx)
 		logger.Debug().Bool("kafka", true).Msgf(msg, a...)
 	}
@@ -175,8 +190,10 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time
 	for {
 		msg, err := r.ReadMessage(ctx)
 		if err != nil && errors.Is(err, io.EOF) {
+			logger.Warn().Err(err).Msg("Kafka receiver has been closed")
 			break
 		} else if err != nil && errors.Is(err, context.Canceled) {
+			logger.Debug().Msg("Kafka receiver has been cancelled")
 			break
 		} else if err != nil {
 			logger.Warn().Err(err).Msgf("Error when reading message: %s", err.Error())
