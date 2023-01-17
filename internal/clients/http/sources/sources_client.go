@@ -135,32 +135,8 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.
 	// Sources API currently does not provide a good server-side filtering.
 	auth, err := filterSourceAuthentications(*resp.JSON200.Data)
 	if err != nil {
-		logger.Warn().Msgf("Sources replied with more than one authentications for source: %s", sourceId)
+		logger.Warn().Msgf("Sources did not return any Provisioning authentication for source: %s", sourceId)
 		return nil, err
-	}
-
-	// Get the resource_id which equals to application_id
-	// and check that application_type_id in /applications/<app_id> equals to provisioning id
-	res, err := c.client.ShowApplicationWithResponse(ctx, *auth.ResourceId, headers.AddSourcesIdentityHeader)
-	if err != nil {
-		return nil, fmt.Errorf("cannot list source authentication: %w", err)
-	}
-
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
-	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			return nil, fmt.Errorf("get source ARN call: %w", http.ApplicationNotFoundErr)
-		}
-		return nil, fmt.Errorf("get source ARN call: %w", err)
-	}
-
-	appTypeId, err := c.GetProvisioningTypeId(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("cannot get provisioning app type: %w", err)
-	}
-
-	if *res.JSON200.ApplicationTypeId != appTypeId {
-		return nil, fmt.Errorf("%w for source id %s", http.AuthenticationSourceAssociationErr, sourceId)
 	}
 
 	authentication := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, string(*auth.Authtype))
@@ -220,7 +196,30 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 func filterSourceAuthentications(authentications []AuthenticationRead) (AuthenticationRead, error) {
 	for _, auth := range authentications {
 		if *auth.ResourceType == "Application" {
-			return auth, nil
+			switch *auth.Authtype {
+			case AuthenticationReadAuthtypeProvisioningArn,
+				AuthenticationReadAuthtypeProvisioningLighthouseSubscriptionId,
+				AuthenticationReadAuthtypeProvisioningProjectId:
+				return auth, nil
+			case AuthenticationReadAuthtypeAccessKeySecretKey,
+				AuthenticationReadAuthtypeApiTokenAccountId,
+				AuthenticationReadAuthtypeArn,
+				AuthenticationReadAuthtypeBitbucketAppPassword,
+				AuthenticationReadAuthtypeCloudMeterArn,
+				AuthenticationReadAuthtypeDockerAccessToken,
+				AuthenticationReadAuthtypeGithubPersonalAccessToken,
+				AuthenticationReadAuthtypeGitlabPersonalAccessToken,
+				AuthenticationReadAuthtypeLighthouseSubscriptionId,
+				AuthenticationReadAuthtypeMarketplaceToken,
+				AuthenticationReadAuthtypeOcid,
+				AuthenticationReadAuthtypeProjectIdServiceAccountJson,
+				AuthenticationReadAuthtypeQuayEncryptedPassword,
+				AuthenticationReadAuthtypeReceptorNode,
+				AuthenticationReadAuthtypeTenantIdClientIdClientSecret,
+				AuthenticationReadAuthtypeToken,
+				AuthenticationReadAuthtypeUsernamePassword:
+				continue
+			}
 		}
 	}
 	return AuthenticationRead{}, http.ApplicationReadErr
