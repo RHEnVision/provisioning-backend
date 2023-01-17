@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"runtime/debug"
 	"strconv"
@@ -31,6 +30,9 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 				Logger()
 			t1 := time.Now()
 
+			lHeaders := logger.With().Fields(r.Header).Logger()
+			lHeaders.Debug().Msgf("Started %s request %s", r.Method, r.URL.Path)
+
 			defer func() {
 				duration := time.Since(t1)
 				log := logger.With().
@@ -49,8 +51,8 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 
 				log.Info().
 					Int("status", ww.Status()).
-					Msg(fmt.Sprintf("Completed %s request %s in %s ms with %d",
-						r.Method, r.URL.Path, duration.Round(time.Millisecond).String(), ww.Status()))
+					Msgf("Completed %s request %s in %s with %d",
+						r.Method, r.URL.Path, duration.Round(time.Millisecond).String(), ww.Status())
 			}()
 
 			ctx := ctxval.WithLogger(r.Context(), &logger)
