@@ -97,5 +97,7 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.Azure.ClientSecret = replacement
 	configCopy.GCP.JSON = replacement
 	configCopy.Unleash.Token = replacement
+	configCopy.Kafka.SASL.Username = replacement
+	configCopy.Kafka.SASL.Password = replacement
 	logger.Info().Msgf("Configuration: %+v", configCopy)
 }
