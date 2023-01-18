@@ -10,10 +10,11 @@ import (
 // Logger returns the main logger with context fields or the standard global logger
 // when the main logger was not set. Never returns nil.
 func Logger(ctx context.Context) *zerolog.Logger {
-	if ctx == nil || ctx.Value(loggerCtxKey) == nil {
+	value := ctx.Value(loggerCtxKey)
+	if ctx == nil || value == nil {
 		return &log.Logger
 	}
-	return ctx.Value(loggerCtxKey).(*zerolog.Logger)
+	return value.(*zerolog.Logger)
 }
 
 // WithLogger returns context copy with logger.

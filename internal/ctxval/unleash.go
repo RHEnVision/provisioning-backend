@@ -8,10 +8,11 @@ import (
 
 // UnleashContext returns unleash context or an empty context when not set.
 func UnleashContext(ctx context.Context) ucontext.Context {
-	if ctx.Value(unleashContextCtxKey) == nil {
+	value := ctx.Value(unleashContextCtxKey)
+	if value == nil {
 		return ucontext.Context{}
 	}
-	return ctx.Value(unleashContextCtxKey).(ucontext.Context)
+	return value.(ucontext.Context)
 }
 
 // WithUnleashContext returns context copy with unleash context as a value.
