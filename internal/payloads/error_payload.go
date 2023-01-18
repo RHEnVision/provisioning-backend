@@ -41,9 +41,8 @@ func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
 
 func NewInvalidRequestError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("invalid request: %s", message)
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Warn().Err(err).Msg(message)
-	}
+	ctxval.Logger(ctx).Warn().Err(err).Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        message,
@@ -56,9 +55,8 @@ func NewInvalidRequestError(ctx context.Context, message string, err error) *Res
 
 func NewWrongArchitectureUserError(ctx context.Context, err error) *ResponseError {
 	msg := "Image and type architecture mismatch"
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Warn().Err(err).Msg(msg)
-	}
+	ctxval.Logger(ctx).Warn().Err(err).Msg(msg)
+
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        msg,
@@ -70,9 +68,8 @@ func NewWrongArchitectureUserError(ctx context.Context, err error) *ResponseErro
 }
 
 func NewMissingRequestParameterError(ctx context.Context, message string) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Warn().Msg(message)
-	}
+	ctxval.Logger(ctx).Warn().Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        message,
@@ -83,9 +80,8 @@ func NewMissingRequestParameterError(ctx context.Context, message string) *Respo
 }
 
 func PubkeyDuplicateError(ctx context.Context, message string, err error) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Warn().Msg(message)
-	}
+	ctxval.Logger(ctx).Warn().Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 422,
 		Message:        message,
@@ -142,9 +138,8 @@ func ImageBuilderHelper(err error) (int, string) {
 }
 
 func Response(ctx context.Context, status int, message string, err error) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(message)
-	}
+	ctxval.Logger(ctx).Error().Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: status,
 		Message:        message,
@@ -173,9 +168,8 @@ func NewClientError(ctx context.Context, err error) *ResponseError {
 
 func NewNotFoundError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("not found: %s", message)
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Warn().Msg(message)
-	}
+	ctxval.Logger(ctx).Warn().Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 404,
 		Message:        message,
@@ -187,9 +181,8 @@ func NewNotFoundError(ctx context.Context, message string, err error) *ResponseE
 }
 
 func NewEnqueueTaskError(ctx context.Context, message string, err error) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Msg(message)
-	}
+	ctxval.Logger(ctx).Error().Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        message,
@@ -202,9 +195,8 @@ func NewEnqueueTaskError(ctx context.Context, message string, err error) *Respon
 
 func NewDAOError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("dao error: %s", message)
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Err(err).Msg(message)
-	}
+	ctxval.Logger(ctx).Error().Err(err).Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        message,
@@ -216,9 +208,8 @@ func NewDAOError(ctx context.Context, message string, err error) *ResponseError 
 }
 
 func NewRenderError(ctx context.Context, message string, err error) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Err(err).Msg(message)
-	}
+	ctxval.Logger(ctx).Error().Err(err).Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        message,
@@ -230,9 +221,8 @@ func NewRenderError(ctx context.Context, message string, err error) *ResponseErr
 }
 
 func NewURLParsingError(ctx context.Context, message string, err error) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Warn().Msg(message)
-	}
+	ctxval.Logger(ctx).Warn().Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 400,
 		Message:        message,
@@ -244,9 +234,8 @@ func NewURLParsingError(ctx context.Context, message string, err error) *Respons
 }
 
 func NewStatusError(ctx context.Context, message string, err error) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Err(err).Msg(message)
-	}
+	ctxval.Logger(ctx).Error().Err(err).Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        message,
@@ -258,9 +247,8 @@ func NewStatusError(ctx context.Context, message string, err error) *ResponseErr
 }
 
 func NewAWSError(ctx context.Context, message string, err error) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Err(err).Msg(message)
-	}
+	ctxval.Logger(ctx).Error().Err(err).Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        message,
@@ -272,9 +260,8 @@ func NewAWSError(ctx context.Context, message string, err error) *ResponseError 
 }
 
 func NewAzureError(ctx context.Context, message string, err error) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Err(err).Msg(message)
-	}
+	ctxval.Logger(ctx).Error().Err(err).Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        message,
@@ -286,9 +273,8 @@ func NewAzureError(ctx context.Context, message string, err error) *ResponseErro
 }
 
 func NewGCPError(ctx context.Context, message string, err error) *ResponseError {
-	if logger := ctxval.Logger(ctx); logger != nil {
-		logger.Error().Err(err).Msg(message)
-	}
+	ctxval.Logger(ctx).Error().Err(err).Msg(message)
+
 	return &ResponseError{
 		HTTPStatusCode: 500,
 		Message:        message,
