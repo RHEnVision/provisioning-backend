@@ -4,10 +4,11 @@ import "context"
 
 // TraceId returns request id or an empty string when not set.
 func TraceId(ctx context.Context) string {
-	if ctx.Value(requestIdCtxKey) == nil {
+	value := ctx.Value(requestIdCtxKey)
+	if value == nil {
 		return ""
 	}
-	return ctx.Value(requestIdCtxKey).(string)
+	return value.(string)
 }
 
 // WithTraceId returns context copy with trace id value.
