@@ -272,8 +272,8 @@ func Initialize(configFiles ...string) {
 		if endpoint, ok := clowder.DependencyEndpoints["sources-api"]["svc"]; ok {
 			config.RestEndpoints.Sources.URL = fmt.Sprintf("http://%s:%d/api/sources/v3.1", endpoint.Hostname, endpoint.Port)
 		}
-		if endpoint, ok := clowder.DependencyEndpoints["image-builder"]["svc"]; ok {
-			config.RestEndpoints.Sources.URL = fmt.Sprintf("http://%s:%d/api/image-builder/v1", endpoint.Hostname, endpoint.Port)
+		if endpoint, ok := clowder.DependencyEndpoints["image-builder"]["service"]; ok {
+			config.RestEndpoints.ImageBuilder.URL = fmt.Sprintf("http://%s:%d/api/image-builder/v1", endpoint.Hostname, endpoint.Port)
 		}
 	}
 
