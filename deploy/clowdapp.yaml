@@ -223,6 +223,34 @@ objects:
       optionalDependencies:
         - image-builder
 
+  - apiVersion: metrics.console.redhat.com/v1alpha1
+    kind: FloorPlan
+    metadata:
+      name: provisioning-backend
+      labels:
+        app: provisioning-backend
+        service: provisioning
+    spec:
+      database:
+        secretName: ${FLOORIST_DB_SECRET_NAME}
+      objectStore:
+        secretName: ${FLOORIST_BUCKET_SECRET_NAME}
+      logLevel: ${FLOORIST_LOGLEVEL}
+      suspend: ${{FLOORIST_SUSPEND}}
+      queries:
+        - prefix: ${FLOORIST_QUERY_PREFIX}/reservations
+          query: >-
+            select r.created_at, r.finished_at, r.success,
+                   a.account_number, a.org_id, d.source_id,
+                   d.detail->'instance_type' as type,
+                   d.detail->'region' as region,
+                   d.detail->'amount' as amount
+            from reservations r
+            join aws_reservation_details d on r.id = d.reservation_id
+            join accounts a on r.account_id = a.id
+            where provider = provider_type_aws()
+            order by r.created_at;
+
 # possible application ENV variables are in config/api.env.example
 parameters:
   - description: ClowdEnv Name
@@ -264,6 +292,21 @@ parameters:
   - description: Determines Clowder deployment
     name: CLOWDER_ENABLED
     value: "true"
+  - name: FLOORIST_LOGLEVEL
+    description: Floorist loglevel config
+    value: 'INFO'
+  - name: FLOORIST_SUSPEND
+    description: Disable Floorist cronjob execution
+    value: 'false'
+  - name: FLOORIST_DB_SECRET_NAME
+    description: Name of the secret for accessing the database for floorist
+    value: "provisioning-db"
+  - name: FLOORIST_BUCKET_SECRET_NAME
+    description: Name of the secret for accessing the bucket for the floorist data dump
+    value: "floorist-bucket"
+  - name: FLOORIST_QUERY_PREFIX
+    description: Prefix for separating query data between prod and stage in the bucket
+    value: "hms_analytics/provisioning/unknown"
   - description: ImageBuilder service URL
     name: IMAGEBUILDER_URL
     required: false
