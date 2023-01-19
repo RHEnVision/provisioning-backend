@@ -60,6 +60,45 @@ Here are few points before you start contributing:
 
 Keep security in mind: https://github.com/RedHatInsights/secure-coding-checklist
 
+## Upgrade safety
+
+All changes need to be implemented with zero downtime upgrades in mind.
+There will be for a brief moment version N and version N+1 containers running over a single database during upgrade.
+
+This affects migration policies. All migrations need to be backward compatible with code running without the migration.
+If there is a need for a breaking change, it needs to happen over course of two deployments.
+
+Common examples:
+
+* **Change a column name**
+
+   1. First Merge/Deploy PR that would
+      1. introduce the new column nullable with default to NULL.
+      2. change the code to use this new column and the old one as fallback in case first is NULL
+   2. Merge/deploy a followup PR to:
+      1. Migrate all data to the new column where there are data in old column
+      2. Drop the fallback to the old column
+      3. Drop the now unused column
+
+* **Introduce non-nullable column** without default value
+   1. Merge/Deploy PR that would
+      1. Introduce the column nullable with NULL default
+      2. Adjust code to be adding data to the new column
+   2. Merge/Deploy followup PR that would
+      1. migrate data for the empty rows of the column
+      2. changed the column to non-nullable
+
+* **Drop table/column**
+   1. Merge/Deploy PR that would
+      1. Stop using the said table/column
+   2. Merge/Deploy followup PR
+      1. With migration dropping the table/column
+
+* **Change in job arguments**
+  * When new field is added, make sure the code is ready to process data when the value is unset (zero or nil)
+  * Rename or delete is similar to migrations, there can be jobs enqueued by the old version so code must account for that.
+  * Alternatively, "version" flag can be added to the arg struct for easier handling of these issues.
+
 ## Testing
 
 All code logic has unit test coverage.
