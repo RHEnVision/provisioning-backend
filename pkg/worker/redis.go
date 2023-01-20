@@ -6,7 +6,6 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
-	"math/rand"
 	"runtime"
 	"strings"
 	"sync"
@@ -126,19 +125,18 @@ func (w *RedisWorker) DequeueLoop(ctx context.Context) {
 	logger.Info().Msgf("Starting %d polling goroutines", pollers)
 	for i := 1; i <= pollers; i++ {
 		w.loopWG.Add(1)
-		go w.dequeueLoop(ctx)
+		go w.dequeueLoop(ctx, i, pollers)
 	}
 }
 
-//nolint:gosec
-func (w *RedisWorker) dequeueLoop(ctx context.Context) {
+func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 	defer w.loopWG.Done()
 	logger := ctxval.Logger(ctx)
 
-	// randomize polling intervals for a better spread (random delay up to one read timeout)
-	randMs := rand.Int63n(w.pollInterval.Milliseconds())
-	logger.Info().Msgf("Worker start sleep (ms): %d", randMs)
-	time.Sleep(time.Duration(randMs) * time.Millisecond)
+	// spread polling intervals
+	delayMs := (int(w.pollInterval.Milliseconds()) / total) * (i - 1)
+	logger.Info().Msgf("Worker start delay %dms", delayMs)
+	time.Sleep(time.Duration(delayMs) * time.Millisecond)
 
 	for {
 		select {

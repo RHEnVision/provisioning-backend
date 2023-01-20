@@ -49,7 +49,7 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 		return
 	}
 
-	ctx = contextLogger(ctx, nil, args.AccountID, args.ReservationID)
+	ctx = contextLogger(ctx, job, args.AccountID, args.ReservationID)
 
 	jobErr := DoEnsurePubkeyOnAWS(ctx, &args)
 	if jobErr != nil {
