@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"runtime"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -152,7 +153,21 @@ func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 	}
 }
 
+func recoverAndLog(ctx context.Context) {
+	if rec := recover(); rec != nil {
+		logger := ctxval.Logger(ctx).Error()
+		if err, ok := rec.(error); ok {
+			logger = logger.Err(err)
+		}
+		logger.Msgf("Error during job handling: %v, stacktrace: %s", rec, debug.Stack())
+	}
+}
+
 func (w *RedisWorker) fetchJob(ctx context.Context) {
+	// recover from segfault panics for the fetch goroutine
+	debug.SetPanicOnFault(true)
+	defer recoverAndLog(ctx)
+
 	res, err := w.client.BLPop(ctx, w.pollInterval, w.queueName).Result()
 
 	if errors.Is(err, redis.Nil) {
@@ -178,6 +193,10 @@ func (w *RedisWorker) fetchJob(ctx context.Context) {
 }
 
 func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
+	// recover from segfault panics for the execution goroutine
+	debug.SetPanicOnFault(true)
+	defer recoverAndLog(ctx)
+
 	defer w.handleWG.Done()
 	defer atomic.AddInt64(&w.inFlight, -1)
 	logger := loggerWithJob(ctx, job)
