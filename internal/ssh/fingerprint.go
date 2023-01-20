@@ -1,7 +1,7 @@
 package ssh
 
 import (
-	"crypto/md5"
+	"crypto/md5" //#nosec
 	"crypto/x509"
 	"encoding/hex"
 	"fmt"

@@ -10,7 +10,7 @@ import (
 // Pubkey represents SSH public key that can be deployed to clients.
 type Pubkey struct {
 	// Set to true to skip model validation and transformation during save.
-	SkipValidation bool
+	SkipValidation bool `db:"-" json:"-"`
 
 	// Required auto-generated PK.
 	ID int64 `db:"id" json:"id"`
