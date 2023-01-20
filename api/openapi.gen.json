@@ -669,6 +669,20 @@
       "get": {
         "description": "Return list of provisioning sources",
         "operationId": "getSourceList",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "enum": [
+                "aws",
+                "azure",
+                "gcp"
+              ],
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
