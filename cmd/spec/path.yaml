@@ -101,6 +101,15 @@ paths:
     get:
       description: 'Return list of provisioning sources'
       operationId: getSourceList
+      parameters:
+      - name: provider
+        in: query
+        schema:
+          type: string
+          enum:
+            - aws
+            - azure
+            - gcp
       responses:
         '200':
           description: Returned on success.
