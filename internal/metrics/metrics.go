@@ -13,7 +13,7 @@ import (
 
 var TotalAvailabilityCheckReqs = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
-		Name:        "source_availability_check_request_total",
+		Name:        "provisioning_source_availability_check_request_total",
 		Help:        "availability Check requests count partitioned by type (aws/gcp/azure), source status, component and error",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
 	},
@@ -21,7 +21,7 @@ var TotalAvailabilityCheckReqs = prometheus.NewCounterVec(
 )
 
 var JobQueueSize = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
-	Name:        "job_queue_size",
+	Name:        "provisioning_job_queue_size",
 	Help:        "background job queue size (pending tasks total)",
 	ConstLabels: prometheus.Labels{"service": "provisioning"},
 }, func() float64 {
@@ -30,7 +30,7 @@ var JobQueueSize = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
 
 var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
 	prometheus.HistogramOpts{
-		Name:        "source_availability_check_request_duration_ms",
+		Name:        "provisioning_source_availability_check_request_duration_ms",
 		Help:        "Availability check Request duration partitioned by type and error",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
 	},

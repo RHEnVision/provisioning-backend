@@ -5,6 +5,7 @@ package middleware
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -16,8 +17,8 @@ import (
 var buckets = []float64{100, 200, 500, 5000}
 
 const (
-	metricNameHttpRequestTotal    = "http_request_total"
-	metricNameHttpRequestDuration = "http_request_duration_ms"
+	metricNameHttpRequestTotal    = "provisioning_http_request_total"
+	metricNameHttpRequestDuration = "provisioning_http_request_duration_ms"
 )
 
 // Middleware is a handler that exposes prometheus metrics for the number of requests,
@@ -34,20 +35,20 @@ func NewPatternMiddleware(name string) func(next http.Handler) http.Handler {
 	m.reqs = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name:        metricNameHttpRequestTotal,
-			Help:        "HTTP requests count partitioned by status code, method and HTTP path (chi route)",
+			Help:        "HTTP requests count partitioned by numeric status code, text status code, method and HTTP path (chi route)",
 			ConstLabels: prometheus.Labels{"service": name},
 		},
-		[]string{"code", "method", "path"},
+		[]string{"code", "status_code", "method", "path"},
 	)
 	prometheus.MustRegister(m.reqs)
 
 	m.latency = prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Name:        metricNameHttpRequestDuration,
-		Help:        "Request duration partitioned by status code, method and HTTP path (chi route)",
+		Help:        "Request duration partitioned by numeric status code, text status code, method and HTTP path (chi route)",
 		ConstLabels: prometheus.Labels{"service": name},
 		Buckets:     buckets,
 	},
-		[]string{"code", "method", "path"},
+		[]string{"code", "status_code", "method", "path"},
 	)
 	prometheus.MustRegister(m.latency)
 	return m.patternHandler
@@ -63,8 +64,8 @@ func (c Middleware) patternHandler(next http.Handler) http.Handler {
 		routePattern := strings.Join(rctx.RoutePatterns, "")
 		routePattern = strings.Replace(routePattern, "/*/", "/", -1)
 
-		c.reqs.WithLabelValues(http.StatusText(ww.Status()), r.Method, routePattern).Inc()
-		c.latency.WithLabelValues(http.StatusText(ww.Status()), r.Method, routePattern).Observe(float64(time.Since(start).Nanoseconds()) / 1000000)
+		c.reqs.WithLabelValues(strconv.Itoa(ww.Status()), http.StatusText(ww.Status()), r.Method, routePattern).Inc()
+		c.latency.WithLabelValues(strconv.Itoa(ww.Status()), http.StatusText(ww.Status()), r.Method, routePattern).Observe(float64(time.Since(start).Nanoseconds()) / 1000000)
 	}
 	return http.HandlerFunc(fn)
 }
