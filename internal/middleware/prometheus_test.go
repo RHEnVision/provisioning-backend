@@ -62,10 +62,10 @@ func Test_PatternLogger(t *testing.T) {
 		t.Errorf("body does not contain request duration entry '%s'", metricNameHttpRequestDuration)
 	}
 
-	req1Count := `http_request_total{code="OK",method="GET",path="/ok",service="patternOnlyTest"} 1`
-	joeBobCount := `http_request_total{code="OK",method="GET",path="/users/JoeBob",service="patternOnlyTest"} 1`
-	mistyCount := `http_request_total{code="OK",method="GET",path="/users/Misty",service="patternOnlyTest"} 1`
-	firstNamePatternCount := `http_request_total{code="OK",method="GET",path="/users/{firstName}",service="patternOnlyTest"} 2`
+	req1Count := `provisioning_http_request_total{code="200",method="GET",path="/ok",service="patternOnlyTest",status_code="OK"} 1`
+	joeBobCount := `provisioning_http_request_total{code="200", status_code="OK",method="GET",path="/users/JoeBob",service="patternOnlyTest"} 1`
+	mistyCount := `provisioning_http_request_total{code="200", status_code="OK",method="GET",path="/users/Misty",service="patternOnlyTest"} 1`
+	firstNamePatternCount := `provisioning_http_request_total{code="200",method="GET",path="/users/{firstName}",service="patternOnlyTest",status_code="OK"} 2`
 
 	if !strings.Contains(body, req1Count) {
 		t.Errorf("body does not contain req1 count summary '%s'", req1Count)
