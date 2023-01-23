@@ -14,7 +14,7 @@ const (
 )
 
 type SourceResult struct {
-	SourceID string `json:"resource_id"`
+	ResourceID string `json:"resource_id"`
 
 	// Resource type of the source
 	ResourceType string `json:"resource_type"`
@@ -27,5 +27,5 @@ type SourceResult struct {
 }
 
 func (sr SourceResult) GenericMessage(ctx context.Context) (GenericMessage, error) {
-	return genericMessage(ctx, sr, sr.SourceID, SourcesStatusTopic)
+	return genericMessage(ctx, sr, sr.ResourceID, SourcesStatusTopic)
 }

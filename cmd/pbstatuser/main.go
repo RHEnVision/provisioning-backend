@@ -39,7 +39,7 @@ const ChannelBuffer = 32
 type SourceInfo struct {
 	Authentication clients.Authentication
 
-	SourceID string
+	SourceApplictionID string
 
 	Identity identity.XRHID
 }
@@ -85,9 +85,9 @@ func processMessage(ctx context.Context, message *kafka.GenericMessage) {
 	}
 
 	s := SourceInfo{
-		Authentication: *authentication,
-		SourceID:       sourceId,
-		Identity:       ctxval.Identity(ctx),
+		Authentication:     *authentication,
+		SourceApplictionID: authentication.SourceApplictionID,
+		Identity:           ctxval.Identity(ctx),
 	}
 
 	switch authentication.ProviderType {
@@ -110,9 +110,9 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAzure, func() error {
 			var err error
 			sr := kafka.SourceResult{
-				SourceID:     s.SourceID,
+				ResourceID:   s.SourceApplictionID,
 				Identity:     s.Identity,
-				ResourceType: "Source",
+				ResourceType: "Application",
 			}
 			// TODO: check if source is avavliable - WIP
 			sr.Status = kafka.StatusAvaliable
@@ -132,9 +132,9 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAWS, func() error {
 			var err error
 			sr := kafka.SourceResult{
-				SourceID:     s.SourceID,
+				ResourceID:   s.SourceApplictionID,
 				Identity:     s.Identity,
-				ResourceType: "Source",
+				ResourceType: "Application",
 			}
 			_, err = clients.GetEC2Client(ctx, &s.Authentication, "")
 			if err != nil {
@@ -160,9 +160,9 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeGCP, func() error {
 			var err error
 			sr := kafka.SourceResult{
-				SourceID:     s.SourceID,
+				ResourceID:   s.SourceApplictionID,
 				Identity:     s.Identity,
-				ResourceType: "Source",
+				ResourceType: "Application",
 			}
 			gcpClient, err := clients.GetGCPClient(ctx, &s.Authentication)
 			if err != nil {
