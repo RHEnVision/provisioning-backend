@@ -9,8 +9,9 @@ import (
 )
 
 type Authentication struct {
-	ProviderType models.ProviderType `json:"type"`
-	Payload      string              `json:"payload"`
+	SourceApplictionID string              `json:"source_application_id"`
+	ProviderType       models.ProviderType `json:"type"`
+	Payload            string              `json:"payload"`
 }
 
 func NewAuthentication(str string, provType models.ProviderType) *Authentication {
@@ -21,8 +22,8 @@ func NewAuthentication(str string, provType models.ProviderType) *Authentication
 	return &a
 }
 
-func NewAuthenticationFromSourceAuthType(ctx context.Context, str, authType string) *Authentication {
-	a := Authentication{Payload: str}
+func NewAuthenticationFromSourceAuthType(ctx context.Context, str, authType, appID string) *Authentication {
+	a := Authentication{Payload: str, SourceApplictionID: appID}
 	switch authType {
 	case "provisioning-arn":
 		a.ProviderType = models.ProviderTypeAWS

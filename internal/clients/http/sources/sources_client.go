@@ -139,7 +139,7 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.
 		return nil, err
 	}
 
-	authentication := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, string(*auth.Authtype))
+	authentication := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, string(*auth.Authtype), *auth.ResourceId)
 	return authentication, nil
 }
 
