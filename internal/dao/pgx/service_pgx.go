@@ -21,6 +21,26 @@ func getServiceDao(_ context.Context) dao.ServiceDao {
 	return &serviceDao{}
 }
 
+func UnscopedUpdatePubkey(ctx context.Context, pubkey *models.Pubkey) error {
+	query := `
+		UPDATE pubkeys SET
+			type = $2,
+			name = $3,
+			body = $4,
+			fingerprint = $5,
+			fingerprint_legacy = $6
+		WHERE id = $1`
+
+	tag, err := db.Pool.Exec(ctx, query, pubkey.ID, pubkey.Type, pubkey.Name, pubkey.Body, pubkey.Fingerprint, pubkey.FingerprintLegacy)
+	if err != nil {
+		return fmt.Errorf("pgx error: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+	}
+	return nil
+}
+
 // RecalculatePubkeyFingerprints recalculates fingerprints for all keys which have a blank value in any of
 // the fingerprints or type. The type column with value "test" is also considered as pubkey which needs
 // to be recalculated as this is used in tests. Fingerprints starting with "SHA256" are also considered the same.
@@ -28,8 +48,6 @@ func (x *serviceDao) RecalculatePubkeyFingerprints(ctx context.Context) (int, er
 	total := 0
 	query := `SELECT * FROM pubkeys WHERE type = '' OR type = 'test' OR fingerprint LIKE 'SHA256:%' OR fingerprint = '' OR fingerprint_legacy = ''`
 	logger := ctxval.Logger(ctx)
-
-	pkr := dao.GetPubkeyDao(ctx)
 
 	rows, err := db.Pool.Query(ctx, query)
 	if err != nil {
@@ -51,9 +69,8 @@ func (x *serviceDao) RecalculatePubkeyFingerprints(ctx context.Context) (int, er
 		}
 		logger.Trace().Msgf("Pubkey after: %+v", pk)
 
-		pk.SkipValidation = true // don't validate again
 		logger.Debug().Msgf("Updating pubkey fingerprints of %d named %s", pk.ID, pk.Name)
-		err = pkr.Update(ctx, &pk)
+		err = UnscopedUpdatePubkey(ctx, &pk)
 		if err != nil {
 			return total, fmt.Errorf("pgx update error: %w", err)
 		}
