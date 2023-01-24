@@ -80,6 +80,12 @@ objects:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
               - /pbstatuser
+            initContainers:
+              - name: run-migrations
+                image: "${IMAGE}:${IMAGE_TAG}"
+                command:
+                  - /pbmigrate
+                inheritEnv: true
             env:
               - name: LOGGING_LEVEL
                 value: ${LOGGING_LEVEL}
