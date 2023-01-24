@@ -15,12 +15,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func newContext(t *testing.T) context.Context {
+func newContextWithAccount(t *testing.T) context.Context {
 	return identity.WithTenant(t, context.Background())
 }
 
+func newContext(_ *testing.T) context.Context {
+	return context.Background()
+}
+
 func TestMigrationUpdateFingerprint(t *testing.T) {
-	ctx := newContext(t)
+	testCtx := newContext(t)
+	ctx := newContextWithAccount(t)
+
 	pkDao := dao.GetPubkeyDao(ctx)
 	defer reset()
 
@@ -34,7 +40,7 @@ func TestMigrationUpdateFingerprint(t *testing.T) {
 		require.NotZero(t, pk.ID)
 		require.NoError(t, err)
 
-		err = code.UpdateFingerprints(ctx)
+		err = code.UpdateFingerprints(testCtx)
 		require.NoError(t, err)
 
 		pk2, err := pkDao.GetById(ctx, pk.ID)
@@ -51,7 +57,7 @@ func TestMigrationUpdateFingerprint(t *testing.T) {
 		err = pkDao.Update(ctx, pks[0])
 		require.NoError(t, err)
 
-		err = code.UpdateFingerprints(ctx)
+		err = code.UpdateFingerprints(testCtx)
 		require.NoError(t, err)
 
 		pk2, err := pkDao.GetById(ctx, pks[0].ID)
@@ -70,7 +76,7 @@ func TestMigrationUpdateFingerprint(t *testing.T) {
 			require.NoError(t, err)
 		}
 
-		err = code.UpdateFingerprints(ctx)
+		err = code.UpdateFingerprints(testCtx)
 		require.NoError(t, err)
 	})
 }
