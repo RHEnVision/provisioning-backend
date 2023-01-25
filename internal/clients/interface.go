@@ -89,6 +89,12 @@ var GetServiceAzureClient func(ctx context.Context) (ServiceAzure, error)
 
 type Azure interface {
 	ClientStatuser
+
+	// CreateVM creates Azure virtual machine.
+	// Most of the parameters are constant for now.
+	// imageID is expected in format /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageID}
+	// sshKeyBody should be full public key body
+	CreateVM(ctx context.Context, imageID string, pubkey *models.Pubkey, instanceType InstanceTypeName) (*string, error)
 }
 
 type ServiceAzure interface {

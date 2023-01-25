@@ -3,6 +3,7 @@ package stubs
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
@@ -18,20 +19,35 @@ type SourcesIntegrationStub struct {
 	store           *[]sources.Source
 	authentications *[]sources.AuthenticationRead
 }
-type SourcesClientStub struct{}
+type SourcesClientStub struct {
+	sources []*clients.Source
+	auths   map[string]*clients.Authentication
+}
 
 func init() {
 	// We are currently using SourcesClientStub
-	clients.GetSourcesClient = getSourcesClientStub
+	clients.GetSourcesClient = getSourcesClient
 }
 
 // SourcesClient
 func WithSourcesClient(parent context.Context) context.Context {
-	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesClientStub{})
+	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesClientStub{auths: make(map[string]*clients.Authentication)})
 	return ctx
 }
 
-func getSourcesClientStub(ctx context.Context) (si clients.Sources, err error) {
+func AddSource(ctx context.Context, provider models.ProviderType) (*clients.Source, error) {
+	stub, err := getSourcesClientStub(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return stub.addSource(ctx, provider)
+}
+
+func getSourcesClient(ctx context.Context) (clients.Sources, error) {
+	return getSourcesClientStub(ctx)
+}
+
+func getSourcesClientStub(ctx context.Context) (si *SourcesClientStub, err error) {
 	var ok bool
 	if si, ok = ctx.Value(sourcesCtxKey).(*SourcesClientStub); !ok {
 		err = &contextReadError{}
@@ -39,12 +55,42 @@ func getSourcesClientStub(ctx context.Context) (si clients.Sources, err error) {
 	return si, err
 }
 
+func (stub *SourcesClientStub) addSource(ctx context.Context, provider models.ProviderType) (*clients.Source, error) {
+	id := strconv.Itoa(len(stub.sources) + 2) // starts at 2 as 1 is reserved - TODO migrate users of the implicit id = 1
+	source := &clients.Source{
+		Id:   ptr.To(id),
+		Name: ptr.To("source-" + id),
+	}
+	switch provider {
+	case models.ProviderTypeAWS:
+		stub.auths[id] = clients.NewAuthentication("arn:aws:iam::230214684733:role/Test", provider)
+	case models.ProviderTypeAzure:
+		stub.auths[id] = clients.NewAuthentication("4b9d213f-712f-4d17-a483-8a10bbe9df3a", provider)
+	case models.ProviderTypeGCP:
+		stub.auths[id] = clients.NewAuthentication("test@org.com", provider)
+	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
+		// not implemented
+		return nil, NotImplementedErr
+	}
+
+	stub.sources = append(stub.sources, source)
+	return source, nil
+}
+
+// Implementation
+
 func (*SourcesClientStub) Ready(ctx context.Context) error {
 	return nil
 }
 
-func (mock *SourcesClientStub) GetAuthentication(ctx context.Context, sourceId sources.ID) (*clients.Authentication, error) {
-	return clients.NewAuthentication("arn:aws:iam::230214684733:role/Test", models.ProviderTypeAWS), nil
+func (stub *SourcesClientStub) GetAuthentication(ctx context.Context, sourceId sources.ID) (*clients.Authentication, error) {
+	if sourceId == "1" {
+		return clients.NewAuthentication("arn:aws:iam::230214684733:role/Test", models.ProviderTypeAWS), nil
+	}
+	if auth, ok := stub.auths[sourceId]; ok {
+		return auth, nil
+	}
+	return nil, SourceAuthenticationNotFound
 }
 
 func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (string, error) {
