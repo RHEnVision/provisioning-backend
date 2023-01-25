@@ -14,6 +14,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
+	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -26,6 +27,9 @@ func TestListInstanceTypesHandler(t *testing.T) {
 		ctx = clientStub.WithSourcesClient(ctx)
 		ctx = clientStub.WithEC2Client(ctx)
 
+		rctx := chi.NewRouteContext()
+		ctx = context.WithValue(ctx, chi.RouteCtxKey, rctx)
+		rctx.URLParams.Add("ID", "1")
 		req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources/1/instance_types?region=us-east-1", nil)
 		require.NoError(t, err, "failed to create request")
 
