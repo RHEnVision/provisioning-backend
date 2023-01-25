@@ -23,37 +23,18 @@ func getReservationDao(ctx context.Context) dao.ReservationDao {
 }
 
 func (x *reservationDao) CreateNoop(ctx context.Context, reservation *models.NoopReservation) error {
-	query := `INSERT INTO reservations (provider, account_id, steps, status, step_titles) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
-
-	reservation.AccountID = ctxval.AccountId(ctx)
-
-	err := db.Pool.QueryRow(ctx, query,
-		reservation.Provider,
-		reservation.AccountID,
-		reservation.Steps,
-		reservation.Status,
-		reservation.StepTitles).Scan(&reservation.ID, &reservation.CreatedAt)
-	if err != nil {
-		return fmt.Errorf("pgx error: %w", err)
+	reservation.Provider = models.ProviderTypeNoop
+	if err := x.createGenericReservation(ctx, &reservation.Reservation); err != nil {
+		return fmt.Errorf("failed to create reservation record: %w", err)
 	}
-
 	return nil
 }
 
 func (x *reservationDao) CreateAWS(ctx context.Context, reservation *models.AWSReservation) error {
 	txErr := dao.WithTransaction(ctx, func(tx pgx.Tx) error {
-		reservation.AccountID = ctxval.AccountId(ctx)
-
-		reservationQuery := `INSERT INTO reservations (provider, account_id, steps, status, step_titles)
-		VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
-		err := db.Pool.QueryRow(ctx, reservationQuery,
-			reservation.Provider,
-			reservation.AccountID,
-			reservation.Steps,
-			reservation.Status,
-			reservation.StepTitles).Scan(&reservation.ID, &reservation.CreatedAt)
-		if err != nil {
-			return fmt.Errorf("pgx error: %w", err)
+		reservation.Provider = models.ProviderTypeAWS
+		if err := x.createGenericReservation(ctx, &reservation.Reservation); err != nil {
+			return err
 		}
 
 		awsQuery := `INSERT INTO aws_reservation_details (reservation_id, pubkey_id, source_id, image_id, detail)
@@ -80,19 +61,42 @@ func (x *reservationDao) CreateAWS(ctx context.Context, reservation *models.AWSR
 	return nil
 }
 
-func (x *reservationDao) CreateGCP(ctx context.Context, reservation *models.GCPReservation) error {
+func (x *reservationDao) CreateAzure(ctx context.Context, reservation *models.AzureReservation) error {
 	txErr := dao.WithTransaction(ctx, func(tx pgx.Tx) error {
-		reservation.AccountID = ctxval.AccountId(ctx)
+		reservation.Provider = models.ProviderTypeAzure
+		if err := x.createGenericReservation(ctx, &reservation.Reservation); err != nil {
+			return err
+		}
 
-		reservationQuery := `INSERT INTO reservations (provider, account_id, steps, status)
-		VALUES ($1, $2, $3, $4) RETURNING id, created_at`
-		err := db.Pool.QueryRow(ctx, reservationQuery,
-			reservation.Provider,
-			reservation.AccountID,
-			reservation.Steps,
-			reservation.Status).Scan(&reservation.ID, &reservation.CreatedAt)
+		azureQuery := `INSERT INTO azure_reservation_details (reservation_id, pubkey_id, source_id, image_id, detail)
+			VALUES ($1, $2, $3, $4, $5)`
+		tag, err := db.Pool.Exec(ctx, azureQuery,
+			reservation.ID,
+			reservation.PubkeyID,
+			reservation.SourceID,
+			reservation.ImageID,
+			reservation.Detail)
 		if err != nil {
 			return fmt.Errorf("pgx error: %w", err)
+		}
+		if tag.RowsAffected() != 1 {
+			return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		}
+
+		return nil
+	})
+
+	if txErr != nil {
+		return fmt.Errorf("pgx transaction error: %w", txErr)
+	}
+	return nil
+}
+
+func (x *reservationDao) CreateGCP(ctx context.Context, reservation *models.GCPReservation) error {
+	txErr := dao.WithTransaction(ctx, func(tx pgx.Tx) error {
+		reservation.Provider = models.ProviderTypeGCP
+		if err := x.createGenericReservation(ctx, &reservation.Reservation); err != nil {
+			return err
 		}
 
 		gcpQuery := `INSERT INTO gcp_reservation_details (reservation_id, pubkey_id, source_id, image_id, detail)
@@ -115,6 +119,23 @@ func (x *reservationDao) CreateGCP(ctx context.Context, reservation *models.GCPR
 
 	if txErr != nil {
 		return fmt.Errorf("pgx transaction error: %w", txErr)
+	}
+	return nil
+}
+
+func (x *reservationDao) createGenericReservation(ctx context.Context, reservation *models.Reservation) error {
+	reservation.AccountID = ctxval.AccountId(ctx)
+	reservation.Status = "Created"
+
+	reservationQuery := `INSERT INTO reservations (provider, account_id, steps, status)
+		VALUES ($1, $2, $3, $4) RETURNING id, created_at`
+	err := db.Pool.QueryRow(ctx, reservationQuery,
+		reservation.Provider,
+		reservation.AccountID,
+		reservation.Steps,
+		reservation.Status).Scan(&reservation.ID, &reservation.CreatedAt)
+	if err != nil {
+		return fmt.Errorf("failed to create reservation record: %w", err)
 	}
 	return nil
 }
@@ -154,6 +175,21 @@ func (x *reservationDao) GetAWSById(ctx context.Context, id int64) (*models.AWSR
 		WHERE account_id = $1 AND id = $2 AND id = reservation_id AND provider = provider_type_aws() LIMIT 1`
 	accountId := ctxval.AccountId(ctx)
 	result := &models.AWSReservation{}
+
+	err := pgxscan.Get(ctx, db.Pool, result, query, accountId, id)
+	if err != nil {
+		return nil, fmt.Errorf("pgx error: %w", err)
+	}
+	return result, nil
+}
+
+func (x *reservationDao) GetAzureById(ctx context.Context, id int64) (*models.AzureReservation, error) {
+	query := `SELECT id, reservations.provider, account_id, created_at, steps, step, status, error, finished_at, success,
+    	pubkey_id, source_id, image_id, detail
+		FROM reservations, azure_reservation_details
+		WHERE account_id = $1 AND id = $2 AND id = reservation_id AND reservations.provider = provider_type_azure() LIMIT 1`
+	accountId := ctxval.AccountId(ctx)
+	result := &models.AzureReservation{}
 
 	err := pgxscan.Get(ctx, db.Pool, result, query, accountId, id)
 	if err != nil {
