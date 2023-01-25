@@ -61,3 +61,7 @@ func InstanceTypesForZone(region, zone string, supported *bool) ([]*clients.Inst
 	}
 	return result, nil
 }
+
+func FindInstanceSize(name clients.InstanceTypeName) *clients.InstanceType {
+	return typeInfo.RegisteredTypes.Get(name)
+}
