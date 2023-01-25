@@ -119,7 +119,7 @@ var config struct {
 	Unleash struct {
 		Enabled     bool   `env:"ENABLED" env-default:"false" env-description:"unleash service (feature flags)"`
 		Environment string `env:"ENVIRONMENT" env-default:"" env-description:"unleash environment"`
-		Prefix      string `env:"PREFIX" env-default:"app.provisioning" env-description:"unleash flag prefix"`
+		Prefix      string `env:"PREFIX" env-default:"provisioning" env-description:"unleash flag prefix"`
 		URL         string `env:"URL" env-default:"http://localhost:4242" env-description:"unleash service URL"`
 		Token       string `env:"TOKEN" env-default:"" env-description:"unleash service client access token"`
 	} `env-prefix:"UNLEASH_"`
