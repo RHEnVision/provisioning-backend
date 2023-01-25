@@ -76,6 +76,35 @@ type AWSReservationResponsePayload struct {
 	Instances []string `json:"instances,omitempty"`
 }
 
+type AzureReservationResponsePayload struct {
+	ID int64 `json:"reservation_id"`
+
+	PubkeyID int64 `json:"pubkey_id"`
+
+	SourceID string `json:"source_id"`
+
+	// Azure Location.
+	Location string `json:"location"`
+
+	// Azure Instance size.
+	InstanceSize string `json:"instance_size"`
+
+	// Amount of instances to provision of type: Instance type.
+	Amount int64 `json:"amount"`
+
+	// The ID of the image from which the instance is created.
+	ImageID string `json:"image_id"`
+
+	// Optional name of the instance(s).
+	Name string `json:"name"`
+
+	// Immediately PowerOff the system after initialization.
+	PowerOff bool `json:"poweroff"`
+
+	// Instances IDs, only present for finished reservations.
+	Instances []string `json:"instances,omitempty"`
+}
+
 type GCPReservationResponsePayload struct {
 	ID int64 `json:"reservation_id"`
 
@@ -134,6 +163,30 @@ type AWSReservationRequestPayload struct {
 	PowerOff bool `json:"poweroff"`
 }
 
+type AzureReservationRequestPayload struct {
+	PubkeyID int64 `json:"pubkey_id"`
+
+	SourceID string `json:"source_id"`
+
+	// Image Builder UUID of the image that should be launched. This can be directly Azure image ID.
+	ImageID string `json:"image_id"`
+
+	// Azure Location to deploy into.
+	Location string `json:"location"`
+
+	// Azure Instance type.
+	InstanceSize string `json:"instance_size"`
+
+	// Amount of instances to provision of size: InstanceSize.
+	Amount int64 `json:"amount"`
+
+	// Name of the instance(s).
+	Name string `json:"name"`
+
+	// Immediately power off the system after initialization.
+	PowerOff bool `json:"poweroff"`
+}
+
 type GCPReservationRequestPayload struct {
 	// Pubkey ID.
 	PubkeyID int64 `json:"pubkey_id"`
@@ -153,7 +206,7 @@ type GCPReservationRequestPayload struct {
 	// Image Builder UUID of the image that should be launched.
 	ImageID string `json:"image_id"`
 
-	// Immediately power off the system after initialization
+	// Immediately power off the system after initialization.
 	PowerOff bool `json:"poweroff"`
 }
 
@@ -166,6 +219,14 @@ func (p *AWSReservationRequestPayload) Bind(_ *http.Request) error {
 }
 
 func (p *AWSReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
+	return nil
+}
+
+func (p *AzureReservationRequestPayload) Bind(_ *http.Request) error {
+	return nil
+}
+
+func (p *AzureReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
@@ -205,6 +266,27 @@ func NewAWSReservationResponse(reservation *models.AWSReservation, instances []*
 	}
 	if reservation.AWSReservationID != nil {
 		response.AWSReservationID = *reservation.AWSReservationID
+	}
+	return &response
+}
+
+func NewAzureReservationResponse(reservation *models.AzureReservation, instances []*models.ReservationInstance) render.Renderer {
+	instanceIds := make([]string, len(instances))
+	for iter, inst := range instances {
+		instanceIds[iter] = inst.InstanceID
+	}
+
+	response := AzureReservationResponsePayload{
+		PubkeyID:     reservation.PubkeyID,
+		ImageID:      reservation.ImageID,
+		SourceID:     reservation.SourceID,
+		Location:     reservation.Detail.Location,
+		Amount:       reservation.Detail.Amount,
+		InstanceSize: reservation.Detail.InstanceSize,
+		ID:           reservation.ID,
+		Name:         reservation.Detail.Name,
+		PowerOff:     reservation.Detail.PowerOff,
+		Instances:    instanceIds,
 	}
 	return &response
 }

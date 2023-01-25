@@ -34,7 +34,11 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 	case models.ProviderTypeAWS:
 		CreateAWSReservation(w, r)
 	case models.ProviderTypeAzure:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "azure reservation is not implemented", ProviderTypeNotImplementedError))
+		if config.FeatureEnabled(r.Context(), "azure") {
+			CreateAzureReservation(w, r)
+		} else {
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "azure reservation is not implemented", ProviderTypeNotImplementedError))
+		}
 	case models.ProviderTypeGCP:
 		CreateGCPReservation(w, r)
 	case models.ProviderTypeUnknown:
