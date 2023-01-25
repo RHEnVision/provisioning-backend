@@ -57,6 +57,9 @@ type ReservationDao interface {
 	// CreateAWS creates AWS reservation with details in a single transaction.
 	CreateAWS(ctx context.Context, reservation *models.AWSReservation) error
 
+	// CreateAzure creates Azure reservation with details in a single transaction.
+	CreateAzure(ctx context.Context, reservation *models.AzureReservation) error
+
 	// CreateGCP creates GCP reservation with details in a single transaction.
 	CreateGCP(ctx context.Context, reservation *models.GCPReservation) error
 
@@ -68,6 +71,9 @@ type ReservationDao interface {
 
 	// GetAWSById returns reservation for a particular account.
 	GetAWSById(ctx context.Context, id int64) (*models.AWSReservation, error)
+
+	// GetAzureById returns Azure reservation for a given id.
+	GetAzureById(ctx context.Context, id int64) (*models.AzureReservation, error)
 
 	// List returns reservation for a particular account.
 	List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error)

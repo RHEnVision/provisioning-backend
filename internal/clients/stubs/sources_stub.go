@@ -87,10 +87,12 @@ func (stub *SourcesClientStub) GetAuthentication(ctx context.Context, sourceId s
 	if sourceId == "1" {
 		return clients.NewAuthentication("arn:aws:iam::230214684733:role/Test", models.ProviderTypeAWS), nil
 	}
-	if auth, ok := stub.auths[sourceId]; ok {
-		return auth, nil
+
+	auth, ok := stub.auths[sourceId]
+	if !ok {
+		return nil, SourceAuthenticationNotFound
 	}
-	return nil, SourceAuthenticationNotFound
+	return auth, nil
 }
 
 func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (string, error) {

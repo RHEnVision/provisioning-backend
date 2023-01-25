@@ -29,6 +29,7 @@ func RegisterJobs(logger *zerolog.Logger) {
 	logger.Debug().Msg("Registering job queue handlers and interfaces")
 	workers.RegisterHandler(jobs.TypeNoop, jobs.HandleNoop, jobs.NoopJobArgs{})
 	workers.RegisterHandler(jobs.TypeLaunchInstanceAws, jobs.HandleLaunchInstanceAWS, jobs.LaunchInstanceAWSTaskArgs{})
+	workers.RegisterHandler(jobs.TypeLaunchInstanceAzure, jobs.HandleLaunchInstanceAzure, jobs.LaunchInstanceAzureTaskArgs{})
 	workers.RegisterHandler(jobs.TypeLaunchInstanceGcp, jobs.HandleLaunchInstanceGCP, jobs.LaunchInstanceGCPTaskArgs{})
 }
 

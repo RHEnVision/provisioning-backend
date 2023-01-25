@@ -123,6 +123,38 @@ type GCPReservation struct {
 	Detail *GCPDetail `db:"detail" json:"detail"`
 }
 
+type AzureDetail struct {
+	Location string `json:"location"`
+
+	// Instance name
+	Name string `json:"name"`
+
+	// InstanceSize of Azure VM.
+	InstanceSize string `json:"instance_size"`
+
+	// Amount of instances to provision of type: Instance type.
+	Amount int64 `json:"amount"`
+
+	// Immediately power off the system after initialization
+	PowerOff bool `json:"poweroff"`
+}
+
+type AzureReservation struct {
+	Reservation
+
+	// Pubkey ID.
+	PubkeyID int64 `db:"pubkey_id" json:"pubkey_id"`
+
+	// Source ID.
+	SourceID string `db:"source_id" json:"source_id"`
+
+	// The ID of the image from which the instance is created.
+	ImageID string `json:"image_id"`
+
+	// Detail information is stored as JSON in DB
+	Detail *AzureDetail `db:"detail" json:"detail"`
+}
+
 type ReservationInstance struct {
 	// Reservation ID.
 	ReservationID int64 `db:"reservation_id" json:"reservation_id"`

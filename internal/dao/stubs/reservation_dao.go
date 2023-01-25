@@ -9,17 +9,22 @@ import (
 )
 
 type reservationDaoStub struct {
-	lastId   int64
-	storeAWS []*models.AWSReservation
+	storeAWS   []*models.AWSReservation
+	storeAzure []*models.AzureReservation
 }
 
 func init() {
 	dao.GetReservationDao = getReservationDao
 }
 
-func ReservationStubCount(ctx context.Context) int {
-	pkdao := getReservationDaoStub(ctx)
-	return len(pkdao.storeAWS)
+func AWSReservationStubCount(ctx context.Context) int {
+	resDao := getReservationDaoStub(ctx)
+	return len(resDao.storeAWS)
+}
+
+func AzureReservationStubCount(ctx context.Context) int {
+	resDao := getReservationDaoStub(ctx)
+	return len(resDao.storeAzure)
 }
 
 func getReservationDao(ctx context.Context) dao.ReservationDao {
@@ -27,9 +32,14 @@ func getReservationDao(ctx context.Context) dao.ReservationDao {
 }
 
 func (stub *reservationDaoStub) CreateAWS(ctx context.Context, reservation *models.AWSReservation) error {
-	reservation.ID = stub.lastId + 1
+	reservation.ID = int64(len(stub.storeAWS)) + 1
 	stub.storeAWS = append(stub.storeAWS, reservation)
-	stub.lastId++
+	return nil
+}
+
+func (stub *reservationDaoStub) CreateAzure(ctx context.Context, reservation *models.AzureReservation) error {
+	reservation.ID = int64(len(stub.storeAzure)) + 1
+	stub.storeAzure = append(stub.storeAzure, reservation)
 	return nil
 }
 
@@ -58,6 +68,15 @@ func (stub *reservationDaoStub) GetAWSById(ctx context.Context, id int64) (*mode
 	for _, awsReservation := range stub.storeAWS {
 		if awsReservation.AccountID == ctxAccountId(ctx) && awsReservation.ID == id {
 			return awsReservation, nil
+		}
+	}
+	return nil, dao.ErrNoRows
+}
+
+func (stub *reservationDaoStub) GetAzureById(ctx context.Context, id int64) (*models.AzureReservation, error) {
+	for _, azureReservation := range stub.storeAzure {
+		if azureReservation.AccountID == ctxAccountId(ctx) && azureReservation.ID == id {
+			return azureReservation, nil
 		}
 	}
 	return nil, dao.ErrNoRows
