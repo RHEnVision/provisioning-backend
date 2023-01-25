@@ -11,6 +11,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/go-chi/render"
+	"github.com/rs/zerolog"
 )
 
 // ResponseError is used as a payload for all errors
@@ -39,57 +40,49 @@ func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func NewInvalidRequestError(ctx context.Context, message string, err error) *ResponseError {
-	message = fmt.Sprintf("invalid request: %s", message)
-	ctxval.Logger(ctx).Warn().Err(err).Msg(message)
+func newResponse(ctx context.Context, status int, userMsg string, err error) *ResponseError {
+	var event *zerolog.Event
+	var strError string
+
+	if status < 500 {
+		event = ctxval.Logger(ctx).Warn().Stack()
+	} else {
+		event = ctxval.Logger(ctx).Error().Stack()
+	}
+	if err != nil {
+		event = event.Err(err)
+		strError = err.Error()
+	}
+	if userMsg == "" {
+		userMsg = err.Error()
+	}
+	event.Msg(userMsg)
 
 	return &ResponseError{
-		HTTPStatusCode: 400,
-		Message:        message,
+		HTTPStatusCode: status,
+		Message:        userMsg,
 		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
+		Error:          strError,
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
 	}
+}
+
+func NewInvalidRequestError(ctx context.Context, message string, err error) *ResponseError {
+	message = fmt.Sprintf("Invalid request: %s", message)
+	return newResponse(ctx, http.StatusBadRequest, message, err)
 }
 
 func NewWrongArchitectureUserError(ctx context.Context, err error) *ResponseError {
-	msg := "Image and type architecture mismatch"
-	ctxval.Logger(ctx).Warn().Err(err).Msg(msg)
-
-	return &ResponseError{
-		HTTPStatusCode: 400,
-		Message:        msg,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	return newResponse(ctx, http.StatusBadRequest, "Image and type architecture mismatch", err)
 }
 
 func NewMissingRequestParameterError(ctx context.Context, message string) *ResponseError {
-	ctxval.Logger(ctx).Warn().Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 400,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	return newResponse(ctx, http.StatusBadRequest, message, nil)
 }
 
 func PubkeyDuplicateError(ctx context.Context, message string, err error) *ResponseError {
-	ctxval.Logger(ctx).Warn().Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 422,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	return newResponse(ctx, http.StatusUnprocessableEntity, message, err)
 }
 
 func ClientErrorHelper(err error) (int, string) {
@@ -137,150 +130,63 @@ func ImageBuilderHelper(err error) (int, string) {
 	return 0, ""
 }
 
-func Response(ctx context.Context, status int, message string, err error) *ResponseError {
-	ctxval.Logger(ctx).Error().Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: status,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
-}
-
 func NewClientError(ctx context.Context, err error) *ResponseError {
 	if errors.Is(err, clients.UnknownAuthenticationTypeErr) {
-		return Response(ctx, 500, "unknown authentication type", err)
+		return newResponse(ctx, 500, "Unknown authentication type", err)
 	}
 	if status, message := ImageBuilderHelper(err); status != 0 {
-		return Response(ctx, status, message, err)
+		return newResponse(ctx, status, message, err)
 	}
 	if status, message := SourcesErrorHelper(err); status != 0 {
-		return Response(ctx, status, message, err)
+		return newResponse(ctx, status, message, err)
 	}
 	if status, message := ClientErrorHelper(err); status != 0 {
-		return Response(ctx, status, message, err)
+		return newResponse(ctx, status, message, err)
 	}
-	return Response(ctx, 500, "HTTP service returned unknown client error", err)
+	return newResponse(ctx, 500, "HTTP service returned unknown client error", err)
 }
 
 func NewNotFoundError(ctx context.Context, message string, err error) *ResponseError {
-	message = fmt.Sprintf("not found: %s", message)
-	ctxval.Logger(ctx).Warn().Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 404,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	message = fmt.Sprintf("Not found: %s", message)
+	return newResponse(ctx, http.StatusNotFound, message, err)
 }
 
 func NewEnqueueTaskError(ctx context.Context, message string, err error) *ResponseError {
-	ctxval.Logger(ctx).Error().Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	message = fmt.Sprintf("Task enqueue error: %s", message)
+	return newResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewDAOError(ctx context.Context, message string, err error) *ResponseError {
-	message = fmt.Sprintf("dao error: %s", message)
-	ctxval.Logger(ctx).Error().Err(err).Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	message = fmt.Sprintf("DAO error: %s", message)
+	return newResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewRenderError(ctx context.Context, message string, err error) *ResponseError {
-	ctxval.Logger(ctx).Error().Err(err).Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	message = fmt.Sprintf("Rendering error: %s", message)
+	return newResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewURLParsingError(ctx context.Context, message string, err error) *ResponseError {
-	ctxval.Logger(ctx).Warn().Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 400,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	message = fmt.Sprintf("URL parsing error: %s", message)
+	return newResponse(ctx, http.StatusBadRequest, message, err)
 }
 
 func NewStatusError(ctx context.Context, message string, err error) *ResponseError {
-	ctxval.Logger(ctx).Error().Err(err).Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	message = fmt.Sprintf("Status error: %s", message)
+	return newResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewAWSError(ctx context.Context, message string, err error) *ResponseError {
-	ctxval.Logger(ctx).Error().Err(err).Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	message = fmt.Sprintf("AWS API error: %s", message)
+	return newResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewAzureError(ctx context.Context, message string, err error) *ResponseError {
-	ctxval.Logger(ctx).Error().Err(err).Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	message = fmt.Sprintf("Azure API error: %s", message)
+	return newResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewGCPError(ctx context.Context, message string, err error) *ResponseError {
-	ctxval.Logger(ctx).Error().Err(err).Msg(message)
-
-	return &ResponseError{
-		HTTPStatusCode: 500,
-		Message:        message,
-		TraceId:        ctxval.TraceId(ctx),
-		Error:          err.Error(),
-		Version:        version.BuildCommit,
-		BuildTime:      version.BuildTime,
-	}
+	message = fmt.Sprintf("Google API error: %s", message)
+	return newResponse(ctx, http.StatusInternalServerError, message, err)
 }

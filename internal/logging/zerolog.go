@@ -12,6 +12,7 @@ import (
 	cww "github.com/lzap/cloudwatchwriter2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/pkgerrors"
 )
 
 var hostname string
@@ -61,6 +62,7 @@ func InitializeStdout() {
 		panic(fmt.Errorf("cannot parse log level '%s': %w", config.Logging.Level, err))
 	}
 	zerolog.SetGlobalLevel(level)
+	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 
 	log.Logger = decorate(log.Output(zerolog.ConsoleWriter{
 		Out:        os.Stdout,

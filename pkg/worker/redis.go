@@ -155,7 +155,7 @@ func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 
 func recoverAndLog(ctx context.Context) {
 	if rec := recover(); rec != nil {
-		logger := ctxval.Logger(ctx).Error()
+		logger := ctxval.Logger(ctx).Error().Stack()
 		if err, ok := rec.(error); ok {
 			logger = logger.Err(err)
 		}
