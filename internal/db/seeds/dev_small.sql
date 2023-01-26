@@ -16,7 +16,7 @@ INSERT INTO pubkeys(id, account_id, name, body, type, fingerprint, fingerprint_l
 VALUES (1, 3, 'lzap-ed25519-2021',
         'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap',
         'ssh-ed25519',
-        'gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk',
+        'gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk=',
         '89:c5:99:b5:33:48:1c:84:be:da:cb:97:45:b0:4a:ee')
 ON CONFLICT DO NOTHING;
 
