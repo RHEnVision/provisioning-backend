@@ -117,7 +117,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 			// TODO: check if source is avavliable - WIP
 			sr.Status = kafka.StatusAvaliable
 			chSend <- sr
-			metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeAzure, sr.Status, nil)
+			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure, sr.Status, nil)
 
 			return fmt.Errorf("error during check %w:", err)
 		})
@@ -146,7 +146,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 				sr.Status = kafka.StatusAvaliable
 				chSend <- sr
 			}
-			metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeAWS, sr.Status, err)
+			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS, sr.Status, err)
 			return fmt.Errorf("error during check %w:", err)
 		})
 	}
@@ -181,7 +181,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 				sr.Status = kafka.StatusAvaliable
 				chSend <- sr
 			}
-			metrics.IncTotalAvailabilityCheckReqs(models.ProviderTypeGCP, sr.Status, err)
+			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeGCP, sr.Status, err)
 
 			return fmt.Errorf("error during check %w:", err)
 		})

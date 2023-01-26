@@ -11,13 +11,22 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-var TotalAvailabilityCheckReqs = prometheus.NewCounterVec(
+var TotalSentAvailabilityCheckReqs = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
 		Name:        "provisioning_source_availability_check_request_total",
-		Help:        "availability Check requests count partitioned by type (aws/gcp/azure), source status, component and error",
+		Help:        "availability check requests count partitioned by type (aws/gcp/azure), source status, component and error",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
 	},
 	[]string{"type", "status", "error"},
+)
+
+var TotalReceivedAvailabilityCheckReqs = prometheus.NewCounterVec(
+	prometheus.CounterOpts{
+		Name:        "provisioning_received_source_availability_check_request_total",
+		Help:        "availability check requests count received from sources partitioned by type component and error",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "api"},
+	},
+	[]string{"error"},
 )
 
 var JobQueueSize = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
@@ -31,7 +40,7 @@ var JobQueueSize = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
 var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
 	prometheus.HistogramOpts{
 		Name:        "provisioning_source_availability_check_request_duration_ms",
-		Help:        "Availability check Request duration partitioned by type and error",
+		Help:        "availability check request duration partitioned by type and error",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
 	},
 	[]string{"type", "error"},
@@ -50,18 +59,26 @@ func ObserveAvailablilityCheckReqsDuration(provider models.ProviderType, Observe
 	}
 }
 
-func IncTotalAvailabilityCheckReqs(provider models.ProviderType, StatusType kafka.StatusType, err error) {
+func IncTotalSentAvailabilityCheckReqs(provider models.ProviderType, StatusType kafka.StatusType, err error) {
 	errString := "false"
 	if err != nil {
 		errString = "true"
 	}
-	TotalAvailabilityCheckReqs.WithLabelValues(provider.String(), string(StatusType), errString).Inc()
+	TotalSentAvailabilityCheckReqs.WithLabelValues(provider.String(), string(StatusType), errString).Inc()
+}
+
+func IncTotalReceivedAvailabilityCheckReqs(err error) {
+	errString := "false"
+	if err != nil {
+		errString = "true"
+	}
+	TotalReceivedAvailabilityCheckReqs.WithLabelValues(errString).Inc()
 }
 
 func RegisterStatuserMetrics() {
-	prometheus.MustRegister(TotalAvailabilityCheckReqs, AvailabilityCheckReqsDuration)
+	prometheus.MustRegister(TotalSentAvailabilityCheckReqs, AvailabilityCheckReqsDuration)
 }
 
 func RegisterApiMetrics() {
-	prometheus.MustRegister(JobQueueSize)
+	prometheus.MustRegister(JobQueueSize, TotalReceivedAvailabilityCheckReqs)
 }
