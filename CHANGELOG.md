@@ -1,3 +1,47 @@
+<a name="0.14.0"></a>
+## [0.14.0](https://github.com/RHEnVision/provisioning-backend/compare/0.13.0...0.14.0) (2023-01-25)
+
+### Bug Fixes
+- **HMSPROV-387:** filter out noisy kafka logs ([e0a7b21](https://github.com/RHEnVision/provisioning-backend/commit/e0a7b216744ae4232a6474a795c9ae2967eb99a6))
+- **HMSPROV-387:** use time-based offset for statuser ([bbc59a9](https://github.com/RHEnVision/provisioning-backend/commit/bbc59a9cfc9960afe52db731507e761d6e4e2746))
+- **HMSPROV-390:** RSA fingerprint and migration ([e115286](https://github.com/RHEnVision/provisioning-backend/commit/e115286767281b9401c384c311feeda8820ca588))
+- **HMSPROV-390:** RSA fingerprint and migration ([6ddf275](https://github.com/RHEnVision/provisioning-backend/commit/6ddf275f49f3c947a4ea7357b0a66808b0ac131e))
+- **HMSPROV-390:** unscoped update pubkey fix ([bd30ea8](https://github.com/RHEnVision/provisioning-backend/commit/bd30ea85cd57f19e77390f209c375e72d833eb33))
+- **HMSPROV-425:** incorporate dejq into the app ([f8a0b6f](https://github.com/RHEnVision/provisioning-backend/commit/f8a0b6f5fb5e767d2d0d57f1f11f892c7f014946))
+- **HMSPROV-425:** incorporate dejq into the app ([bf11c14](https://github.com/RHEnVision/provisioning-backend/commit/bf11c14ed178bd98727eb348647ea63732f38f14))
+- **HMSPROV-425:** recover panics in workers ([2a560d5](https://github.com/RHEnVision/provisioning-backend/commit/2a560d524040312ba3984197b8902dce3f1b1007))
+- **HMSPROV-433:** change resource type to application ([72d26d1](https://github.com/RHEnVision/provisioning-backend/commit/72d26d16f5324a0ac5b66d4558acc6a63f86c67c))
+- filtering Provisioning auth for Source ([cebbdb3](https://github.com/RHEnVision/provisioning-backend/commit/cebbdb3df4d21826fc7fdcc66c7fb33939b53e11)), related to [HMSPROV-426](https://issues.redhat.com/browse/HMSPROV-426)
+- image builder clowder config ([29aa59d](https://github.com/RHEnVision/provisioning-backend/commit/29aa59d95cdb1b2fdc99731dcc44d78085932303)), related to [HMSPROV-421](https://issues.redhat.com/browse/HMSPROV-421)
+- unique index on pubkey_resource ([2b68b0a](https://github.com/RHEnVision/provisioning-backend/commit/2b68b0a4240b5ec2e3d77ce64a5ce92292f65097)), related to [HMSPROV-415](https://issues.redhat.com/browse/HMSPROV-415)
+
+### Build
+- Change unleash prefix to only app name ([2932b02](https://github.com/RHEnVision/provisioning-backend/commit/2932b020634011a7f305df8139e71dfe7b4148c8))
+
+### Chore
+- changelog for 0.13.0 ([4a5b30e](https://github.com/RHEnVision/provisioning-backend/commit/4a5b30ef6c0a1a18deecaa28d06c9e4cedff2c57))
+- document and split ctxval package ([f6e8db3](https://github.com/RHEnVision/provisioning-backend/commit/f6e8db38907220c4c911a666ff67bf440ec643ff))
+- improve logger middleware to better visibility ([24919ed](https://github.com/RHEnVision/provisioning-backend/commit/24919edf2fbbc3d79ce7dc82c2fb63c00233ff0b))
+- move EnforceIdentity so it logs through our logger ([603d4f6](https://github.com/RHEnVision/provisioning-backend/commit/603d4f675bb9ba7e06e7e384749f2b7bf5148f1c))
+- optimize ctxval getters ([f73e3a4](https://github.com/RHEnVision/provisioning-backend/commit/f73e3a4ccc78233c92a797957366df0c9944f7b8))
+- prevent kafka SASL creds log leak ([793746c](https://github.com/RHEnVision/provisioning-backend/commit/793746c4ce4c3af36350e8a411ce11a93958ec46))
+- run migrations for statuser ([f5b2e19](https://github.com/RHEnVision/provisioning-backend/commit/f5b2e1992b1987bdb7c95685f7ae2e607a420990))
+- simplify error payload logging ([542f74e](https://github.com/RHEnVision/provisioning-backend/commit/542f74e7965a70c6e2b560e3ad21afb342d5e9e8))
+- use reservation_id instead reservation ([65e5ac3](https://github.com/RHEnVision/provisioning-backend/commit/65e5ac3dfee8b25c561a4fbe9fe90ff2fa495739))
+
+### CI
+- Add testing.yaml for IQE CJI ([a978bda](https://github.com/RHEnVision/provisioning-backend/commit/a978bda0702b238329cfb9bf94ab59e82753272a))
+
+### Code Refactoring
+- Add numeric status code ([0c4591e](https://github.com/RHEnVision/provisioning-backend/commit/0c4591ecb299ea9e42c3036508bf74145966c427))
+
+### Docs
+- Safe zero downtime upgrades ([75caf69](https://github.com/RHEnVision/provisioning-backend/commit/75caf695b7dbffb3a490916f83b35c399fa12346)), related to [HMSPROV-386](https://issues.redhat.com/browse/HMSPROV-386)
+
+### Features
+- **HMSPROV-428:** Add provisioning dashboard ([a93a9f5](https://github.com/RHEnVision/provisioning-backend/commit/a93a9f5589c3400f62fa86d1d93c66859eaf1f4e))
+
+
 <a name="0.13.0"></a>
 ## [0.13.0](https://github.com/RHEnVision/provisioning-backend/compare/0.12.0...0.13.0) (2023-01-12)
 
