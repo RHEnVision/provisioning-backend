@@ -125,7 +125,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 
 	launchJob := worker.Job{
 		Type: jobs.TypeLaunchInstanceAws,
-		Args: &jobs.LaunchInstanceAWSTaskArgs{
+		Args: jobs.LaunchInstanceAWSTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			Region:        reservation.Detail.Region,
