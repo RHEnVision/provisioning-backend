@@ -104,7 +104,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	launchJob := worker.Job{
 		Type: jobs.TypeLaunchInstanceGcp,
-		Args: &jobs.LaunchInstanceGCPTaskArgs{
+		Args: jobs.LaunchInstanceGCPTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			Zone:          reservation.Detail.Zone,
