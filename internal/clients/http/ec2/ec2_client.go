@@ -309,6 +309,25 @@ func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]*clie
 	return instances, nil
 }
 
+func (c *ec2Client) ListInstancesDescription(ctx context.Context, InstanceIds []string) ([]*clients.InstanceDescription, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "istInstancesDescription")
+	defer span.End()
+
+	input := &ec2.DescribeInstancesInput{
+		InstanceIds: InstanceIds,
+	}
+	resp, err := c.ec2.DescribeInstances(ctx, input)
+	if err != nil {
+		if isAWSUnauthorizedError(err) {
+			err = clients.UnauthorizedErr
+		}
+		span.SetStatus(codes.Error, err.Error())
+		return nil, fmt.Errorf("cannot fetch instances description: %w", err)
+	}
+	instancesList := c.parseDescribeInstances(resp)
+	return instancesList, nil
+}
+
 func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "RunInstances")
 	defer span.End()
@@ -362,6 +381,19 @@ func (c *ec2Client) parseRunInstancesResponse(respAWS *ec2.RunInstancesOutput) [
 	list := make([]*string, len(instances))
 	for i, instance := range instances {
 		list[i] = instance.InstanceId
+	}
+	return list
+}
+
+func (c *ec2Client) parseDescribeInstances(respAWS *ec2.DescribeInstancesOutput) []*clients.InstanceDescription {
+	instances := respAWS.Reservations[0].Instances
+	list := make([]*clients.InstanceDescription, len(instances))
+	for i, instance := range instances {
+		list[i] = &clients.InstanceDescription{
+			ID:   instance.InstanceId,
+			IPV4: instance.PublicIpAddress,
+			DNS:  instance.PublicDnsName,
+		}
 	}
 	return list
 }

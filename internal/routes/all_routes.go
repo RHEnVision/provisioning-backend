@@ -79,8 +79,11 @@ func MountAPI(r *chi.Mux) {
 			// Different types do have different payloads, therefore TYPE must be part of
 			// URL and not a URL (filter) parameter.
 			r.Route("/{TYPE}", func(r chi.Router) {
-				r.Get("/{ID}", s.GetReservationDetail)
 				r.Post("/", s.CreateReservation)
+				r.Route("/{ID}", func(r chi.Router) {
+					r.Get("/", s.GetReservationDetail)
+					r.Get("/instances", s.ListInstancesDescription)
+				})
 			})
 			// Generic reservation detail request (no details provided)
 			r.Get("/{ID}", s.GetReservationDetail)
