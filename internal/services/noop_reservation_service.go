@@ -18,7 +18,7 @@ import (
 func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	logger := ctxval.Logger(r.Context())
 	accountId := ctxval.AccountId(r.Context())
-
+	identity := ctxval.Identity(r.Context())
 	rDao := dao.GetReservationDao(r.Context())
 	reservation := &models.NoopReservation{
 		Reservation: models.Reservation{
@@ -40,7 +40,8 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 
 	// create a new job
 	pj := worker.Job{
-		Type: jobs.TypeNoop,
+		Type:     jobs.TypeNoop,
+		Identity: identity,
 		Args: jobs.NoopJobArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,

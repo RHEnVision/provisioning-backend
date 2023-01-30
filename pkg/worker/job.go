@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
 func init() {
@@ -22,6 +23,9 @@ type Job struct {
 
 	// Job type or "queue".
 	Type JobType
+
+	// Associated identity
+	Identity identity.XRHID
 
 	// Job arguments.
 	Args any
