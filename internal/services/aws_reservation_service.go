@@ -17,12 +17,14 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
+	"github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
 func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	logger := *ctxval.Logger(r.Context())
 
 	var accountId int64 = ctxval.AccountId(r.Context())
+	var identity identity.XRHID = ctxval.Identity(r.Context())
 
 	payload := &payloads.AWSReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {
@@ -124,7 +126,8 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	launchJob := worker.Job{
-		Type: jobs.TypeLaunchInstanceAws,
+		Type:     jobs.TypeLaunchInstanceAws,
+		Identity: identity,
 		Args: jobs.LaunchInstanceAWSTaskArgs{
 			AccountID:     accountId,
 			ReservationID: reservation.ID,

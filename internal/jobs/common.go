@@ -27,6 +27,7 @@ func contextLogger(ctx context.Context, job *worker.Job, accountId, reservationI
 	}
 
 	newContext := ctxval.WithAccountId(ctx, accountId)
+	newContext = ctxval.WithIdentity(newContext, job.Identity)
 	newContext = ctxval.WithLogger(newContext, &logger)
 	return newContext
 }
