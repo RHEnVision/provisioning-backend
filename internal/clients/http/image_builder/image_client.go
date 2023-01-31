@@ -71,11 +71,11 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, err
 	if imageStatus.Type != UploadTypesAws {
 		return "", fmt.Errorf("%w: expected image type AWS", http.UnknownImageTypeErr)
 	}
-	ami, ok := imageStatus.Options.(map[string]interface{})["ami"]
-	if !ok {
+	uploadStatus, err := imageStatus.Options.AsAWSUploadStatus()
+	if err != nil {
 		return "", http.AmiNotFoundInStatusErr
 	}
-	return ami.(string), nil
+	return uploadStatus.Ami, nil
 }
 
 func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (string, error) {
@@ -91,17 +91,12 @@ func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (strin
 	if imageStatus.Type != UploadTypesGcp {
 		return "", fmt.Errorf("%w: expected image type GCP", http.UnknownImageTypeErr)
 	}
-	imageName, ok := imageStatus.Options.(map[string]interface{})["image_name"]
-	if !ok {
-		return "", fmt.Errorf("%w: image name was not found", http.NameNotFoundInStatusErr)
+	uploadStatus, err := imageStatus.Options.AsGCPUploadStatus()
+	if err != nil {
+		return "", fmt.Errorf("%w: could not fetch GCP upload status", http.UploadStatusErr)
 	}
 
-	projectID, ok := imageStatus.Options.(map[string]interface{})["project_id"]
-	if !ok {
-		return "", fmt.Errorf("%w: project id was not found", http.IDNotFoundInStatusErr)
-	}
-
-	return fmt.Sprintf("projects/%s/global/images/%s", projectID, imageName.(string)), nil
+	return fmt.Sprintf("projects/%s/global/images/%s", uploadStatus.ProjectId, uploadStatus.ImageName), nil
 }
 
 func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
