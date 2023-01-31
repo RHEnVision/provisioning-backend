@@ -62,6 +62,10 @@
     {
       "description": "Endpoints related to source types",
       "name": "source types"
+    },
+    {
+      "description": "Endpoints related to secrets",
+      "name": "secrets"
     }
   ],
   "paths": {
@@ -1134,10 +1138,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RhcConnectionRead"
-                  }
+                  "$ref": "#/components/schemas/RhcConnectionCollection"
                 }
               }
             }
@@ -1308,10 +1309,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SourcesCollection"
-                  }
+                  "$ref": "#/components/schemas/SourcesCollection"
                 }
               }
             }
@@ -1356,10 +1354,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RhcConnectionCollection"
-                  }
+                  "$ref": "#/components/schemas/RhcConnectionCollection"
                 }
               }
             }
@@ -2051,6 +2046,192 @@
           "sources"
         ]
       }
+    },
+    "/secrets": {
+      "get": {
+        "summary": "List Secrets",
+        "operationId": "listSecrets",
+        "description": "Returns an array of secrets",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryOffset"
+          },
+          {
+            "$ref": "#/components/parameters/QueryFilter"
+          },
+          {
+            "$ref": "#/components/parameters/QuerySortBy"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Secrets collection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecretsCollection"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        },
+        "tags": [
+          "secrets"
+        ]
+      },
+      "post": {
+        "summary": "Create secret",
+        "operationId": "createSecret",
+        "description": "Create a secret with desired credentials",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecretCreate"
+              }
+            }
+          },
+          "description": "Secret attributes",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Resources created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecretRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "secrets"
+        ]
+      }
+    },
+    "/secrets/{id}": {
+      "get": {
+        "summary": "Get a secret",
+        "operationId": "showSecret",
+        "description": "Returns a secret object",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested secrets' payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecretRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "secrets"
+        ]
+      },
+      "patch": {
+        "summary": "Update an existing secret",
+        "operationId": "updateSecret",
+        "description": "Updates a secret object.\n\nAllowed attributes to be updated are `extra` and `password`.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecretEdit"
+              }
+            }
+          },
+          "description": "Secret attributes to update",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The updated secrets' payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecretRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Please check that you are not trying to update unpermitted parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "secrets"
+        ]
+      },
+      "delete": {
+        "summary": "Delete an existing secret",
+        "operationId": "deleteSecret",
+        "description": "Deletes a secret",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Secret deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "tags": [
+          "secrets"
+        ]
+      }
     }
   },
   "servers": [
@@ -2583,6 +2764,7 @@
             "description": "The availability status of the authentication",
             "example": "available",
             "enum": [
+              "in_progress",
               "available",
               "unavailable"
             ]
@@ -2671,6 +2853,7 @@
             "description": "The availability status of the authentication",
             "example": "available",
             "enum": [
+              "in_progress",
               "available",
               "unavailable"
             ]
@@ -2843,6 +3026,7 @@
             "example": "available",
             "enum": [
               "",
+              "in_progress",
               "available",
               "unavailable"
             ],
@@ -2941,6 +3125,7 @@
             "example": "available",
             "enum": [
               "",
+              "in_progress",
               "available",
               "unavailable"
             ],
@@ -3022,6 +3207,7 @@
             "example": "available",
             "enum": [
               "",
+              "in_progress",
               "available",
               "unavailable"
             ],
@@ -3138,6 +3324,7 @@
             "example": "available",
             "enum": [
               "",
+              "in_progress",
               "available",
               "unavailable"
             ],
@@ -3435,6 +3622,94 @@
           }
         }
       },
+      "SecretCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the secret"
+          },
+          "authtype": {
+            "type": "string",
+            "description": "Authentication type of the secret"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the secret"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password of the secret"
+          },
+          "user_scoped": {
+            "type": "boolean",
+            "description": "Defines whether the secret is created with user ownership. Takes user from header"
+          },
+          "extra": {
+            "description": "Any extra information you want stored for the secret, in JSON format",
+            "type": "object"
+          }
+        }
+      },
+      "SecretRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ID"
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Name of the secret"
+          },
+          "authtype": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Authentication type of the secret"
+          },
+          "username": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Username of the secret"
+          },
+          "extra": {
+            "description": "Any extra information you want stored for the secret, in JSON format",
+            "type": "object"
+          }
+        }
+      },
+      "SecretsCollection": {
+        "description": "An array containing Secret objects",
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadata"
+          },
+          "links": {
+            "$ref": "#/components/schemas/CollectionLinks"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecretRead"
+            }
+          }
+        }
+      },
+      "SecretEdit": {
+        "type": "object",
+        "description": "The payload that the backend accepts when editing a Secret",
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "Password of the secret"
+          },
+          "extra": {
+            "description": "Any extra information you want stored for the secret, in JSON format",
+            "type": "object"
+          }
+        }
+      },
       "Source": {
         "type": "object",
         "properties": {
@@ -3720,6 +3995,11 @@
                   "example": "My shiny source",
                   "type": "string"
                 },
+                "source_ref": {
+                  "description": "The external referece or ID for the source",
+                  "example": "my-long-external-ref",
+                  "type": "string"
+                },
                 "source_type_name": {
                   "description": "The type of the source that will be created",
                   "example": "amazon",
@@ -3731,12 +4011,20 @@
                     "google",
                     "github",
                     "gitlab",
-                    "oracle-cloud-infraestructure",
+                    "oracle-cloud-infrastructure",
                     "openshift",
                     "quay",
                     "rh-marketplace",
                     "satellite",
                     "ibm"
+                  ],
+                  "type": "string"
+                },
+                "app_creation_workflow": {
+                  "description": "The way the source is going to be created: manually, or using superkey?",
+                  "enum": [
+                    "manual_configuration",
+                    "account_authorization"
                   ],
                   "type": "string"
                 }
@@ -3756,6 +4044,11 @@
                 "source_name": {
                   "description": "The name of the source this endpoint will be attached to",
                   "example": "My shiny source",
+                  "type": "string"
+                },
+                "certificate_authority": {
+                  "description": "Optional X.509 Certificate Authority.",
+                  "example": "Let's Encrypt",
                   "type": "string"
                 },
                 "host": {
@@ -3880,9 +4173,9 @@
                 "resource_type": {
                   "description": "The type of the resource this authentication relates to",
                   "enum": [
-                    "application",
-                    "endpoint",
-                    "source"
+                    "Application",
+                    "Endpoint",
+                    "Source"
                   ],
                   "example": "application",
                   "type": "string"
@@ -3924,7 +4217,7 @@
             "description": "An array containing the created authentications",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AuthenticationCreate"
+              "$ref": "#/components/schemas/AuthenticationRead"
             }
           }
         }

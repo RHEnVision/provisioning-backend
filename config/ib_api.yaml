@@ -260,7 +260,7 @@ paths:
           required: true
           schema:
             type: string
-            enum: ['x86_64']
+            enum: ['x86_64', 'aarch64']
           description: architecture to look up packages for
         - in: query
           name: search
@@ -347,6 +347,7 @@ components:
       required:
         - arch
         - image_types
+        - repositories
       properties:
         arch:
           type: string
@@ -356,6 +357,11 @@ components:
           items:
             type: string
             example: 'qcow2'
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Repository'
+          description: Base repositories for the given distribution and architecture.
     ComposeStatus:
       required:
         - image_status
@@ -470,8 +476,10 @@ components:
         - rhel-84
         - rhel-85
         - rhel-86
+        - rhel-87
         - rhel-9
         - rhel-90
+        - rhel-91
         - centos-8
         - centos-9
         - fedora-35
@@ -488,8 +496,9 @@ components:
           type: string
           enum:
             - x86_64
+            - aarch64
           description: |
-            CPU architecture of the image, only x86_64 is currently supported.
+            CPU architecture of the image, x86_64 and aarch64 are currently supported.
         image_type:
           $ref: '#/components/schemas/ImageTypes'
         upload_request:
@@ -579,12 +588,16 @@ components:
       enum: ['aws', 'gcp', 'azure', 'aws.s3']
     AWSUploadRequestOptions:
       type: object
-      required:
-        - share_with_accounts
       properties:
         share_with_accounts:
           type: array
           example: ['123456789012']
+          items:
+            type: string
+          uniqueItems: true
+        share_with_sources:
+          type: array
+          example: ['12345']
           items:
             type: string
           uniqueItems: true
@@ -731,6 +744,11 @@ components:
       properties:
         url:
           type: string
+        contenturl:
+          type: string
+          description: |
+            A URL which, if set, is used for fetching content. Implies that `url` is set as well,
+            which will be used for metadata only.
         ref:
           type: string
           example: 'rhel/8/x86_64/edge'
@@ -741,6 +759,12 @@ components:
             02604b2da6e954bd34b8b82a835e5a77d2b60ffa), or a branch-like
             reference (example: rhel/8/x86_64/edge)
           example: 'rhel/8/x86_64/edge'
+        rhsm:
+          type: boolean
+          description: |
+            Determines whether a valid subscription manager (candlepin) identity is required to
+            access this repository. Consumer certificates will be used as client certificates when
+            fetching metadata and content.
     PackagesResponse:
       type: object
       required:

@@ -129,10 +129,8 @@ func ImageBuilderHelper(err error) (int, string) {
 		return 500, "unknown image type"
 	} else if errors.Is(err, httpClients.AmiNotFoundInStatusErr) {
 		return 404, "image builder did not find AMI in status"
-	} else if errors.Is(err, httpClients.NameNotFoundInStatusErr) {
-		return 404, "image builder did not find image name in image status"
-	} else if errors.Is(err, httpClients.IDNotFoundInStatusErr) {
-		return 404, "image builder did not find project id in image status"
+	} else if errors.Is(err, httpClients.UploadStatusErr) {
+		return 404, "could not fetch upload status from image builder"
 	}
 	return 0, ""
 }
