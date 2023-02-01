@@ -24,7 +24,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	logger := *ctxval.Logger(r.Context())
 
 	var accountId int64 = ctxval.AccountId(r.Context())
-	var identity identity.XRHID = ctxval.Identity(r.Context())
+	var id identity.XRHID = ctxval.Identity(r.Context())
 
 	payload := &payloads.AWSReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {
@@ -126,10 +126,10 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	launchJob := worker.Job{
-		Type:     jobs.TypeLaunchInstanceAws,
-		Identity: identity,
+		Type:      jobs.TypeLaunchInstanceAws,
+		Identity:  id,
+		AccountID: accountId,
 		Args: jobs.LaunchInstanceAWSTaskArgs{
-			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			Region:        reservation.Detail.Region,
 			PubkeyID:      pk.ID,

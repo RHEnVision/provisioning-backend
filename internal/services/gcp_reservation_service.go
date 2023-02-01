@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/redhatinsights/platform-go-middlewares/identity"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -13,14 +15,13 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
-	"github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
 func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	logger := *ctxval.Logger(r.Context())
 
 	var accountId int64 = ctxval.AccountId(r.Context())
-	var identity identity.XRHID = ctxval.Identity(r.Context())
+	var id identity.XRHID = ctxval.Identity(r.Context())
 
 	payload := &payloads.GCPReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {
@@ -105,10 +106,10 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	logger.Trace().Msgf("Image Name is %s", name)
 
 	launchJob := worker.Job{
-		Type:     jobs.TypeLaunchInstanceGcp,
-		Identity: identity,
+		Type:      jobs.TypeLaunchInstanceGcp,
+		AccountID: accountId,
+		Identity:  id,
 		Args: jobs.LaunchInstanceGCPTaskArgs{
-			AccountID:     accountId,
 			ReservationID: reservation.ID,
 			Zone:          reservation.Detail.Zone,
 			PubkeyID:      reservation.PubkeyID,

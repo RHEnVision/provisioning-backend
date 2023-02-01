@@ -4,22 +4,18 @@ import (
 	"context"
 	"fmt"
 
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
-	"github.com/RHEnVision/provisioning-backend/internal/ptr"
-	"github.com/RHEnVision/provisioning-backend/pkg/worker"
-
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 )
 
 type LaunchInstanceGCPTaskArgs struct {
 	// Associated reservation
 	ReservationID int64
-
-	// Associated account
-	AccountID int64
 
 	// Zone to provision the instances into
 	Zone string
@@ -45,7 +41,8 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 		return
 	}
 
-	ctx = contextLogger(ctx, job, args.AccountID, args.ReservationID)
+	logger := ctxval.Logger(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	ctx = ctxval.WithLogger(ctx, &logger)
 
 	jobErr := DoLaunchInstanceGCP(ctx, &args)
 
@@ -54,11 +51,8 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 
 // Job logic, when error is returned the job status is updated accordingly
 func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
-	ctxLogger := ctxval.Logger(ctx)
-	ctxLogger.Debug().Msg("Started launch instance GCP job")
-
-	ctx = ctxval.WithAccountId(ctx, args.AccountID)
-	logger := ctxLogger.With().Int64("reservation_id", args.ReservationID).Logger()
+	logger := ctxval.Logger(ctx)
+	logger.Debug().Msg("Started launch instance GCP job")
 	logger.Info().Interface("args", args).Msg("Processing launch instance GCP job")
 
 	// status updates before and after the code logic

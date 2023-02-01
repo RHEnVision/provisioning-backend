@@ -11,7 +11,6 @@ import (
 )
 
 type NoopJobArgs struct {
-	AccountID     int64
 	ReservationID int64
 
 	// Indicates that the test should fail, used only in tests.
@@ -28,7 +27,8 @@ func HandleNoop(ctx context.Context, job *worker.Job) {
 		return
 	}
 
-	ctx = contextLogger(ctx, job, args.AccountID, args.ReservationID)
+	logger := ctxval.Logger(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	ctx = ctxval.WithLogger(ctx, &logger)
 
 	jobErr := DoNoop(ctx, &args)
 

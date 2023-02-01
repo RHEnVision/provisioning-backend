@@ -49,6 +49,7 @@ func (w *MemoryWorker) DequeueLoop(ctx context.Context) {
 func (w *MemoryWorker) dequeueLoop(ctx context.Context) {
 	for job := range w.todo {
 		if h, ok := w.handlers[job.Type]; ok {
+			ctx = contextLogger(ctx, job)
 			h(ctx, job)
 		} else {
 			ctxval.Logger(ctx).Warn().Msgf("Memory worker handler not found for job type: %s", job.Type)

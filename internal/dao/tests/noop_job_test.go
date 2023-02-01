@@ -46,9 +46,9 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 
 				// create new job
 				job := worker.Job{
-					Type: jobs.TypeNoop,
+					AccountID: 1,
+					Type:      jobs.TypeNoop,
 					Args: jobs.NoopJobArgs{
-						AccountID:     1,
 						ReservationID: res.ID,
 						Fail:          false,
 					},
@@ -86,9 +86,9 @@ func TestReservationNoopOneSuccess(t *testing.T) {
 
 				// create new job
 				job := worker.Job{
-					Type: jobs.TypeNoop,
+					Type:      jobs.TypeNoop,
+					AccountID: 1,
 					Args: jobs.NoopJobArgs{
-						AccountID:     1,
 						ReservationID: res.ID,
 						Fail:          true,
 					},

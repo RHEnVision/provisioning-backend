@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+
 	"github.com/google/uuid"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 )
@@ -23,6 +25,9 @@ type Job struct {
 
 	// Job type or "queue".
 	Type JobType
+
+	// Associated account.
+	AccountID int64
 
 	// Associated identity
 	Identity identity.XRHID
@@ -61,4 +66,19 @@ type Stats struct {
 
 	// Number of jobs currently being processed
 	InFlight int64
+}
+
+func contextLogger(ctx context.Context, job *Job) context.Context {
+	accountId := job.AccountID
+	id := job.Identity
+	logger := ctxval.Logger(ctx).With().
+		Str("job_id", job.ID.String()).
+		Int64("account_id", accountId).
+		Str("account_number", id.Identity.AccountNumber).
+		Str("org_id", id.Identity.OrgID).Logger()
+	newContext := ctxval.WithLogger(ctx, &logger)
+	newContext = ctxval.WithIdentity(newContext, id)
+	newContext = ctxval.WithAccountId(newContext, accountId)
+
+	return newContext
 }
