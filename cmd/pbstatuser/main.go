@@ -14,6 +14,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 
 	// Clients
@@ -54,8 +55,8 @@ var (
 	senderWG     = sync.WaitGroup{}
 )
 
-func processMessage(ctx context.Context, message *kafka.GenericMessage) {
-	logger := ctxval.Logger(ctx)
+func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
+	logger := ctxval.Logger(origCtx)
 
 	// Get source id
 	asm, err := kafka.NewAvailabilityStatusMessage(message)
@@ -65,6 +66,10 @@ func processMessage(ctx context.Context, message *kafka.GenericMessage) {
 	}
 
 	sourceId := asm.SourceID
+
+	// Set source id as logging field
+	logger = ptr.To(logger.With().Str("source_id", sourceId).Logger())
+	ctx := ctxval.WithLogger(origCtx, logger)
 
 	// Get sources client
 	sourcesClient, err := clients.GetSourcesClient(ctx)
@@ -119,7 +124,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 			chSend <- sr
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure, sr.Status, nil)
 
-			return fmt.Errorf("error during check %w:", err)
+			return fmt.Errorf("error during check: %w", err)
 		})
 	}
 }
@@ -147,7 +152,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 				chSend <- sr
 			}
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS, sr.Status, err)
-			return fmt.Errorf("error during check %w:", err)
+			return fmt.Errorf("error during check: %w", err)
 		})
 	}
 }
@@ -183,7 +188,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 			}
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeGCP, sr.Status, err)
 
-			return fmt.Errorf("error during check %w:", err)
+			return fmt.Errorf("error during check: %w", err)
 		})
 	}
 }
