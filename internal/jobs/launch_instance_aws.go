@@ -19,9 +19,6 @@ type LaunchInstanceAWSTaskArgs struct {
 	// Associated reservation
 	ReservationID int64
 
-	// Associated account
-	AccountID int64
-
 	// Region to provision the instances into
 	Region string
 
@@ -49,7 +46,8 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 		return
 	}
 
-	ctx = contextLogger(ctx, job, args.AccountID, args.ReservationID)
+	logger := ctxval.Logger(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	ctx = ctxval.WithLogger(ctx, &logger)
 
 	jobErr := DoEnsurePubkeyOnAWS(ctx, &args)
 	if jobErr != nil {
@@ -64,8 +62,8 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 
 // Job logic, when error is returned the job status is updated accordingly
 func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
-	ctxLogger := ctxval.Logger(ctx)
-	ctxLogger.Debug().Msg("Started pubkey upload AWS job")
+	logger := ctxval.Logger(ctx)
+	logger.Debug().Msg("Started pubkey upload AWS job")
 
 	// skip job if reservation already contains errors
 	err := checkExistingError(ctx, args.ReservationID)
@@ -73,8 +71,6 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 		return fmt.Errorf("step skipped: %w", err)
 	}
 
-	ctx = ctxval.WithAccountId(ctx, args.AccountID)
-	logger := ctxLogger.With().Int64("reservation_id", args.ReservationID).Logger()
 	logger.Info().Interface("args", args).Msg("Processing pubkey upload AWS job")
 
 	// status updates before and after the code logic
@@ -155,11 +151,9 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 }
 
 func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
-	ctxLogger := ctxval.Logger(ctx)
-	ctxLogger.Debug().Msg("Started launch instance AWS job")
+	logger := ctxval.Logger(ctx)
+	logger.Debug().Msg("Started launch instance AWS job")
 
-	ctx = ctxval.WithAccountId(ctx, args.AccountID)
-	logger := ctxLogger.With().Int64("reservation_id", args.ReservationID).Logger()
 	logger.Info().Interface("args", args).Msg("Processing launch instance AWS job")
 
 	// status updates before and after the code logic

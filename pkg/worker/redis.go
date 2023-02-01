@@ -202,6 +202,7 @@ func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
 	logger := loggerWithJob(ctx, job)
 
 	logger.Info().Msg("Dequeued job from Redis")
+	ctx = contextLogger(ctx, job)
 	if h, ok := w.handlers[job.Type]; ok {
 		h(ctx, job)
 	} else {

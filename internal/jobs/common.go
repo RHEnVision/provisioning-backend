@@ -7,30 +7,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
-	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 )
-
-func contextLogger(ctx context.Context, job *worker.Job, accountId, reservationId int64) context.Context {
-	logger := ctxval.Logger(ctx).With().
-		Str("job_id", job.ID.String()).
-		Int64("reservation_id", reservationId).
-		Int64("account_id", accountId).Logger()
-
-	ad := dao.GetAccountDao(ctx)
-	account, err := ad.GetById(ctx, accountId)
-	if err != nil {
-		logger.Warn().Msgf("Unable to fetch account info for: %d", accountId)
-	} else {
-		logger = logger.With().
-			Str("account_number", account.AccountNumber.String).
-			Str("org_id", account.OrgID).Logger()
-	}
-
-	newContext := ctxval.WithAccountId(ctx, accountId)
-	newContext = ctxval.WithIdentity(newContext, job.Identity)
-	newContext = ctxval.WithLogger(newContext, &logger)
-	return newContext
-}
 
 func finishJob(ctx context.Context, reservationId int64, jobErr error) {
 	if jobErr != nil {

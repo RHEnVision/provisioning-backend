@@ -93,7 +93,6 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 			require.NoError(t, err, "failed to add stubbed reservation")
 
 			args := &jobs.LaunchInstanceAWSTaskArgs{
-				AccountID:     1,
 				ReservationID: reservation.ID,
 				Region:        reservation.Detail.Region,
 				PubkeyID:      pk.ID,
@@ -132,7 +131,6 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 		require.NoError(t, err, "failed to add stubbed reservation")
 
 		args := &jobs.LaunchInstanceAWSTaskArgs{
-			AccountID:     1,
 			ReservationID: reservation.ID,
 			Region:        reservation.Detail.Region,
 			PubkeyID:      pk.ID,

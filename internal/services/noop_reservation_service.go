@@ -40,10 +40,10 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 
 	// create a new job
 	pj := worker.Job{
-		Type:     jobs.TypeNoop,
-		Identity: identity,
+		Type:      jobs.TypeNoop,
+		AccountID: accountId,
+		Identity:  identity,
 		Args: jobs.NoopJobArgs{
-			AccountID:     accountId,
 			ReservationID: reservation.ID,
 		},
 	}
