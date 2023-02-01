@@ -39,7 +39,7 @@ const ChannelBuffer = 32
 type SourceInfo struct {
 	Authentication clients.Authentication
 
-	SourceApplictionID string
+	SourceApplicationID string
 
 	Identity identity.XRHID
 }
@@ -85,9 +85,9 @@ func processMessage(ctx context.Context, message *kafka.GenericMessage) {
 	}
 
 	s := SourceInfo{
-		Authentication:     *authentication,
-		SourceApplictionID: authentication.SourceApplictionID,
-		Identity:           ctxval.Identity(ctx),
+		Authentication:      *authentication,
+		SourceApplicationID: authentication.SourceApplictionID,
+		Identity:            ctxval.Identity(ctx),
 	}
 
 	switch authentication.ProviderType {
@@ -110,7 +110,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAzure, func() error {
 			var err error
 			sr := kafka.SourceResult{
-				ResourceID:   s.SourceApplictionID,
+				ResourceID:   s.SourceApplicationID,
 				Identity:     s.Identity,
 				ResourceType: "Application",
 			}
@@ -132,7 +132,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAWS, func() error {
 			var err error
 			sr := kafka.SourceResult{
-				ResourceID:   s.SourceApplictionID,
+				ResourceID:   s.SourceApplicationID,
 				Identity:     s.Identity,
 				ResourceType: "Application",
 			}
@@ -160,7 +160,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeGCP, func() error {
 			var err error
 			sr := kafka.SourceResult{
-				ResourceID:   s.SourceApplictionID,
+				ResourceID:   s.SourceApplicationID,
 				Identity:     s.Identity,
 				ResourceType: "Application",
 			}
