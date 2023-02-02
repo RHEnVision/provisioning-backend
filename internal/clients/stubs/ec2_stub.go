@@ -11,9 +11,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
-type ec2CtxKeyType string
+type ec2CtxKeyType int
 
-var ec2CtxKey ec2CtxKeyType = "ec2-interface"
+const ec2CtxKey ec2CtxKeyType = iota
 
 type EC2ClientStub struct {
 	Imported []*types.KeyPairInfo
@@ -51,7 +51,7 @@ func getEC2StubFromContext(ctx context.Context) (*EC2ClientStub, error) {
 	var err error
 	var ok bool
 	if si, ok = ctx.Value(ec2CtxKey).(*EC2ClientStub); !ok {
-		err = &contextReadError{}
+		err = ContextReadError
 	}
 	return si, err
 }

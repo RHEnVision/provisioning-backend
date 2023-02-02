@@ -18,6 +18,7 @@ const TraceName = "github.com/RHEnVision/provisioning-backend/internal/jobs/laun
 const (
 	resourceGroupName = "redhat-deployed"
 	location          = "eastus"
+	vmName            = "redhat-vm"
 )
 
 var LaunchInstanceAzureSteps = []string{"Prepare resource group", "Launch instance(s)"}
@@ -126,7 +127,7 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 	}
 
 	// TODO create multiple
-	instanceId, err := azureClient.CreateVM(ctx, location, resourceGroupName, args.AzureImageID, pubkey, clients.InstanceTypeName(reservation.Detail.InstanceSize))
+	instanceId, err := azureClient.CreateVM(ctx, location, resourceGroupName, args.AzureImageID, pubkey, clients.InstanceTypeName(reservation.Detail.InstanceSize), vmName)
 	if err != nil {
 		span.SetStatus(codes.Error, "failed to create Azure instance")
 		return fmt.Errorf("cannot create Azure instance(s): %w", err)
