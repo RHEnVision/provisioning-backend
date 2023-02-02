@@ -62,6 +62,7 @@ func InitializeStdout() {
 		panic(fmt.Errorf("cannot parse log level '%s': %w", config.Logging.Level, err))
 	}
 	zerolog.SetGlobalLevel(level)
+	//nolint:reassign
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 
 	log.Logger = decorate(log.Output(zerolog.ConsoleWriter{
