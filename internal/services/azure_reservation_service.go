@@ -94,8 +94,8 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 		ImageID:  payload.ImageID,
 		Detail:   detail,
 	}
-	reservation.Steps = 1
-	reservation.StepTitles = []string{"Launch instance(s)"}
+	reservation.Steps = int32(len(jobs.LaunchInstanceAzureSteps))
+	reservation.StepTitles = jobs.LaunchInstanceAzureSteps
 
 	// create reservation in the database
 	err = rDao.CreateAzure(r.Context(), reservation)

@@ -26,35 +26,25 @@ var subscriptionId string
 const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
 
 const (
-	resourceGroupName = "redhat-deployed"
-	vmName            = "redhat-vm"
-	vnetName          = "redhat-vnet"
-	subnetName        = "redhat-subnet"
-	nsgName           = "redhat-nsg"
-	nicName           = "redhat-nic"
-	diskName          = "redhat-disk"
-	publicIPName      = "redhat-public-ip"
-	location          = "eastus"
-	adminUsername     = "azureuser"
-	vpnIPAddress      = "172.22.0.0/16"
+	vmName        = "redhat-vm"
+	vnetName      = "redhat-vnet"
+	subnetName    = "redhat-subnet"
+	nsgName       = "redhat-nsg"
+	nicName       = "redhat-nic"
+	diskName      = "redhat-disk"
+	publicIPName  = "redhat-public-ip"
+	adminUsername = "azureuser"
+	vpnIPAddress  = "172.22.0.0/16"
 )
 
-func (c *client) CreateVM(ctx context.Context, imageID string, pubkey *models.Pubkey, instanceType clients.InstanceTypeName) (*string, error) {
+func (c *client) CreateVM(ctx context.Context, location string, resourceGroupName string, imageID string, pubkey *models.Pubkey, instanceType clients.InstanceTypeName) (*string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "CreateVM")
 	defer span.End()
 
 	logger := logger(ctx)
 	logger.Debug().Msg("Creating Azure VM instance")
 
-	resourceGroup, err := c.getOrCreateResourceGroup(ctx, resourceGroupName, location)
-	if err != nil {
-		span.SetStatus(codes.Error, "cannot create resource group")
-		logger.Error().Err(err).Msgf("cannot create resource group")
-		return nil, err
-	}
-	logger.Trace().Msgf("Using resource group id=%s", *resourceGroup.ID)
-
-	virtualNetwork, err := c.createVirtualNetwork(ctx, resourceGroupName, vnetName)
+	virtualNetwork, err := c.createVirtualNetwork(ctx, location, resourceGroupName, vnetName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create virtual network")
 		logger.Error().Err(err).Msgf("cannot create virtual network")
@@ -107,7 +97,7 @@ func (c *client) CreateVM(ctx context.Context, imageID string, pubkey *models.Pu
 	return virtualMachine.ID, nil
 }
 
-func (c *client) getOrCreateResourceGroup(ctx context.Context, name string, location string) (*armresources.ResourceGroup, error) {
+func (c *client) EnsureResourceGroup(ctx context.Context, name string, location string) (*string, error) {
 	resourceGroupClient, err := c.newResourceGroupsClient(ctx)
 	if err != nil {
 		return nil, err
@@ -116,7 +106,7 @@ func (c *client) getOrCreateResourceGroup(ctx context.Context, name string, loca
 	logger := logger(ctx)
 	getResp, err := resourceGroupClient.Get(ctx, name, nil)
 	if err == nil {
-		return &getResp.ResourceGroup, nil
+		return getResp.ResourceGroup.ID, nil
 	}
 	if err != nil {
 		var azErr *azcore.ResponseError
@@ -139,10 +129,10 @@ func (c *client) getOrCreateResourceGroup(ctx context.Context, name string, loca
 		return nil, fmt.Errorf("cannot create resource group: %w", err)
 	}
 
-	return &resp.ResourceGroup, nil
+	return resp.ResourceGroup.ID, nil
 }
 
-func (c *client) createVirtualNetwork(ctx context.Context, resourceGroupName string, name string) (*armnetwork.VirtualNetwork, error) {
+func (c *client) createVirtualNetwork(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.VirtualNetwork, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "createVirtualNetwork")
 	defer span.End()
 
