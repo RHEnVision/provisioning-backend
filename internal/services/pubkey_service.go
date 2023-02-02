@@ -1,10 +1,12 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -108,24 +110,25 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 			if res.Handle != "" {
 				logger.Info().Msgf("Deleting pubkey resource ID %v with handle %s", res.ID, res.Handle)
 				authentication, errAuth := sourcesClient.GetAuthentication(r.Context(), res.SourceID)
-				if errAuth != nil {
-					renderError(w, r, payloads.NewClientError(r.Context(), errAuth))
-					return
-				}
+				if errAuth == nil {
+					ec2Client, errEc2 := clients.GetEC2Client(r.Context(), authentication, res.Region)
+					if errEc2 != nil {
+						renderError(w, r, payloads.NewAWSError(r.Context(), "unable to get AWS client", errEc2))
+						return
+					}
 
-				ec2Client, errEc2 := clients.GetEC2Client(r.Context(), authentication, res.Region)
-				if errEc2 != nil {
-					renderError(w, r, payloads.NewAWSError(r.Context(), "unable to get AWS client", errEc2))
-					return
-				}
-
-				errDelete := ec2Client.DeleteSSHKey(r.Context(), res.Handle)
-				if errDelete != nil {
-					renderError(w, r, payloads.NewAWSError(r.Context(), "unable to delete AWS public key", errDelete))
-					return
+					errDelete := ec2Client.DeleteSSHKey(r.Context(), res.Handle)
+					if errDelete != nil {
+						renderError(w, r, payloads.NewAWSError(r.Context(), "unable to delete AWS public key", errDelete))
+						return
+					}
+				} else if errors.Is(errAuth, httpClients.AuthenticationForSourcesNotFoundErr) {
+					logger.Warn().Msgf("Skipping source %s authorization which is no longer available", res.SourceID)
+				} else {
+					logger.Warn().Err(errAuth).Msgf("Skipping source %s authorization because sources returned an error: %s", res.SourceID, errAuth.Error())
 				}
 			} else {
-				logger.Warn().Msgf("Pubkey resource with empty handle: resource ID %d", res.ID)
+				logger.Warn().Msgf("Skipping pubkey resource %d with empty handle", res.ID)
 			}
 		} else {
 			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "delete not implemented for this provider", ProviderTypeNotImplementedError))
