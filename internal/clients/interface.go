@@ -97,7 +97,7 @@ type Azure interface {
 	// Most of the parameters are constant for now.
 	// imageID is expected in format /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageID}
 	// sshKeyBody should be full public key body
-	CreateVM(ctx context.Context, location string, resourceGroupName string, imageID string, pubkey *models.Pubkey, instanceType InstanceTypeName) (*string, error)
+	CreateVM(ctx context.Context, location string, resourceGroupName string, imageID string, pubkey *models.Pubkey, instanceType InstanceTypeName, vmName string) (*string, error)
 }
 
 type ServiceAzure interface {

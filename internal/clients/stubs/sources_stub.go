@@ -50,7 +50,7 @@ func getSourcesClient(ctx context.Context) (clients.Sources, error) {
 func getSourcesClientStub(ctx context.Context) (si *SourcesClientStub, err error) {
 	var ok bool
 	if si, ok = ctx.Value(sourcesCtxKey).(*SourcesClientStub); !ok {
-		err = &contextReadError{}
+		err = ContextReadError
 	}
 	return si, err
 }

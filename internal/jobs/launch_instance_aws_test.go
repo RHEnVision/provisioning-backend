@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func prepareContext(t *testing.T) context.Context {
+func prepareEC2Context(t *testing.T) context.Context {
 	t.Helper()
 
 	ctx := daoStubs.WithAccountDaoOne(context.Background())
@@ -30,7 +30,7 @@ func prepareContext(t *testing.T) context.Context {
 	return ctx
 }
 
-func prepareReservation(t *testing.T, ctx context.Context, pk *models.Pubkey) *models.AWSReservation {
+func prepareAWSReservation(t *testing.T, ctx context.Context, pk *models.Pubkey) *models.AWSReservation {
 	t.Helper()
 	detail := &models.AWSDetail{
 		Region:       "us-east-1",
@@ -68,7 +68,7 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 
 	for _, testKey := range keys {
 		t.Run("exists_"+testKey.KeyType, func(t *testing.T) {
-			ctx := prepareContext(t)
+			ctx := prepareEC2Context(t)
 			pkt := factories.PubkeyWithTrans(t, ctx, testKey.Pubkey)
 
 			// using a static key for which we know it's real AWS fingerprint
@@ -87,7 +87,7 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 			})
 			require.NoError(t, err, "failed to add stubbed key to ec2 stub")
 
-			reservation := prepareReservation(t, ctx, pk)
+			reservation := prepareAWSReservation(t, ctx, pk)
 			rDao := dao.GetReservationDao(ctx)
 			err = rDao.CreateAWS(ctx, reservation)
 			require.NoError(t, err, "failed to add stubbed reservation")
@@ -116,7 +116,7 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 	}
 
 	t.Run("not_exists", func(t *testing.T) {
-		ctx := prepareContext(t)
+		ctx := prepareEC2Context(t)
 
 		pk := &models.Pubkey{
 			Name: factories.SeqNameWithPrefix("pubkey"),
@@ -125,7 +125,7 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 		err := daoStubs.AddPubkey(ctx, pk)
 		require.NoError(t, err, "failed to add stubbed key")
 
-		reservation := prepareReservation(t, ctx, pk)
+		reservation := prepareAWSReservation(t, ctx, pk)
 		rDao := dao.GetReservationDao(ctx)
 		err = rDao.CreateAWS(ctx, reservation)
 		require.NoError(t, err, "failed to add stubbed reservation")

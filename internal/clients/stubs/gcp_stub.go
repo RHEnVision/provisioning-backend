@@ -38,7 +38,7 @@ func WithGCPCCustomerClient(parent context.Context) context.Context {
 func getCustomerGCPClientStub(ctx context.Context, auth *clients.Authentication) (si clients.GCP, err error) {
 	var ok bool
 	if si, ok = ctx.Value(gcpCtxKey).(*GCPClientStub); !ok {
-		err = &contextReadError{}
+		err = ContextReadError
 	}
 	return si, err
 }
@@ -46,7 +46,7 @@ func getCustomerGCPClientStub(ctx context.Context, auth *clients.Authentication)
 func getServiceGCPClientStub(ctx context.Context) (si clients.ServiceGCP, err error) {
 	var ok bool
 	if si, ok = ctx.Value(serviceGCPCtxKey).(*GCPServiceClientStub); !ok {
-		err = &contextReadError{}
+		err = ContextReadError
 	}
 	return si, err
 }
