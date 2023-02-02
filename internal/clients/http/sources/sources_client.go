@@ -197,6 +197,7 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 	return "", http.ApplicationTypeNotFoundErr
 }
 
+//nolint:exhaustive
 func filterSourceAuthentications(authentications []AuthenticationRead) (AuthenticationRead, error) {
 	for _, auth := range authentications {
 		if *auth.ResourceType == "Application" {
@@ -205,23 +206,7 @@ func filterSourceAuthentications(authentications []AuthenticationRead) (Authenti
 				AuthenticationReadAuthtypeProvisioningLighthouseSubscriptionId,
 				AuthenticationReadAuthtypeProvisioningProjectId:
 				return auth, nil
-			case AuthenticationReadAuthtypeAccessKeySecretKey,
-				AuthenticationReadAuthtypeApiTokenAccountId,
-				AuthenticationReadAuthtypeArn,
-				AuthenticationReadAuthtypeBitbucketAppPassword,
-				AuthenticationReadAuthtypeCloudMeterArn,
-				AuthenticationReadAuthtypeDockerAccessToken,
-				AuthenticationReadAuthtypeGithubPersonalAccessToken,
-				AuthenticationReadAuthtypeGitlabPersonalAccessToken,
-				AuthenticationReadAuthtypeLighthouseSubscriptionId,
-				AuthenticationReadAuthtypeMarketplaceToken,
-				AuthenticationReadAuthtypeOcid,
-				AuthenticationReadAuthtypeProjectIdServiceAccountJson,
-				AuthenticationReadAuthtypeQuayEncryptedPassword,
-				AuthenticationReadAuthtypeReceptorNode,
-				AuthenticationReadAuthtypeTenantIdClientIdClientSecret,
-				AuthenticationReadAuthtypeToken,
-				AuthenticationReadAuthtypeUsernamePassword:
+			default:
 				continue
 			}
 		}
