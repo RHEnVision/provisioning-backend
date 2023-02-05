@@ -5,7 +5,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/background"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
-	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
 )
@@ -24,6 +23,5 @@ func AvailabilityStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	background.EnqueueAvailabilityStatusRequest(&msg)
-	metrics.IncTotalReceivedAvailabilityCheckReqs(err)
 	writeOk(w, r)
 }

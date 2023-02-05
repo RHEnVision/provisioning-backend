@@ -20,13 +20,12 @@ var TotalSentAvailabilityCheckReqs = prometheus.NewCounterVec(
 	[]string{"type", "status", "error"},
 )
 
-var TotalReceivedAvailabilityCheckReqs = prometheus.NewCounterVec(
+var TotalInvalidAvailabilityCheckReqs = prometheus.NewCounter(
 	prometheus.CounterOpts{
-		Name:        "provisioning_received_source_availability_check_request_total",
-		Help:        "availability check requests count received from sources partitioned by type component and error",
-		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "api"},
+		Name:        "provisioning_invalid_source_availability_check_request_total",
+		Help:        "invalid availability check requests count partitioned by component",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
 	},
-	[]string{"error"},
 )
 
 var JobQueueSize = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
@@ -67,18 +66,14 @@ func IncTotalSentAvailabilityCheckReqs(provider models.ProviderType, StatusType 
 	TotalSentAvailabilityCheckReqs.WithLabelValues(provider.String(), string(StatusType), errString).Inc()
 }
 
-func IncTotalReceivedAvailabilityCheckReqs(err error) {
-	errString := "false"
-	if err != nil {
-		errString = "true"
-	}
-	TotalReceivedAvailabilityCheckReqs.WithLabelValues(errString).Inc()
+func IncTotalInvalidAvailabilityCheckReqs() {
+	TotalInvalidAvailabilityCheckReqs.Inc()
 }
 
 func RegisterStatuserMetrics() {
-	prometheus.MustRegister(TotalSentAvailabilityCheckReqs, AvailabilityCheckReqsDuration)
+	prometheus.MustRegister(TotalSentAvailabilityCheckReqs, AvailabilityCheckReqsDuration, TotalInvalidAvailabilityCheckReqs)
 }
 
 func RegisterApiMetrics() {
-	prometheus.MustRegister(JobQueueSize, TotalReceivedAvailabilityCheckReqs)
+	prometheus.MustRegister(JobQueueSize)
 }
