@@ -61,9 +61,10 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	// Get source id
 	asm, err := kafka.NewAvailabilityStatusMessage(message)
 	if err != nil {
-		logger.Warn().Err(err).Msgf("could not get availability status message %s", err)
+		logger.Warn().Err(err).Msgf("Could not get availability status message %s", err)
 		return
 	}
+	logger.Trace().Msgf("Received a message from sources to be processed with source id %s", asm.SourceID)
 
 	sourceId := asm.SourceID
 
@@ -81,6 +82,7 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	// Fetch authentication from Sources
 	authentication, err := sourcesClient.GetAuthentication(ctx, sourceId)
 	if err != nil {
+		metrics.IncTotalInvalidAvailabilityCheckReqs()
 		if errors.Is(err, clients.NotFoundErr) {
 			logger.Warn().Err(err).Msgf("Not found error: %s", err)
 			return
@@ -109,9 +111,11 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 }
 
 func checkSourceAvailabilityAzure(ctx context.Context) {
+	logger := ctxval.Logger(ctx)
 	defer processingWG.Done()
 
 	for s := range chAzure {
+		logger.Trace().Msgf("Checking Azure source availability status %s", s.SourceApplicationID)
 		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAzure, func() error {
 			var err error
 			sr := kafka.SourceResult{
@@ -134,6 +138,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chAws {
+		logger.Trace().Msgf("Checking AWS source availability status %s", s.SourceApplicationID)
 		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAWS, func() error {
 			var err error
 			sr := kafka.SourceResult{
@@ -162,6 +167,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chGcp {
+		logger.Trace().Msgf("Checking GCP source availability status %s", s.SourceApplicationID)
 		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeGCP, func() error {
 			var err error
 			sr := kafka.SourceResult{
