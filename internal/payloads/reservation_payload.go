@@ -36,10 +36,10 @@ type GenericReservationResponsePayload struct {
 	Error string `json:"error"`
 
 	// Time when reservation was finished or nil when it's still processing.
-	FinishedAt *time.Time `json:"finished_at"`
+	FinishedAt *time.Time `json:"finished_at" nullable:"true"`
 
 	// Flag indicating success, error or unknown state (NULL). See Status for the actual error.
-	Success *bool `json:"success"`
+	Success *bool `json:"success" nullable:"true"`
 }
 
 type AWSReservationResponsePayload struct {
