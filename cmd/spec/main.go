@@ -66,6 +66,8 @@ func main() {
 	gen.addSchema("v1.NoopReservationResponse", &payloads.NoopReservationResponsePayload{})
 	gen.addSchema("v1.AWSReservationRequest", &payloads.AWSReservationRequestPayload{})
 	gen.addSchema("v1.AWSReservationResponse", &payloads.AWSReservationResponsePayload{})
+	gen.addSchema("v1.AzureReservationRequest", &payloads.AzureReservationRequestPayload{})
+	gen.addSchema("v1.AzureReservationResponse", &payloads.AzureReservationResponsePayload{})
 	gen.addSchema("v1.AvailabilityStatusRequest", &payloads.AvailabilityStatusRequest{})
 	gen.addSchema("v1.AccountIDTypeResponse", &payloads.AccountIdentityResponse{})
 	gen.addSchema("v1.LaunchTemplatesResponse", &payloads.LaunchTemplateResponse{})

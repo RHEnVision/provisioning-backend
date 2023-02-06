@@ -135,6 +135,78 @@
         },
         "type": "object"
       },
+      "v1.AzureReservationRequest": {
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "image_id": {
+            "type": "string"
+          },
+          "instance_size": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "poweroff": {
+            "type": "boolean"
+          },
+          "pubkey_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1.AzureReservationResponse": {
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "image_id": {
+            "type": "string"
+          },
+          "instance_size": {
+            "type": "string"
+          },
+          "instances": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "location": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "poweroff": {
+            "type": "boolean"
+          },
+          "pubkey_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reservation_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "v1.InstanceTypeResponse": {
         "properties": {
           "architecture": {
@@ -255,6 +327,7 @@
           },
           "finished_at": {
             "format": "date-time",
+            "nullable": true,
             "type": "string"
           },
           "id": {
@@ -282,6 +355,7 @@
             "type": "integer"
           },
           "success": {
+            "nullable": true,
             "type": "boolean"
           }
         },
@@ -615,6 +689,74 @@
               }
             },
             "description": "Returns detailed reservation information for an AWS reservation."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/reservations/azure": {
+      "post": {
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. An Azure reservation is a reservation created for an Azure job. Image Builder UUID image is required and needs to be stored under same account as provided by SourceID.\n",
+        "operationId": "createAzureReservation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/v1.AzureReservationRequest"
+              }
+            }
+          },
+          "description": "aws request body",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.AzureReservationResponse"
+                }
+              }
+            },
+            "description": "Returned on success."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/reservations/azure/{ID}": {
+      "get": {
+        "description": "Return an Azure reservation with details by id",
+        "operationId": "getAzureReservationByID",
+        "parameters": [
+          {
+            "description": "Reservation ID, must be an Azure reservation otherwise 404 is returned",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.AzureReservationResponse"
+                }
+              }
+            },
+            "description": "Returns detailed reservation information for an Azure reservation."
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
