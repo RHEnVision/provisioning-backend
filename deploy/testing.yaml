@@ -18,7 +18,7 @@ objects:
         debug: false
         dynaconfEnvName: stage_post_deploy
         filter: ''
-        marker: 'smoke and api'
+        marker: 'stage'
 parameters:
 - name: IMAGE_TAG
   value: ''
