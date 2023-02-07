@@ -93,6 +93,8 @@ type EC2 interface {
 
 	// Returns AWS account number.
 	GetAccountId(ctx context.Context) (string, error)
+
+	CheckPermission(ctx context.Context, auth *Authentication) ([]string, error)
 }
 
 // GetAzureClient returns an Azure client with customer's subscription ID.
