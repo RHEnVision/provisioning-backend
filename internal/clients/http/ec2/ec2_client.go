@@ -279,8 +279,8 @@ func (c *ec2Client) ListAllZones(ctx context.Context, region clients.Region) ([]
 	return result, nil
 }
 
-func (c *ec2Client) ListInstanceTypesWithPaginator(ctx context.Context) ([]*clients.InstanceType, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListInstanceTypesWithPaginator")
+func (c *ec2Client) ListInstanceTypes(ctx context.Context) ([]*clients.InstanceType, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListInstanceTypes")
 	defer span.End()
 
 	input := &ec2.DescribeInstanceTypesInput{MaxResults: ptr.ToInt32(100)}

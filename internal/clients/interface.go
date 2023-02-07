@@ -64,26 +64,28 @@ var GetServiceEC2Client func(ctx context.Context, region string) (EC2, error)
 type EC2 interface {
 	ClientStatuser
 
-	// ListAllRegions returns list of all EC2 regions
+	// ListAllRegions returns list of all EC2 regions.
 	ListAllRegions(ctx context.Context) ([]Region, error)
 
-	// ListAllZones returns list of all EC2 zones within a Region
+	// ListAllZones returns list of all EC2 zones within a Region.
 	ListAllZones(ctx context.Context, region Region) ([]Zone, error)
 
-	// ImportPubkey imports new ssh key-pair with given tag returning its AWS ID
+	// ImportPubkey imports new ssh key-pair with given tag returning its AWS ID.
 	ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error)
 
-	// GetPubkeyName fetches the AWS key name using given pubkey fingerprint
+	// GetPubkeyName fetches the AWS key name using given pubkey fingerprint.
 	GetPubkeyName(ctx context.Context, fingerprint string) (string, error)
 
-	// DeleteSSHKey deletes a given ssh key-pair found by AWS ID
+	// DeleteSSHKey deletes a given ssh key-pair found by AWS ID.
 	DeleteSSHKey(ctx context.Context, handle string) error
 
-	ListInstanceTypesWithPaginator(ctx context.Context) ([]*InstanceType, error)
+	// ListInstanceTypesWithPaginator lists all instance types.
+	ListInstanceTypes(ctx context.Context) ([]*InstanceType, error)
 
-	// RunInstances launches one or more instances
+	// RunInstances launches one or more instances.
 	RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error)
 
+	// Returns AWS account number.
 	GetAccountId(ctx context.Context) (string, error)
 }
 
