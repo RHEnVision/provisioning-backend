@@ -19,6 +19,7 @@ var (
 	ProviderTypeNotImplementedError = errors.New("provider type not yet implemented")
 	UnknownInstanceTypeNameError    = errors.New("unknown instance type")
 	ArchitectureMismatch            = errors.New("instance type and image architecture mismatch")
+	BothTypeAndTemplateMissingError = errors.New("instance type or launch template not set")
 )
 
 // CreateReservation dispatches requests to type provider specific handlers

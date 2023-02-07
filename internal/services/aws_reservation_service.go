@@ -35,23 +35,33 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	rDao := dao.GetReservationDao(r.Context())
 	pkDao := dao.GetPubkeyDao(r.Context())
 
-	// validate architecture match (hardcoded since image builder currently only supports x86_64)
-	supportedArch := "x86_64"
-	it := types.FindInstanceType(clients.InstanceTypeName(payload.InstanceType))
-	if it == nil {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown type: %s", payload.InstanceType), UnknownInstanceTypeNameError))
-		return
-	}
-	if it.Architecture.String() != supportedArch {
-		renderError(w, r, payloads.NewWrongArchitectureUserError(r.Context(), ArchitectureMismatch))
+	// Either Launch Template or Instance Type must be set. Both can be set too, in that case, instance type overrides the launch template.
+	if payload.InstanceType == "" && payload.LaunchTemplateID == "" {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Both instance type and launch template are missing", BothTypeAndTemplateMissingError))
 		return
 	}
 
+	// Validate architecture match (hardcoded since image builder currently only supports x86_64). This can be only done
+	// when launch template is not set.
+	if payload.LaunchTemplateID == "" {
+		supportedArch := "x86_64"
+		it := types.FindInstanceType(clients.InstanceTypeName(payload.InstanceType))
+		if it == nil {
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown type: %s", payload.InstanceType), UnknownInstanceTypeNameError))
+			return
+		}
+		if it.Architecture.String() != supportedArch {
+			renderError(w, r, payloads.NewWrongArchitectureUserError(r.Context(), ArchitectureMismatch))
+			return
+		}
+	}
+
 	detail := &models.AWSDetail{
-		Region:       payload.Region,
-		InstanceType: payload.InstanceType,
-		Amount:       payload.Amount,
-		PowerOff:     payload.PowerOff,
+		Region:           payload.Region,
+		LaunchTemplateID: payload.LaunchTemplateID,
+		InstanceType:     payload.InstanceType,
+		Amount:           payload.Amount,
+		PowerOff:         payload.PowerOff,
 	}
 	reservation := &models.AWSReservation{
 		PubkeyID: payload.PubkeyID,
@@ -63,7 +73,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.Status = "Created"
 	reservation.Provider = models.ProviderTypeAWS
 	reservation.Steps = 2
-	reservation.StepTitles = []string{"Upload public key", "Launch instance(s)"}
+	reservation.StepTitles = []string{"Ensure public key", "Launch instance(s)"}
 	newName := config.Application.InstancePrefix + payload.Name
 	reservation.Detail.Name = &newName
 
@@ -105,8 +115,8 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var ami string
-	if strings.HasPrefix(reservation.ImageID, "ami-") {
-		// Direct AMI ID was provided, no need to call image builder
+	if reservation.ImageID == "" || strings.HasPrefix(reservation.ImageID, "ami-") {
+		// Direct AMI or no image were provided (launch template), no need to call image builder
 		ami = reservation.ImageID
 	} else {
 		// Get Image builder client
@@ -130,13 +140,14 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		Identity:  id,
 		AccountID: accountId,
 		Args: jobs.LaunchInstanceAWSTaskArgs{
-			ReservationID: reservation.ID,
-			Region:        reservation.Detail.Region,
-			PubkeyID:      pk.ID,
-			SourceID:      reservation.SourceID,
-			Detail:        reservation.Detail,
-			AMI:           ami,
-			ARN:           authentication,
+			ReservationID:    reservation.ID,
+			Region:           reservation.Detail.Region,
+			PubkeyID:         pk.ID,
+			SourceID:         reservation.SourceID,
+			Detail:           reservation.Detail,
+			AMI:              ami,
+			LaunchTemplateID: reservation.Detail.LaunchTemplateID,
+			ARN:              authentication,
 		},
 	}
 

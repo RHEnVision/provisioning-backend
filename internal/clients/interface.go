@@ -82,8 +82,14 @@ type EC2 interface {
 	// ListInstanceTypesWithPaginator lists all instance types.
 	ListInstanceTypes(ctx context.Context) ([]*InstanceType, error)
 
+	// ListLaunchTemplates lists all launch templates.
+	ListLaunchTemplates(ctx context.Context) ([]*LaunchTemplate, error)
+
 	// RunInstances launches one or more instances.
-	RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error)
+	//
+	// All arguments are required except: launchTemplateID (empty string means no template in use).
+	//
+	RunInstances(ctx context.Context, launchTemplateID string, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error)
 
 	// Returns AWS account number.
 	GetAccountId(ctx context.Context) (string, error)

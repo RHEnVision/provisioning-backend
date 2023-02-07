@@ -309,7 +309,37 @@ func (c *ec2Client) ListInstanceTypes(ctx context.Context) ([]*clients.InstanceT
 	return instances, nil
 }
 
-func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
+func (c *ec2Client) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListLaunchTemplates")
+	defer span.End()
+
+	input := &ec2.DescribeLaunchTemplatesInput{MaxResults: ptr.ToInt32(100)}
+	pag := ec2.NewDescribeLaunchTemplatesPaginator(c.ec2, input)
+
+	var res []*clients.LaunchTemplate
+	for pag.HasMorePages() {
+		resp, err := pag.NextPage(ctx)
+		if err != nil {
+			if isAWSUnauthorizedError(err) {
+				err = clients.UnauthorizedErr
+			}
+			span.SetStatus(codes.Error, err.Error())
+			return nil, fmt.Errorf("cannot list launch templates: %w", err)
+		}
+
+		for _, awsTemplate := range resp.LaunchTemplates {
+			t := clients.LaunchTemplate{
+				ID:   ptr.From(awsTemplate.LaunchTemplateId),
+				Name: ptr.From(awsTemplate.LaunchTemplateName),
+			}
+			res = append(res, &t)
+		}
+	}
+
+	return res, nil
+}
+
+func (c *ec2Client) RunInstances(ctx context.Context, launchTemplateID string, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "RunInstances")
 	defer span.End()
 
@@ -319,14 +349,22 @@ func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32
 	logger := logger(ctx)
 	logger.Trace().Msg("Run AWS EC2 instance")
 
+	var templateSpec *types.LaunchTemplateSpecification
+	if launchTemplateID != "" {
+		templateSpec = &types.LaunchTemplateSpecification{
+			LaunchTemplateId: ptr.To(launchTemplateID),
+		}
+	}
+
 	encodedUserData := base64.StdEncoding.EncodeToString(userData)
 	input := &ec2.RunInstancesInput{
-		MaxCount:     ptr.To(amount),
-		MinCount:     ptr.To(amount),
-		InstanceType: instanceType,
-		ImageId:      ptr.To(AMI),
-		KeyName:      &keyName,
-		UserData:     &encodedUserData,
+		LaunchTemplate: templateSpec,
+		MaxCount:       ptr.To(amount),
+		MinCount:       ptr.To(amount),
+		InstanceType:   instanceType,
+		ImageId:        ptr.To(AMI),
+		KeyName:        &keyName,
+		UserData:       &encodedUserData,
 	}
 	if name != nil {
 		input.TagSpecifications = []types.TagSpecification{
@@ -341,6 +379,7 @@ func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32
 			},
 		}
 	}
+
 	resp, err := c.ec2.RunInstances(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
@@ -349,11 +388,13 @@ func (c *ec2Client) RunInstances(ctx context.Context, name *string, amount int32
 		span.SetStatus(codes.Error, err.Error())
 		return nil, nil, fmt.Errorf("cannot run instances: %w", err)
 	}
+
 	instances := c.parseRunInstancesResponse(resp)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		return nil, nil, fmt.Errorf("cannot ParseRunInstancesResponse: %w", err)
 	}
+
 	return instances, resp.ReservationId, nil
 }
 

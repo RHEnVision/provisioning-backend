@@ -142,7 +142,20 @@ func (mock *EC2ClientStub) ListInstanceTypes(ctx context.Context) ([]*clients.In
 	}, nil
 }
 
-func (mock *EC2ClientStub) RunInstances(ctx context.Context, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
+func (mock *EC2ClientStub) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, error) {
+	return []*clients.LaunchTemplate{
+		{
+			ID:   "lt-8732678436272377",
+			Name: "Nano ARM64 load balancer",
+		},
+		{
+			ID:   "lt-8732678438462378",
+			Name: "XXLarge AMD64 database",
+		},
+	}, nil
+}
+
+func (mock *EC2ClientStub) RunInstances(ctx context.Context, launchTemplateID string, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
 	return nil, nil, nil
 }
 

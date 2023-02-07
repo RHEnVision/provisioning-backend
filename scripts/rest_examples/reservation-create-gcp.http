@@ -8,8 +8,8 @@ X-Rh-Identity: {{identity}}
   "zone": "us-central1-a",
   "source_id": "3",
   "image_id": "80967e7f-efef-4eee-85b0-bd4cef4c455d",
-  "amount": 2,
+  "amount": 1,
   "machine_type": "n1-standard-1",
-  "pubkey_id": 1,
+  "pubkey_id": {{pubkey_id}},
   "poweroff": true
 }
