@@ -48,7 +48,8 @@ func (s *APISchemaGen) addResponse(name string, description string, ref string) 
 func main() {
 	gen := APISchemaGen{}
 	gen.init()
-	// payloads
+
+	// payloads - MAKE SURE THE TYPE HAS JSON/YAML Go STRUCT TAGS (or "map key XXX not found" error occurs)
 	gen.addSchema("v1.PubkeyRequest", &payloads.PubkeyRequest{})
 	gen.addSchema("v1.PubkeyResponse", &payloads.PubkeyResponse{})
 	gen.addSchema("v1.SourceResponse", &payloads.SourceResponse{})
@@ -59,6 +60,7 @@ func main() {
 	gen.addSchema("v1.AWSReservationResponse", &payloads.AWSReservationResponsePayload{})
 	gen.addSchema("v1.AvailabilityStatusRequest", &payloads.AvailabilityStatusRequest{})
 	gen.addSchema("v1.AccountIDTypeResponse", &payloads.AccountIdentityResponse{})
+	gen.addSchema("v1.LaunchTemplatesResponse", &payloads.LaunchTemplateResponse{})
 
 	// error payloads
 	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})

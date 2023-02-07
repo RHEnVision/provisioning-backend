@@ -9,6 +9,6 @@ X-Rh-Identity: {{identity}}
   "image_id": "9be1ff26-da9e-4947-9cd7-eaa7a87c00f0",
   "amount": 1,
   "instance_size": "Standard_B1ls",
-  "pubkey_id": 2,
+  "pubkey_id": {{pubkey_id}},
   "poweroff": true
 }

@@ -45,6 +45,9 @@
           "instance_type": {
             "type": "string"
           },
+          "launch_template_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -84,6 +87,9 @@
               "type": "string"
             },
             "type": "array"
+          },
+          "launch_template_id": {
+            "type": "string"
           },
           "name": {
             "type": "string"
@@ -166,6 +172,17 @@
           "vcpus": {
             "format": "int32",
             "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "v1.LaunchTemplatesResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
           }
         },
         "type": "object"
@@ -753,7 +770,7 @@
             }
           },
           {
-            "description": "List instance types of the specified region",
+            "description": "Hyperscaler region",
             "in": "query",
             "name": "region",
             "required": true,
@@ -769,6 +786,54 @@
                 "schema": {
                   "items": {
                     "$ref": "#/components/schemas/v1.InstanceTypeResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Return on success."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/sources/{ID}/launch_templates": {
+      "get": {
+        "description": "Return a list of launch templates",
+        "operationId": "getLaunchTemplatesList",
+        "parameters": [
+          {
+            "description": "Source ID from Sources Database",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Hyperscaler region",
+            "in": "query",
+            "name": "region",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/v1.LaunchTemplatesResponse"
                   },
                   "type": "array"
                 }

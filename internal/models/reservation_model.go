@@ -56,7 +56,10 @@ type AWSDetail struct {
 	// Optional instance name
 	Name *string `json:"name"`
 
-	// AWS Instance type.
+	// Optional launch template id ("lt-987432987342") or empty string
+	LaunchTemplateID string `json:"launch_template_id"`
+
+	// AWS Instance type. Can be blank if LaunchTemplateID is set.
 	InstanceType string `json:"instance_type"`
 
 	// Amount of instances to provision of type: Instance type.
@@ -82,6 +85,7 @@ type AWSReservation struct {
 	AWSReservationID *string `db:"aws_reservation_id" json:"aws_reservation_id"`
 
 	// The ID of the image from which the instance is created. AMI's must be prefixed with 'ami-'.
+	// Can be also set to blank, in that case launch template with a valid AMI must be provided.
 	ImageID string `db:"image_id" json:"image_id"`
 
 	// Detail information is stored as JSON in DB

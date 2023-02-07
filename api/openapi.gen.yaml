@@ -143,10 +143,10 @@ paths:
           '500':
             $ref: "#/components/responses/InternalError"
   /sources/{ID}/instance_types:
-      get:
-        description: 'Return a list of instance types (DEPRECATED: use /instance_types)'
-        operationId: getInstanceTypeList
-        parameters:
+    get:
+      description: 'Return a list of instance types (DEPRECATED: use /instance_types)'
+      operationId: getInstanceTypeList
+      parameters:
         - in: path
           name: ID
           schema:
@@ -159,20 +159,51 @@ paths:
           schema:
             type: string
           required: true
-          description: List instance types of the specified region
-        responses:
-          '200':
-            description: Return on success.
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/v1.InstanceTypeResponse'
-          '404':
-            $ref: "#/components/responses/NotFound"
-          '500':
-            $ref: "#/components/responses/InternalError"
+          description: Hyperscaler region
+      responses:
+        '200':
+          description: Return on success.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/v1.InstanceTypeResponse'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalError"
+  /sources/{ID}/launch_templates:
+    get:
+      description: Return a list of launch templates
+      operationId: getLaunchTemplatesList
+      parameters:
+        - in: path
+          name: ID
+          schema:
+            type: integer
+            format: int64
+          required: true
+          description: Source ID from Sources Database
+        - in: query
+          name: region
+          schema:
+            type: string
+          required: true
+          description: Hyperscaler region
+      responses:
+        '200':
+          description: Return on success.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/v1.LaunchTemplatesResponse'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalError"
   /instance_types/{PROVIDER}:
     get:
       description: >
@@ -369,6 +400,8 @@ components:
           type: string
         instance_type:
           type: string
+        launch_template_id:
+          type: string
         name:
           type: string
         poweroff:
@@ -396,6 +429,8 @@ components:
           items:
             type: string
           type: array
+        launch_template_id:
+          type: string
         name:
           type: string
         poweroff:
@@ -451,6 +486,13 @@ components:
         vcpus:
           format: int32
           type: integer
+      type: object
+    v1.LaunchTemplatesResponse:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
       type: object
     v1.NoopReservationResponse:
       properties:

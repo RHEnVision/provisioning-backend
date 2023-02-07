@@ -34,6 +34,9 @@ type LaunchInstanceAWSTaskArgs struct {
 	// AWS AMI as fetched from image builder
 	AMI string
 
+	// LaunchTemplateID or empty string when no template in use
+	LaunchTemplateID string
+
 	// The ARN fetched from Sources which is linked to a specific source
 	ARN *clients.Authentication
 }
@@ -183,7 +186,7 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	}
 
 	logger.Trace().Msg("Executing RunInstances")
-	instances, awsReservationId, err := ec2Client.RunInstances(ctx, args.Detail.Name, args.Detail.Amount, types.InstanceType(args.Detail.InstanceType), args.AMI, reservation.Detail.PubkeyName, userData)
+	instances, awsReservationId, err := ec2Client.RunInstances(ctx, args.LaunchTemplateID, args.Detail.Name, args.Detail.Amount, types.InstanceType(args.Detail.InstanceType), args.AMI, reservation.Detail.PubkeyName, userData)
 	if err != nil {
 		return fmt.Errorf("cannot run instances: %w", err)
 	}
