@@ -63,6 +63,9 @@ func MountAPI(r *chi.Mux) {
 
 				r.Get("/launch_templates", s.ListLaunchTemplates)
 				r.Get("/account_identity", s.GetAccountIdentity)
+				r.Route("/validate_permissions", func(r chi.Router) {
+					r.Get("/", s.ValidatePermissions)
+				})
 			})
 		})
 
