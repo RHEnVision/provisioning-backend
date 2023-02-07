@@ -110,7 +110,7 @@ func (mock *EC2ClientStub) ListAllZones(ctx context.Context, region clients.Regi
 	}, nil
 }
 
-func (mock *EC2ClientStub) ListInstanceTypesWithPaginator(ctx context.Context) ([]*clients.InstanceType, error) {
+func (mock *EC2ClientStub) ListInstanceTypes(ctx context.Context) ([]*clients.InstanceType, error) {
 	return []*clients.InstanceType{
 		{
 			Name:               "t4g.nano",

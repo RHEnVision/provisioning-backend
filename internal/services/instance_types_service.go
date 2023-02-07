@@ -34,7 +34,7 @@ func ListInstanceTypes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	instances, err := ec2Client.ListInstanceTypesWithPaginator(r.Context())
+	instances, err := ec2Client.ListInstanceTypes(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "unable to list AWS EC2 instances", err))
 		return

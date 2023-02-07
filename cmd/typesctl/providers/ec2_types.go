@@ -56,7 +56,7 @@ func generateTypesEC2() error {
 		if regionErr != nil {
 			return fmt.Errorf("unable to get regional EC2 client: %w", regionErr)
 		}
-		instTypes, regionErr := client.ListInstanceTypesWithPaginator(ctx)
+		instTypes, regionErr := client.ListInstanceTypes(ctx)
 		if regionErr != nil {
 			// skip
 			fmt.Printf("unable to list EC2 instance types (region STS not enabled?): %s\n", regionErr.Error())
