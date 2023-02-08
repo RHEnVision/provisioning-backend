@@ -13,8 +13,11 @@ var GetSourcesClient func(ctx context.Context) (Sources, error)
 
 // Sources interface provides access to the Sources backend service API
 type Sources interface {
-	// ListProvisioningSources returns all sources that have provisioning credentials assigned
-	ListProvisioningSources(ctx context.Context) ([]*Source, error)
+	// ListProvisioningSourcesByProvider returns sources filtered by provider that have provisioning credentials assigned
+	ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*Source, error)
+
+	// ListAllProvisioningSources returns all sources that have provisioning credentials assigned
+	ListAllProvisioningSources(ctx context.Context) ([]*Source, error)
 
 	// GetArn returns authentication associated with provisioning app for given sourceId
 	GetAuthentication(ctx context.Context, sourceId ID) (*Authentication, error)

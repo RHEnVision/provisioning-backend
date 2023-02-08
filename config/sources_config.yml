@@ -9,6 +9,7 @@ output-options:
     - sources
     - "application types"
     - "applications"
+    - source types
   exclude-schemas:
     - BulkCreateResponse # generator issue: redeclaration
     - ID

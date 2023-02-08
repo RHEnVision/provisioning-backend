@@ -12,6 +12,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
 )
@@ -76,9 +77,55 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 	return nil
 }
 
-func (c *sourcesClient) ListProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
+func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*clients.Source, error) {
 	logger := logger(ctx)
-	logger.Trace().Msg("Listing provisioning sources")
+	logger.Trace().Msgf("Listing provisioning sources of provider %s", provider)
+
+	appTypeId, err := c.GetProvisioningTypeId(ctx)
+	if err != nil {
+		logger.Warn().Err(err).Msg("Failed to get provisioning type id")
+		return nil, fmt.Errorf("failed to get provisioning app type: %w", err)
+	}
+
+	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader)
+	if err != nil {
+		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
+		return nil, fmt.Errorf("failed to get ApplicationTypes: %w", err)
+	}
+
+	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
+	if err != nil {
+		if errors.Is(err, clients.NotFoundErr) {
+			return nil, fmt.Errorf("list provisioning sources call: %w", http.SourceNotFoundErr)
+		}
+		return nil, fmt.Errorf("list provisioning sources call: %w", err)
+	}
+
+	result := make([]*clients.Source, 0, len(*resp.JSON200.Data))
+
+	for _, src := range *resp.JSON200.Data {
+		sourceTypeName, err := c.GetSourceTypeName(ctx, *src.SourceTypeId)
+		if err != nil {
+			return nil, fmt.Errorf("could not get source type name for source type id %d: %w", src.SourceTypeId, err)
+		}
+
+		if sourceTypeName == models.ProviderTypeFromString(provider.String()) {
+			newSrc := clients.Source{
+				Id:           src.Id,
+				Name:         src.Name,
+				SourceTypeId: src.SourceTypeId,
+				Uid:          src.Uid,
+			}
+			result = append(result, &newSrc)
+		}
+	}
+
+	return result, nil
+}
+
+func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
+	logger := logger(ctx)
+	logger.Trace().Msg("Listing all provisioning sources")
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
 	if err != nil {
@@ -212,4 +259,32 @@ func filterSourceAuthentications(authentications []AuthenticationRead) (Authenti
 		}
 	}
 	return AuthenticationRead{}, http.ApplicationReadErr
+}
+
+func (c *sourcesClient) GetSourceTypeName(ctx context.Context, sourceTypeID string) (models.ProviderType, error) {
+	logger := logger(ctx)
+	logger.Trace().Msg("Getting source types list from sources")
+
+	// Get all the source types
+	resp, err := c.client.ListSourceTypesWithResponse(ctx, &ListSourceTypesParams{})
+	if err != nil {
+		return models.ProviderTypeUnknown, fmt.Errorf("cannot list source types: %w", err)
+	}
+
+	for _, st := range *resp.JSON200.Data {
+		if sourceTypeID == *st.Id {
+			logger.Trace().Msg("Found source type id from sources")
+			switch *st.Name {
+			case "amazon":
+				return models.ProviderTypeAWS, nil
+			case "google":
+				return models.ProviderTypeGCP, nil
+			case "azure":
+				return models.ProviderTypeAzure, nil
+			default:
+				return models.ProviderTypeUnknown, fmt.Errorf("provider unknown %w", clients.UnknownProviderErr)
+			}
+		}
+	}
+	return models.ProviderTypeUnknown, fmt.Errorf("cannot find source type name for source type id %s: %w", sourceTypeID, http.SourceTypeNameNotFoundErr)
 }
