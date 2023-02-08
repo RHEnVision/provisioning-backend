@@ -23,7 +23,7 @@ func NewPlatformClient(ctx context.Context, proxy string) HttpRequestDoer {
 			ctxval.Logger(ctx).Warn().Msgf("Unable to use HTTP client proxy in clowder environment: %s", proxy)
 		} else {
 			ctxval.Logger(ctx).Warn().Msgf("Creating HTTP client with proxy %s", proxy)
-			transport.Proxy = http.ProxyURL(config.StringToURL(proxy))
+			rt = &http.Transport{Proxy: http.ProxyURL(config.StringToURL(proxy))}
 		}
 	}
 
