@@ -9,6 +9,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
+	"github.com/google/uuid"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
@@ -18,7 +19,7 @@ const TraceName = "github.com/RHEnVision/provisioning-backend/internal/jobs/laun
 const (
 	resourceGroupName = "redhat-deployed"
 	location          = "eastus"
-	vmName            = "redhat-vm"
+	vmNamePrefix      = "redhat-vm"
 )
 
 var LaunchInstanceAzureSteps = []string{"Prepare resource group", "Launch instance(s)"}
@@ -126,21 +127,27 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 		return fmt.Errorf("failed to instantiate Azure client: %w", err)
 	}
 
-	// TODO create multiple
-	instanceId, err := azureClient.CreateVM(ctx, location, resourceGroupName, args.AzureImageID, pubkey, clients.InstanceTypeName(reservation.Detail.InstanceSize), vmName)
-	if err != nil {
-		span.SetStatus(codes.Error, "failed to create Azure instance")
-		return fmt.Errorf("cannot create Azure instance(s): %w", err)
+	for i := 0; i < int(reservation.Detail.Amount); i++ {
+		uuid, err := uuid.NewUUID()
+		if err != nil {
+			return fmt.Errorf("could not generate a new UUID: %w", err)
+		}
+		vmName := fmt.Sprintf("%s-%s", vmNamePrefix, uuid.String())
+		instanceId, err := azureClient.CreateVM(ctx, location, resourceGroupName, args.AzureImageID, pubkey, clients.InstanceTypeName(reservation.Detail.InstanceSize), vmName)
+		if err != nil {
+			span.SetStatus(codes.Error, "failed to create Azure instance")
+			return fmt.Errorf("cannot create Azure instance(s): %w", err)
+		}
+		err = resDao.CreateInstance(ctx, &models.ReservationInstance{
+			ReservationID: args.ReservationID,
+			InstanceID:    *instanceId,
+		})
+		if err != nil {
+			span.SetStatus(codes.Error, "failed to save instance to DB")
+			return fmt.Errorf("cannot create instance reservation for id %d: %w", instanceId, err)
+		}
+		logger.Debug().Msgf("Created new instance (%s) via Azure CreateVM", *instanceId)
 	}
-	err = resDao.CreateInstance(ctx, &models.ReservationInstance{
-		ReservationID: args.ReservationID,
-		InstanceID:    *instanceId,
-	})
-	if err != nil {
-		span.SetStatus(codes.Error, "failed to save instance to DB")
-		return fmt.Errorf("cannot create instance reservation for id %d: %w", instanceId, err)
-	}
-	logger.Debug().Msgf("Created new instance (%s) via Azure CreateVM", *instanceId)
 
 	return nil
 }

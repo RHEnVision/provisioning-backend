@@ -86,6 +86,7 @@ func TestDoLaunchInstanceAzure(t *testing.T) {
 	require.NoError(t, err, "failed to add stubbed key")
 
 	res := prepareAzureReservation(t, ctx, pk)
+	res.Detail.Amount = 2
 
 	rDao := dao.GetReservationDao(ctx)
 	err = rDao.CreateAzure(ctx, res)
@@ -103,5 +104,5 @@ func TestDoLaunchInstanceAzure(t *testing.T) {
 	err = jobs.DoLaunchInstanceAzure(ctx, args)
 	require.NoError(t, err, "launch instances failed to run")
 
-	assert.True(t, clientStubs.DidCreateAzureVM(ctx, "redhat-vm"))
+	assert.Equal(t, 2, clientStubs.CountStubAzureVMs(ctx))
 }

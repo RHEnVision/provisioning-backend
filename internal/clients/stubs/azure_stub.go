@@ -28,17 +28,12 @@ func DidCreateAzureResourceGroup(ctx context.Context, name string) bool {
 	return false
 }
 
-func DidCreateAzureVM(ctx context.Context, name string) bool {
+func CountStubAzureVMs(ctx context.Context) int {
 	client, err := getAzureClientStub(ctx)
 	if err != nil {
-		return false
+		return 0
 	}
-	for _, vm := range client.createdVms {
-		if *vm.Name == name {
-			return true
-		}
-	}
-	return false
+	return len(client.createdVms)
 }
 
 func (stub *AzureClientStub) Status(ctx context.Context) error {
