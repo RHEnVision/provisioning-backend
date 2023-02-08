@@ -36,12 +36,14 @@ const (
 	vpnIPAddress  = "172.22.0.0/16"
 )
 
-func (c *client) CreateVM(ctx context.Context, location string, resourceGroupName string, imageID string, pubkey *models.Pubkey, instanceType clients.InstanceTypeName, vmName string) (*string, error) {
+func (c *client) CreateVM(ctx context.Context, location string, resourceGroupName string, imageName string, pubkey *models.Pubkey, instanceType clients.InstanceTypeName, vmName string) (*string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "CreateVM")
 	defer span.End()
 
 	logger := logger(ctx)
 	logger.Debug().Msg("Creating Azure VM instance")
+
+	imageID := c.getImageId(ctx, resourceGroupName, imageName)
 
 	virtualNetwork, err := c.createVirtualNetwork(ctx, location, resourceGroupName, vnetName)
 	if err != nil {
@@ -129,6 +131,10 @@ func (c *client) EnsureResourceGroup(ctx context.Context, name string, location 
 	}
 
 	return resp.ResourceGroup.ID, nil
+}
+
+func (c *client) getImageId(ctx context.Context, resourceGroupName string, imageName string) string {
+	return fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/images/%s", c.subscriptionID, resourceGroupName, imageName)
 }
 
 func (c *client) createVirtualNetwork(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.VirtualNetwork, error) {

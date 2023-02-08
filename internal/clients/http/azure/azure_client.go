@@ -43,6 +43,14 @@ func (c *client) newResourceGroupsClient(ctx context.Context) (*armresources.Res
 	return client, nil
 }
 
+func (c *client) newImagesClient(ctx context.Context) (*armcompute.ImagesClient, error) {
+	vmClient, err := armcompute.NewImagesClient(c.subscriptionID, c.credential, nil)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create Image Azure client: %w", err)
+	}
+	return vmClient, nil
+}
+
 func (c *client) newVirtualMachinesClient(ctx context.Context) (*armcompute.VirtualMachinesClient, error) {
 	vmClient, err := armcompute.NewVirtualMachinesClient(c.subscriptionID, c.credential, nil)
 	if err != nil {

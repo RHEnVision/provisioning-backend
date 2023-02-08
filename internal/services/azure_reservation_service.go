@@ -47,6 +47,13 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Get IB client
+	ibClient, err := clients.GetImageBuilderClient(r.Context())
+	if err != nil {
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
+		return
+	}
+
 	// Fetch SubscriptionID from Sources
 	authentication, err := sourcesClient.GetAuthentication(r.Context(), payload.SourceID)
 	if err != nil {
@@ -59,14 +66,16 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var azureImageID string
-	if strings.HasPrefix(payload.ImageID, "/subscriptions/") {
-		// Direct AMI ID was provided, no need to call image builder
-		azureImageID = payload.ImageID
+	var azureImageName string
+	if strings.HasPrefix(payload.ImageID, "composer-api") {
+		// Azure name was provided directly, no need to call image builder
+		azureImageName = payload.ImageID
 	} else {
-		// TODO fetch image ID from Image Builder
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "fetching Azure image id from Image Builder is not implemented", ProviderTypeNotImplementedError))
-		return
+		azureImageName, err = ibClient.GetAzureImageName(r.Context(), payload.ImageID)
+		if err != nil {
+			renderError(w, r, payloads.NewClientError(r.Context(), err))
+			return
+		}
 	}
 
 	supportedArch := "x86_64"
@@ -114,7 +123,7 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 			Location:      reservation.Detail.Location,
 			PubkeyID:      pk.ID,
 			SourceID:      reservation.SourceID,
-			AzureImageID:  azureImageID,
+			AzureImageID:  azureImageName,
 			Subscription:  authentication,
 		},
 	}

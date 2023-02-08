@@ -37,6 +37,10 @@ func (mock *ImageBuilderClientStub) GetAWSAmi(ctx context.Context, composeID str
 	return "ami-0c830793775595d4b-test", nil
 }
 
+func (mock *ImageBuilderClientStub) GetAzureImageName(ctx context.Context, composeID string) (string, error) {
+	return "composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7", nil
+}
+
 func (mock *ImageBuilderClientStub) GetGCPImageName(ctx context.Context, composeID string) (string, error) {
 	return "projects/red-hat-image-builder/global/images/composer-api-871fa36d-0b5b-4001-8c95-a11f751a4d66-test", nil
 }

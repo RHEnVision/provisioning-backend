@@ -36,7 +36,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 
 	values := map[string]interface{}{
 		"source_id":     source.Id,
-		"image_id":      "/subscriptions/uuid/group/images/uuid",
+		"image_id":      "92ea98f8-7697-472e-80b1-7454fa0e7fa7",
 		"amount":        1,
 		"instance_size": "Basic_A0",
 		"pubkey_id":     pk.ID,

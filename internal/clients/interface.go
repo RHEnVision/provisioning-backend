@@ -38,6 +38,9 @@ type ImageBuilder interface {
 	// GetAWSAmi returns related AWS image AMI identifier
 	GetAWSAmi(ctx context.Context, composeID string) (string, error)
 
+	// GetAzureImageName returns name of the Azure image, without the subscription and resource group scope
+	GetAzureImageName(ctx context.Context, composeID string) (string, error)
+
 	// GetGCPImageName returns GCP image name
 	GetGCPImageName(ctx context.Context, composeID string) (string, error)
 
@@ -98,9 +101,9 @@ type Azure interface {
 
 	// CreateVM creates Azure virtual machine.
 	// Most of the parameters are constant for now.
-	// imageID is expected in format /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageID}
-	// sshKeyBody should be full public key body
-	CreateVM(ctx context.Context, location string, resourceGroupName string, imageID string, pubkey *models.Pubkey, instanceType InstanceTypeName, vmName string) (*string, error)
+	// location - to deploy into
+	// imageName - the imageID will be inferred as /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName}
+	CreateVM(ctx context.Context, location string, resourceGroupName string, imageName string, pubkey *models.Pubkey, instanceType InstanceTypeName, vmName string) (*string, error)
 }
 
 type ServiceAzure interface {
