@@ -1,0 +1,33 @@
+{
+    "data":[
+       {
+          "availability_status":"in_progress",
+          "id":"1",
+          "created_at":"2023-02-02T16:06:00Z",
+          "updated_at":"2023-02-02T16:06:00Z",
+          "name":"Amazon source",
+          "uid":"384cca67-6838-4571-811f-d725a0a57b6f",
+          "app_creation_workflow":"manual_configuration",
+          "source_type_id":"1"
+       },
+       {
+          "availability_status":"in_progress",
+          "id":"2",
+          "created_at":"2023-02-02T16:06:00Z",
+          "updated_at":"2023-02-02T16:06:00Z",
+          "name":"Azure source",
+          "uid":"66b783a5-a643-45fa-86c6-f1bccce98fd3",
+          "app_creation_workflow":"manual_configuration",
+          "source_type_id":"2"
+       }
+    ],
+    "meta":{
+       "count":2,
+       "limit":100,
+       "offset":0
+    },
+    "links":{
+       "first":"/api/sources/v3.1/application_types/5/sources?limit=100&offset=0",
+       "last":"/api/sources/v3.1/application_types/5/sources?limit=100&offset=100"
+    }
+ }

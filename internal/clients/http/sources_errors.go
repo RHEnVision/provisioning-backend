@@ -14,4 +14,5 @@ var (
 	AuthenticationSourceAssociationErr  = errors.New("authentication associated to source id not found")
 	AuthenticationForSourcesNotFoundErr = fmt.Errorf("authentications for source weren't found in sources app: %w", clients.NotFoundErr)
 	ApplicationReadErr                  = fmt.Errorf("application read returned no application type in sources: %w", clients.NotFoundErr)
+	SourceTypeNameNotFoundErr           = fmt.Errorf("source type name not found: %w", clients.NotFoundErr)
 )

@@ -803,6 +803,39 @@ type SourceEdit struct {
 // SourceEditAvailabilityStatus The availability status of the source
 type SourceEditAvailabilityStatus string
 
+// SourceType defines model for SourceType.
+type SourceType struct {
+	// Category The category of this source type
+	Category  *string    `json:"category,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+
+	// IconUrl The icon's URL for this source type
+	IconUrl *string `json:"icon_url,omitempty"`
+
+	// Id ID of the resource
+	Id *ID `json:"id,omitempty"`
+
+	// Name The name of the source type
+	Name *string `json:"name,omitempty"`
+
+	// ProductName The name of the product
+	ProductName *string `json:"product_name,omitempty"`
+
+	// Schema The schema for the front end to interpret how to show this source type
+	Schema    *map[string]interface{} `json:"schema,omitempty"`
+	UpdatedAt *time.Time              `json:"updated_at,omitempty"`
+
+	// Vendor The vendor that developed this product
+	Vendor *string `json:"vendor,omitempty"`
+}
+
+// SourceTypesCollection defines model for SourceTypesCollection.
+type SourceTypesCollection struct {
+	Data  *[]SourceType       `json:"data,omitempty"`
+	Links *CollectionLinks    `json:"links,omitempty"`
+	Meta  *CollectionMetadata `json:"meta,omitempty"`
+}
+
 // SourcesCollection An array containing source objects
 type SourcesCollection struct {
 	Data  *[]Source           `json:"data,omitempty"`
@@ -893,6 +926,36 @@ type ListApplicationsParams struct {
 
 // ListApplicationAuthenticationsParams defines parameters for ListApplicationAuthentications.
 type ListApplicationAuthenticationsParams struct {
+	// Limit The numbers of items to return per page.
+	Limit *QueryLimit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Offset The number of items to skip before starting to collect the result set.
+	Offset *QueryOffset `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Filter Filter for querying collections. The format of the filters is as follows: `filter[subresource][field][operation]="value"`.
+	Filter *QueryFilter `form:"filter,omitempty" json:"filter,omitempty"`
+
+	// SortBy The list of attribute and order to sort the result set by.
+	SortBy *QuerySortBy `form:"sort_by,omitempty" json:"sort_by,omitempty"`
+}
+
+// ListSourceTypesParams defines parameters for ListSourceTypes.
+type ListSourceTypesParams struct {
+	// Limit The numbers of items to return per page.
+	Limit *QueryLimit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Offset The number of items to skip before starting to collect the result set.
+	Offset *QueryOffset `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Filter Filter for querying collections. The format of the filters is as follows: `filter[subresource][field][operation]="value"`.
+	Filter *QueryFilter `form:"filter,omitempty" json:"filter,omitempty"`
+
+	// SortBy The list of attribute and order to sort the result set by.
+	SortBy *QuerySortBy `form:"sort_by,omitempty" json:"sort_by,omitempty"`
+}
+
+// ListSourceTypeSourcesParams defines parameters for ListSourceTypeSources.
+type ListSourceTypeSourcesParams struct {
 	// Limit The numbers of items to return per page.
 	Limit *QueryLimit `form:"limit,omitempty" json:"limit,omitempty"`
 
@@ -1129,6 +1192,15 @@ type ClientInterface interface {
 
 	BulkCreate(ctx context.Context, body BulkCreateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListSourceTypes request
+	ListSourceTypes(ctx context.Context, params *ListSourceTypesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ShowSourceType request
+	ShowSourceType(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSourceTypeSources request
+	ListSourceTypeSources(ctx context.Context, id ID, params *ListSourceTypeSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListSources request
 	ListSources(ctx context.Context, params *ListSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1355,6 +1427,42 @@ func (c *Client) BulkCreateWithBody(ctx context.Context, contentType string, bod
 
 func (c *Client) BulkCreate(ctx context.Context, body BulkCreateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewBulkCreateRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSourceTypes(ctx context.Context, params *ListSourceTypesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSourceTypesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ShowSourceType(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewShowSourceTypeRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSourceTypeSources(ctx context.Context, id ID, params *ListSourceTypeSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSourceTypeSourcesRequest(c.Server, id, params)
 	if err != nil {
 		return nil, err
 	}
@@ -2338,6 +2446,237 @@ func NewBulkCreateRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
+// NewListSourceTypesRequest generates requests for ListSourceTypes
+func NewListSourceTypesRequest(server string, params *ListSourceTypesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/source_types")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Limit != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Offset != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.SortBy != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewShowSourceTypeRequest generates requests for ShowSourceType
+func NewShowSourceTypeRequest(server string, id ID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/source_types/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListSourceTypeSourcesRequest generates requests for ListSourceTypeSources
+func NewListSourceTypeSourcesRequest(server string, id ID, params *ListSourceTypeSourcesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/source_types/%s/sources", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	queryValues := queryURL.Query()
+
+	if params.Limit != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Offset != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Filter != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "filter", runtime.ParamLocationQuery, *params.Filter); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.SortBy != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "sort_by", runtime.ParamLocationQuery, *params.SortBy); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewListSourcesRequest generates requests for ListSources
 func NewListSourcesRequest(server string, params *ListSourcesParams) (*http.Request, error) {
 	var err error
@@ -3288,6 +3627,15 @@ type ClientWithResponsesInterface interface {
 
 	BulkCreateWithResponse(ctx context.Context, body BulkCreateJSONRequestBody, reqEditors ...RequestEditorFn) (*BulkCreateResponse, error)
 
+	// ListSourceTypes request
+	ListSourceTypesWithResponse(ctx context.Context, params *ListSourceTypesParams, reqEditors ...RequestEditorFn) (*ListSourceTypesResponse, error)
+
+	// ShowSourceType request
+	ShowSourceTypeWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*ShowSourceTypeResponse, error)
+
+	// ListSourceTypeSources request
+	ListSourceTypeSourcesWithResponse(ctx context.Context, id ID, params *ListSourceTypeSourcesParams, reqEditors ...RequestEditorFn) (*ListSourceTypeSourcesResponse, error)
+
 	// ListSources request
 	ListSourcesWithResponse(ctx context.Context, params *ListSourcesParams, reqEditors ...RequestEditorFn) (*ListSourcesResponse, error)
 
@@ -3631,6 +3979,77 @@ func (r BulkCreateResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r BulkCreateResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListSourceTypesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SourceTypesCollection
+	JSON400      *ErrorBadRequest
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSourceTypesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSourceTypesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ShowSourceTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SourceType
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ShowSourceTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ShowSourceTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListSourceTypeSourcesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SourcesCollection
+	JSON400      *ErrorBadRequest
+	JSON404      *ErrorNotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSourceTypeSourcesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSourceTypeSourcesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4082,6 +4501,33 @@ func (c *ClientWithResponses) BulkCreateWithResponse(ctx context.Context, body B
 		return nil, err
 	}
 	return ParseBulkCreateResponse(rsp)
+}
+
+// ListSourceTypesWithResponse request returning *ListSourceTypesResponse
+func (c *ClientWithResponses) ListSourceTypesWithResponse(ctx context.Context, params *ListSourceTypesParams, reqEditors ...RequestEditorFn) (*ListSourceTypesResponse, error) {
+	rsp, err := c.ListSourceTypes(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSourceTypesResponse(rsp)
+}
+
+// ShowSourceTypeWithResponse request returning *ShowSourceTypeResponse
+func (c *ClientWithResponses) ShowSourceTypeWithResponse(ctx context.Context, id ID, reqEditors ...RequestEditorFn) (*ShowSourceTypeResponse, error) {
+	rsp, err := c.ShowSourceType(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseShowSourceTypeResponse(rsp)
+}
+
+// ListSourceTypeSourcesWithResponse request returning *ListSourceTypeSourcesResponse
+func (c *ClientWithResponses) ListSourceTypeSourcesWithResponse(ctx context.Context, id ID, params *ListSourceTypeSourcesParams, reqEditors ...RequestEditorFn) (*ListSourceTypeSourcesResponse, error) {
+	rsp, err := c.ListSourceTypeSources(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSourceTypeSourcesResponse(rsp)
 }
 
 // ListSourcesWithResponse request returning *ListSourcesResponse
@@ -4682,6 +5128,119 @@ func ParseBulkCreateResponse(rsp *http.Response) (*BulkCreateResponse, error) {
 			return nil, err
 		}
 		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSourceTypesResponse parses an HTTP response from a ListSourceTypesWithResponse call
+func ParseListSourceTypesResponse(rsp *http.Response) (*ListSourceTypesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSourceTypesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SourceTypesCollection
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseShowSourceTypeResponse parses an HTTP response from a ShowSourceTypeWithResponse call
+func ParseShowSourceTypeResponse(rsp *http.Response) (*ShowSourceTypeResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ShowSourceTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SourceType
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSourceTypeSourcesResponse parses an HTTP response from a ListSourceTypeSourcesWithResponse call
+func ParseListSourceTypeSourcesResponse(rsp *http.Response) (*ListSourceTypeSourcesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSourceTypeSourcesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SourcesCollection
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorBadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest ErrorNotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 

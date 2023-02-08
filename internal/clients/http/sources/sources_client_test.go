@@ -2,6 +2,7 @@ package sources_test
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,8 +10,20 @@ import (
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+)
+
+var (
+	//go:embed fixtures/application_types.json
+	applicationTypes string
+
+	//go:embed fixtures/source_types.json
+	sourceTypes string
+
+	//go:embed fixtures/provisioning_sources.json
+	provisioningSources string
 )
 
 func TestSourcesClient_GetAuthentication(t *testing.T) {
@@ -72,5 +85,73 @@ func TestSourcesClient_GetAuthentication(t *testing.T) {
 		assert.NoError(t, clientErr, "Authentication should succeed with Provisioning as one of many apps")
 
 		assert.Equal(t, "arn:aws:iam::123456789999:role/redhat-provisioning-role-2f6d01c", authentication.Payload)
+	})
+}
+
+func TestSourcesClient_ListAllProvisioningSources(t *testing.T) {
+	mux := http.NewServeMux()
+	mux.HandleFunc(fmt.Sprintf("/application_types"), func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, err := io.WriteString(w, applicationTypes)
+		require.NoError(t, err, "failed to write http body for stubbed server")
+	})
+
+	mux.HandleFunc(fmt.Sprintf("/application_types/%s/sources", "5"), func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, err := io.WriteString(w, provisioningSources)
+		require.NoError(t, err, "failed to write http body for stubbed server")
+	})
+
+	ts := httptest.NewServer(mux)
+	defer ts.Close()
+
+	ctx := context.Background()
+	client, err := sources.NewSourcesClientWithUrl(ctx, ts.URL)
+	require.NoError(t, err, "failed to initialize sources client with test server")
+
+	sources, clientErr := client.ListAllProvisioningSources(ctx)
+	assert.NoError(t, clientErr, "Could not list all provisioning sources")
+	assert.Equal(t, 2, len(sources))
+	assert.Equal(t, "1", *sources[0].SourceTypeId)
+	assert.Equal(t, "2", *sources[1].SourceTypeId)
+}
+
+func TestSourcesClient_ListProvisioningSourcesByProvider(t *testing.T) {
+	t.Run("list amazon provisioning sources", func(t *testing.T) {
+		mux := http.NewServeMux()
+		mux.HandleFunc(fmt.Sprintf("/application_types"), func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_, err := io.WriteString(w, applicationTypes)
+			require.NoError(t, err, "failed to write http body for stubbed server")
+		})
+
+		mux.HandleFunc(fmt.Sprintf("/source_types"), func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_, err := io.WriteString(w, sourceTypes)
+			require.NoError(t, err, "failed to write http body for stubbed server")
+		})
+
+		mux.HandleFunc(fmt.Sprintf("/application_types/%s/sources", "5"), func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_, err := io.WriteString(w, provisioningSources)
+			require.NoError(t, err, "failed to write http body for stubbed server")
+		})
+
+		ts := httptest.NewServer(mux)
+		defer ts.Close()
+
+		ctx := context.Background()
+		client, err := sources.NewSourcesClientWithUrl(ctx, ts.URL)
+		require.NoError(t, err, "failed to initialize sources client with test server")
+
+		sources, clientErr := client.ListProvisioningSourcesByProvider(ctx, models.ProviderTypeAWS)
+		assert.NoError(t, clientErr, "Could not list all provisioning sources")
+		assert.Equal(t, 1, len(sources))
+		assert.Equal(t, "1", *sources[0].SourceTypeId)
 	})
 }
