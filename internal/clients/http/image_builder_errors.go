@@ -8,10 +8,9 @@ import (
 )
 
 var (
-	CloneNotFoundErr       = fmt.Errorf("image clone not found: %w", clients.NotFoundErr)
-	ComposeNotFoundErr     = fmt.Errorf("image compose not found: %w", clients.NotFoundErr)
-	ImageStatusErr         = errors.New("build of requested image has not finished yet")
-	UnknownImageTypeErr    = errors.New("unknown image type")
-	AmiNotFoundInStatusErr = fmt.Errorf("AMI not found in image status: %w", clients.NotFoundErr)
-	UploadStatusErr        = fmt.Errorf("could not fetch upload status: %w", clients.NotFoundErr)
+	CloneNotFoundErr    = fmt.Errorf("image clone not found: %w", clients.NotFoundErr)
+	ComposeNotFoundErr  = fmt.Errorf("image compose not found: %w", clients.NotFoundErr)
+	ImageStatusErr      = errors.New("build of requested image has not finished yet")
+	UnknownImageTypeErr = errors.New("unknown image type")
+	UploadStatusErr     = fmt.Errorf("could not fetch upload status: %w", clients.NotFoundErr)
 )

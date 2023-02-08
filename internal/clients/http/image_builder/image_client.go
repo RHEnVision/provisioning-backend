@@ -73,9 +73,29 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, err
 	}
 	uploadStatus, err := imageStatus.Options.AsAWSUploadStatus()
 	if err != nil {
-		return "", http.AmiNotFoundInStatusErr
+		return "", fmt.Errorf("%w: not an AWS status", http.UploadStatusErr)
 	}
 	return uploadStatus.Ami, nil
+}
+
+func (c *ibClient) GetAzureImageName(ctx context.Context, composeID string) (string, error) {
+	logger := logger(ctx)
+	logger.Trace().Msgf("Getting Azure ID of image %v", composeID)
+
+	imageStatus, err := c.fetchImageStatus(ctx, composeID)
+	if err != nil {
+		return "", err
+	}
+
+	logger.Trace().Msgf("Verifying Azure type")
+	if imageStatus.Type != UploadTypesAzure {
+		return "", fmt.Errorf("%w: expected image type Azure, got %s", http.UnknownImageTypeErr, imageStatus.Type)
+	}
+	uploadStatus, err := imageStatus.Options.AsAzureUploadStatus()
+	if err != nil {
+		return "", fmt.Errorf("%w: not an Azure status", http.UploadStatusErr)
+	}
+	return uploadStatus.ImageName, nil
 }
 
 func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (string, error) {
@@ -93,7 +113,7 @@ func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (strin
 	}
 	uploadStatus, err := imageStatus.Options.AsGCPUploadStatus()
 	if err != nil {
-		return "", fmt.Errorf("%w: could not fetch GCP upload status", http.UploadStatusErr)
+		return "", fmt.Errorf("%w: not a GCP status", http.UploadStatusErr)
 	}
 
 	return fmt.Sprintf("projects/%s/global/images/%s", uploadStatus.ProjectId, uploadStatus.ImageName), nil

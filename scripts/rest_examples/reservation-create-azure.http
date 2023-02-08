@@ -6,7 +6,7 @@ X-Rh-Identity: {{identity}}
 {
   "name": "azure-linux-us-east",
   "source_id": "5",
-  "image_id": "/subscriptions/4b9d213f-712f-4d17-a483-8a10bbe9df3a/resourceGroups/oezr/providers/Microsoft.Compute/images/composer-api-00e391e7-e6c8-4283-b94a-ea719a58bc05",
+  "image_id": "9be1ff26-da9e-4947-9cd7-eaa7a87c00f0",
   "amount": 1,
   "instance_size": "Standard_B1ls",
   "pubkey_id": 2,
