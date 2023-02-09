@@ -60,6 +60,12 @@ objects:
                     name: provisioning-aws-acc
                     key: aws_secret_access_key
                     optional: false
+              - name: AZURE_TENANT_ID
+                value: ${AZURE_TENANT_ID}
+              - name: AZURE_CLIENT_ID
+                value: ${AZURE_CLIENT_ID}
+              - name: AZURE_CLIENT_SECRET
+                value: ${AZURE_CLIENT_SECRET}
               - name: APP_INSTANCE_PREFIX
                 value: ${APP_INSTANCE_PREFIX}
               - name: APP_CACHE_TYPE
@@ -183,6 +189,12 @@ objects:
                     name: provisioning-aws-acc
                     key: aws_secret_access_key
                     optional: false
+              - name: AZURE_TENANT_ID
+                value: ${AZURE_TENANT_ID}
+              - name: AZURE_CLIENT_ID
+                value: ${AZURE_CLIENT_ID}
+              - name: AZURE_CLIENT_SECRET
+                value: ${AZURE_CLIENT_SECRET}
               - name: APP_INSTANCE_PREFIX
                 value: ${APP_INSTANCE_PREFIX}
               - name: APP_CACHE_TYPE
@@ -265,4 +277,13 @@ parameters:
   - description: Internal queue type (memory/sqs/postgres).
     name: WORKER_QUEUE
     value: "redis"
-
+  # TODO: remove this once we have secret
+  - description: Azure tenant of the service account
+    name: AZURE_TENANT_ID
+    required: false
+  - description: Azure tenant of the service account
+    name: AZURE_CLIENT_ID
+    required: false
+  - description: Azure tenant of the service account
+    name: AZURE_CLIENT_SECRET
+    required: false
