@@ -7,34 +7,34 @@
       "metadata": {
         "description": "Specify a unique name for your offer"
       },
-      "defaultValue": "Provisioning CRC"
+      "defaultValue": "{{.OfferingDefaultName}}"
     },
     "mspOfferDescription": {
       "type": "string",
       "metadata": {
         "description": "Name of the Managed Service Provider offering"
       },
-      "defaultValue": "ConsoleDot provisioning"
+      "defaultValue": "{{.OfferingDefaultDescription}}"
     }
   },
   "variables": {
     "mspRegistrationName": "[guid(parameters('mspOfferName'))]",
     "mspAssignmentName": "[guid(parameters('mspOfferName'))]",
-    "managedByTenantId": "<ProviderTenantID>",
+    "managedByTenantId": "{{.TenantID}}",
     "authorizations": [
       {
-        "principalId": "<EnterpriseAppID>",
-        "principalIdDisplayName": "<EnterpriseAppName>",
-        "roleDefinitionId": "9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
-      },
-      {
-        "principalId": "<EnterpriseAppID>",
-        "principalIdDisplayName": "<EnterpriseAppName>",
+        "principalId": "{{.EnterpriseAppID}}",
+        "principalIdDisplayName": "{{.EnterpriseAppName}}",
         "roleDefinitionId": "acdd72a7-3385-48ef-bd42-f606fba81ae7"
       },
       {
-        "principalId": "<EnterpriseAppID>",
-        "principalIdDisplayName": "<EnterpriseAppName>",
+        "principalId": "{{.EnterpriseAppID}}",
+        "principalIdDisplayName": "{{.EnterpriseAppName}}",
+        "roleDefinitionId": "9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
+      },
+      {
+        "principalId": "{{.EnterpriseAppID}}",
+        "principalIdDisplayName": "{{.EnterpriseAppName}}",
         "roleDefinitionId": "b24988ac-6180-42a0-ab88-20f7382dd24c"
       }
     ]
