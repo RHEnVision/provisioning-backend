@@ -78,6 +78,12 @@ objects:
                     name: provisioning-azure-acc
                     key: client_secret
                     optional: true
+              - name: AZURE_CLIENT_NAME
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-azure-acc
+                    key: client_name
+                    optional: true
               - name: SENTRY_DSN
                 valueFrom:
                   secretKeyRef:
@@ -248,6 +254,12 @@ objects:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: client_secret
+                    optional: true
+              - name: AZURE_CLIENT_NAME
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-azure-acc
+                    key: client_name
                     optional: true
               - name: SENTRY_DSN
                 valueFrom:

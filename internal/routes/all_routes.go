@@ -46,6 +46,9 @@ func MountAPI(r *chi.Mux) {
 		r.Use(middleware.ETagMiddleware(api.ETagValue))
 		r.Get("/", api.ServeOpenAPISpec)
 	})
+
+	r.Get("/azure_offering_template", s.AzureOfferingTemplate)
+
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.EnforceIdentity)
 		r.Use(middleware.AccountMiddleware)
