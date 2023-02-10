@@ -12,6 +12,13 @@ func TraceID(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
+		// Edge request id
+		edgeId := r.Header.Get("X-Rh-Edge-Request-Id")
+		if edgeId != "" {
+			ctx = ctxval.WithEdgeRequestId(ctx, edgeId)
+		}
+
+		// OpenTelemetry trace id
 		traceId := trace.SpanFromContext(ctx).SpanContext().TraceID()
 		if !traceId.IsValid() {
 			// OpenTelemetry library does not provide a public interface to create new IDs

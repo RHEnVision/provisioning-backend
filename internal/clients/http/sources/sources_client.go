@@ -63,7 +63,7 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 	defer span.End()
 
 	logger := logger(ctx)
-	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
+	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Error().Err(err).Msgf("Readiness request failed for sources: %s", err.Error())
 		return err
@@ -87,7 +87,7 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 		return nil, fmt.Errorf("failed to get provisioning app type: %w", err)
 	}
 
-	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader)
+	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return nil, fmt.Errorf("failed to get ApplicationTypes: %w", err)
@@ -133,7 +133,7 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 		return nil, fmt.Errorf("failed to get provisioning app type: %w", err)
 	}
 
-	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader)
+	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return nil, fmt.Errorf("failed to get ApplicationTypes: %w", err)
@@ -165,7 +165,7 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.
 	logger.Trace().Msgf("Getting authentication from source %s", sourceId)
 
 	// Get all the authentications linked to a specific source
-	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader)
+	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		return nil, fmt.Errorf("cannot list source authentication: %w", err)
 	}
@@ -216,7 +216,7 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 	logger := logger(ctx)
 	logger.Trace().Msg("Fetching the Application Type ID of Provisioning for Sources")
 
-	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader)
+	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return "", fmt.Errorf("failed to fetch ApplicationTypes: %w", err)

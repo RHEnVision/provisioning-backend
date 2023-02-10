@@ -4,6 +4,8 @@ Provisioning backend service for cloud.redhat.com.
 
 Requirements: Go 1.18+
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/RHEnVision/provisioning-backend.svg)](https://pkg.go.dev/github.com/RHEnVision/provisioning-backend)
+
 ## Components
 
 * pbapi - API backend service
