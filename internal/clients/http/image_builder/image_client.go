@@ -44,7 +44,7 @@ func (c *ibClient) Ready(ctx context.Context) error {
 	defer span.End()
 
 	logger := logger(ctx)
-	resp, err := c.client.GetReadiness(ctx, headers.AddImageBuilderIdentityHeader)
+	resp, err := c.client.GetReadiness(ctx, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Error().Err(err).Msgf("Readiness request failed for image builder: %s", err.Error())
 		return err
@@ -140,7 +140,7 @@ func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadS
 	logger := logger(ctx)
 	logger.Trace().Msgf("Fetching image status %v from composes", composeID)
 
-	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader)
+	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
@@ -166,7 +166,7 @@ func (c *ibClient) checkClone(ctx context.Context, composeID string) (*UploadSta
 	logger := logger(ctx)
 	logger.Trace().Msgf("Fetching image status %v from clones", composeID)
 
-	resp, err := c.client.GetCloneStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader)
+	resp, err := c.client.GetCloneStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
 		return nil, fmt.Errorf("cannot get compose status: %w", err)

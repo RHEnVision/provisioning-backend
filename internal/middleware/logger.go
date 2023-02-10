@@ -20,14 +20,18 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
 			bytesIn, _ := strconv.Atoi(r.Header.Get("Content-Length"))
 			traceId := ctxval.TraceId(r.Context())
-			logger := rootLogger.With().
+			edgeId := ctxval.EdgeRequestId(r.Context())
+			lctx := rootLogger.With().
 				Timestamp().
 				Str("trace_id", traceId).
 				Str("remote_ip", r.RemoteAddr).
 				Str("url", r.URL.Path).
 				Str("method", r.Method).
-				Int("bytes_in", bytesIn).
-				Logger()
+				Int("bytes_in", bytesIn)
+			if edgeId != "" {
+				lctx = lctx.Str("request_id", edgeId)
+			}
+			logger := lctx.Logger()
 			t1 := time.Now()
 
 			lHeaders := logger.With().Fields(r.Header).Logger()

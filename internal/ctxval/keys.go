@@ -8,4 +8,5 @@ const (
 	requestIdCtxKey      commonKeyId = iota
 	accountIdCtxKey      commonKeyId = iota
 	unleashContextCtxKey commonKeyId = iota
+	edgeRequestIdCtxKey  commonKeyId = iota
 )

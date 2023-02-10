@@ -25,6 +25,14 @@ func addIdentityHeader(ctx context.Context, req *http.Request, username, passwor
 	return nil
 }
 
+func AddEdgeRequestIdHeader(ctx context.Context, req *http.Request) error {
+	reqId := ctxval.EdgeRequestId(ctx)
+	if reqId != "" {
+		req.Header.Set("X-Rh-Edge-Request-Id", reqId)
+	}
+	return nil
+}
+
 func AddSourcesIdentityHeader(ctx context.Context, req *http.Request) error {
 	username := config.Sources.Username
 	password := config.Sources.Password
