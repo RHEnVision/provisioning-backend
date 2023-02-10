@@ -1,4 +1,12 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: grafana-dashboard-provisioning
+  labels:
+    grafana_dashboard: "true"
+  annotations:
+    grafana-folder: /grafana-dashboard-definitions/Insights
 data:
   Provisioning-1674548289785.json: |-
     {
@@ -1344,7 +1352,3 @@ data:
       "version": 1,
       "weekStart": ""
     }
-kind: ConfigMap
-metadata:
-  creationTimestamp: null
-  name: grafana-dashboard-provisioning
