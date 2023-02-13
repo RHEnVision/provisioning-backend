@@ -127,12 +127,13 @@ func (x *reservationDao) createGenericReservation(ctx context.Context, reservati
 	reservation.AccountID = ctxval.AccountId(ctx)
 	reservation.Status = "Created"
 
-	reservationQuery := `INSERT INTO reservations (provider, account_id, steps, status)
-		VALUES ($1, $2, $3, $4) RETURNING id, created_at`
+	reservationQuery := `INSERT INTO reservations (provider, account_id, steps, step_titles, status)
+		VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`
 	err := db.Pool.QueryRow(ctx, reservationQuery,
 		reservation.Provider,
 		reservation.AccountID,
 		reservation.Steps,
+		reservation.StepTitles,
 		reservation.Status).Scan(&reservation.ID, &reservation.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("failed to create reservation record: %w", err)
