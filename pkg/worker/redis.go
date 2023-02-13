@@ -35,7 +35,7 @@ type RedisWorker struct {
 
 	// polling and wait groups
 	pollInterval time.Duration
-	pollMax      int
+	numPollers   int
 	loopWG       sync.WaitGroup
 	handleWG     sync.WaitGroup
 
@@ -48,19 +48,21 @@ var _ JobWorker = &RedisWorker{}
 // NewRedisWorker creates new worker that keeps all jobs in a single queue (list), starts CPU+1 polling
 // goroutines which fetch jobs from the queue and process them in separate goroutines. There is no limit
 // on how many jobs can be processed, use Stats function to track number of in-flight jobs.
-func NewRedisWorker(address, username, password string, db int, queueName string, pollInterval time.Duration, pollMax int) (*RedisWorker, error) {
+func NewRedisWorker(address, username, password string, db int, queueName string, pollInterval time.Duration, numPollers int) (*RedisWorker, error) {
+	pollers := math.Min(numPollers, runtime.NumCPU()+1)
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     address,
 		Username: username,
 		Password: password,
 		DB:       db,
+		PoolSize: pollers + 10, // number of polling goroutines + room for Stats call
 	})
 	return &RedisWorker{
 		handlers:     make(map[JobType]JobHandler),
 		client:       rdb,
 		queueName:    queueName,
 		pollInterval: pollInterval,
-		pollMax:      pollMax,
+		numPollers:   pollers,
 		closeCh:      make(chan interface{}),
 	}, nil
 }
@@ -122,11 +124,10 @@ func (w *RedisWorker) Stop(ctx context.Context) {
 
 func (w *RedisWorker) DequeueLoop(ctx context.Context) {
 	logger := ctxval.Logger(ctx)
-	pollers := math.Min(w.pollMax, runtime.NumCPU()+1)
-	logger.Info().Msgf("Starting %d polling goroutines", pollers)
-	for i := 1; i <= pollers; i++ {
+	logger.Info().Msgf("Starting %d polling goroutines", w.numPollers)
+	for i := 1; i <= w.numPollers; i++ {
 		w.loopWG.Add(1)
-		go w.dequeueLoop(ctx, i, pollers)
+		go w.dequeueLoop(ctx, i, w.numPollers)
 	}
 }
 
@@ -219,6 +220,6 @@ func (w *RedisWorker) Stats(ctx context.Context) (Stats, error) {
 
 	return Stats{
 		EnqueuedJobs: uint64(count),
-		InFlight:     w.inFlight,
+		InFlight:     atomic.LoadInt64(&w.inFlight),
 	}, nil
 }
