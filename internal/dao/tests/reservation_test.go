@@ -7,6 +7,7 @@ import (
 	"context"
 	"math"
 	"testing"
+	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -76,6 +77,11 @@ func TestReservationCreateNoop(t *testing.T) {
 		newRes, err := reservationDao.GetById(ctx, res.ID)
 		require.NoError(t, err)
 		assert.Equal(t, res.ID, newRes.ID)
+		assert.Equal(t, res.AccountID, newRes.AccountID)
+		assert.Equal(t, res.StepTitles, newRes.StepTitles)
+		assert.Equal(t, res.Steps, newRes.Steps)
+		assert.Equal(t, res.Status, newRes.Status)
+		assert.Equal(t, time.Now().Year(), res.CreatedAt.Year())
 	})
 }
 
@@ -91,6 +97,11 @@ func TestReservationGetById(t *testing.T) {
 		newRes, err := reservationDao.GetById(ctx, res.ID)
 		require.NoError(t, err)
 		assert.Equal(t, res.ID, newRes.ID)
+		assert.Equal(t, res.AccountID, newRes.AccountID)
+		assert.Equal(t, res.StepTitles, newRes.StepTitles)
+		assert.Equal(t, res.Steps, newRes.Steps)
+		assert.Equal(t, res.Status, newRes.Status)
+		assert.Equal(t, time.Now().Year(), res.CreatedAt.Year())
 	})
 
 	t.Run("no rows", func(t *testing.T) {
@@ -111,6 +122,11 @@ func TestReservationCreateAWS(t *testing.T) {
 		newRes, err := reservationDao.GetById(ctx, res.ID)
 		require.NoError(t, err)
 		assert.Equal(t, res.ID, newRes.ID)
+		assert.Equal(t, res.AccountID, newRes.AccountID)
+		assert.Equal(t, res.StepTitles, newRes.StepTitles)
+		assert.Equal(t, res.Steps, newRes.Steps)
+		assert.Equal(t, res.Status, newRes.Status)
+		assert.Equal(t, time.Now().Year(), res.CreatedAt.Year())
 	})
 }
 
@@ -126,6 +142,11 @@ func TestReservationCreateGCP(t *testing.T) {
 		newRes, err := reservationDao.GetById(ctx, res.ID)
 		require.NoError(t, err)
 		assert.Equal(t, res.ID, newRes.ID)
+		assert.Equal(t, res.AccountID, newRes.AccountID)
+		assert.Equal(t, res.StepTitles, newRes.StepTitles)
+		assert.Equal(t, res.Steps, newRes.Steps)
+		assert.Equal(t, res.Status, newRes.Status)
+		assert.Equal(t, time.Now().Year(), res.CreatedAt.Year())
 	})
 }
 
