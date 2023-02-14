@@ -13,7 +13,6 @@ IQE_MARKER_EXPRESSION="api and smoke"  # This is the value passed to pytest -m
 IQE_FILTER_EXPRESSION=""  # This is the value passed to pytest -k
 IQE_CJI_TIMEOUT="30m"  # This is the time to wait for smoke test to complete or fail
 
-
 # Install bonfire repo/initialize
 # https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd/bootstrap.sh
 # This script automates the install / config of bonfire
@@ -33,3 +32,6 @@ source $CICD_ROOT/cji_smoke_test.sh
 
 # Post a comment with test run IDs to the PR
 source $CICD_ROOT/post_test_results.sh
+
+SONAR_PR_CHECK="true" # used by sonarqube to set PR check variables
+source $WORKSPACE/.rhcicd/sonarqube.sh
