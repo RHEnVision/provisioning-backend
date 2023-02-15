@@ -45,7 +45,7 @@ var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
 	[]string{"type", "error"},
 )
 
-func ObserveAvailablilityCheckReqsDuration(provider models.ProviderType, ObservedFunc func() error) {
+func ObserveAvailabilityCheckReqsDuration(provider models.ProviderType, ObservedFunc func() error) {
 	errString := "false"
 	start := time.Now()
 	defer func() {
