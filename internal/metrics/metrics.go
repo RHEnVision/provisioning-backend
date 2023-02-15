@@ -1,12 +1,10 @@
 package metrics
 
 import (
-	"context"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -28,13 +26,17 @@ var TotalInvalidAvailabilityCheckReqs = prometheus.NewCounter(
 	},
 )
 
-var JobQueueSize = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
+var JobQueueSize = prometheus.NewGauge(prometheus.GaugeOpts{
 	Name:        "provisioning_job_queue_size",
-	Help:        "background job queue size (pending tasks total)",
+	Help:        "background job queue size (total pending jobs)",
 	ConstLabels: prometheus.Labels{"service": "provisioning"},
-}, func() float64 {
-	return float64(jq.Stats(context.Background()).EnqueuedJobs)
 })
+
+var JobQueueInFlight = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+	Name:        "provisioning_job_queue_inflight",
+	Help:        "number of in-flight jobs (total jobs which are currently processing)",
+	ConstLabels: prometheus.Labels{"service": "provisioning"},
+}, []string{"worker"})
 
 var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
 	prometheus.HistogramOpts{
@@ -68,6 +70,14 @@ func IncTotalSentAvailabilityCheckReqs(provider models.ProviderType, StatusType 
 
 func IncTotalInvalidAvailabilityCheckReqs() {
 	TotalInvalidAvailabilityCheckReqs.Inc()
+}
+
+func SetJobQueueSize(size uint64) {
+	JobQueueSize.Set(float64(size))
+}
+
+func SetJobQueueInFlight(workerName string, inflight int64) {
+	JobQueueInFlight.WithLabelValues(workerName).Set(float64(inflight))
 }
 
 func RegisterStatuserMetrics() {

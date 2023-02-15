@@ -93,7 +93,7 @@ func main() {
 
 	// initialize background goroutines
 	bgCtx, bgCancel := context.WithCancel(ctx)
-	background.Initialize(bgCtx)
+	background.InitializeApi(bgCtx)
 	defer bgCancel()
 
 	// initialize job queue

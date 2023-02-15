@@ -15,6 +15,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"github.com/RHEnVision/provisioning-backend/internal/random"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 
 	// Clients
@@ -54,6 +55,10 @@ var (
 	processingWG = sync.WaitGroup{}
 	senderWG     = sync.WaitGroup{}
 )
+
+func init() {
+	random.SeedGlobal()
+}
 
 func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	logger := ctxval.Logger(origCtx)

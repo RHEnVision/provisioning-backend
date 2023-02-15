@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/RHEnVision/provisioning-backend/internal/background"
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
@@ -72,6 +73,11 @@ func main() {
 	}
 	jq.RegisterJobs(&logger)
 	jq.StartDequeueLoop(ctx)
+
+	// initialize background goroutines
+	bgCtx, bgCancel := context.WithCancel(ctx)
+	background.InitializeWorker(bgCtx, hostname)
+	defer bgCancel()
 
 	// wait for term signal
 	c := make(chan os.Signal, 1)

@@ -7,23 +7,31 @@ package random
 import (
 	crand "crypto/rand"
 	"encoding/binary"
-	"math/rand"
+	mrand "math/rand"
 
 	"go.opentelemetry.io/otel/trace"
+	erand "golang.org/x/exp/rand"
 )
 
 // SeedGlobal can be used to initialize the global thread-safe pseudo-random
 // generator from the standard library. This should be called from all init()
 // functions for all binaries.
+//
+// It seeds both math/rand and e/exp/rand packages just in case IDE imports
+// one or the other by accident.
 func SeedGlobal() {
-	var rngSeed int64
-	_ = binary.Read(crand.Reader, binary.LittleEndian, &rngSeed)
-	rand.Seed(rngSeed)
+	var seedInt64 int64
+	_ = binary.Read(crand.Reader, binary.LittleEndian, &seedInt64)
+	mrand.Seed(seedInt64)
+
+	var seedUint64 uint64
+	_ = binary.Read(crand.Reader, binary.LittleEndian, &seedUint64)
+	erand.Seed(seedUint64)
 }
 
 // TraceID generates a random OpenTelemetry Trace ID.
 func TraceID() trace.TraceID {
 	tid := trace.TraceID{}
-	_, _ = rand.Read(tid[:])
+	_, _ = mrand.Read(tid[:])
 	return tid
 }

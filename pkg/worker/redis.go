@@ -137,7 +137,7 @@ func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 
 	// spread polling intervals
 	delayMs := (int(w.pollInterval.Milliseconds()) / total) * (i - 1)
-	logger.Info().Msgf("Worker start delay %dms", delayMs)
+	logger.Debug().Msgf("Worker start delay %dms", delayMs)
 	time.Sleep(time.Duration(delayMs) * time.Millisecond)
 
 	for {

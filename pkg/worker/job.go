@@ -61,10 +61,10 @@ type JobWorker interface {
 
 // Stats provides monitoring statistics.
 type Stats struct {
-	// Number of jobs currently in the queue
+	// Number of jobs currently in the queue. This is a global value - all clients see the same value.
 	EnqueuedJobs uint64
 
-	// Number of jobs currently being processed
+	// Number of jobs currently being processed. Local value - each client has its own number.
 	InFlight int64
 }
 
