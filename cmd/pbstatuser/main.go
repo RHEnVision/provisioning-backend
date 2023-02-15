@@ -116,7 +116,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 
 	for s := range chAzure {
 		logger.Trace().Msgf("Checking Azure source availability status %s", s.SourceApplicationID)
-		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAzure, func() error {
+		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAzure, func() error {
 			var err error
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
@@ -139,7 +139,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 
 	for s := range chAws {
 		logger.Trace().Msgf("Checking AWS source availability status %s", s.SourceApplicationID)
-		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeAWS, func() error {
+		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAWS, func() error {
 			var err error
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
@@ -168,7 +168,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 
 	for s := range chGcp {
 		logger.Trace().Msgf("Checking GCP source availability status %s", s.SourceApplicationID)
-		metrics.ObserveAvailablilityCheckReqsDuration(models.ProviderTypeGCP, func() error {
+		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeGCP, func() error {
 			var err error
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
