@@ -607,7 +607,7 @@ data:
                 "type": "prometheus",
                 "uid": "PDD8BE47D10408F45"
               },
-              "expr": " (sum(rate(provisioning_source_availability_check_request_total[$__range]))+ sum(rate(provisioning_invalid_source_availability_check_request_total[$__range])))/sum(rate(provisioning_http_request_total{path="/api/provisioning/v1/availability_status/sources/"}[$__range]))",
+              "expr": "(sum(rate(provisioning_source_availability_check_request_total[$__range]))+ sum(rate(provisioning_invalid_source_availability_check_request_total[$__range])))/sum(rate(provisioning_http_request_total{path=\"/api/provisioning/v1/availability_status/sources/\"}[$__range]))",
               "refId": "A"
             }
           ],
