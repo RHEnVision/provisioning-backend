@@ -52,17 +52,11 @@ func Initialize(rootLogger *zerolog.Logger) *Telemetry {
 		exporterOption = trace.WithSyncer(exporter)
 	}
 
-	res, err := resource.Merge(
-		resource.Default(),
-		resource.NewWithAttributes(
-			semconv.SchemaURL,
-			semconv.ServiceNameKey.String("provisioning"),
-			semconv.ServiceVersionKey.String(version.OpenTelemetryVersion),
-		),
+	res := resource.NewWithAttributes(
+		semconv.SchemaURL,
+		semconv.ServiceNameKey.String("provisioning"),
+		semconv.ServiceVersionKey.String(version.OpenTelemetryVersion),
 	)
-	if err != nil {
-		panic(err)
-	}
 
 	tp := trace.NewTracerProvider(
 		exporterOption,

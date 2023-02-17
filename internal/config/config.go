@@ -236,8 +236,8 @@ func Initialize(configFiles ...string) {
 					config.Kafka.CACert = *b.Cacert
 				}
 				if b.Sasl != nil {
-					if b.Sasl.SecurityProtocol != nil && *b.Sasl.SecurityProtocol != "" {
-						config.Kafka.SASL.SecurityProtocol = *b.Sasl.SecurityProtocol
+					if b.SecurityProtocol != nil && *b.SecurityProtocol != "" {
+						config.Kafka.SASL.SecurityProtocol = *b.SecurityProtocol
 					}
 					if b.Sasl.SaslMechanism != nil && *b.Sasl.SaslMechanism != "" {
 						config.Kafka.SASL.SaslMechanism = *b.Sasl.SaslMechanism
