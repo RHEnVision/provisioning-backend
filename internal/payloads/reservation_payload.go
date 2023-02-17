@@ -141,7 +141,7 @@ type NoopReservationResponsePayload struct {
 }
 
 type AWSReservationRequestPayload struct {
-	// Pubkey ID.
+	// Pubkey ID. Always required even when launch template provides one.
 	PubkeyID int64 `json:"pubkey_id"`
 
 	// Source ID.
@@ -154,7 +154,7 @@ type AWSReservationRequestPayload struct {
 	Name string `json:"name"`
 
 	// Optional launch template ID ("lt-9848392734432") or empty for no template.
-	LaunchTemplateID string `json:"launch_template_id"`
+	LaunchTemplateID string `json:"launch_template_id,omitempty"`
 
 	// AWS Instance type.
 	InstanceType string `json:"instance_type"`

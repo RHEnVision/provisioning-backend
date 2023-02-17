@@ -77,7 +77,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	newName := config.Application.InstancePrefix + payload.Name
 	reservation.Detail.Name = &newName
 
-	// validate pubkey
+	// validate pubkey - must be always present because of data integrity (foreign keys)
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
 	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
 	if err != nil {

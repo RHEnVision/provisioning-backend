@@ -20,12 +20,12 @@ func WithTransaction(ctx context.Context, fn TxFn) error {
 	tx, beginErr := db.Pool.Begin(ctx)
 	if beginErr != nil {
 		logger.Warn().Err(beginErr).Msg("Cannot begin database transaction")
-		return fmt.Errorf("transaction error: %w", beginErr)
+		return fmt.Errorf("tx error: %w", beginErr)
 	}
 
 	defer func() {
 		if p := recover(); p != nil {
-			logger.Warn().Msgf("Rolling database transaction back due to panic call: %s", p)
+			logger.Warn().Msgf("DB panic (rollback): %s", p)
 			rollErr := tx.Rollback(ctx)
 			if rollErr != nil {
 				logger.Warn().Err(rollErr).Msg("Cannot rollback database transaction")
@@ -38,19 +38,20 @@ func WithTransaction(ctx context.Context, fn TxFn) error {
 	callErr := fn(tx)
 
 	if callErr != nil {
-		logger.Warn().Msg("Rolling database transaction back due to error")
+		logger.Warn().Err(callErr).Msgf("DB error (rollback): %s", callErr.Error())
 		rollErr := tx.Rollback(ctx)
 		if rollErr != nil {
 			logger.Warn().Err(rollErr).Msg("Cannot rollback database transaction")
 			// return the call (root cause) error and not transaction error
-			return fmt.Errorf("transaction error: %w", callErr)
+			return fmt.Errorf("tx rollback error: %s, cause: %w", rollErr.Error(), callErr)
 		}
+		return fmt.Errorf("tx error: %w", callErr)
 	}
 
 	commitErr := tx.Commit(ctx)
 	if commitErr != nil {
-		logger.Warn().Err(commitErr).Msg("Cannot rollback database transaction")
-		return fmt.Errorf("transaction error: %w", commitErr)
+		logger.Warn().Err(commitErr).Msg("Cannot commit database transaction")
+		return fmt.Errorf("db commit error: %w", commitErr)
 	}
 
 	return nil
