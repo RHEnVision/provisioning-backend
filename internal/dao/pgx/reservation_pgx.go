@@ -56,7 +56,7 @@ func (x *reservationDao) CreateAWS(ctx context.Context, reservation *models.AWSR
 	})
 
 	if txErr != nil {
-		return fmt.Errorf("pgx transaction error: %w", txErr)
+		return fmt.Errorf("pgx tx error: %w", txErr)
 	}
 	return nil
 }
@@ -87,7 +87,7 @@ func (x *reservationDao) CreateAzure(ctx context.Context, reservation *models.Az
 	})
 
 	if txErr != nil {
-		return fmt.Errorf("pgx transaction error: %w", txErr)
+		return fmt.Errorf("pgx tx error: %w", txErr)
 	}
 	return nil
 }
@@ -118,7 +118,7 @@ func (x *reservationDao) CreateGCP(ctx context.Context, reservation *models.GCPR
 	})
 
 	if txErr != nil {
-		return fmt.Errorf("pgx transaction error: %w", txErr)
+		return fmt.Errorf("pgx tx error: %w", txErr)
 	}
 	return nil
 }
