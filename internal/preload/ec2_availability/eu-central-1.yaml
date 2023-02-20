@@ -148,6 +148,12 @@
 - g5.4xlarge
 - g5.8xlarge
 - g5.xlarge
+- g5g.16xlarge
+- g5g.2xlarge
+- g5g.4xlarge
+- g5g.8xlarge
+- g5g.metal
+- g5g.xlarge
 - i2.2xlarge
 - i2.4xlarge
 - i2.8xlarge

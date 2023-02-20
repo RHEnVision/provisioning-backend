@@ -35,6 +35,7 @@
 - Standard_D16d_v5
 - Standard_D16ds_v4
 - Standard_D16ds_v5
+- Standard_D16lds_v5
 - Standard_D16s_v3
 - Standard_D16s_v4
 - Standard_D16s_v5
@@ -52,6 +53,7 @@
 - Standard_D2d_v5
 - Standard_D2ds_v4
 - Standard_D2ds_v5
+- Standard_D2lds_v5
 - Standard_D2s_v3
 - Standard_D2s_v4
 - Standard_D2s_v5
@@ -66,6 +68,7 @@
 - Standard_D32d_v5
 - Standard_D32ds_v4
 - Standard_D32ds_v5
+- Standard_D32lds_v5
 - Standard_D32s_v3
 - Standard_D32s_v4
 - Standard_D32s_v5
@@ -82,6 +85,7 @@
 - Standard_D48d_v5
 - Standard_D48ds_v4
 - Standard_D48ds_v5
+- Standard_D48lds_v5
 - Standard_D48s_v3
 - Standard_D48s_v4
 - Standard_D48s_v5
@@ -98,6 +102,7 @@
 - Standard_D4d_v5
 - Standard_D4ds_v4
 - Standard_D4ds_v5
+- Standard_D4lds_v5
 - Standard_D4s_v3
 - Standard_D4s_v4
 - Standard_D4s_v5
@@ -114,6 +119,7 @@
 - Standard_D64d_v5
 - Standard_D64ds_v4
 - Standard_D64ds_v5
+- Standard_D64lds_v5
 - Standard_D64s_v3
 - Standard_D64s_v4
 - Standard_D64s_v5
@@ -128,6 +134,7 @@
 - Standard_D8d_v5
 - Standard_D8ds_v4
 - Standard_D8ds_v5
+- Standard_D8lds_v5
 - Standard_D8s_v3
 - Standard_D8s_v4
 - Standard_D8s_v5
@@ -138,6 +145,7 @@
 - Standard_D96as_v5
 - Standard_D96d_v5
 - Standard_D96ds_v5
+- Standard_D96lds_v5
 - Standard_D96s_v5
 - Standard_DS11-1_v2
 - Standard_DS11_v2
@@ -460,8 +468,12 @@
 - Standard_NC32ads_A10_v4
 - Standard_NC8ads_A10_v4
 - Standard_NV12ads_A10_v5
+- Standard_NV16as_v4
 - Standard_NV18ads_A10_v5
+- Standard_NV32as_v4
 - Standard_NV36adms_A10_v5
 - Standard_NV36ads_A10_v5
+- Standard_NV4as_v4
 - Standard_NV6ads_A10_v5
 - Standard_NV72ads_A10_v5
+- Standard_NV8as_v4

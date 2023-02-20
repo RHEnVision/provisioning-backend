@@ -1186,6 +1186,15 @@ c7g.medium:
     supported: true
     arch: arm64
     azure: null
+c7g.metal:
+    name: c7g.metal
+    vcpus: 64
+    cores: 64
+    memory_mib: 131072
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
 c7g.xlarge:
     name: c7g.xlarge
     vcpus: 4
@@ -3382,6 +3391,87 @@ m6in.xlarge:
     supported: true
     arch: x86_64
     azure: null
+m7g.2xlarge:
+    name: m7g.2xlarge
+    vcpus: 8
+    cores: 8
+    memory_mib: 32768
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+m7g.4xlarge:
+    name: m7g.4xlarge
+    vcpus: 16
+    cores: 16
+    memory_mib: 65536
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+m7g.8xlarge:
+    name: m7g.8xlarge
+    vcpus: 32
+    cores: 32
+    memory_mib: 131072
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+m7g.12xlarge:
+    name: m7g.12xlarge
+    vcpus: 48
+    cores: 48
+    memory_mib: 196608
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+m7g.16xlarge:
+    name: m7g.16xlarge
+    vcpus: 64
+    cores: 64
+    memory_mib: 262144
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+m7g.large:
+    name: m7g.large
+    vcpus: 2
+    cores: 2
+    memory_mib: 8192
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+m7g.medium:
+    name: m7g.medium
+    vcpus: 1
+    cores: 1
+    memory_mib: 4096
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+m7g.metal:
+    name: m7g.metal
+    vcpus: 64
+    cores: 64
+    memory_mib: 262144
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+m7g.xlarge:
+    name: m7g.xlarge
+    vcpus: 4
+    cores: 4
+    memory_mib: 16384
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
 p2.8xlarge:
     name: p2.8xlarge
     vcpus: 32
@@ -4704,6 +4794,87 @@ r6in.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
+    azure: null
+r7g.2xlarge:
+    name: r7g.2xlarge
+    vcpus: 8
+    cores: 8
+    memory_mib: 65536
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+r7g.4xlarge:
+    name: r7g.4xlarge
+    vcpus: 16
+    cores: 16
+    memory_mib: 131072
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+r7g.8xlarge:
+    name: r7g.8xlarge
+    vcpus: 32
+    cores: 32
+    memory_mib: 262144
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+r7g.12xlarge:
+    name: r7g.12xlarge
+    vcpus: 48
+    cores: 48
+    memory_mib: 393216
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+r7g.16xlarge:
+    name: r7g.16xlarge
+    vcpus: 64
+    cores: 64
+    memory_mib: 524288
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+r7g.large:
+    name: r7g.large
+    vcpus: 2
+    cores: 2
+    memory_mib: 16384
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+r7g.medium:
+    name: r7g.medium
+    vcpus: 1
+    cores: 1
+    memory_mib: 8192
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+r7g.metal:
+    name: r7g.metal
+    vcpus: 64
+    cores: 64
+    memory_mib: 524288
+    storage_gb: 0
+    supported: true
+    arch: arm64
+    azure: null
+r7g.xlarge:
+    name: r7g.xlarge
+    vcpus: 4
+    cores: 4
+    memory_mib: 32768
+    storage_gb: 0
+    supported: true
+    arch: arm64
     azure: null
 t1.micro:
     name: t1.micro

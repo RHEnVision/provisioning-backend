@@ -313,6 +313,60 @@ c2-standard-60:
     supported: true
     arch: x86_64
     azure: null
+c3-highcpu-4:
+    name: c3-highcpu-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 7811
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c3-highcpu-8:
+    name: c3-highcpu-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c3-highcpu-22:
+    name: c3-highcpu-22
+    vcpus: 22
+    cores: 0
+    memory_mib: 42965
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c3-highcpu-44:
+    name: c3-highcpu-44
+    vcpus: 44
+    cores: 0
+    memory_mib: 85930
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c3-highcpu-88:
+    name: c3-highcpu-88
+    vcpus: 88
+    cores: 0
+    memory_mib: 171861
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+c3-highcpu-176:
+    name: c3-highcpu-176
+    vcpus: 176
+    cores: 0
+    memory_mib: 343723
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
 e2-highcpu-2:
     name: e2-highcpu-2
     vcpus: 2
@@ -570,6 +624,51 @@ m2-ultramemx-96:
     vcpus: 96
     cores: 0
     memory_mib: 585891
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m3-megamem-64:
+    name: m3-megamem-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 953050
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m3-megamem-128:
+    name: m3-megamem-128
+    vcpus: 128
+    cores: 0
+    memory_mib: 1906101
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m3-ultramem-32:
+    name: m3-ultramem-32
+    vcpus: 32
+    cores: 0
+    memory_mib: 953050
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m3-ultramem-64:
+    name: m3-ultramem-64
+    vcpus: 64
+    cores: 0
+    memory_mib: 1906101
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure: null
+m3-ultramem-128:
+    name: m3-ultramem-128
+    vcpus: 128
+    cores: 0
+    memory_mib: 3812202
     storage_gb: 0
     supported: true
     arch: x86_64
