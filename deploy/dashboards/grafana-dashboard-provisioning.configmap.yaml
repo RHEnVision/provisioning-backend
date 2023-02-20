@@ -35,8 +35,8 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 52102,
-      "iteration": 1674477051623,
+      "id": 78101,
+      "iteration": 1676904767267,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -56,7 +56,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PDD8BE47D10408F45"
+            "uid": "${datasource}"
           },
           "description": "The request latency for http requests over the selected date range",
           "fieldConfig": {
@@ -185,7 +185,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -197,7 +197,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
               "expr": "histogram_quantile(0.95, sum(rate(provisioning_http_request_duration_ms_bucket[$__interval]))by (le))",
@@ -209,7 +209,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
               "expr": "histogram_quantile(0.5, sum(rate(provisioning_http_request_duration_ms_bucket[$__interval]))by (le))",
@@ -226,7 +226,7 @@ data:
           "collapsed": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "PD776AFABBE26000A"
+            "uid": "${datasource}"
           },
           "gridPos": {
             "h": 1,
@@ -240,7 +240,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PD776AFABBE26000A"
+                "uid": "${datasource}"
               },
               "refId": "A"
             }
@@ -251,7 +251,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PDD8BE47D10408F45"
+            "uid": "${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -276,6 +276,10 @@ data:
                   {
                     "color": "green",
                     "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 95
                   }
                 ]
               },
@@ -311,7 +315,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
               "expr": "sum(rate(provisioning_http_request_total{code=~\"2.*\"}[$__range]))/sum(rate(provisioning_http_request_total[$__range]))",
@@ -326,7 +330,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PDD8BE47D10408F45"
+            "uid": "${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -385,7 +389,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
               "expr": "sum(increase(provisioning_http_request_total[$__range]))",
@@ -400,7 +404,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PDD8BE47D10408F45"
+            "uid": "${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -490,7 +494,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -502,7 +506,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -517,16 +521,106 @@ data:
           "type": "timeseries"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 11,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 14,
+            "x": 0,
+            "y": 25
+          },
+          "id": 43,
+          "links": [],
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "9.0.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "sum(rate(provisioning_http_request_duration_ms_bucket{le=\"200\"}[$__range])) / sum(rate(provisioning_http_request_duration_ms_count[$__range]))",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "HTTP  Request Latency",
+          "type": "timeseries"
+        },
+        {
           "collapsed": true,
           "datasource": {
             "type": "prometheus",
-            "uid": "PD776AFABBE26000A"
+            "uid": "${datasource}"
           },
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 25
+            "y": 32
           },
           "id": 26,
           "panels": [],
@@ -534,7 +628,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PD776AFABBE26000A"
+                "uid": "${datasource}"
               },
               "refId": "A"
             }
@@ -545,7 +639,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PDD8BE47D10408F45"
+            "uid": "${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -568,8 +662,12 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "semi-dark-red",
+                    "color": "green",
                     "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 75
                   }
                 ]
               },
@@ -581,7 +679,7 @@ data:
             "h": 7,
             "w": 5,
             "x": 0,
-            "y": 26
+            "y": 33
           },
           "id": 33,
           "links": [],
@@ -605,7 +703,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "expr": "(sum(rate(provisioning_source_availability_check_request_total[$__range]))+ sum(rate(provisioning_invalid_source_availability_check_request_total[$__range])))/sum(rate(provisioning_http_request_total{path=\"/api/provisioning/v1/availability_status/sources/\"}[$__range]))",
               "refId": "A"
@@ -617,7 +715,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PDD8BE47D10408F45"
+            "uid": "${datasource}"
           },
           "fieldConfig": {
             "defaults": {
@@ -702,7 +800,7 @@ data:
             "h": 7,
             "w": 14,
             "x": 5,
-            "y": 26
+            "y": 33
           },
           "id": 42,
           "interval": "1h",
@@ -723,7 +821,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -735,7 +833,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PDD8BE47D10408F45"
+                "uid": "${datasource}"
               },
               "editorMode": "code",
               "exemplar": true,
@@ -746,7 +844,97 @@ data:
               "refId": "B"
             }
           ],
-          "title": "Source Availability  Throughput Rate",
+          "title": "Source Availability Throughput Rate",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 11,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 14,
+            "x": 1,
+            "y": 40
+          },
+          "id": 44,
+          "links": [],
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "9.0.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              },
+              "editorMode": "code",
+              "exemplar": true,
+              "expr": "sum(rate(provisioning_source_availability_check_request_duration_ms_bucket{le=\"5000\"}[$__range])) / sum(rate(provisioning_source_availability_check_request_duration_ms_count[$__range]))",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Source Availability Request Latency",
           "type": "timeseries"
         }
       ],
@@ -758,7 +946,7 @@ data:
         "list": [
           {
             "current": {
-              "selected": false,
+              "selected": true,
               "text": "crcs02ue1-prometheus",
               "value": "crcs02ue1-prometheus"
             },
