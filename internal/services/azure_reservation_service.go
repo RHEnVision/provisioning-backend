@@ -30,7 +30,16 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	pkDao := dao.GetPubkeyDao(r.Context())
 	rDao := dao.GetReservationDao(r.Context())
 
-	// validate pubkey
+	// Check for preloaded region
+	if payload.Location == "" {
+		payload.Location = "eastus_1"
+	}
+	if !preload.AzureInstanceType.ValidateRegion(payload.Location) {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported location", UnsupportedRegionError))
+		return
+	}
+
+	// Validate pubkey
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", payload.PubkeyID)
 	pk, err := pkDao.GetById(r.Context(), payload.PubkeyID)
 	if err != nil {

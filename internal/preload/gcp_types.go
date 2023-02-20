@@ -1,5 +1,7 @@
 package preload
 
+import "fmt"
+
 var GCPInstanceType instanceType
 
 func init() {
@@ -10,6 +12,6 @@ func init() {
 	}
 	err := GCPInstanceType.Load()
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("cannot preload gcp types: %w", err))
 	}
 }

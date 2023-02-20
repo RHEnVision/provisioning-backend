@@ -20,6 +20,7 @@ var (
 	UnknownInstanceTypeNameError    = errors.New("unknown instance type")
 	ArchitectureMismatch            = errors.New("instance type and image architecture mismatch")
 	BothTypeAndTemplateMissingError = errors.New("instance type or launch template not set")
+	UnsupportedRegionError          = errors.New("unknown region/location/zone")
 )
 
 // CreateReservation dispatches requests to type provider specific handlers

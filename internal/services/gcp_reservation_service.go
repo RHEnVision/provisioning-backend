@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -31,6 +32,12 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	rDao := dao.GetReservationDao(r.Context())
 	pkDao := dao.GetPubkeyDao(r.Context())
+
+	// Check for preloaded region
+	if !preload.GCPInstanceType.ValidateRegion(payload.Zone) {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported zone", UnsupportedRegionError))
+		return
+	}
 
 	detail := &models.GCPDetail{
 		Zone:        payload.Zone,

@@ -35,6 +35,15 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	rDao := dao.GetReservationDao(r.Context())
 	pkDao := dao.GetPubkeyDao(r.Context())
 
+	// Check for preloaded region
+	if payload.Region == "" {
+		payload.Region = "us-east-1"
+	}
+	if !preload.EC2InstanceType.ValidateRegion(payload.Region) {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported region", UnsupportedRegionError))
+		return
+	}
+
 	// Either Launch Template or Instance Type must be set. Both can be set too, in that case, instance type overrides the launch template.
 	if payload.InstanceType == "" && payload.LaunchTemplateID == "" {
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Both instance type and launch template are missing", BothTypeAndTemplateMissingError))

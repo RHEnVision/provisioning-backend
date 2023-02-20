@@ -71,3 +71,19 @@ func (p *instanceType) InstanceTypesForZone(region, zone string, supported *bool
 func (p *instanceType) FindInstanceType(name clients.InstanceTypeName) *clients.InstanceType {
 	return p.typeInfo.RegisteredTypes.Get(name)
 }
+
+// ValidateRegion checks if a region is preloaded.
+func (p *instanceType) ValidateRegion(region string) bool {
+	dirEntries, err := fsTypes.ReadDir(p.path)
+	if err != nil {
+		panic(fmt.Errorf("unable to read availability dir: %w", err))
+	}
+
+	fullName := region + ".yaml"
+	for _, e := range dirEntries {
+		if e.Name() == fullName {
+			return true
+		}
+	}
+	return false
+}
