@@ -1,5 +1,7 @@
 package preload
 
+import "fmt"
+
 var AzureInstanceType instanceType
 
 func init() {
@@ -10,6 +12,6 @@ func init() {
 	}
 	err := AzureInstanceType.Load()
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("cannot preload azure types: %w", err))
 	}
 }
