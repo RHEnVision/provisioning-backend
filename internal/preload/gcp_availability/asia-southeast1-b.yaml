@@ -51,6 +51,11 @@
 - m1-ultramem-160
 - m1-ultramem-40
 - m1-ultramem-80
+- m3-megamem-128
+- m3-megamem-64
+- m3-ultramem-128
+- m3-ultramem-32
+- m3-ultramem-64
 - n1-highcpu-16
 - n1-highcpu-2
 - n1-highcpu-32
