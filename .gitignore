@@ -4,6 +4,7 @@
 /.fleet/
 /cmd/*/__debug_bin
 /generate_*_types
+/print_*_types
 
 # universal-ctags
 tags

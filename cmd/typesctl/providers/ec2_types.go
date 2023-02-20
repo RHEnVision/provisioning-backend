@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2/types"
+	"github.com/RHEnVision/provisioning-backend/internal/preload"
 )
 
 func init() {
@@ -18,11 +18,11 @@ func init() {
 }
 
 func printRegisteredTypesEC2(name string) {
-	types.PrintRegisteredTypes(name)
+	preload.EC2InstanceType.PrintRegisteredTypes(name)
 }
 
 func printRegionalAvailabilityEC2(region, zone string) {
-	types.PrintRegionalAvailability(region, zone)
+	preload.EC2InstanceType.PrintRegionalAvailability(region, zone)
 }
 
 func generateTypesEC2() error {
@@ -35,6 +35,7 @@ func generateTypesEC2() error {
 		return fmt.Errorf("unable to get default EC2 client: %w", err)
 	}
 
+	fmt.Println("Warning: Account must have all regions enabled, otherwise this will return 4xx")
 	regions, err := defaultClient.ListAllRegions(ctx)
 	if err != nil {
 		return fmt.Errorf("unable to list EC2 regions: %w", err)
@@ -71,12 +72,12 @@ func generateTypesEC2() error {
 		}
 	}
 
-	err = instanceTypes.Save("internal/clients/http/ec2/types/types.yaml")
+	err = instanceTypes.Save("internal/preload/ec2_types.yaml")
 	if err != nil {
 		return fmt.Errorf("unable to generate types: %w", err)
 	}
 
-	err = regionalTypes.Save("internal/clients/http/ec2/types/availability")
+	err = regionalTypes.Save("internal/preload/ec2_availability")
 	if err != nil {
 		return fmt.Errorf("unable to generate types: %w", err)
 	}

@@ -5,10 +5,8 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/api"
-	azure_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure/types"
-	ec2_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2/types"
-	gcp_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp/types"
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
+	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
 	redoc "github.com/go-openapi/runtime/middleware"
@@ -113,16 +111,16 @@ func MountAPI(r *chi.Mux) {
 		// improved UI experience.
 		r.Route("/instance_types", func(r chi.Router) {
 			r.Route("/azure", func(r chi.Router) {
-				r.Use(middleware.ETagMiddleware(azure_types.ETagValue))
-				r.Get("/", s.ListBuiltinInstanceTypes(azure_types.InstanceTypesForZone))
+				r.Use(middleware.ETagMiddleware(preload.AzureInstanceType.ETagValue))
+				r.Get("/", s.ListBuiltinInstanceTypes(preload.AzureInstanceType.InstanceTypesForZone))
 			})
 			r.Route("/aws", func(r chi.Router) {
-				r.Use(middleware.ETagMiddleware(ec2_types.ETagValue))
-				r.Get("/", s.ListBuiltinInstanceTypes(ec2_types.InstanceTypesForZone))
+				r.Use(middleware.ETagMiddleware(preload.EC2InstanceType.ETagValue))
+				r.Get("/", s.ListBuiltinInstanceTypes(preload.EC2InstanceType.InstanceTypesForZone))
 			})
 			r.Route("/gcp", func(r chi.Router) {
-				r.Use(middleware.ETagMiddleware(gcp_types.ETagValue))
-				r.Get("/", s.ListBuiltinInstanceTypes(gcp_types.InstanceTypesForZone))
+				r.Use(middleware.ETagMiddleware(preload.GCPInstanceType.ETagValue))
+				r.Get("/", s.ListBuiltinInstanceTypes(preload.GCPInstanceType.InstanceTypesForZone))
 			})
 		})
 

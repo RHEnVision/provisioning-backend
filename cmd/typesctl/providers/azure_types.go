@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/azure/types"
+	"github.com/RHEnVision/provisioning-backend/internal/preload"
 )
 
 func init() {
@@ -18,11 +18,11 @@ func init() {
 }
 
 func printRegisteredTypesAzure(name string) {
-	types.PrintRegisteredTypes(name)
+	preload.AzureInstanceType.PrintRegisteredTypes(name)
 }
 
 func printRegionalAvailabilityAzure(region, zone string) {
-	types.PrintRegionalAvailability(region, zone)
+	preload.AzureInstanceType.PrintRegionalAvailability(region, zone)
 }
 
 func generateTypesAzure() error {
@@ -40,12 +40,12 @@ func generateTypesAzure() error {
 		return fmt.Errorf("unable to generate types: %w", err)
 	}
 
-	err = instanceTypes.Save("internal/clients/http/azure/types/types.yaml")
+	err = instanceTypes.Save("internal/preload/azure_types.yaml")
 	if err != nil {
 		return fmt.Errorf("unable to generate types: %w", err)
 	}
 
-	err = regionalTypes.Save("internal/clients/http/azure/types/availability")
+	err = regionalTypes.Save("internal/preload/azure_availability")
 	if err != nil {
 		return fmt.Errorf("unable to generate types: %w", err)
 	}
