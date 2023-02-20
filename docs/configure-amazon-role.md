@@ -136,7 +136,8 @@ Create a new policy for the Tenant account:
                 "ec2:DescribeTags",
                 "ec2:ImportKeyPair",
                 "ec2:RunInstances",
-                "ec2:StartInstances"
+                "ec2:StartInstances",
+                "ec2:ListRolePolicies",
             ],
             "Resource": "*"
         }

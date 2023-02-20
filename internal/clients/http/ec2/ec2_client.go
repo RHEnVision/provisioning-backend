@@ -4,9 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"strings"
-
-	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
@@ -425,56 +422,4 @@ func (c *ec2Client) GetAccountId(ctx context.Context) (string, error) {
 	}
 
 	return *out.Account, nil
-}
-
-func getRoleName(arn string) (string, error) {
-	arnParts := strings.Split(arn, ":")
-	if len(arnParts) == 0 {
-		return "", fmt.Errorf("%w: ARN has no colons: %s", http.ARNParsingError, arn)
-	}
-	roleName := strings.Split(arnParts[len(arnParts)-1], "/")
-	if len(roleName) != 2 {
-		return "", fmt.Errorf("%w: ARN has incorrect syntax: %s rolename parsing result: %s",
-			http.ARNParsingError, arn, roleName)
-	} else if roleName[0] != "role" {
-		return "", fmt.Errorf("%w: ARN does not have any role: %s", http.ARNParsingError, arn)
-	}
-	return roleName[1], nil
-}
-
-func (c *ec2Client) listAttachedRolePolicies(ctx context.Context, auth *clients.Authentication) ([]*iamTypes.AttachedPolicy, error) {
-	logger := logger(ctx)
-	logger.Info().Msgf("Parsing ARN to get a friendly role name.")
-	roleName, err := getRoleName(auth.Payload)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse ARN: %w", err)
-	}
-
-	input := &iam.ListAttachedRolePoliciesInput{
-		RoleName: aws.String(roleName),
-	}
-	output, err := c.iam.ListAttachedRolePolicies(ctx, input)
-	if err != nil {
-		return nil, fmt.Errorf("cannot list attached role policies: %w", err)
-	}
-	result := make([]*iamTypes.AttachedPolicy, len(output.AttachedPolicies))
-	for i := range output.AttachedPolicies {
-		result[i] = &output.AttachedPolicies[i]
-	}
-	return result, nil
-}
-
-func (c *ec2Client) CheckPermission(ctx context.Context, auth *clients.Authentication) ([]string, error) {
-	logger := logger(ctx)
-	logger.Info().Msgf("Listing policies attached to the role.")
-	_, err := c.listAttachedRolePolicies(ctx, auth)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: GetPolicies for listed policies.
-
-	// TODO: GetPolicyVersion for policies.
-
-	return nil, nil
 }
