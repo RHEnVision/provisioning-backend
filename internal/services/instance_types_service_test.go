@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	azure_types "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure/types"
 	clientStub "github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
+	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	"github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/go-chi/chi/v5"
@@ -79,7 +79,7 @@ func TestListAzureBuiltinInstanceTypesHandler(t *testing.T) {
 	req.URL.RawQuery = url.Values{"region": {"westus2"}, "zone": {"1"}}.Encode()
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(services.ListBuiltinInstanceTypes(azure_types.InstanceTypesForZone))
+	handler := http.HandlerFunc(services.ListBuiltinInstanceTypes(preload.AzureInstanceType.InstanceTypesForZone))
 	handler.ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")

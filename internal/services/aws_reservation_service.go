@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2/types"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -14,6 +13,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
+	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
@@ -45,7 +45,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	// when launch template is not set.
 	if payload.LaunchTemplateID == "" {
 		supportedArch := "x86_64"
-		it := types.FindInstanceType(clients.InstanceTypeName(payload.InstanceType))
+		it := preload.EC2InstanceType.FindInstanceType(clients.InstanceTypeName(payload.InstanceType))
 		if it == nil {
 			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown type: %s", payload.InstanceType), UnknownInstanceTypeNameError))
 			return

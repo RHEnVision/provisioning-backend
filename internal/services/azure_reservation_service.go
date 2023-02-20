@@ -6,13 +6,13 @@ import (
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/azure/types"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
+	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
@@ -79,7 +79,7 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	supportedArch := "x86_64"
-	it := types.FindInstanceSize(clients.InstanceTypeName(payload.InstanceSize))
+	it := preload.AzureInstanceType.FindInstanceType(clients.InstanceTypeName(payload.InstanceSize))
 	if it == nil {
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown instance size: %s", payload.InstanceSize), UnknownInstanceTypeNameError))
 		return

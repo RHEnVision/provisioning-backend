@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2/types"
+	"github.com/RHEnVision/provisioning-backend/internal/preload"
 )
 
 func init() {
@@ -18,11 +18,11 @@ func init() {
 }
 
 func printRegisteredTypesGCP(name string) {
-	types.PrintRegisteredTypes(name)
+	preload.GCPInstanceType.PrintRegisteredTypes(name)
 }
 
 func printRegionalAvailabilityGCP(region, zone string) {
-	types.PrintRegionalAvailability(region, zone)
+	preload.GCPInstanceType.PrintRegionalAvailability(region, zone)
 }
 
 func generateTypesGCP() error {
@@ -40,12 +40,12 @@ func generateTypesGCP() error {
 		return fmt.Errorf("unable to generate types: %w", err)
 	}
 
-	err = instanceTypes.Save("internal/clients/http/gcp/types/types.yaml")
+	err = instanceTypes.Save("internal/preload/gcp_types.yaml")
 	if err != nil {
 		return fmt.Errorf("unable to save types: %w", err)
 	}
 
-	err = regionalTypes.Save("internal/clients/http/gcp/types/availability")
+	err = regionalTypes.Save("internal/preload/gcp_availability")
 	if err != nil {
 		return fmt.Errorf("unable to save regional types: %w", err)
 	}
