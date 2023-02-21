@@ -1,0 +1,57 @@
+{% uml %}
+@startuml
+
+title Source availability check
+
+node "SourcesApp" {
+  [Sources]
+  Sources -( ResultListener
+}
+package "Provisioning API" {
+  interface "HTTP Rest" as ProvAPI
+  queue "buffer channel" as bChannel
+  [api]
+  [bgProcessor]
+  api -u-( ProvAPI
+}
+node "KAFKA" {
+  queue kafka
+  interface "sources.result" as sourcesRes
+  interface "internal.status" as internalReq
+  kafka -u-( sourcesRes
+  kafka --( internalReq
+}
+
+component "Availability Checker" {
+  [checkProcess]
+  queue AWS
+  queue Azure
+  queue GCP
+
+  collections "go routines" as checkWrkrs
+}
+
+cloud CloudProviders
+
+Sources --> ProvAPI : "**1.** //Send// ""source_id"""
+api -> bChannel : **2**
+bChannel <- bgProcessor : **3**
+bgProcessor -> internalReq : **4**
+checkProcess -l-> internalReq : **5**
+
+checkProcess -u-> AWS : **6**
+checkProcess -u-> Azure : **6**
+checkProcess -u-> GCP : **6**
+
+checkWrkrs --> AWS : **7**
+checkWrkrs --> Azure : **7**
+checkWrkrs --> GCP : **7**
+
+checkWrkrs -r-> CloudProviders : **8**
+
+checkWrkrs -l-> sourcesRes : **9**
+
+ResultListener -r-> sourcesRes : **10**
+
+@enduml
+{% enduml %}
