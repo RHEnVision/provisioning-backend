@@ -43,6 +43,7 @@ var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
 		Name:        "provisioning_source_availability_check_request_duration_ms",
 		Help:        "availability check request duration partitioned by type and error",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
+		Buckets:     []float64{5, 10, 50, 100, 250, 500, 1000, 2500, 5000, 10000},
 	},
 	[]string{"type", "error"},
 )
