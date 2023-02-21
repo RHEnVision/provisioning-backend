@@ -4,7 +4,7 @@ Authors: Ondrej Ezr
 
 ## Status
 
-Reviewing
+Superseded by [8. Config environment files](008-config-env-files.md)
 
 
 ## Problem Statement
