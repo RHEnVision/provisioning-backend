@@ -8,6 +8,7 @@ Authors: Lukas Zapletal, Ondrej Ezr
 Accepted
 
 Amended by [5. Tern migraions](005-tern-migrations.md)
+Amended by [9. Use scany and pgx in DAO](009-dao-use-scany.md)
 
 ## Problem Statement
 
