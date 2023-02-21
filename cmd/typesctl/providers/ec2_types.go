@@ -52,7 +52,7 @@ func generateTypesEC2() error {
 	// https://docs.aws.amazon.com/general/latest/gr/rande-manage.html
 	// https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_enable-regions.html#sts-regions-manage-tokens
 	for _, region := range regions {
-		fmt.Printf("Generating for region %s", region)
+		fmt.Printf("Generating for region %s\n", region)
 		client, regionErr := clients.GetServiceEC2Client(ctx, region.String())
 		if regionErr != nil {
 			return fmt.Errorf("unable to get regional EC2 client: %w", regionErr)
