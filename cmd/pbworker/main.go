@@ -14,7 +14,9 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 
 	// HTTP client implementations
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 
 	// Performs initialization of DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
