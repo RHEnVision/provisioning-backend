@@ -5,7 +5,9 @@ Authors: Lukas Zapletal
 
 ## Status
 
-Reviewing
+Accepted
+
+Superseded by [10. Simplify job queue](010-simplify-jobqueue.md)
 
 ## Glossary
 
