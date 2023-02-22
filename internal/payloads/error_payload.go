@@ -8,8 +8,10 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
+	"github.com/getsentry/sentry-go"
 	"github.com/go-chi/render"
 	"github.com/rs/zerolog"
 )
@@ -40,7 +42,7 @@ func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func newResponse(ctx context.Context, status int, userMsg string, err error) *ResponseError {
+func newErrorResponse(ctx context.Context, status int, userMsg string, err error) *ResponseError {
 	var event *zerolog.Event
 	var strError string
 
@@ -58,6 +60,15 @@ func newResponse(ctx context.Context, status int, userMsg string, err error) *Re
 	}
 	event.Msg(userMsg)
 
+	// Send the error to Sentry
+	if config.Sentry.Enabled && status >= 500 {
+		if err != nil {
+			sentry.CaptureException(err)
+		} else {
+			sentry.CaptureMessage(userMsg)
+		}
+	}
+
 	return &ResponseError{
 		HTTPStatusCode: status,
 		Message:        userMsg,
@@ -70,19 +81,19 @@ func newResponse(ctx context.Context, status int, userMsg string, err error) *Re
 
 func NewInvalidRequestError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Invalid request: %s", message)
-	return newResponse(ctx, http.StatusBadRequest, message, err)
+	return newErrorResponse(ctx, http.StatusBadRequest, message, err)
 }
 
 func NewWrongArchitectureUserError(ctx context.Context, err error) *ResponseError {
-	return newResponse(ctx, http.StatusBadRequest, "Image and type architecture mismatch", err)
+	return newErrorResponse(ctx, http.StatusBadRequest, "Image and type architecture mismatch", err)
 }
 
 func NewMissingRequestParameterError(ctx context.Context, message string) *ResponseError {
-	return newResponse(ctx, http.StatusBadRequest, message, nil)
+	return newErrorResponse(ctx, http.StatusBadRequest, message, nil)
 }
 
 func PubkeyDuplicateError(ctx context.Context, message string, err error) *ResponseError {
-	return newResponse(ctx, http.StatusUnprocessableEntity, message, err)
+	return newErrorResponse(ctx, http.StatusUnprocessableEntity, message, err)
 }
 
 func ClientErrorHelper(err error) (int, string) {
@@ -128,61 +139,61 @@ func ImageBuilderHelper(err error) (int, string) {
 
 func NewClientError(ctx context.Context, err error) *ResponseError {
 	if errors.Is(err, clients.UnknownAuthenticationTypeErr) {
-		return newResponse(ctx, 500, "Unknown authentication type", err)
+		return newErrorResponse(ctx, 500, "Unknown authentication type", err)
 	}
 	if status, message := ImageBuilderHelper(err); status != 0 {
-		return newResponse(ctx, status, message, err)
+		return newErrorResponse(ctx, status, message, err)
 	}
 	if status, message := SourcesErrorHelper(err); status != 0 {
-		return newResponse(ctx, status, message, err)
+		return newErrorResponse(ctx, status, message, err)
 	}
 	if status, message := ClientErrorHelper(err); status != 0 {
-		return newResponse(ctx, status, message, err)
+		return newErrorResponse(ctx, status, message, err)
 	}
-	return newResponse(ctx, 500, "HTTP service returned unknown client error", err)
+	return newErrorResponse(ctx, 500, "HTTP service returned unknown client error", err)
 }
 
 func NewNotFoundError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Not found: %s", message)
-	return newResponse(ctx, http.StatusNotFound, message, err)
+	return newErrorResponse(ctx, http.StatusNotFound, message, err)
 }
 
 func NewEnqueueTaskError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Task enqueue error: %s", message)
-	return newResponse(ctx, http.StatusInternalServerError, message, err)
+	return newErrorResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewDAOError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("DAO error: %s", message)
-	return newResponse(ctx, http.StatusInternalServerError, message, err)
+	return newErrorResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewRenderError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Rendering error: %s", message)
-	return newResponse(ctx, http.StatusInternalServerError, message, err)
+	return newErrorResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewURLParsingError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("URL parsing error: %s", message)
-	return newResponse(ctx, http.StatusBadRequest, message, err)
+	return newErrorResponse(ctx, http.StatusBadRequest, message, err)
 }
 
 func NewStatusError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Status error: %s", message)
-	return newResponse(ctx, http.StatusInternalServerError, message, err)
+	return newErrorResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewAWSError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("AWS API error: %s", message)
-	return newResponse(ctx, http.StatusInternalServerError, message, err)
+	return newErrorResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewAzureError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Azure API error: %s", message)
-	return newResponse(ctx, http.StatusInternalServerError, message, err)
+	return newErrorResponse(ctx, http.StatusInternalServerError, message, err)
 }
 
 func NewGCPError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Google API error: %s", message)
-	return newResponse(ctx, http.StatusInternalServerError, message, err)
+	return newErrorResponse(ctx, http.StatusInternalServerError, message, err)
 }

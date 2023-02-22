@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/getsentry/sentry-go"
 )
 
 func finishJob(ctx context.Context, reservationId int64, jobErr error) {
@@ -44,6 +46,11 @@ func finishWithSuccess(ctx context.Context, reservationId int64) {
 func finishWithError(ctx context.Context, reservationId int64, jobError error) {
 	logger := ctxval.Logger(ctx)
 	logger.Warn().Err(jobError).Msgf("Job returned an error: %s", jobError.Error())
+
+	// Send the error to Sentry
+	if config.Sentry.Enabled {
+		sentry.CaptureException(jobError)
+	}
 
 	rDao := dao.GetReservationDao(ctx)
 	err := rDao.FinishWithError(ctx, reservationId, jobError.Error())

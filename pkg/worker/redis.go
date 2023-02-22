@@ -13,8 +13,10 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/math"
+	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
@@ -161,6 +163,9 @@ func recoverAndLog(ctx context.Context) {
 			logger = logger.Err(err)
 		}
 		logger.Msgf("Error during job handling: %v, stacktrace: %s", rec, debug.Stack())
+		if config.Sentry.Enabled {
+			sentry.CurrentHub().Recover(rec)
+		}
 	}
 }
 

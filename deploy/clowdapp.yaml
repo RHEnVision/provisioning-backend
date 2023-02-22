@@ -72,6 +72,18 @@ objects:
                 value: ${APP_CACHE_TYPE}
               - name: WORKER_QUEUE
                 value: ${WORKER_QUEUE}
+              - name: SENTRY_ENABLED
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-sentry
+                    key: enabled
+                    optional: true
+              - name: SENTRY_DSN
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-sentry
+                    key: dsn
+                    optional: true
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}
@@ -117,6 +129,18 @@ objects:
                     name: provisioning-aws-acc
                     key: aws_secret_access_key
                     optional: false
+              - name: SENTRY_ENABLED
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-sentry
+                    key: enabled
+                    optional: true
+              - name: SENTRY_DSN
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-sentry
+                    key: dsn
+                    optional: true
               - name: APP_INSTANCE_PREFIX
                 value: ${APP_INSTANCE_PREFIX}
               - name: APP_CACHE_TYPE
@@ -201,6 +225,18 @@ objects:
                 value: ${APP_CACHE_TYPE}
               - name: WORKER_QUEUE
                 value: ${WORKER_QUEUE}
+              - name: SENTRY_ENABLED
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-sentry
+                    key: enabled
+                    optional: true
+              - name: SENTRY_DSN
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-sentry
+                    key: dsn
+                    optional: true
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}

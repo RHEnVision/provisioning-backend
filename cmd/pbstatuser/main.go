@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"sync"
 	"syscall"
 	"time"
@@ -16,6 +17,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
+	"github.com/getsentry/sentry-go"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 
 	// Clients
@@ -121,20 +123,23 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 
 	for s := range chAzure {
 		logger.Trace().Msgf("Checking Azure source availability status %s", s.SourceApplicationID)
+		var err error
 		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAzure, func() error {
-			var err error
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
 				Identity:     s.Identity,
 				ResourceType: "Application",
 			}
-			// TODO: check if source is avavliable - WIP
+			// TODO: check if source is available - WIP
 			sr.Status = kafka.StatusAvaliable
 			chSend <- sr
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure, sr.Status, nil)
 
-			return fmt.Errorf("error during check: %w", err)
+			return err
 		})
+		if err != nil && config.Sentry.Enabled {
+			sentry.CaptureException(err)
+		}
 	}
 }
 
@@ -144,8 +149,8 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 
 	for s := range chAws {
 		logger.Trace().Msgf("Checking AWS source availability status %s", s.SourceApplicationID)
+		var err error
 		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAWS, func() error {
-			var err error
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
 				Identity:     s.Identity,
@@ -157,13 +162,17 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 				sr.Err = err
 				logger.Warn().Err(err).Msgf("Could not get aws assumed client %s", err)
 				chSend <- sr
+				err = fmt.Errorf("error during check: %w", err)
 			} else {
 				sr.Status = kafka.StatusAvaliable
 				chSend <- sr
 			}
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS, sr.Status, err)
-			return fmt.Errorf("error during check: %w", err)
+			return err
 		})
+		if err != nil && config.Sentry.Enabled {
+			sentry.CaptureException(err)
+		}
 	}
 }
 
@@ -173,34 +182,39 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 
 	for s := range chGcp {
 		logger.Trace().Msgf("Checking GCP source availability status %s", s.SourceApplicationID)
+		var err error
 		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeGCP, func() error {
-			var err error
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
 				Identity:     s.Identity,
 				ResourceType: "Application",
 			}
-			gcpClient, err := clients.GetGCPClient(ctx, &s.Authentication)
-			if err != nil {
+			gcpClient, gcpErr := clients.GetGCPClient(ctx, &s.Authentication)
+			if gcpErr != nil {
 				sr.Status = kafka.StatusUnavailable
-				sr.Err = err
-				logger.Warn().Err(err).Msgf("Could not get gcp client %s", err)
+				sr.Err = gcpErr
+				logger.Warn().Err(gcpErr).Msgf("Could not get gcp client %s", gcpErr)
 				chSend <- sr
+				err = fmt.Errorf("error during check: %w", gcpErr)
 			}
-			_, err = gcpClient.ListAllRegions(ctx)
-			if err != nil {
+			_, gcpErr = gcpClient.ListAllRegions(ctx)
+			if gcpErr != nil {
 				sr.Status = kafka.StatusUnavailable
-				sr.Err = err
-				logger.Warn().Err(err).Msgf("Could not list gcp regions %s", err)
+				sr.Err = gcpErr
+				logger.Warn().Err(gcpErr).Msgf("Could not list gcp regions %s", gcpErr)
 				chSend <- sr
+				err = fmt.Errorf("error during check: %w", gcpErr)
 			} else {
 				sr.Status = kafka.StatusAvaliable
 				chSend <- sr
 			}
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeGCP, sr.Status, err)
 
-			return fmt.Errorf("error during check: %w", err)
+			return err
 		})
+		if err != nil && config.Sentry.Enabled {
+			sentry.CaptureException(err)
+		}
 	}
 }
 
@@ -218,6 +232,9 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 			msg, err := sr.GenericMessage(ctx)
 			if err != nil {
 				logger.Warn().Err(err).Msgf("Could not generate generic message %s", err)
+				if config.Sentry.Enabled {
+					sentry.CaptureException(err)
+				}
 				continue
 			}
 			messages = append(messages, &msg)
@@ -225,9 +242,12 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 
 			if length >= batchSize {
 				logger.Trace().Int("messages", length).Msgf("Sending %d source availability status messages (full buffer)", length)
-				err := kafka.Send(ctx, messages...)
+				err = kafka.Send(ctx, messages...)
 				if err != nil {
 					logger.Warn().Err(err).Msgf("Could not send source availability status messages (full buffer) %s", err)
+					if config.Sentry.Enabled {
+						sentry.CaptureException(err)
+					}
 				}
 				messages = messages[:0]
 			}
@@ -238,6 +258,9 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 				err := kafka.Send(ctx, messages...)
 				if err != nil {
 					logger.Warn().Err(err).Msgf("Could not send source availability status messages (tick) %s", err)
+					if config.Sentry.Enabled {
+						sentry.CaptureException(err)
+					}
 				}
 				messages = messages[:0]
 			}
@@ -250,6 +273,9 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 				err := kafka.Send(ctx, messages...)
 				if err != nil {
 					logger.Warn().Err(err).Msgf("Could not send source availability status messages (cancel) %s", err)
+					if config.Sentry.Enabled {
+						sentry.CaptureException(err)
+					}
 				}
 			}
 
@@ -284,6 +310,17 @@ func main() {
 		Str("hostname", hostname).
 		Bool("statuser", true).
 		Logger()
+
+	// initialize Sentry error logging
+	if config.Sentry.Enabled {
+		sentry.Init(sentry.ClientOptions{
+			Dsn: config.Sentry.Dsn,
+		})
+		sentry.ConfigureScope(func(scope *sentry.Scope) {
+			scope.SetTag("stream", path.Base(os.Args[0]))
+		})
+		defer sentry.Recover()
+	}
 
 	// initialize telemetry
 	tel := telemetry.Initialize(&log.Logger)

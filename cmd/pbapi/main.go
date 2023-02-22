@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
+	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/background"
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
@@ -34,6 +36,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
 	"github.com/RHEnVision/provisioning-backend/internal/routes"
+	"github.com/getsentry/sentry-go"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
@@ -106,6 +109,16 @@ func main() {
 		jq.StartDequeueLoop(ctx)
 	}
 
+	// initialize Sentry error logging
+	if config.Sentry.Enabled {
+		sentry.Init(sentry.ClientOptions{
+			Dsn: config.Sentry.Dsn,
+		})
+		sentry.ConfigureScope(func(scope *sentry.Scope) {
+			scope.SetTag("stream", path.Base(os.Args[0]))
+		})
+	}
+
 	// Setup routes
 	rootRouter := chi.NewRouter()
 	apiRouter := chi.NewRouter()
@@ -165,6 +178,9 @@ func main() {
 		if err := metricsServer.Shutdown(context.Background()); err != nil {
 			log.Fatal().Err(err).Msg("Metrics service shutdown error")
 		}
+		// Since sentry emits events in the background we need to make sure
+		// they are sent before we shut down
+		sentry.Flush(time.Second * 5)
 		close(waitForSignal)
 	}()
 

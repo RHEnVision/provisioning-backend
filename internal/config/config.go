@@ -123,6 +123,10 @@ var config struct {
 		URL         string `env:"URL" env-default:"http://localhost:4242" env-description:"unleash service URL"`
 		Token       string `env:"TOKEN" env-default:"" env-description:"unleash service client access token"`
 	} `env-prefix:"UNLEASH_"`
+	Sentry struct {
+		Enabled bool   `env:"ENABLED" env-default:"false" env-description:"sentry error logging"`
+		Dsn     string `env:"DSN" env-default:"" env-description:"data source name - full url to send events to"`
+	} `env-prefix:"SENTRY_"`
 	Kafka struct {
 		Enabled  bool     `env:"ENABLED" env-default:"false" env-description:"kafka service enabled"`
 		Brokers  []string `env:"BROKERS" env-default:"localhost:9092" env-description:"kafka hostname:port list of brokers"`
@@ -153,6 +157,7 @@ var (
 	Sources       = &config.RestEndpoints.Sources
 	Worker        = &config.Worker
 	Unleash       = &config.Unleash
+	Sentry        = &config.Sentry
 	Kafka         = &config.Kafka
 )
 

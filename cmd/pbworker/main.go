@@ -4,12 +4,14 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 
 	"github.com/RHEnVision/provisioning-backend/internal/background"
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 
@@ -56,6 +58,16 @@ func main() {
 		Str("hostname", hostname).
 		Logger()
 	logger.Info().Msg("Worker starting")
+
+	// initialize Sentry error logging
+	if config.Sentry.Enabled {
+		sentry.Init(sentry.ClientOptions{
+			Dsn: config.Sentry.Dsn,
+		})
+		sentry.ConfigureScope(func(scope *sentry.Scope) {
+			scope.SetTag("stream", path.Base(os.Args[0]))
+		})
+	}
 
 	// initialize cache
 	cache.Initialize()

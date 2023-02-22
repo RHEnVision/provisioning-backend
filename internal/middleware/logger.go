@@ -6,7 +6,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog"
@@ -50,6 +52,10 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 						Bool("panic", true).
 						Int("status", panicStatus).
 						Msgf("Unhandled panic: %s\n%s", rec, debug.Stack())
+					if config.Sentry.Enabled {
+						// Send the panic to Sentry
+						sentry.CurrentHub().Recover(rec)
+					}
 					http.Error(ww, http.StatusText(panicStatus), panicStatus)
 				}
 
