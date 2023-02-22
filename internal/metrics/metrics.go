@@ -3,8 +3,6 @@ package metrics
 import (
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/kafka"
-	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -48,25 +46,44 @@ var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
 	[]string{"type", "error"},
 )
 
-func ObserveAvailabilityCheckReqsDuration(provider models.ProviderType, ObservedFunc func() error) {
+var BackgroundJobDuration = prometheus.NewHistogramVec(
+	prometheus.HistogramOpts{
+		Name:        "background_job_duration_ms",
+		Help:        "task queue job duration (ms)",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "worker"},
+		Buckets:     []float64{5, 10, 50, 100, 250, 500, 1000, 2500, 5000, 10000},
+	},
+	[]string{"type"},
+)
+
+func ObserveAvailabilityCheckReqsDuration(provider string, observedFunc func() error) {
 	errString := "false"
 	start := time.Now()
 	defer func() {
-		AvailabilityCheckReqsDuration.WithLabelValues(provider.String(), errString).Observe(float64(time.Since(start).Nanoseconds()) / 1000000)
+		AvailabilityCheckReqsDuration.WithLabelValues(provider, errString).Observe(float64(time.Since(start).Nanoseconds()) / 1000000)
 	}()
 
-	err := ObservedFunc()
+	err := observedFunc()
 	if err != nil {
 		errString = "true"
 	}
 }
 
-func IncTotalSentAvailabilityCheckReqs(provider models.ProviderType, StatusType kafka.StatusType, err error) {
+func ObserveBackgroundJobDuration(jobType string, observedFunc func()) {
+	start := time.Now()
+	defer func() {
+		BackgroundJobDuration.WithLabelValues(jobType).Observe(float64(time.Since(start).Nanoseconds()) / 1000000)
+	}()
+
+	observedFunc()
+}
+
+func IncTotalSentAvailabilityCheckReqs(provider string, statusType string, err error) {
 	errString := "false"
 	if err != nil {
 		errString = "true"
 	}
-	TotalSentAvailabilityCheckReqs.WithLabelValues(provider.String(), string(StatusType), errString).Inc()
+	TotalSentAvailabilityCheckReqs.WithLabelValues(provider, string(statusType), errString).Inc()
 }
 
 func IncTotalInvalidAvailabilityCheckReqs() {
@@ -86,5 +103,10 @@ func RegisterStatuserMetrics() {
 }
 
 func RegisterApiMetrics() {
+	// no metrics
+}
+
+func RegisterWorkerMetrics() {
 	prometheus.MustRegister(JobQueueSize)
+	prometheus.MustRegister(BackgroundJobDuration)
 }

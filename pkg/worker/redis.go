@@ -15,6 +15,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/math"
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
@@ -205,7 +206,9 @@ func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
 	logger.Info().Msg("Dequeued job from Redis")
 	ctx = contextLogger(ctx, job)
 	if h, ok := w.handlers[job.Type]; ok {
-		h(ctx, job)
+		metrics.ObserveBackgroundJobDuration(job.Type.String(), func() {
+			h(ctx, job)
+		})
 	} else {
 		// handler not found
 		ctxval.Logger(ctx).Warn().Msgf("Redis worker handler not found for job type: %s", job.Type)

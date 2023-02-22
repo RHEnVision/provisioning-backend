@@ -121,7 +121,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 
 	for s := range chAzure {
 		logger.Trace().Msgf("Checking Azure source availability status %s", s.SourceApplicationID)
-		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAzure, func() error {
+		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAzure.String(), func() error {
 			var err error
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
@@ -131,7 +131,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 			// TODO: check if source is avavliable - WIP
 			sr.Status = kafka.StatusAvaliable
 			chSend <- sr
-			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure, sr.Status, nil)
+			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure.String(), sr.Status.String(), nil)
 
 			return fmt.Errorf("error during check: %w", err)
 		})
@@ -144,7 +144,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 
 	for s := range chAws {
 		logger.Trace().Msgf("Checking AWS source availability status %s", s.SourceApplicationID)
-		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAWS, func() error {
+		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAWS.String(), func() error {
 			var err error
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
@@ -161,7 +161,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 				sr.Status = kafka.StatusAvaliable
 				chSend <- sr
 			}
-			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS, sr.Status, err)
+			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS.String(), sr.Status.String(), err)
 			return fmt.Errorf("error during check: %w", err)
 		})
 	}
@@ -173,7 +173,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 
 	for s := range chGcp {
 		logger.Trace().Msgf("Checking GCP source availability status %s", s.SourceApplicationID)
-		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeGCP, func() error {
+		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeGCP.String(), func() error {
 			var err error
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
@@ -197,7 +197,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 				sr.Status = kafka.StatusAvaliable
 				chSend <- sr
 			}
-			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeGCP, sr.Status, err)
+			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeGCP.String(), sr.Status.String(), err)
 
 			return fmt.Errorf("error during check: %w", err)
 		})
@@ -311,7 +311,7 @@ func main() {
 		signal.Notify(sigint, syscall.SIGINT, syscall.SIGTERM)
 		<-sigint
 		if err := metricsServer.Shutdown(context.Background()); err != nil {
-			logger.Fatal().Err(err).Msg("Metrics service shutdown error")
+			logger.Warn().Err(err).Msg("Metrics service shutdown error")
 		}
 		close(signalNotify)
 	}()
