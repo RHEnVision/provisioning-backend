@@ -29,3 +29,7 @@ type SourceResult struct {
 func (sr SourceResult) GenericMessage(ctx context.Context) (GenericMessage, error) {
 	return genericMessage(ctx, sr, sr.ResourceID, SourcesStatusTopic)
 }
+
+func (st StatusType) String() string {
+	return string(st)
+}

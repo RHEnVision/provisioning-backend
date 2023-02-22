@@ -59,6 +59,10 @@ type JobWorker interface {
 	Stats(ctx context.Context) (Stats, error)
 }
 
+func (jt JobType) String() string {
+	return string(jt)
+}
+
 // Stats provides monitoring statistics.
 type Stats struct {
 	// Number of jobs currently in the queue. This is a global value - all clients see the same value.

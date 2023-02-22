@@ -2,14 +2,21 @@ package main
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/RHEnVision/provisioning-backend/internal/background"
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
+	"github.com/go-chi/chi/v5"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 
@@ -57,6 +64,11 @@ func main() {
 		Logger()
 	logger.Info().Msg("Worker starting")
 
+	// initialize telemetry
+	tel := telemetry.Initialize(&log.Logger)
+	defer tel.Close(ctx)
+	metrics.RegisterWorkerMetrics()
+
 	// initialize cache
 	cache.Initialize()
 
@@ -81,10 +93,39 @@ func main() {
 	background.InitializeWorker(bgCtx, hostname)
 	defer bgCancel()
 
+	// metrics
+	logger.Info().Msgf("Starting new instance on port %d with prometheus on %d", config.Application.Port, config.Prometheus.Port)
+	metricsRouter := chi.NewRouter()
+	metricsRouter.Handle(config.Prometheus.Path, promhttp.Handler())
+	metricsServer := http.Server{
+		Addr:    fmt.Sprintf(":%d", config.Prometheus.Port),
+		Handler: metricsRouter,
+	}
+
+	signalNotify := make(chan struct{})
+	go func() {
+		sigint := make(chan os.Signal, 1)
+		signal.Notify(sigint, syscall.SIGINT, syscall.SIGTERM)
+		<-sigint
+		if err := metricsServer.Shutdown(context.Background()); err != nil {
+			logger.Warn().Err(err).Msg("Metrics service shutdown error")
+		}
+		close(signalNotify)
+	}()
+
+	go func() {
+		if err := metricsServer.ListenAndServe(); err != nil {
+			var errInUse syscall.Errno
+			if errors.As(err, &errInUse) && errInUse == syscall.EADDRINUSE {
+				logger.Warn().Err(err).Msg("Not starting metrics service, port already in use")
+			} else if !errors.Is(err, http.ErrServerClosed) {
+				logger.Warn().Err(err).Msg("Metrics service listen error")
+			}
+		}
+	}()
+
 	// wait for term signal
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	<-c
+	<-signalNotify
 
 	logger.Info().Msg("Graceful shutdown initiated - waiting for jobs to finish")
 	jq.StopDequeueLoop(ctx)

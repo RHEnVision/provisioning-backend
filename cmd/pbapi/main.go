@@ -160,10 +160,10 @@ func main() {
 		signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)
 		<-sigint
 		if err := apiServer.Shutdown(context.Background()); err != nil {
-			log.Fatal().Err(err).Msg("Main service shutdown error")
+			log.Warn().Err(err).Msg("Main service shutdown error")
 		}
 		if err := metricsServer.Shutdown(context.Background()); err != nil {
-			log.Fatal().Err(err).Msg("Metrics service shutdown error")
+			log.Warn().Err(err).Msg("Metrics service shutdown error")
 		}
 		close(waitForSignal)
 	}()
@@ -181,7 +181,7 @@ func main() {
 
 	if err := apiServer.ListenAndServe(); err != nil {
 		if !errors.Is(err, http.ErrServerClosed) {
-			log.Fatal().Err(err).Msg("Main service listen error")
+			log.Warn().Err(err).Msg("Main service listen error")
 		}
 	}
 
