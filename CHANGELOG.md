@@ -1,4 +1,39 @@
 <!-- insertion marker -->
+<a name="0.16.0"></a>
+
+## [0.16.0](https://github.com/RHEnVision/provisioning-backend/compare/0.15.0...0.16.0) (2023-02-22)
+
+### Features
+
+- respect Amount in Azure deployments ([77942a2](https://github.com/RHEnVision/provisioning-backend/commit/77942a25a11d727d24bda3f86268ead6b2aa630c))
+- Fetch image name from image builder ([077dd25](https://github.com/RHEnVision/provisioning-backend/commit/077dd25ae59e298bc1366943d2107319c8a71953))
+- **HMS-969:** List and filter sources by their hyperscaler ([74f26f5](https://github.com/RHEnVision/provisioning-backend/commit/74f26f5769829e4abd3a6e820dea6771077b2c6e))
+- **HMS-1110:** ListAttachedPolicies feature ([befed63](https://github.com/RHEnVision/provisioning-backend/commit/befed63f39e036d8f7159fc2fff4b1ef40fa8711))
+- add provider for Sources in OpenAPI spec ([877dae8](https://github.com/RHEnVision/provisioning-backend/commit/877dae89b414235f9c7ab6e81d06208ac384f20c))
+
+### Bug Fixes
+
+- **HMS-951:** region refresh docs ([572622d](https://github.com/RHEnVision/provisioning-backend/commit/572622d879de1347cda87711314844a45163757e))
+- **HMS-1269:** initialize clients in workers ([1da390d](https://github.com/RHEnVision/provisioning-backend/commit/1da390da29a18ee1d7f1e683fef590ff1742f98f))
+- **HMS-1259:** update avail check buckets to ms ([bad43f8](https://github.com/RHEnVision/provisioning-backend/commit/bad43f81bf343b9f3898ab69ded82b6198804bd2))
+- **HMS-951:** region/location/zone validation ([36a8366](https://github.com/RHEnVision/provisioning-backend/commit/36a8366b04bdbe8d18a42f0e02a95a3cfba6e1a7))
+- **HMS-951:** refresh preloaded data ([a1ef8be](https://github.com/RHEnVision/provisioning-backend/commit/a1ef8bebf5eb78a980afca4e5bddb87df25a1357))
+- **HMS-1259:** Add adjustable datasource and SLOs panels ([c382c91](https://github.com/RHEnVision/provisioning-backend/commit/c382c91b9b105ec76be0e82494ae262b6feb809a))
+- **HMS-951:** move preloaded types into separate package ([fd4d278](https://github.com/RHEnVision/provisioning-backend/commit/fd4d2783d8b9ca620b5d85853ed902dd58ee5499))
+- **HMS-1260:** document pubkey and template behavior ([497c082](https://github.com/RHEnVision/provisioning-backend/commit/497c0823c256f8e21ffb47a7af192715de2e3d8c))
+- **HMS-860:** modify and update job queue metrics ([525d1d3](https://github.com/RHEnVision/provisioning-backend/commit/525d1d350f8cfeb0f1b310aeaf01691cef62c5bb))
+- **HMS-860:** fix typo in function name ([361da5a](https://github.com/RHEnVision/provisioning-backend/commit/361da5a485ba204c1212a7f3884b6f0ced66e11b))
+- **HMS-1242:** atomically read statistics ([0b7a42b](https://github.com/RHEnVision/provisioning-backend/commit/0b7a42bc86394c7dd03aa1f53a498c8689b3c5fa))
+- **HMS-1240:** add step titles back ([687e73a](https://github.com/RHEnVision/provisioning-backend/commit/687e73a28b6316605de1cde055b2f82481961582))
+- allow setting proxy per client ([6e191e4](https://github.com/RHEnVision/provisioning-backend/commit/6e191e414ee46b7167be9739decd53122e1b3ff2))
+- **HMS-1209:** launch templates for AWS ([01b4933](https://github.com/RHEnVision/provisioning-backend/commit/01b493303e12a27c3ea7865dbc0b346448101b6a))
+- **HMS-1106:** rename ListInstanceTypes ([f224cb4](https://github.com/RHEnVision/provisioning-backend/commit/f224cb41ff56595d247042286ba9808dc629b1aa))
+- **HMSPROV-429:** floorist exporter ([bf11efd](https://github.com/RHEnVision/provisioning-backend/commit/bf11efd62e9fe9cd6d4fbbd908abc95deba69b76))
+
+### Code Refactoring
+
+- Add logs to statuser and add invalid requests metric ([aacbf62](https://github.com/RHEnVision/provisioning-backend/commit/aacbf62f1cd731a6610ec52b5a1e932f63442e26))
+
 <a name="0.15.0"></a>
 
 ## [0.15.0](https://github.com/RHEnVision/provisioning-backend/compare/0.14.0...0.15.0) (2023-02-06)
