@@ -11,6 +11,7 @@ import (
 type reservationDaoStub struct {
 	storeAWS   []*models.AWSReservation
 	storeAzure []*models.AzureReservation
+	storeGCP   []*models.GCPReservation
 }
 
 func init() {
@@ -25,6 +26,11 @@ func AWSReservationStubCount(ctx context.Context) int {
 func AzureReservationStubCount(ctx context.Context) int {
 	resDao := getReservationDaoStub(ctx)
 	return len(resDao.storeAzure)
+}
+
+func GCPReservationStubCount(ctx context.Context) int {
+	resDao := getReservationDaoStub(ctx)
+	return len(resDao.storeGCP)
 }
 
 func getReservationDao(ctx context.Context) dao.ReservationDao {
@@ -44,6 +50,8 @@ func (stub *reservationDaoStub) CreateAzure(ctx context.Context, reservation *mo
 }
 
 func (stub *reservationDaoStub) CreateGCP(ctx context.Context, reservation *models.GCPReservation) error {
+	reservation.ID = int64(len(stub.storeGCP)) + 1
+	stub.storeGCP = append(stub.storeGCP, reservation)
 	return nil
 }
 
