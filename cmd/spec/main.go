@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"reflect"
 
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/getkin/kin-openapi/openapi3"
@@ -33,7 +34,14 @@ func (s *APISchemaGen) init() {
 }
 
 func (s *APISchemaGen) addSchema(name string, model interface{}) {
-	schema, err := openapi3gen.NewSchemaRefForValue(model, s.Components.Schemas)
+	// Allow tagging with nullable to work
+	opt := openapi3gen.SchemaCustomizer(func(_name string, _t reflect.Type, tag reflect.StructTag, schema *openapi3.Schema) error {
+		if tag.Get("nullable") == "true" {
+			schema.Nullable = true
+		}
+		return nil
+	})
+	schema, err := openapi3gen.NewSchemaRefForValue(model, s.Components.Schemas, opt)
 	if err != nil {
 		panic(err)
 	}
