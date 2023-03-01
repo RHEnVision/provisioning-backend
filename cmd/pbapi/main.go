@@ -49,20 +49,14 @@ func main() {
 	ctx := context.Background()
 	config.Initialize("config/api.env")
 
-	// initialize stdout logging and AWS clients first
-	logging.InitializeStdout()
-
 	// initialize cloudwatch using the AWS clients
-	logger, clsFunc, err := logging.InitializeCloudwatch(log.Logger)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error initializing cloudwatch")
-	}
-	defer clsFunc()
+	logger, closeFunc := logging.InitializeLogger()
+	defer closeFunc()
 	log.Logger = logger
 	logging.DumpConfigForDevelopment()
 
 	// initialize feature flags
-	err = config.InitializeFeatureFlags(ctx)
+	err := config.InitializeFeatureFlags(ctx)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing feature flags")
 	}

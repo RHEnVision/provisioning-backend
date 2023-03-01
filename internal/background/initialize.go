@@ -6,6 +6,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 )
 
@@ -25,10 +26,10 @@ func InitializeApi(ctx context.Context) {
 
 // InitializeWorker starts background goroutines for worker processes.
 // Use context cancellation to stop them.
-func InitializeWorker(ctx context.Context, workerName string) {
+func InitializeWorker(ctx context.Context) {
 	logger := ctxval.Logger(ctx).With().Bool("background", true).Logger()
 	ctx = ctxval.WithLogger(ctx, &logger)
 
 	// start job queue telemetry
-	go jobQueueMetricLoop(ctx, 30*time.Second, workerName)
+	go jobQueueMetricLoop(ctx, 30*time.Second, config.Hostname())
 }

@@ -45,23 +45,11 @@ func main() {
 	logging.InitializeStdout()
 
 	// initialize cloudwatch using the AWS clients
-	logger, clsFunc, err := logging.InitializeCloudwatch(log.Logger)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error initializing cloudwatch")
-	}
-	defer clsFunc()
+	logger, closeFunc := logging.InitializeLogger()
+	defer closeFunc()
 	log.Logger = logger
 	logging.DumpConfigForDevelopment()
 
-	// setup structured logging
-	hostname, err := os.Hostname()
-	if err != nil {
-		hostname = "unknown-hostname"
-	}
-	logger = logger.With().
-		Timestamp().
-		Str("hostname", hostname).
-		Logger()
 	logger.Info().Msg("Worker starting")
 
 	// initialize telemetry
@@ -74,7 +62,7 @@ func main() {
 
 	// initialize the database
 	logger.Debug().Msg("Initializing database connection")
-	err = db.Initialize(ctx, "public")
+	err := db.Initialize(ctx, "public")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
@@ -90,7 +78,7 @@ func main() {
 
 	// initialize background goroutines
 	bgCtx, bgCancel := context.WithCancel(ctx)
-	background.InitializeWorker(bgCtx, hostname)
+	background.InitializeWorker(bgCtx)
 	defer bgCancel()
 
 	// metrics

@@ -2,6 +2,7 @@ package logging
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"time"
 	"unicode/utf8"
@@ -13,16 +14,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
 )
-
-var hostname string
-
-func init() {
-	h, err := os.Hostname()
-	if err != nil {
-		h = "unknown-hostname"
-	}
-	hostname = h
-}
 
 func truncateText(str string, length int) string {
 	if length <= 0 {
@@ -44,7 +35,7 @@ func truncateText(str string, length int) string {
 
 func decorate(l zerolog.Logger) zerolog.Logger {
 	logger := l.With().Timestamp().
-		Str("hostname", hostname)
+		Str("hostname", config.Hostname())
 
 	if version.BuildCommit != "" {
 		logger = logger.Str("version", version.BuildCommit)
@@ -53,9 +44,7 @@ func decorate(l zerolog.Logger) zerolog.Logger {
 	return logger.Logger()
 }
 
-// InitializeStdout initializes logging to standard output with human-friendly output.
-// It is used before CloudWatch logging output is initialized, or in unit and integration tests.
-func InitializeStdout() {
+func configureZerolog() {
 	level, err := zerolog.ParseLevel(config.Logging.Level)
 	if err != nil {
 		panic(fmt.Errorf("cannot parse log level '%s': %w", config.Logging.Level, err))
@@ -63,42 +52,63 @@ func InitializeStdout() {
 	zerolog.SetGlobalLevel(level)
 	//nolint:reassign
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+}
 
-	log.Logger = decorate(log.Output(zerolog.ConsoleWriter{
+func stdoutWriter(truncate bool) io.Writer {
+	writer := zerolog.ConsoleWriter{
 		Out:        os.Stdout,
 		NoColor:    config.InEphemeralClowder(),
 		TimeFormat: time.Kitchen,
-		FormatFieldValue: func(i interface{}) string {
+	}
+	if truncate {
+		writer.FormatFieldValue = func(i interface{}) string {
 			return truncateText(fmt.Sprintf("%s", i), config.Logging.MaxField)
-		},
-	})).With().Str("binary", config.BinaryName()).Logger()
-}
-
-func InitializeCloudwatch(logger zerolog.Logger) (zerolog.Logger, func(), error) {
-	if config.Cloudwatch.Enabled {
-		log.Debug().Msgf("Initializing cloudwatch logger key %s group %s stream %s region %s",
-			config.Cloudwatch.Key, config.Cloudwatch.Group, config.Cloudwatch.Stream, config.Cloudwatch.Region)
-
-		cwClient := newCloudwatchClient()
-		cloudWatchWriter, err := cww.NewWithClient(cwClient, 500*time.Millisecond, config.Cloudwatch.Group, config.Cloudwatch.Stream)
-		if err != nil {
-			return logger, nil, fmt.Errorf("cannot initialize cloudwatch: %w", err)
-		}
-
-		if !config.InClowder() && config.Logging.Stdout {
-			// stdout and cloudwatch during local development
-			consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
-			newLogger := decorate(zerolog.New(zerolog.MultiLevelWriter(consoleWriter, cloudWatchWriter)))
-			return newLogger, cloudWatchWriter.Close, nil
-		} else {
-			// only cloudwatch (production mode)
-			newLogger := decorate(zerolog.New(cloudWatchWriter))
-			return newLogger, cloudWatchWriter.Close, nil
 		}
 	}
+	return writer
+}
 
-	log.Trace().Msg("Cloudwatch not enabled")
-	return logger, func() {}, nil
+func cloudwatchWriter() (io.Writer, func(), error) {
+	log.Debug().Msgf("Initializing cloudwatch logger key %s group %s stream %s region %s",
+		config.Cloudwatch.Key, config.Cloudwatch.Group, config.Cloudwatch.Stream, config.Cloudwatch.Region)
+
+	cwClient := newCloudwatchClient()
+	cloudWatchWriter, err := cww.NewWithClient(cwClient, 500*time.Millisecond, config.Cloudwatch.Group, config.Cloudwatch.Stream)
+	if err != nil {
+		return nil, func() {}, fmt.Errorf("cannot initialize cloudwatch: %w", err)
+	}
+
+	return cloudWatchWriter, cloudWatchWriter.Close, nil
+}
+
+// InitializeStdout initializes logging to standard output with human-friendly output.
+// It is used in unit and database tests.
+func InitializeStdout() {
+	configureZerolog()
+	log.Logger = decorate(log.Output(stdoutWriter(true))).With().Str("binary", config.BinaryName()).Logger()
+}
+
+// InitializeLogger initializes logging to cloudwatch client and enables sentry Error logging.
+// If cloudwatch is disabled, we enable stdout output.
+func InitializeLogger() (zerolog.Logger, func()) {
+	configureZerolog()
+
+	var writers []io.Writer
+	closeFn := func() {}
+
+	if config.Cloudwatch.Enabled {
+		cwWriter, cwClose, err := cloudwatchWriter()
+		if err != nil {
+			panic(err)
+		}
+		writers = append(writers, cwWriter)
+		closeFn = cwClose
+	} else {
+		log.Trace().Msg("Cloudwatch not enabled, enabling stdout")
+		writers = append(writers, stdoutWriter(false))
+	}
+
+	return decorate(zerolog.New(io.MultiWriter(writers...))), closeFn
 }
 
 func DumpConfigForDevelopment() {
