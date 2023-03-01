@@ -260,7 +260,7 @@ func Initialize(configFiles ...string) {
 			config.Cloudwatch.Secret = cw.SecretAccessKey
 			config.Cloudwatch.Region = cw.Region
 			config.Cloudwatch.Group = cw.LogGroup
-			config.Cloudwatch.Stream = path.Base(os.Args[0])
+			config.Cloudwatch.Stream = BinaryName()
 		}
 
 		// HTTP proxies are not allowed in clowder environment
@@ -280,6 +280,10 @@ func Initialize(configFiles ...string) {
 	if err := validate(); err != nil {
 		panic(err)
 	}
+}
+
+func BinaryName() string {
+	return path.Base(os.Args[0])
 }
 
 func HelpText() (string, error) {
