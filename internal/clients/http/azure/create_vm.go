@@ -30,7 +30,6 @@ const (
 	subnetName    = "redhat-subnet"
 	nsgName       = "redhat-nsg"
 	nicName       = "redhat-nic"
-	diskName      = "redhat-disk"
 	publicIPName  = "redhat-public-ip"
 	adminUsername = "azureuser"
 	vpnIPAddress  = "172.22.0.0/16"
@@ -86,7 +85,7 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	}
 	logger.Trace().Msgf("Using network interface id=%s", *networkInterface.ID)
 
-	vmParams := c.prepareVirtualMachineParameters(location, armcompute.VirtualMachineSizeTypes(instanceType), networkInterface, imageID, pubkey.Body, diskName, vmName)
+	vmParams := c.prepareVirtualMachineParameters(location, armcompute.VirtualMachineSizeTypes(instanceType), networkInterface, imageID, pubkey.Body, vmName)
 	virtualMachine, err := c.createVirtualMachine(ctx, resourceGroupName, vmName, vmParams)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create virtual machine")
@@ -354,7 +353,7 @@ func (c *client) createNetworkInterface(ctx context.Context, location string, re
 	return &resp.Interface, nil
 }
 
-func (c *client) prepareVirtualMachineParameters(location string, instanceType armcompute.VirtualMachineSizeTypes, networkInterface *armnetwork.Interface, imageID string, sshKeyBody string, diskName string, vmName string) *armcompute.VirtualMachine {
+func (c *client) prepareVirtualMachineParameters(location string, instanceType armcompute.VirtualMachineSizeTypes, networkInterface *armnetwork.Interface, imageID string, sshKeyBody string, vmName string) *armcompute.VirtualMachine {
 	return &armcompute.VirtualMachine{
 		Location: to.Ptr(location),
 		Identity: &armcompute.VirtualMachineIdentity{
@@ -366,7 +365,7 @@ func (c *client) prepareVirtualMachineParameters(location string, instanceType a
 					ID: ptr.To(imageID),
 				},
 				OSDisk: &armcompute.OSDisk{
-					Name:         to.Ptr(diskName),
+					// Name:         ptr.To(vmName + "_disk1"),
 					CreateOption: to.Ptr(armcompute.DiskCreateOptionTypesFromImage),
 					Caching:      to.Ptr(armcompute.CachingTypesReadWrite),
 					ManagedDisk: &armcompute.ManagedDiskParameters{
