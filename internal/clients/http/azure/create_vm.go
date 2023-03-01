@@ -29,8 +29,6 @@ const (
 	vnetName      = "redhat-vnet"
 	subnetName    = "redhat-subnet"
 	nsgName       = "redhat-nsg"
-	nicName       = "redhat-nic"
-	publicIPName  = "redhat-public-ip"
 	adminUsername = "azureuser"
 	vpnIPAddress  = "172.22.0.0/16"
 )
@@ -60,14 +58,6 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	}
 	logger.Trace().Msgf("Using subnet id=%s", *subnet.ID)
 
-	publicIP, err := c.createPublicIP(ctx, location, resourceGroupName, publicIPName)
-	if err != nil {
-		span.SetStatus(codes.Error, "cannot create public IP address")
-		logger.Error().Err(err).Msgf("cannot create public IP address")
-		return nil, err
-	}
-	logger.Trace().Msgf("Using public IP address id=%s", *publicIP.ID)
-
 	// network security group
 	nsg, err := c.createNetworkSecurityGroup(ctx, location, resourceGroupName, nsgName)
 	if err != nil {
@@ -77,6 +67,16 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	}
 	logger.Trace().Msgf("Using network security group id=%s", *nsg.ID)
 
+	publicIPName := vmName + "_ip"
+	publicIP, err := c.createPublicIP(ctx, location, resourceGroupName, publicIPName)
+	if err != nil {
+		span.SetStatus(codes.Error, "cannot create public IP address")
+		logger.Error().Err(err).Msgf("cannot create public IP address")
+		return nil, err
+	}
+	logger.Trace().Msgf("Using public IP address id=%s", *publicIP.ID)
+
+	nicName := vmName + "_nic"
 	networkInterface, err := c.createNetworkInterface(ctx, location, resourceGroupName, subnet, publicIP, nsg, nicName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create network interface")
@@ -221,34 +221,6 @@ func (c *client) createSubnets(ctx context.Context, resourceGroupName string, vn
 	return &resp.Subnet, nil
 }
 
-func (c *client) createPublicIP(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.PublicIPAddress, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "createPublicIP")
-	defer span.End()
-
-	publicIPAddressClient, err := c.newPublicIPAddressesClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	parameters := armnetwork.PublicIPAddress{
-		Location: to.Ptr(location),
-		Properties: &armnetwork.PublicIPAddressPropertiesFormat{
-			PublicIPAllocationMethod: to.Ptr(armnetwork.IPAllocationMethodStatic), // Static or Dynamic
-		},
-	}
-
-	pollerResponse, err := publicIPAddressClient.BeginCreateOrUpdate(ctx, resourceGroupName, name, parameters, nil)
-	if err != nil {
-		return nil, fmt.Errorf("create of public IP address failed to start: %w", err)
-	}
-
-	resp, err := pollerResponse.PollUntilDone(ctx, nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to poll for create public IP address result: %w", err)
-	}
-	return &resp.PublicIPAddress, nil
-}
-
 func (c *client) createNetworkSecurityGroup(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.SecurityGroup, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "createNetworkSecurityGroup")
 	defer span.End()
@@ -306,6 +278,34 @@ func (c *client) createNetworkSecurityGroup(ctx context.Context, location string
 		return nil, fmt.Errorf("failed to poll for create network security group result: %w", err)
 	}
 	return &resp.SecurityGroup, nil
+}
+
+func (c *client) createPublicIP(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.PublicIPAddress, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "createPublicIP")
+	defer span.End()
+
+	publicIPAddressClient, err := c.newPublicIPAddressesClient(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	parameters := armnetwork.PublicIPAddress{
+		Location: to.Ptr(location),
+		Properties: &armnetwork.PublicIPAddressPropertiesFormat{
+			PublicIPAllocationMethod: to.Ptr(armnetwork.IPAllocationMethodStatic), // Static or Dynamic
+		},
+	}
+
+	pollerResponse, err := publicIPAddressClient.BeginCreateOrUpdate(ctx, resourceGroupName, name, parameters, nil)
+	if err != nil {
+		return nil, fmt.Errorf("create of public IP address failed to start: %w", err)
+	}
+
+	resp, err := pollerResponse.PollUntilDone(ctx, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to poll for create public IP address result: %w", err)
+	}
+	return &resp.PublicIPAddress, nil
 }
 
 func (c *client) createNetworkInterface(ctx context.Context, location string, resourceGroupName string, subnet *armnetwork.Subnet, publicIP *armnetwork.PublicIPAddress, nsg *armnetwork.SecurityGroup, name string) (*armnetwork.Interface, error) {
