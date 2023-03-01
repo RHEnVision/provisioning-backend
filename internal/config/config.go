@@ -51,7 +51,7 @@ var config struct {
 	} `env-prefix:"DATABASE_"`
 	Logging struct {
 		Level    string `env:"LEVEL" env-default:"info" env-description:"logger level (trace, debug, info, warn, error, fatal, panic)"`
-		Stdout   bool   `env:"STDOUT" env-default:"true" env-description:"logger standard output"`
+		Stdout   bool   `env:"STDOUT" env-default:"true" env-description:"logger standard output, disabled in clowder by default, stdout is still used if there is no other writer"`
 		MaxField int    `env:"MAX_FIELD" env-default:"0" env-description:"logger maximum field length (dev only)"`
 	} `env-prefix:"LOGGING_"`
 	Telemetry struct {
@@ -161,6 +161,16 @@ var (
 	validateMissingSecretError = errors.New("config error: Cloudwatch enabled but Region or Key or Secret are blank")
 	validateGroupStreamError   = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
 )
+
+var hostname string
+
+func init() {
+	h, err := os.Hostname()
+	if err != nil {
+		h = "unknown-hostname"
+	}
+	hostname = h
+}
 
 // Initialize loads configuration from provided .env files, the first existing file wins.
 func Initialize(configFiles ...string) {
@@ -284,6 +294,10 @@ func Initialize(configFiles ...string) {
 
 func BinaryName() string {
 	return path.Base(os.Args[0])
+}
+
+func Hostname() string {
+	return hostname
 }
 
 func HelpText() (string, error) {

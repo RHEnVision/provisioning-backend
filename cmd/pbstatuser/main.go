@@ -262,28 +262,11 @@ func main() {
 	ctx := context.Background()
 	config.Initialize("config/api.env", "config/statuser.env")
 
-	// initialize stdout logging and AWS clients first
-	logging.InitializeStdout()
-
 	// initialize cloudwatch using the AWS clients
-	logger, clsFunc, err := logging.InitializeCloudwatch(log.Logger)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error initializing cloudwatch")
-	}
-	defer clsFunc()
+	logger, closeFunc := logging.InitializeLogger()
+	defer closeFunc()
 	log.Logger = logger
 	logging.DumpConfigForDevelopment()
-
-	// setup structured logging
-	hostname, err := os.Hostname()
-	if err != nil {
-		hostname = "unknown-hostname"
-	}
-	logger = logger.With().
-		Timestamp().
-		Str("hostname", hostname).
-		Bool("statuser", true).
-		Logger()
 
 	// initialize telemetry
 	tel := telemetry.Initialize(&log.Logger)
@@ -291,7 +274,7 @@ func main() {
 
 	// initialize platform kafka
 	logger.Info().Msg("Initializing platform kafka")
-	err = kafka.InitializeKafkaBroker(ctx)
+	err := kafka.InitializeKafkaBroker(ctx)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
 	}
