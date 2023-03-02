@@ -266,7 +266,7 @@ func (c *sourcesClient) GetSourceTypeName(ctx context.Context, sourceTypeID stri
 	logger.Trace().Msg("Getting source types list from sources")
 
 	// Get all the source types
-	resp, err := c.client.ListSourceTypesWithResponse(ctx, &ListSourceTypesParams{})
+	resp, err := c.client.ListSourceTypesWithResponse(ctx, &ListSourceTypesParams{}, headers.AddSourcesIdentityHeader)
 	if err != nil {
 		return models.ProviderTypeUnknown, fmt.Errorf("cannot list source types: %w", err)
 	}

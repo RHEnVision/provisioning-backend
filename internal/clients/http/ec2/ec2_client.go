@@ -313,6 +313,29 @@ func (c *ec2Client) ListInstanceTypes(ctx context.Context) ([]*clients.InstanceT
 	return instances, nil
 }
 
+func (c *ec2Client) DescribeInstanceDetails(ctx context.Context, InstanceIds []string) ([]*clients.InstanceDescription, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "DescribeInstanceDetails")
+	defer span.End()
+
+	input := &ec2.DescribeInstancesInput{
+		InstanceIds: InstanceIds,
+	}
+	resp, err := c.ec2.DescribeInstances(ctx, input)
+	if err != nil {
+		if isAWSUnauthorizedError(err) {
+			err = clients.UnauthorizedErr
+		}
+		span.SetStatus(codes.Error, err.Error())
+		return nil, fmt.Errorf("cannot fetch instances description: %w", err)
+	}
+	instanceDetailList, err := c.parseDescribeInstances(resp)
+	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
+		return nil, fmt.Errorf("failed to fetch instances description: %w", err)
+	}
+	return instanceDetailList, nil
+}
+
 func (c *ec2Client) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListLaunchTemplates")
 	defer span.End()
@@ -409,6 +432,22 @@ func (c *ec2Client) parseRunInstancesResponse(respAWS *ec2.RunInstancesOutput) [
 		list[i] = instance.InstanceId
 	}
 	return list
+}
+
+func (c *ec2Client) parseDescribeInstances(respAWS *ec2.DescribeInstancesOutput) ([]*clients.InstanceDescription, error) {
+	if len(respAWS.Reservations) == 0 {
+		return nil, http.NoReservationErr
+	}
+	instances := respAWS.Reservations[0].Instances
+	list := make([]*clients.InstanceDescription, len(instances))
+	for i, instance := range instances {
+		list[i] = &clients.InstanceDescription{
+			ID:         *instance.InstanceId,
+			PublicIPv4: *instance.PublicIpAddress,
+			PublicDNS:  *instance.PublicDnsName,
+		}
+	}
+	return list, nil
 }
 
 func (c *ec2Client) GetAccountId(ctx context.Context) (string, error) {

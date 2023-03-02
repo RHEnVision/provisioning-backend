@@ -95,6 +95,8 @@ type EC2 interface {
 	GetAccountId(ctx context.Context) (string, error)
 
 	CheckPermission(ctx context.Context, auth *Authentication) ([]string, error)
+
+	DescribeInstanceDetails(ctx context.Context, InstanceIds []string) ([]*InstanceDescription, error)
 }
 
 // GetAzureClient returns an Azure client with customer's subscription ID.

@@ -13,6 +13,7 @@ package dao
 import (
 	"context"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 )
 
@@ -93,6 +94,9 @@ type ReservationDao interface {
 
 	// UpdateOperationNameForGCP updates GCP operation name field. UNSCOPED.
 	UpdateOperationNameForGCP(ctx context.Context, id int64, gcpOperationName string) error
+
+	// UpdateReservationInstance updates an instance with its description
+	UpdateReservationInstance(ctx context.Context, reservationID int64, instance *clients.InstanceDescription) error
 
 	// FinishWithSuccess sets Success flag. UNSCOPED.
 	FinishWithSuccess(ctx context.Context, id int64) error

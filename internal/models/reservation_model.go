@@ -159,10 +159,18 @@ type AzureReservation struct {
 	Detail *AzureDetail `db:"detail" json:"detail"`
 }
 
+type ReservationInstanceDetail struct {
+	PublicDNS  string `json:"public_dns"`
+	PublicIPv4 string `json:"public_ipv4"`
+}
+
 type ReservationInstance struct {
 	// Reservation ID.
 	ReservationID int64 `db:"reservation_id" json:"reservation_id"`
 
 	// Instance ID which has been created on a cloud provider.
 	InstanceID string `db:"instance_id" json:"instance_id"`
+
+	// Instance's description, ip and dns
+	Detail ReservationInstanceDetail `db:"detail" json:"detail" yaml:"detail"`
 }

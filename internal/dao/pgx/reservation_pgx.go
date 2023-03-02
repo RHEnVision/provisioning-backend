@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
@@ -157,6 +158,23 @@ func (x *reservationDao) CreateInstance(ctx context.Context, instance *models.Re
 	return nil
 }
 
+func (x *reservationDao) UpdateReservationInstance(ctx context.Context, reservationID int64, instance *clients.InstanceDescription) error {
+	query := `UPDATE reservation_instances SET detail = $3 WHERE reservation_id = $1 AND instance_id = $2`
+	detail := &models.ReservationInstanceDetail{
+		PublicIPv4: instance.PublicIPv4,
+		PublicDNS:  instance.PublicDNS,
+	}
+	tag, err := db.Pool.Exec(ctx, query, reservationID, instance.ID, detail)
+	if err != nil {
+		return fmt.Errorf("pgx error: %w", err)
+	}
+	if tag.RowsAffected() != 1 {
+		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+	}
+
+	return nil
+}
+
 func (x *reservationDao) GetById(ctx context.Context, id int64) (*models.Reservation, error) {
 	query := `SELECT * FROM reservations WHERE account_id = $1 AND id = $2 LIMIT 1`
 	accountId := ctxval.AccountId(ctx)
@@ -218,7 +236,7 @@ func (x *reservationDao) List(ctx context.Context, limit, offset int64) ([]*mode
 }
 
 func (x *reservationDao) ListInstances(ctx context.Context, reservationId int64) ([]*models.ReservationInstance, error) {
-	query := `SELECT reservation_id, instance_id FROM reservation_instances, reservations
+	query := `SELECT reservation_id, instance_id, detail FROM reservation_instances, reservations
          WHERE reservation_id = reservations.id AND account_id = $1 AND reservation_id = $2`
 
 	accountId := ctxval.AccountId(ctx)
