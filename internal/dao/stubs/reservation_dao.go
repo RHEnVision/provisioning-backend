@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 )
@@ -128,5 +129,9 @@ func (stub *reservationDaoStub) FinishWithError(ctx context.Context, id int64, e
 }
 
 func (stub *reservationDaoStub) Delete(ctx context.Context, id int64) error {
+	return nil
+}
+
+func (stub *reservationDaoStub) UpdateReservationInstance(ctx context.Context, reservationID int64, instance *clients.InstanceDescription) error {
 	return nil
 }

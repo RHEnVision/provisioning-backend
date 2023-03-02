@@ -166,3 +166,16 @@ func (mock *EC2ClientStub) RunInstances(ctx context.Context, launchTemplateID st
 func (mock *EC2ClientStub) GetAccountId(ctx context.Context) (string, error) {
 	return "", nil
 }
+
+func (mock *EC2ClientStub) DescribeInstanceDetails(ctx context.Context, InstanceIds []string) ([]*clients.InstanceDescription, error) {
+	id := "i-0a4caa2cf5b097ce1"
+	dns := "ec2-51-83-81-17.compute-1.amazonaws.com"
+	ip := "54.11.88.17"
+	return []*clients.InstanceDescription{
+		{
+			ID:         id,
+			PublicDNS:  dns,
+			PublicIPv4: ip,
+		},
+	}, nil
+}

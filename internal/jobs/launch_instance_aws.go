@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
@@ -59,6 +60,11 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 	}
 
 	jobErr = DoLaunchInstanceAWS(ctx, &args)
+	if jobErr != nil {
+		finishWithError(ctx, args.ReservationID, jobErr)
+		return
+	}
+	jobErr = FetchInstancesDescriptionAWS(ctx, &args)
 
 	finishJob(ctx, args.ReservationID, jobErr)
 }
@@ -208,6 +214,53 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	err = resD.UpdateReservationIDForAWS(ctx, args.ReservationID, *awsReservationId)
 	if err != nil {
 		return fmt.Errorf("cannot UpdateReservationIDForAWS: %w", err)
+	}
+
+	return nil
+}
+
+func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
+	logger := ctxval.Logger(ctx)
+	logger.Debug().Msg("Started fetch instances description")
+
+	// skip job if reservation already contains errors
+	err := checkExistingError(ctx, args.ReservationID)
+	if err != nil {
+		return fmt.Errorf("step skipped: %w", err)
+	}
+
+	updateStatusBefore(ctx, args.ReservationID, "Fetching instance(s) description")
+	defer updateStatusAfter(ctx, args.ReservationID, "Instance(s) description fetched", 1)
+
+	rDao := dao.GetReservationDao(ctx)
+	instances, err := rDao.ListInstances(ctx, args.ReservationID)
+	if err != nil {
+		return fmt.Errorf("cannot get instances list: %w", err)
+	}
+	instancesIDList := make([]string, len(instances))
+	for i, instance := range instances {
+		instancesIDList[i] = instance.InstanceID
+	}
+	ec2Client, err := clients.GetEC2Client(ctx, args.ARN, args.Region)
+	if err != nil {
+		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
+	}
+	backoffInterval := [...]int64{1000, 500, 500, 1000, 2000}
+	for _, interval := range backoffInterval {
+		time.Sleep(time.Duration(interval) * time.Millisecond)
+		instancesDescriptionList, err := ec2Client.DescribeInstanceDetails(ctx, instancesIDList)
+		if err != nil {
+			return fmt.Errorf("cannot get list instances description: %w", err)
+		}
+		if len(instancesDescriptionList) > 0 {
+			for _, instance := range instancesDescriptionList {
+				err := rDao.UpdateReservationInstance(ctx, args.ReservationID, instance)
+				if err != nil {
+					return fmt.Errorf("cannot update instance description: %w", err)
+				}
+			}
+			break
+		}
 	}
 
 	return nil

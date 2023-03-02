@@ -42,6 +42,14 @@ type GenericReservationResponsePayload struct {
 	Success *bool `json:"success" nullable:"true"`
 }
 
+type InstanceResponse struct {
+	// Instance ID which has been created on a cloud provider.
+	InstanceID string `json:"instance_id"`
+
+	// Instance's description, ip and dns
+	Detail models.ReservationInstanceDetail `json:"detail"`
+}
+
 type AWSReservationResponsePayload struct {
 	ID int64 `json:"reservation_id"`
 
@@ -75,8 +83,8 @@ type AWSReservationResponsePayload struct {
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff"`
 
-	// Instance IDs, only present for finished reservations
-	Instances []string `json:"instances,omitempty"`
+	// Instances array, only present for finished reservations
+	Instances []InstanceResponse `json:"instances,omitempty"`
 }
 
 type AzureReservationResponsePayload struct {
@@ -253,9 +261,9 @@ func (p *GCPReservationRequestPayload) Bind(_ *http.Request) error {
 }
 
 func NewAWSReservationResponse(reservation *models.AWSReservation, instances []*models.ReservationInstance) render.Renderer {
-	instanceIds := make([]string, len(instances))
+	instancesResponse := make([]InstanceResponse, len(instances))
 	for iter, inst := range instances {
-		instanceIds[iter] = inst.InstanceID
+		instancesResponse[iter] = InstanceResponse{InstanceID: inst.InstanceID, Detail: inst.Detail}
 	}
 
 	response := AWSReservationResponsePayload{
@@ -268,7 +276,7 @@ func NewAWSReservationResponse(reservation *models.AWSReservation, instances []*
 		ID:               reservation.ID,
 		Name:             StringNullToEmpty(reservation.Detail.Name),
 		PowerOff:         reservation.Detail.PowerOff,
-		Instances:        instanceIds,
+		Instances:        instancesResponse,
 		LaunchTemplateID: reservation.Detail.LaunchTemplateID,
 	}
 	if reservation.AWSReservationID != nil {
