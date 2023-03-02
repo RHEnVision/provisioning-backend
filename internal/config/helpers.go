@@ -99,5 +99,9 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.Unleash.Token = replacement
 	configCopy.Kafka.SASL.Username = replacement
 	configCopy.Kafka.SASL.Password = replacement
+	// We want to know if the DSN was empty
+	if configCopy.Sentry.Dsn != "" {
+		configCopy.Sentry.Dsn = replacement
+	}
 	logger.Info().Msgf("Configuration: %+v", configCopy)
 }

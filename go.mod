@@ -67,6 +67,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
+	github.com/archdx/zerolog-sentry v1.1.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.23 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.29 // indirect
@@ -76,11 +77,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.4 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/buger/jsonparser v1.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
+	github.com/getsentry/sentry-go v0.12.0 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/analysis v0.21.4 // indirect
