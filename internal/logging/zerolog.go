@@ -94,20 +94,36 @@ func InitializeLogger() (zerolog.Logger, func()) {
 	configureZerolog()
 
 	var writers []io.Writer
-	closeFn := func() {}
+	var closeFns []func()
 
 	if config.Cloudwatch.Enabled {
 		cwWriter, cwClose, err := cloudwatchWriter()
 		if err != nil {
+			log.Fatal().Err(err).Msg("Failed to initialize cloudwatch")
 			panic(err)
 		}
 		writers = append(writers, cwWriter)
-		closeFn = cwClose
+		closeFns = append(closeFns, cwClose)
 	} else {
 		log.Trace().Msg("Cloudwatch not enabled, enabling stdout")
 		writers = append(writers, stdoutWriter(false))
 	}
+	if config.Sentry.Dsn != "" {
+		sWriter, closeFn, err := sentryWriter(config.Sentry.Dsn)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Failed to initialize sentry, disabling sentry monitoring")
+		} else {
+			writers = append(writers, sWriter)
+			closeFns = append(closeFns, closeFn)
+		}
+	}
 
+	// closes all writers in one func
+	closeFn := func() {
+		for _, fn := range closeFns {
+			fn()
+		}
+	}
 	return decorate(zerolog.New(io.MultiWriter(writers...))), closeFn
 }
 
