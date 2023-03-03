@@ -1,5 +1,7 @@
 module github.com/RHEnVision/provisioning-backend
 
+// When bumping version, dont forget to bump the build container as well.
+// see build/Dockerfile
 go 1.18
 
 require (
