@@ -94,7 +94,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		}
 	case models.ProviderTypeAWS:
-		reservation, err := rDao.GetAWSById(r.Context(), id)
+		reservationAws, err := rDao.GetAWSById(r.Context(), id)
 		if err != nil {
 			message := fmt.Sprintf("get AWS reservation with id %d", id)
 			renderNotFoundOrDAOError(w, r, err, message)
@@ -103,16 +103,32 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 
 		instances, err := rDao.ListInstances(r.Context(), id)
 		if err != nil {
-			message := fmt.Sprintf("get reservation with id id %d", id)
+			message := fmt.Sprintf("get reservation with id %d", id)
 			renderNotFoundOrDAOError(w, r, err, message)
 			return
 		}
 
-		if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservation, instances)); err != nil {
+		if err := render.Render(w, r, payloads.NewAWSReservationResponse(reservationAws, instances)); err != nil {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		}
 	case models.ProviderTypeAzure:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "azure reservation is not implemented", ProviderTypeNotImplementedError))
+		reservationAzure, err := rDao.GetAzureById(r.Context(), id)
+		if err != nil {
+			message := fmt.Sprintf("get Azure reservation with id %d", id)
+			renderNotFoundOrDAOError(w, r, err, message)
+			return
+		}
+
+		instances, err := rDao.ListInstances(r.Context(), id)
+		if err != nil {
+			message := fmt.Sprintf("get reservation instances with id %d", id)
+			renderNotFoundOrDAOError(w, r, err, message)
+			return
+		}
+
+		if err := render.Render(w, r, payloads.NewAzureReservationResponse(reservationAzure, instances)); err != nil {
+			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
+		}
 	case models.ProviderTypeGCP:
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "gcp reservation is not implemented", ProviderTypeNotImplementedError))
 	default:
