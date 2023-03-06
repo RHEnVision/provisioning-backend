@@ -107,5 +107,5 @@ func RegisterApiMetrics() {
 }
 
 func RegisterWorkerMetrics() {
-	prometheus.MustRegister(JobQueueSize, BackgroundJobDuration)
+	prometheus.MustRegister(JobQueueSize, JobQueueInFlight, BackgroundJobDuration)
 }
