@@ -22,7 +22,6 @@ import (
 )
 
 func TestCreateAzureReservationHandler(t *testing.T) {
-	var err error
 	var json_data []byte
 	ctx := stubs.WithAccountDaoOne(context.Background())
 	ctx = identity.WithTenant(t, ctx)
@@ -32,37 +31,66 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 	ctx = stubs.WithPubkeyDao(ctx)
 	ctx = stub.WithEnqueuer(ctx)
 	pk := factories.NewPubkeyRSA()
-	err = stubs.AddPubkey(ctx, pk)
+	err := stubs.AddPubkey(ctx, pk)
 	require.NoError(t, err, "failed to generate pubkey")
 	source, err := Clientstubs.AddSource(ctx, models.ProviderTypeAzure)
 	require.NoError(t, err, "failed to generate Azure source")
 
-	values := map[string]interface{}{
-		"source_id":     source.Id,
-		"image_id":      "92ea98f8-7697-472e-80b1-7454fa0e7fa7",
-		"amount":        1,
-		"instance_size": "Basic_A0",
-		"pubkey_id":     pk.ID,
-	}
-	if json_data, err = json.Marshal(values); err != nil {
-		t.Fatalf("unable to marshal values to json: %v", err)
-	}
+	t.Run("successful reservation", func(t *testing.T) {
+		var err error
+		values := map[string]interface{}{
+			"source_id":     source.Id,
+			"image_id":      "92ea98f8-7697-472e-80b1-7454fa0e7fa7",
+			"amount":        1,
+			"instance_size": "Basic_A0",
+			"pubkey_id":     pk.ID,
+		}
+		if json_data, err = json.Marshal(values); err != nil {
+			t.Fatalf("unable to marshal values to json: %v", err)
+		}
 
-	req, err := http.NewRequestWithContext(ctx, "POST", "/api/provisioning/reservations/azure", bytes.NewBuffer(json_data))
-	require.NoError(t, err, "failed to create request")
-	req.Header.Add("Content-Type", "application/json")
+		req, err := http.NewRequestWithContext(ctx, "POST", "/api/provisioning/reservations/azure", bytes.NewBuffer(json_data))
+		require.NoError(t, err, "failed to create request")
+		req.Header.Add("Content-Type", "application/json")
 
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(services.CreateAzureReservation)
-	handler.ServeHTTP(rr, req)
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(services.CreateAzureReservation)
+		handler.ServeHTTP(rr, req)
 
-	require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
+		require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-	stubCount := stubs.AzureReservationStubCount(ctx)
-	assert.Equal(t, 1, stubCount, "Reservation has not been Created through DAO")
+		stubCount := stubs.AzureReservationStubCount(ctx)
+		assert.Equal(t, 1, stubCount, "Reservation has not been Created through DAO")
 
-	assert.Equal(t, 1, len(stub.EnqueuedJobs(ctx)), "Expected exactly one job to be planned")
-	assert.IsType(t, jobs.LaunchInstanceAzureTaskArgs{}, stub.EnqueuedJobs(ctx)[0].Args, "Unexpected type of arguments for the planned job")
-	jobArgs := stub.EnqueuedJobs(ctx)[0].Args.(jobs.LaunchInstanceAzureTaskArgs)
-	assert.Equal(t, "composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7", jobArgs.AzureImageID, "Expected translated image to real name - one from IB client stub")
+		assert.Equal(t, 1, len(stub.EnqueuedJobs(ctx)), "Expected exactly one job to be planned")
+		assert.IsType(t, jobs.LaunchInstanceAzureTaskArgs{}, stub.EnqueuedJobs(ctx)[0].Args, "Unexpected type of arguments for the planned job")
+		jobArgs := stub.EnqueuedJobs(ctx)[0].Args.(jobs.LaunchInstanceAzureTaskArgs)
+		assert.Equal(t, "composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7", jobArgs.AzureImageID, "Expected translated image to real name - one from IB client stub")
+	})
+
+	t.Run("failed reservation with invalid location", func(t *testing.T) {
+		var err error
+		values := map[string]interface{}{
+			"source_id":     source.Id,
+			"location":      "blank",
+			"image_id":      "92ea98f8-7697-472e-80b1-7454fa0e7fa7",
+			"amount":        1,
+			"instance_size": "Basic_A0",
+			"pubkey_id":     pk.ID,
+		}
+		if json_data, err = json.Marshal(values); err != nil {
+			t.Fatalf("unable to marshal values to json: %v", err)
+		}
+
+		req, err := http.NewRequestWithContext(ctx, "POST", "/api/provisioning/reservations/azure", bytes.NewBuffer(json_data))
+		require.NoError(t, err, "failed to create request")
+		req.Header.Add("Content-Type", "application/json")
+
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(services.CreateAzureReservation)
+		handler.ServeHTTP(rr, req)
+
+		assert.Contains(t, rr.Body.String(), "Unsupported location")
+		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+	})
 }
