@@ -65,19 +65,19 @@ objects:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: tenant_id
-                    optional: false
+                    optional: true
               - name: AZURE_CLIENT_ID
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: client_id
-                    optional: false
+                    optional: true
               - name: AZURE_CLIENT_SECRET
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: client_secret
-                    optional: false
+                    optional: true
               - name: APP_INSTANCE_PREFIX
                 value: ${APP_INSTANCE_PREFIX}
               - name: APP_CACHE_TYPE
@@ -134,19 +134,19 @@ objects:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: tenant_id
-                    optional: false
+                    optional: true
               - name: AZURE_CLIENT_ID
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: client_id
-                    optional: false
+                    optional: true
               - name: AZURE_CLIENT_SECRET
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: client_secret
-                    optional: false
+                    optional: true
               - name: APP_INSTANCE_PREFIX
                 value: ${APP_INSTANCE_PREFIX}
               - name: APP_CACHE_TYPE
@@ -224,19 +224,19 @@ objects:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: tenant_id
-                    optional: false
+                    optional: true
               - name: AZURE_CLIENT_ID
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: client_id
-                    optional: false
+                    optional: true
               - name: AZURE_CLIENT_SECRET
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: client_secret
-                    optional: false
+                    optional: true
               - name: APP_INSTANCE_PREFIX
                 value: ${APP_INSTANCE_PREFIX}
               - name: APP_CACHE_TYPE
