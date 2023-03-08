@@ -10,7 +10,9 @@ import (
 
 	Clientstubs "github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
+	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/queue/stub"
 	"github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/factories"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
@@ -28,6 +30,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 	ctx = Clientstubs.WithImageBuilderClient(ctx)
 	ctx = stubs.WithReservationDao(ctx)
 	ctx = stubs.WithPubkeyDao(ctx)
+	ctx = stub.WithEnqueuer(ctx)
 	pk := factories.NewPubkeyRSA()
 	err = stubs.AddPubkey(ctx, pk)
 	require.NoError(t, err, "failed to generate pubkey")
@@ -57,4 +60,9 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 
 	stubCount := stubs.AzureReservationStubCount(ctx)
 	assert.Equal(t, 1, stubCount, "Reservation has not been Created through DAO")
+
+	assert.Equal(t, 1, len(stub.EnqueuedJobs(ctx)), "Expected exactly one job to be planned")
+	assert.IsType(t, jobs.LaunchInstanceAzureTaskArgs{}, stub.EnqueuedJobs(ctx)[0].Args, "Unexpected type of arguments for the planned job")
+	jobArgs := stub.EnqueuedJobs(ctx)[0].Args.(jobs.LaunchInstanceAzureTaskArgs)
+	assert.Equal(t, "composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7", jobArgs.AzureImageID, "Expected translated image to real name - one from IB client stub")
 }

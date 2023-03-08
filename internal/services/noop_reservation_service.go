@@ -47,7 +47,7 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 			ReservationID: reservation.ID,
 		},
 	}
-	err = queue.GetEnqueuer().Enqueue(r.Context(), &pj)
+	err = queue.GetEnqueuer(r.Context()).Enqueue(r.Context(), &pj)
 	if err != nil {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return

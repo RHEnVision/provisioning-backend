@@ -17,7 +17,7 @@ var (
 	workers  worker.JobWorker
 )
 
-func getEnqueuer() worker.JobEnqueuer {
+func getEnqueuer(_ context.Context) worker.JobEnqueuer {
 	return enqueuer
 }
 
