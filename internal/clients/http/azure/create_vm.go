@@ -8,8 +8,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/runtime"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork"
@@ -26,11 +28,13 @@ var subscriptionId string
 const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
 
 const (
-	vnetName      = "redhat-vnet"
-	subnetName    = "redhat-subnet"
-	nsgName       = "redhat-nsg"
-	adminUsername = "azureuser"
-	vpnIPAddress  = "172.22.0.0/16"
+	vnetName              = "redhat-vnet"
+	subnetName            = "redhat-subnet"
+	nsgName               = "redhat-nsg"
+	adminUsername         = "azureuser"
+	vpnIPAddress          = "172.22.0.0/16"
+	resourcePollFrequency = 5 * time.Second
+	vmPollFrequency       = 10 * time.Second
 )
 
 func (c *client) CreateVM(ctx context.Context, location string, resourceGroupName string, imageName string, pubkey *models.Pubkey, instanceType clients.InstanceTypeName, vmName string) (*string, error) {
@@ -184,7 +188,9 @@ func (c *client) createVirtualNetwork(ctx context.Context, location string, reso
 		return nil, fmt.Errorf("create of virtual network failed to start: %w", err)
 	}
 
-	resp, err := pollerResponse.PollUntilDone(ctx, nil)
+	resp, err := pollerResponse.PollUntilDone(ctx, &runtime.PollUntilDoneOptions{
+		Frequency: resourcePollFrequency,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to poll for create virtual network result: %w", err)
 	}
@@ -213,7 +219,9 @@ func (c *client) createSubnets(ctx context.Context, resourceGroupName string, vn
 		return nil, fmt.Errorf("create of subnet failed to start: %w", err)
 	}
 
-	resp, err := pollerResponse.PollUntilDone(ctx, nil)
+	resp, err := pollerResponse.PollUntilDone(ctx, &runtime.PollUntilDoneOptions{
+		Frequency: resourcePollFrequency,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to poll for create subnet result: %w", err)
 	}
@@ -273,7 +281,9 @@ func (c *client) createNetworkSecurityGroup(ctx context.Context, location string
 		return nil, fmt.Errorf("create of network security group failed to start: %w", err)
 	}
 
-	resp, err := pollerResponse.PollUntilDone(ctx, nil)
+	resp, err := pollerResponse.PollUntilDone(ctx, &runtime.PollUntilDoneOptions{
+		Frequency: resourcePollFrequency,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to poll for create network security group result: %w", err)
 	}
@@ -301,7 +311,9 @@ func (c *client) createPublicIP(ctx context.Context, location string, resourceGr
 		return nil, fmt.Errorf("create of public IP address failed to start: %w", err)
 	}
 
-	resp, err := pollerResponse.PollUntilDone(ctx, nil)
+	resp, err := pollerResponse.PollUntilDone(ctx, &runtime.PollUntilDoneOptions{
+		Frequency: resourcePollFrequency,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to poll for create public IP address result: %w", err)
 	}
@@ -345,7 +357,9 @@ func (c *client) createNetworkInterface(ctx context.Context, location string, re
 		return nil, fmt.Errorf("create of network interface failed to start: %w", err)
 	}
 
-	resp, err := pollerResponse.PollUntilDone(ctx, nil)
+	resp, err := pollerResponse.PollUntilDone(ctx, &runtime.PollUntilDoneOptions{
+		Frequency: resourcePollFrequency,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to poll for create network interface result: %w", err)
 	}
@@ -418,7 +432,9 @@ func (c *client) createVirtualMachine(ctx context.Context, resourceGroupName str
 		return nil, fmt.Errorf("create of virtual machine failed to start: %w", err)
 	}
 
-	resp, err := pollerResponse.PollUntilDone(ctx, nil)
+	resp, err := pollerResponse.PollUntilDone(ctx, &runtime.PollUntilDoneOptions{
+		Frequency: vmPollFrequency,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to poll for create virtual machine status: %w", err)
 	}
