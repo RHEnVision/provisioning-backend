@@ -160,7 +160,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	err = queue.GetEnqueuer().Enqueue(r.Context(), &launchJob)
+	err = queue.GetEnqueuer(r.Context()).Enqueue(r.Context(), &launchJob)
 	if err != nil {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
