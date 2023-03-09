@@ -13,6 +13,7 @@ type reservationDaoStub struct {
 	storeAWS   []*models.AWSReservation
 	storeAzure []*models.AzureReservation
 	storeGCP   []*models.GCPReservation
+	instances  map[int64][]*models.ReservationInstance
 }
 
 func init() {
@@ -60,7 +61,9 @@ func (stub *reservationDaoStub) CreateNoop(ctx context.Context, reservation *mod
 	return nil
 }
 
-func (stub *reservationDaoStub) CreateInstance(ctx context.Context, reservation *models.ReservationInstance) error {
+func (stub *reservationDaoStub) CreateInstance(ctx context.Context, resInstance *models.ReservationInstance) error {
+	resId := resInstance.ReservationID
+	stub.instances[resId] = append(stub.instances[resId], resInstance)
 	return nil
 }
 
@@ -96,7 +99,7 @@ func (stub *reservationDaoStub) List(ctx context.Context, limit, offset int64) (
 }
 
 func (stub *reservationDaoStub) ListInstances(ctx context.Context, reservationId int64) ([]*models.ReservationInstance, error) {
-	return nil, nil
+	return stub.instances[reservationId], nil
 }
 
 func (stub *reservationDaoStub) UpdateStatus(ctx context.Context, id int64, status string, addSteps int32) error {

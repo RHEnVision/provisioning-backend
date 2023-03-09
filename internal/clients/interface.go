@@ -114,10 +114,11 @@ type Azure interface {
 	EnsureResourceGroup(ctx context.Context, name string, location string) (*string, error)
 
 	// CreateVM creates Azure virtual machine.
-	// Most of the parameters are constant for now.
-	// location - to deploy into
-	// imageName - the imageID will be inferred as /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName}
-	CreateVM(ctx context.Context, location string, resourceGroupName string, imageName string, pubkey *models.Pubkey, instanceType InstanceTypeName, vmName string, userData []byte) (*string, error)
+	CreateVM(ctx context.Context, params AzureInstanceParams, vmName string) (*string, error)
+
+	// CreateVMs creates multiple Azure virtual machines
+	// Returns array of instance IDs and error if something went wrong
+	CreateVMs(ctx context.Context, instanceParams AzureInstanceParams, amount int64, vmNamePrefix string) (vmIds []*string, err error)
 
 	ListResourceGroups(ctx context.Context) ([]string, error)
 }

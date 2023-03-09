@@ -105,4 +105,7 @@ func TestDoLaunchInstanceAzure(t *testing.T) {
 	require.NoError(t, err, "launch instances failed to run")
 
 	assert.Equal(t, 2, clientStubs.CountStubAzureVMs(ctx))
+	resultInstances, err := rDao.ListInstances(ctx, res.ID)
+	require.NoError(t, err, "failed to fetch created instances")
+	assert.Equal(t, 2, len(resultInstances))
 }

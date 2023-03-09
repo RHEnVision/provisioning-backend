@@ -1,6 +1,9 @@
 package clients
 
-import "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+import (
+	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+)
 
 type GCPInstanceParams struct {
 	// The string pattern used for the name of the VM.
@@ -34,6 +37,27 @@ type AWSInstanceParams struct {
 
 	// Pubkey to use for the instance access
 	KeyName string
+
+	// UserData for the instance launch
+	UserData []byte
+}
+
+// AzureInstanceParams define parameters for a single instance launch on Azure.
+type AzureInstanceParams struct {
+	// Location - to deploy into
+	Location string
+
+	// ResourceGroupName to launch the instance in
+	ResourceGroupName string
+
+	// ImageName - the imageID will be inferred as /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName}
+	ImageName string
+
+	// Pubkey to use for the instance access
+	Pubkey *models.Pubkey
+
+	// InstanceType to launch
+	InstanceType InstanceTypeName
 
 	// UserData for the instance launch
 	UserData []byte

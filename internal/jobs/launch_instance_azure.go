@@ -10,7 +10,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
-	"github.com/google/uuid"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
@@ -128,7 +127,6 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 		span.SetStatus(codes.Error, "cannot instantiate Azure client")
 		return fmt.Errorf("failed to instantiate Azure client: %w", err)
 	}
-
 	// Generate user data
 	userDataInput := userdata.UserData{
 		PowerOff: reservation.Detail.PowerOff,
@@ -139,17 +137,22 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 	}
 	logger.Trace().Bool("userdata", true).Msg(string(userData))
 
-	for i := 0; i < int(reservation.Detail.Amount); i++ {
-		uuid, err := uuid.NewUUID()
-		if err != nil {
-			return fmt.Errorf("could not generate a new UUID: %w", err)
-		}
-		vmName := fmt.Sprintf("%s-%s", vmNamePrefix, uuid.String())
-		instanceId, err := azureClient.CreateVM(ctx, location, resourceGroupName, args.AzureImageID, pubkey, clients.InstanceTypeName(reservation.Detail.InstanceSize), vmName, userData)
-		if err != nil {
-			span.SetStatus(codes.Error, "failed to create Azure instance")
-			return fmt.Errorf("cannot create Azure instance(s): %w", err)
-		}
+	vmParams := clients.AzureInstanceParams{
+		Location:          location,
+		ResourceGroupName: resourceGroupName,
+		ImageName:         args.AzureImageID,
+		Pubkey:            pubkey,
+		InstanceType:      clients.InstanceTypeName(reservation.Detail.InstanceSize),
+		UserData:          userData,
+	}
+
+	instanceIds, err := azureClient.CreateVMs(ctx, vmParams, reservation.Detail.Amount, vmNamePrefix)
+	if err != nil {
+		span.SetStatus(codes.Error, "failed to create instances")
+		return fmt.Errorf("cannot create Azure instance: %w", err)
+	}
+
+	for _, instanceId := range instanceIds {
 		err = resDao.CreateInstance(ctx, &models.ReservationInstance{
 			ReservationID: args.ReservationID,
 			InstanceID:    *instanceId,
@@ -158,7 +161,6 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 			span.SetStatus(codes.Error, "failed to save instance to DB")
 			return fmt.Errorf("cannot create instance reservation for id %d: %w", instanceId, err)
 		}
-		logger.Debug().Msgf("Created new instance (%s) via Azure CreateVM", *instanceId)
 	}
 
 	return nil
