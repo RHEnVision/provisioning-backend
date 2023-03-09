@@ -43,7 +43,9 @@ func WithReservationDao(parent context.Context) context.Context {
 		panic(dao.ErrStubContextAlreadySet)
 	}
 
-	ctx := context.WithValue(parent, reservationCtxKey, &reservationDaoStub{})
+	ctx := context.WithValue(parent, reservationCtxKey, &reservationDaoStub{
+		instances: make(map[int64][]*models.ReservationInstance),
+	})
 	return ctx
 }
 
