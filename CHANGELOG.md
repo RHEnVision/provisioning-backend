@@ -1,4 +1,29 @@
 <!-- insertion marker -->
+<a name="0.17.0"></a>
+
+## [0.17.0](https://github.com/RHEnVision/provisioning-backend/compare/0.16.0...0.17.0) (2023-03-08)
+
+### Features
+
+- Azure reservation details endpoint ([db103ff](https://github.com/RHEnVision/provisioning-backend/commit/db103ff11bafd3152c2b45d0ef1d178954ee8286))
+- consume Azure secret ([e27a875](https://github.com/RHEnVision/provisioning-backend/commit/e27a875e9a1837f1411ae922623a905b40702dfa))
+- allow nullable fields iOpenAPI ([c2ae5a8](https://github.com/RHEnVision/provisioning-backend/commit/c2ae5a86ae7d0698d1c927c4e712d782da705794))
+- **HMS-894:** Add GCP reservation test ([64388f6](https://github.com/RHEnVision/provisioning-backend/commit/64388f635c800dca4716808700fbf87f9b20ca07))
+- Add Azure reservation to OpenAPI ([288e3fb](https://github.com/RHEnVision/provisioning-backend/commit/288e3fb09850482f1c29aae63ca2bc00d18bd5ff))
+
+### Bug Fixes
+
+- **HMS-879:** missing metric registration ([2055cf5](https://github.com/RHEnVision/provisioning-backend/commit/2055cf5d6dd0228e5fb6efa303de19e699e7f017))
+- name public IP and nic to be VM specific ([cc74d2e](https://github.com/RHEnVision/provisioning-backend/commit/cc74d2eca2b4f5173d866a8b279d9a95e7e4a20b))
+- allow dynamic naming for Azure disk ([f64c209](https://github.com/RHEnVision/provisioning-backend/commit/f64c209ef320249247ff9b9c1cabd1f0cc7dbe79))
+- **HMS-879:** workers metrics ([7aef3fc](https://github.com/RHEnVision/provisioning-backend/commit/7aef3fc752c86cc456820eafe00ef4b7f99db2cf))
+
+### Code Refactoring
+
+- logging initialization ([1d3dc01](https://github.com/RHEnVision/provisioning-backend/commit/1d3dc013e4f97a3ec9913232a8aa0c15e9750323))
+- extract binary name getter ([eacc010](https://github.com/RHEnVision/provisioning-backend/commit/eacc010664ae721f12d5f83b8df8bbd9d44247ca))
+- fix worker metrics registrations ([ca7893f](https://github.com/RHEnVision/provisioning-backend/commit/ca7893f65fbb062f6c6ed613825e456b5b4cfbba))
+
 <a name="0.16.0"></a>
 
 ## [0.16.0](https://github.com/RHEnVision/provisioning-backend/compare/0.15.0...0.16.0) (2023-02-22)
