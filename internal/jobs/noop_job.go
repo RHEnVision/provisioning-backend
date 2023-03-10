@@ -3,7 +3,6 @@ package jobs
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -12,9 +11,8 @@ import (
 
 type NoopJobArgs struct {
 	ReservationID int64
-
-	// Indicates that the test should fail, used only in tests.
-	Fail bool
+	Fail          bool          // Fail forcefully (used in tests)
+	Sleep         time.Duration // Sleep (delay) duration (used in tests)
 }
 
 var NoOperationFailure = errors.New("job failed on request")
@@ -43,19 +41,13 @@ func DoNoop(ctx context.Context, args *NoopJobArgs) error {
 	updateStatusBefore(ctx, args.ReservationID, "No operation started")
 	defer updateStatusAfter(ctx, args.ReservationID, "No operation finished", 1)
 
-	// skip job if reservation already contains errors
-	err := checkExistingError(ctx, args.ReservationID)
-	if err != nil {
-		return fmt.Errorf("step skipped: %w", err)
-	}
-
 	// do nothing
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(args.Sleep)
 	logger.Info().Msg("No operation finished")
 
 	if args.Fail {
 		return NoOperationFailure
 	}
 
-	return nil
+	return nilUnlessTimeout(ctx)
 }

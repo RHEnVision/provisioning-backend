@@ -41,9 +41,15 @@ func finishWithSuccess(ctx context.Context, reservationId int64) {
 	}
 }
 
+// finishWithError closes a reservation and sets it into error state. Error message is also
+// stored into the reservation.
 func finishWithError(ctx context.Context, reservationId int64, jobError error) {
 	logger := ctxval.Logger(ctx)
 	logger.Warn().Err(jobError).Msgf("Job returned an error: %s", jobError.Error())
+	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+		ctx = context.Background()
+		ctxval.Logger(ctx).Warn().Msgf("Updating reservation %d after context deadline", reservationId)
+	}
 
 	rDao := dao.GetReservationDao(ctx)
 	err := rDao.FinishWithError(ctx, reservationId, jobError.Error())
@@ -52,12 +58,22 @@ func finishWithError(ctx context.Context, reservationId int64, jobError error) {
 	}
 }
 
+// updateStatusBefore is called after every step function within a job. It updates reservation status
+// message.
 func updateStatusBefore(ctx context.Context, id int64, status string) {
 	updateStatusAfter(ctx, id, status, 0)
 }
 
+// updateStatusAfter is called after every step function within a job. It updates reservation status
+// message and step counter. When context deadline was exceeded, it sets the status message to "Timeout".
 func updateStatusAfter(ctx context.Context, id int64, status string, addSteps int) {
 	logger := ctxval.Logger(ctx)
+	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+		status = "Timeout"
+		ctx = context.Background()
+		ctxval.Logger(ctx).Warn().Msgf("Updating reservation %d after context deadline", id)
+	}
+
 	logger.Debug().Bool("step", true).Msgf("Reservation status change: '%s'", status)
 	if addSteps != 0 {
 		logger.Trace().Bool("step", true).Msgf("Increased step number by: %d", addSteps)
@@ -71,17 +87,9 @@ func updateStatusAfter(ctx context.Context, id int64, status string, addSteps in
 	}
 }
 
-// nolint: goerr113
-func checkExistingError(ctx context.Context, reservationId int64) error {
-	resDao := dao.GetReservationDao(ctx)
-	reservation, err := resDao.GetById(ctx, reservationId)
-	if err != nil {
-		return fmt.Errorf("cannot find reservation: %w", err)
+func nilUnlessTimeout(ctx context.Context) error {
+	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+		return fmt.Errorf("context timeout: %w", ctx.Err())
 	}
-	if reservation.Error != "" {
-		ctxval.Logger(ctx).Warn().Msg("Reservation already contains error, skipping job")
-		return errors.New(reservation.Error)
-	}
-
 	return nil
 }

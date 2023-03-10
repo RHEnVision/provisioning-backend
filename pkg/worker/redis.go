@@ -13,6 +13,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/math"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
@@ -158,10 +159,16 @@ func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 func recoverAndLog(ctx context.Context) {
 	if rec := recover(); rec != nil {
 		logger := ctxval.Logger(ctx).Error().Stack()
-		if err, ok := rec.(error); ok {
+		err, ok := rec.(error)
+		if ok {
 			logger = logger.Err(err)
 		}
-		logger.Msgf("Error during job handling: %v, stacktrace: %s", rec, debug.Stack())
+
+		if errors.Is(err, context.DeadlineExceeded) {
+			logger.Msgf("Job timeout: %s", err.Error())
+		} else {
+			logger.Msgf("Job queue panic: %s", err.Error())
+		}
 	}
 }
 
@@ -206,8 +213,10 @@ func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
 	logger.Info().Msg("Dequeued job from Redis")
 	ctx = contextLogger(ctx, job)
 	if h, ok := w.handlers[job.Type]; ok {
+		cCtx, cFunc := context.WithTimeout(ctx, config.Worker.Timeout)
+		defer cFunc()
 		metrics.ObserveBackgroundJobDuration(job.Type.String(), func() {
-			h(ctx, job)
+			h(cCtx, job)
 		})
 	} else {
 		// handler not found

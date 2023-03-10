@@ -25,7 +25,7 @@ type OpenSSHFingerprints struct {
 // public key. It is used in AWS for ssh keys.
 type AWSFingerprint string
 
-//#nosec
+// #nosec
 func md5Separator(data []byte, separator byte) string {
 	hashSlice := md5.Sum(data)
 	var sb strings.Builder
