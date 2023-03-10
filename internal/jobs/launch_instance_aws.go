@@ -74,12 +74,6 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	logger := ctxval.Logger(ctx)
 	logger.Debug().Msg("Started pubkey upload AWS job")
 
-	// skip job if reservation already contains errors
-	err := checkExistingError(ctx, args.ReservationID)
-	if err != nil {
-		return fmt.Errorf("step skipped: %w", err)
-	}
-
 	logger.Info().Interface("args", args).Msg("Processing pubkey upload AWS job")
 
 	// status updates before and after the code logic
@@ -156,7 +150,7 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 		}
 	}
 
-	return nil
+	return nilUnlessTimeout(ctx)
 }
 
 func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
@@ -216,7 +210,7 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 		return fmt.Errorf("cannot UpdateReservationIDForAWS: %w", err)
 	}
 
-	return nil
+	return nilUnlessTimeout(ctx)
 }
 
 func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {

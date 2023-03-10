@@ -10,11 +10,12 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 )
 
-//nolint:gosec
 // jobQueueMetricLoop is a background function that runs for all workers.
 // It polls job queue statistics from Redis as well as in-flight counters.
 // It waits a random delay between 0 and sleep for better polling spread
 // since job queue size is a global metric (redis queue length).
+//
+//nolint:gosec
 func jobQueueMetricLoop(ctx context.Context, sleep time.Duration, name string) {
 	logger := ctxval.Logger(ctx)
 
