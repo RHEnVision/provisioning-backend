@@ -7,14 +7,17 @@ test -d $BASEDIR/kafka || mkdir $BASEDIR/kafka
 
 pushd $BASEDIR/kafka
   if [[ -f kafka.tgz ]]; then
-    echo "Kafka already downloaded"
+    echo "Kafka already downloaded, run ./kafka.start.sh"
   else
     echo "Downloading Kafka..."
-    curl -L -o kafka.tgz "https://www.apache.org/dist/kafka/$VERSION/kafka_$SVERSION-$VERSION.tgz"
-
+    curl -f -L -o kafka.tgz "https://www.apache.org/dist/kafka/$VERSION/kafka_$SVERSION-$VERSION.tgz"
     echo "Extracting Kafka..."
-    tar -xzf kafka.tgz --strip 1
+    if [[ -f kafka.tgz ]]; then
+      tar -xzf kafka.tgz --strip 1
+      echo "All done, run ./kafka.start.sh"
+    else
+      echo "Kafka curl failed"
+    fi
   fi
 popd
 
-echo "All done, run ./kafka.start.sh"
