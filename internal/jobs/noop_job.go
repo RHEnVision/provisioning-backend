@@ -42,7 +42,7 @@ func DoNoop(ctx context.Context, args *NoopJobArgs) error {
 	defer updateStatusAfter(ctx, args.ReservationID, "No operation finished", 1)
 
 	// do nothing
-	time.Sleep(args.Sleep)
+	_ = sleepCtx(ctx, args.Sleep)
 	logger.Info().Msg("No operation finished")
 
 	if args.Fail {

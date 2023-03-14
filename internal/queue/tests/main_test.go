@@ -1,13 +1,16 @@
 //go:build integration
 // +build integration
 
-package code_test
+// To override application configuration for integration tests, create config/test.env file.
+package tests
 
 import (
 	"context"
 	"os"
 	"testing"
+	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
 	_ "github.com/RHEnVision/provisioning-backend/internal/logging/testing"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/integration"
@@ -21,8 +24,13 @@ func reset() {
 func TestMain(t *testing.M) {
 	ctx := context.Background()
 	ctx = integration.InitConfigEnvironment(ctx, "../../../config/test.env")
+	// override the default value to reasonable timeout for testing
+	config.Worker.Queue = "redis"
+	config.Worker.Timeout = 1 * time.Second
 	integration.InitDbEnvironment(ctx)
+	integration.InitJobQueueEnvironment(ctx)
 	defer integration.CloseDbEnvironment(ctx)
+	defer integration.CloseJobQueueEnvironment(ctx)
 	defer integration.DbDrop()
 
 	integration.DbDrop()

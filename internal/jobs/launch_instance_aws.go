@@ -217,12 +217,6 @@ func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTa
 	logger := ctxval.Logger(ctx)
 	logger.Debug().Msg("Started fetch instances description")
 
-	// skip job if reservation already contains errors
-	err := checkExistingError(ctx, args.ReservationID)
-	if err != nil {
-		return fmt.Errorf("step skipped: %w", err)
-	}
-
 	updateStatusBefore(ctx, args.ReservationID, "Fetching instance(s) description")
 	defer updateStatusAfter(ctx, args.ReservationID, "Instance(s) description fetched", 1)
 
