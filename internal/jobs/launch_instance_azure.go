@@ -8,6 +8,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel"
@@ -127,13 +128,23 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 		return fmt.Errorf("failed to instantiate Azure client: %w", err)
 	}
 
+	// Generate user data
+	userDataInput := userdata.UserData{
+		PowerOff: reservation.Detail.PowerOff,
+	}
+	userData, err := userdata.GenerateUserData(&userDataInput)
+	if err != nil {
+		return fmt.Errorf("cannot generate user data: %w", err)
+	}
+	logger.Trace().Bool("userdata", true).Msg(string(userData))
+
 	for i := 0; i < int(reservation.Detail.Amount); i++ {
 		uuid, err := uuid.NewUUID()
 		if err != nil {
 			return fmt.Errorf("could not generate a new UUID: %w", err)
 		}
 		vmName := fmt.Sprintf("%s-%s", vmNamePrefix, uuid.String())
-		instanceId, err := azureClient.CreateVM(ctx, location, resourceGroupName, args.AzureImageID, pubkey, clients.InstanceTypeName(reservation.Detail.InstanceSize), vmName)
+		instanceId, err := azureClient.CreateVM(ctx, location, resourceGroupName, args.AzureImageID, pubkey, clients.InstanceTypeName(reservation.Detail.InstanceSize), vmName, userData)
 		if err != nil {
 			span.SetStatus(codes.Error, "failed to create Azure instance")
 			return fmt.Errorf("cannot create Azure instance(s): %w", err)
