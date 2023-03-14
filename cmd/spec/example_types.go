@@ -29,3 +29,13 @@ var InstanceTypesAzureResponse = []payloads.InstanceTypeResponse{{
 		GenV2: true,
 	},
 }}
+
+var InstanceTypesGCPResponse = []payloads.InstanceTypeResponse{{
+	Name:               "e2-highcpu-16",
+	VCPUs:              16,
+	MemoryMiB:          15623,
+	EphemeralStorageGB: 0,
+	Supported:          true,
+	Architecture:       "x86_64",
+	AzureDetail:        nil,
+}}

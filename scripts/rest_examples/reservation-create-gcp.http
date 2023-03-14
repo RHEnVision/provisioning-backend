@@ -4,7 +4,7 @@ Content-Type: application/json
 X-Rh-Identity: {{identity}}
 
 {
-  "name": "gcp-linux-eu-west8-c",
+  "name_pattern": "gcp-linux-eu-west8-c",
   "zone": "europe-west8-c",
   "source_id": "3",
   "image_id": "https://www.googleapis.com/compute/v1/projects/rhel-cloud/global/images/rhel-9-v20230411",
