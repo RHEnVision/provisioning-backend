@@ -25,6 +25,8 @@ func addPayloads(gen *APISchemaGen) {
 	gen.addSchema("v1.AWSReservationResponse", &payloads.AWSReservationResponsePayload{})
 	gen.addSchema("v1.AzureReservationRequest", &payloads.AzureReservationRequestPayload{})
 	gen.addSchema("v1.AzureReservationResponse", &payloads.AzureReservationResponsePayload{})
+	gen.addSchema("v1.GCPReservationRequest", &payloads.GCPReservationRequestPayload{})
+	gen.addSchema("v1.GCPReservationResponse", &payloads.GCPReservationResponsePayload{})
 	gen.addSchema("v1.AvailabilityStatusRequest", &payloads.AvailabilityStatusRequest{})
 	gen.addSchema("v1.AccountIDTypeResponse", &payloads.AccountIdentityResponse{})
 	gen.addSchema("v1.SourceUploadInfoResponse", &payloads.SourceUploadInfoResponse{})
@@ -50,10 +52,13 @@ func addExamples(gen *APISchemaGen) {
 	gen.addExample("v1.AzureReservationRequestPayloadExample", AzureReservationRequestPayloadExample)
 	gen.addExample("v1.AzureReservationResponsePayloadPendingExample", AzureReservationResponsePayloadPendingExample)
 	gen.addExample("v1.AzureReservationResponsePayloadDoneExample", AzureReservationResponsePayloadDoneExample)
+	gen.addExample("v1.GCPReservationRequestPayloadExample", GCPReservationRequestPayloadExample)
+	gen.addExample("v1.GCPReservationResponsePayloadPendingExample", GCPReservationResponsePayloadPendingExample)
+	gen.addExample("v1.GCPReservationResponsePayloadDoneExample", GCPReservationResponsePayloadDoneExample)
 	gen.addExample("v1.NoopReservationResponsePayloadExample", NoopReservationResponsePayloadExample)
-
 	gen.addExample("v1.InstanceTypesAWSResponse", InstanceTypesAWSResponse)
 	gen.addExample("v1.InstanceTypesAzureResponse", InstanceTypesAzureResponse)
+	gen.addExample("v1.InstanceTypesGCPResponse", InstanceTypesGCPResponse)
 }
 
 // addErrorSchemas all generic errors, that can be returned.

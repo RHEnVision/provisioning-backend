@@ -42,6 +42,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	resUUID := uuid.New().String()
 	detail := &models.GCPDetail{
+		Name:               &payload.Name,
 		Zone:               payload.Zone,
 		MachineType:        payload.MachineType,
 		Amount:             payload.Amount,

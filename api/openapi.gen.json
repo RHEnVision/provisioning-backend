@@ -107,6 +107,59 @@
           "source_id": "654321"
         }
       },
+      "v1.GCPReservationRequestPayloadExample": {
+        "value": {
+          "amount": 1,
+          "image_id": "08a48fed-de87-40ab-a571-f64e30bd0aa8",
+          "launch_template_name": "",
+          "machine_type": "e2-micro",
+          "name_pattern": "my-instance",
+          "poweroff": false,
+          "pubkey_id": 42,
+          "source_id": "654321",
+          "zone": "us-east-4"
+        }
+      },
+      "v1.GCPReservationResponsePayloadDoneExample": {
+        "value": {
+          "amount": 1,
+          "gcp_operation_name": "",
+          "image_id": "08a48fed-de87-40ab-a571-f64e30bd0aa8",
+          "instances": [
+            {
+              "detail": {
+                "publicdns": "",
+                "publicipv4": "10.0.0.88"
+              },
+              "instance_id": "2324343212"
+            }
+          ],
+          "launch_template_name": "",
+          "machine_type": "e2-micro",
+          "name_pattern": "my-instance",
+          "poweroff": false,
+          "pubkey_id": 42,
+          "reservation_id": 1305,
+          "source_id": "654321",
+          "zone": "us-east-4"
+        }
+      },
+      "v1.GCPReservationResponsePayloadPendingExample": {
+        "value": {
+          "amount": 1,
+          "gcp_operation_name": "",
+          "image_id": "08a48fed-de87-40ab-a571-f64e30bd0aa8",
+          "instances": [],
+          "launch_template_name": "",
+          "machine_type": "e2-micro",
+          "name_pattern": "my-instance",
+          "poweroff": false,
+          "pubkey_id": 42,
+          "reservation_id": 1305,
+          "source_id": "654321",
+          "zone": "us-east-4"
+        }
+      },
       "v1.GenericReservationResponsePayloadFailureExample": {
         "value": {
           "created_at": "2013-05-13T19:20:15Z",
@@ -240,6 +293,19 @@
             "storage_gb": 4096,
             "supported": true,
             "vcpus": 128
+          }
+        ]
+      },
+      "v1.InstanceTypesGCPResponse": {
+        "value": [
+          {
+            "arch": "x86_64",
+            "cores": 0,
+            "memory_mib": 15623,
+            "name": "e2-highcpu-16",
+            "storage_gb": 0,
+            "supported": true,
+            "vcpus": 16
           }
         ]
       },
@@ -594,6 +660,103 @@
             "type": "integer"
           },
           "source_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1.GCPReservationRequest": {
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "image_id": {
+            "type": "string"
+          },
+          "launch_template_name": {
+            "type": "string"
+          },
+          "machine_type": {
+            "type": "string"
+          },
+          "name_pattern": {
+            "type": "string"
+          },
+          "poweroff": {
+            "type": "boolean"
+          },
+          "pubkey_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "zone": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1.GCPReservationResponse": {
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "gcp_operation_name": {
+            "type": "string"
+          },
+          "image_id": {
+            "type": "string"
+          },
+          "instances": {
+            "items": {
+              "properties": {
+                "detail": {
+                  "properties": {
+                    "public_dns": {
+                      "type": "string"
+                    },
+                    "public_ipv4": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "instance_id": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "launch_template_name": {
+            "type": "string"
+          },
+          "machine_type": {
+            "type": "string"
+          },
+          "name_pattern": {
+            "type": "string"
+          },
+          "poweroff": {
+            "type": "boolean"
+          },
+          "pubkey_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reservation_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "zone": {
             "type": "string"
           }
         },
@@ -1214,7 +1377,7 @@
               }
             }
           },
-          "description": "aws request body",
+          "description": "azure request body",
           "required": true
         },
         "responses": {
@@ -1271,6 +1434,80 @@
               }
             },
             "description": "Returns detailed reservation information for an Azure reservation."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "tags": [
+          "Reservation"
+        ]
+      }
+    },
+    "/reservations/gcp": {
+      "post": {
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. A GCP reservation is a reservation created for a GCP job. Image Builder UUID image is required and needs to be shared with the service account.\n",
+        "operationId": "createGCPReservation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/v1.GCPReservationRequest"
+              }
+            }
+          },
+          "description": "gcp request body",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.GCPReservationResponse"
+                }
+              }
+            },
+            "description": "Returned on success."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "tags": [
+          "Reservation"
+        ]
+      }
+    },
+    "/reservations/gcp/{ID}": {
+      "get": {
+        "description": "Return an GCP reservation with details by id",
+        "operationId": "getGCPReservationByID",
+        "parameters": [
+          {
+            "description": "Reservation ID, must be an GCP reservation otherwise 404 is returned",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.GCPReservationResponse"
+                }
+              }
+            },
+            "description": "Returns detailed reservation information for an GCP reservation."
           },
           "404": {
             "$ref": "#/components/responses/NotFound"

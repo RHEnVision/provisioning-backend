@@ -150,6 +150,51 @@ var AzureReservationResponsePayloadDoneExample = payloads.AzureReservationRespon
 	}},
 }
 
+var GCPReservationRequestPayloadExample = payloads.GCPReservationRequestPayload{
+	PubkeyID:           42,
+	SourceID:           "654321",
+	Zone:               "us-east-4",
+	Name:               "my-instance",
+	MachineType:        "e2-micro",
+	Amount:             1,
+	ImageID:            "08a48fed-de87-40ab-a571-f64e30bd0aa8",
+	LaunchTemplateName: "",
+}
+
+var GCPReservationResponsePayloadPendingExample = payloads.GCPReservationResponsePayload{
+	ID:                 1305,
+	PubkeyID:           42,
+	SourceID:           "654321",
+	Zone:               "us-east-4",
+	MachineType:        "e2-micro",
+	Amount:             1,
+	Name:               "my-instance",
+	ImageID:            "08a48fed-de87-40ab-a571-f64e30bd0aa8",
+	LaunchTemplateName: "",
+	GCPOperationName:   "",
+	PowerOff:           false,
+}
+
+var GCPReservationResponsePayloadDoneExample = payloads.GCPReservationResponsePayload{
+	ID:                 1305,
+	PubkeyID:           42,
+	SourceID:           "654321",
+	Zone:               "us-east-4",
+	MachineType:        "e2-micro",
+	Amount:             1,
+	ImageID:            "08a48fed-de87-40ab-a571-f64e30bd0aa8",
+	LaunchTemplateName: "",
+	Name:               "my-instance",
+	GCPOperationName:   "",
+	PowerOff:           false,
+	Instances: []payloads.InstanceResponse{
+		{InstanceID: "2324343212", Detail: models.ReservationInstanceDetail{
+			PublicDNS:  "",
+			PublicIPv4: "10.0.0.88",
+		}},
+	},
+}
+
 var NoopReservationResponsePayloadExample = payloads.NoopReservationResponsePayload{
 	ID: 1310,
 }
