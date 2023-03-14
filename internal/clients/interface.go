@@ -113,7 +113,7 @@ type Azure interface {
 	// Most of the parameters are constant for now.
 	// location - to deploy into
 	// imageName - the imageID will be inferred as /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName}
-	CreateVM(ctx context.Context, location string, resourceGroupName string, imageName string, pubkey *models.Pubkey, instanceType InstanceTypeName, vmName string) (*string, error)
+	CreateVM(ctx context.Context, location string, resourceGroupName string, imageName string, pubkey *models.Pubkey, instanceType InstanceTypeName, vmName string, userData []byte) (*string, error)
 }
 
 type ServiceAzure interface {

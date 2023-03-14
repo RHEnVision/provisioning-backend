@@ -5,6 +5,7 @@ package azure
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"net/http"
@@ -37,7 +38,7 @@ const (
 	vmPollFrequency       = 10 * time.Second
 )
 
-func (c *client) CreateVM(ctx context.Context, location string, resourceGroupName string, imageName string, pubkey *models.Pubkey, instanceType clients.InstanceTypeName, vmName string) (*string, error) {
+func (c *client) CreateVM(ctx context.Context, location string, resourceGroupName string, imageName string, pubkey *models.Pubkey, instanceType clients.InstanceTypeName, vmName string, userData []byte) (*string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "CreateVM")
 	defer span.End()
 
@@ -89,7 +90,7 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	}
 	logger.Trace().Msgf("Using network interface id=%s", *networkInterface.ID)
 
-	vmParams := c.prepareVirtualMachineParameters(location, armcompute.VirtualMachineSizeTypes(instanceType), networkInterface, imageID, pubkey.Body, vmName)
+	vmParams := c.prepareVirtualMachineParameters(location, armcompute.VirtualMachineSizeTypes(instanceType), networkInterface, imageID, pubkey.Body, vmName, userData)
 	virtualMachine, err := c.createVirtualMachine(ctx, resourceGroupName, vmName, vmParams)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create virtual machine")
@@ -367,7 +368,10 @@ func (c *client) createNetworkInterface(ctx context.Context, location string, re
 	return &resp.Interface, nil
 }
 
-func (c *client) prepareVirtualMachineParameters(location string, instanceType armcompute.VirtualMachineSizeTypes, networkInterface *armnetwork.Interface, imageID string, sshKeyBody string, vmName string) *armcompute.VirtualMachine {
+func (c *client) prepareVirtualMachineParameters(location string, instanceType armcompute.VirtualMachineSizeTypes, networkInterface *armnetwork.Interface, imageID string, sshKeyBody string, vmName string, userData []byte) *armcompute.VirtualMachine {
+	userDataEncoded := make([]byte, base64.StdEncoding.EncodedLen(len(userData)))
+	base64.StdEncoding.Encode(userDataEncoded, userData)
+
 	return &armcompute.VirtualMachine{
 		Location: to.Ptr(location),
 		Identity: &armcompute.VirtualMachineIdentity{
@@ -414,6 +418,7 @@ func (c *client) prepareVirtualMachineParameters(location string, instanceType a
 					},
 				},
 			},
+			UserData: to.Ptr(string(userDataEncoded)),
 		},
 	}
 }

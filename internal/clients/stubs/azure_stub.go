@@ -8,6 +8,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 )
 
 type AzureClientStub struct {
@@ -40,13 +41,16 @@ func (stub *AzureClientStub) Status(ctx context.Context) error {
 	return nil
 }
 
-func (stub *AzureClientStub) CreateVM(ctx context.Context, location string, resourceGroupName string, imageID string, pubkey *models.Pubkey, instanceType clients.InstanceTypeName, vmName string) (*string, error) {
+func (stub *AzureClientStub) CreateVM(ctx context.Context, location string, resourceGroupName string, imageID string, pubkey *models.Pubkey, instanceType clients.InstanceTypeName, vmName string, userData []byte) (*string, error) {
 	id := strconv.Itoa(len(stub.createdVms) + 1)
 
 	vm := armcompute.VirtualMachine{
 		ID:       &id,
 		Name:     &vmName,
 		Location: &location,
+		Properties: &armcompute.VirtualMachineProperties{
+			UserData: ptr.To(string(userData)),
+		},
 	}
 	stub.createdVms = append(stub.createdVms, &vm)
 	return &id, nil
