@@ -22,8 +22,9 @@ func reset() {
 
 func TestMain(t *testing.M) {
 	ctx := context.Background()
-	integration.InitEnvironment(ctx, "../../../config/test.env")
-	defer integration.CloseEnvironment(ctx)
+	ctx = integration.InitConfigEnvironment(ctx, "../../../config/test.env")
+	integration.InitDbEnvironment(ctx)
+	defer integration.CloseDbEnvironment(ctx)
 	defer integration.DbDrop()
 
 	integration.DbDrop()

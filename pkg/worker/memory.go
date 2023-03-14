@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/google/uuid"
 )
@@ -43,17 +44,24 @@ func (w *MemoryWorker) Stop(_ context.Context) {
 }
 
 func (w *MemoryWorker) DequeueLoop(ctx context.Context) {
+	ctxval.Logger(ctx).Info().Msg("Starting memory dequeuer")
 	go w.dequeueLoop(ctx)
 }
 
 func (w *MemoryWorker) dequeueLoop(ctx context.Context) {
 	for job := range w.todo {
-		if h, ok := w.handlers[job.Type]; ok {
-			ctx = contextLogger(ctx, job)
-			h(ctx, job)
-		} else {
-			ctxval.Logger(ctx).Warn().Msgf("Memory worker handler not found for job type: %s", job.Type)
-		}
+		w.processJob(ctx, job)
+	}
+}
+
+func (w *MemoryWorker) processJob(ctx context.Context, job *Job) {
+	if h, ok := w.handlers[job.Type]; ok {
+		ctx = contextLogger(ctx, job)
+		cCtx, cFunc := context.WithTimeout(ctx, config.Worker.Timeout)
+		defer cFunc()
+		h(cCtx, job)
+	} else {
+		ctxval.Logger(ctx).Warn().Msgf("Memory worker handler not found for job type: %s", job.Type)
 	}
 }
 

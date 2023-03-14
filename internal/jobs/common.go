@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -92,4 +93,16 @@ func nilUnlessTimeout(ctx context.Context) error {
 		return fmt.Errorf("context timeout: %w", ctx.Err())
 	}
 	return nil
+}
+
+// sleep with context deadline
+//nolint:wrapcheck
+func sleepCtx(ctx context.Context, d time.Duration) error {
+	afterCh := time.After(d)
+	select {
+	case <-afterCh:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
 }

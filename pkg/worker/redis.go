@@ -92,7 +92,7 @@ func (w *RedisWorker) Enqueue(ctx context.Context, job *Job) error {
 	}
 
 	logger := loggerWithJob(ctx, job)
-	logger.Info().Msgf("Enqueuing job type: %s", job.Type)
+	logger.Info().Msgf("Enqueuing job type %s via Redis", job.Type)
 
 	var buffer bytes.Buffer
 	enc := gob.NewEncoder(&buffer)
@@ -126,7 +126,7 @@ func (w *RedisWorker) Stop(ctx context.Context) {
 
 func (w *RedisWorker) DequeueLoop(ctx context.Context) {
 	logger := ctxval.Logger(ctx)
-	logger.Info().Msgf("Starting %d polling goroutines", w.numPollers)
+	logger.Info().Msgf("Starting Redis dequeuer with %d polling goroutines", w.numPollers)
 	for i := 1; i <= w.numPollers; i++ {
 		w.loopWG.Add(1)
 		go w.dequeueLoop(ctx, i, w.numPollers)
@@ -159,15 +159,11 @@ func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 func recoverAndLog(ctx context.Context) {
 	if rec := recover(); rec != nil {
 		logger := ctxval.Logger(ctx).Error().Stack()
-		err, ok := rec.(error)
-		if ok {
-			logger = logger.Err(err)
-		}
 
-		if errors.Is(err, context.DeadlineExceeded) {
-			logger.Msgf("Job timeout: %s", err.Error())
+		if err, ok := rec.(error); ok {
+			logger.Err(err).Stack().Msgf("Job queue panic: %s", err.Error())
 		} else {
-			logger.Msgf("Job queue panic: %s", err.Error())
+			logger.Msgf("Error during job handling: %v, stacktrace: %s", rec, debug.Stack())
 		}
 	}
 }
