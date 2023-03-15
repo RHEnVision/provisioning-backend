@@ -94,6 +94,15 @@ func (stub *reservationDaoStub) GetAzureById(ctx context.Context, id int64) (*mo
 	return nil, dao.ErrNoRows
 }
 
+func (stub *reservationDaoStub) GetGCPById(ctx context.Context, id int64) (*models.GCPReservation, error) {
+	for _, gcpReservation := range stub.storeGCP {
+		if gcpReservation.AccountID == ctxAccountId(ctx) && gcpReservation.ID == id {
+			return gcpReservation, nil
+		}
+	}
+	return nil, dao.ErrNoRows
+}
+
 func (stub *reservationDaoStub) List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error) {
 	return nil, nil
 }

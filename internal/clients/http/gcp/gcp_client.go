@@ -170,7 +170,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 		return nil, nil, fmt.Errorf("cannot bulk insert instances: %w", err)
 	}
 
-	filter := fmt.Sprintf("labels.rhhcc-id=%v", uuid)
+	filter := fmt.Sprintf("labels.rhhcc-rid=%s", uuid)
 	lstReq := &computepb.AggregatedListInstancesRequest{
 		Project: c.auth.Payload,
 		Filter:  &filter,
@@ -181,9 +181,9 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 	}
 
 	ids := make([]*string, 0)
-	instances := client.AggregatedList(ctx, lstReq)
+	instancesIt := client.AggregatedList(ctx, lstReq)
 	for {
-		pair, err := instances.Next()
+		pair, err := instancesIt.Next()
 		if errors.Is(err, iterator.Done) {
 			logger.Error().Err(err).Msg("Instances iterator has finished")
 			break

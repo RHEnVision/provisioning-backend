@@ -38,10 +38,8 @@ Create a new Service account:
 7. Choose the permissions the provisioning app needs (TBC):
 
 Roles:
- - Service Account User
-  
-Permissions:
-  - compute.instances.insert
+   - Service Account User
+   - Compute Admin (We are allowing here more permissions than needed)
 
 8. Click CONTINUE
 9.  Click DONE 
@@ -61,11 +59,8 @@ This is a setup in the account in which the service shall deploy the actual inst
 5. Fill in the Service Account e-mail under New principals.
 6. Choose the permissions the provisioning app needs (TBC): 
 Roles:
- - Service Account User
-  
-Permissions:
-  - compute.instances.insert
-
+   - Service Account User
+   - Compute Admin (We are allowing here more permissions than needed)
 7. Click SAVE.
 
 #### Authenticating as the service account
@@ -94,16 +89,18 @@ The downloaded key has the following format, where PRIVATE_KEY is the private po
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/SERVICE_ACCOUNT_e-mail"
 }
 ```
+
 7. Set the GCP_JSON environment variable to the downloaded JSON in base64:
   ```shell
    cat creds.json | base64
   ```
-8. Paste the base64 json in api.env under GCP_JSON variable (notice there are no new lines)
+8. Paste the service account project id under GCP_PROJECT_ID 
+9. Paste the base64 json in api.env under GCP_JSON variable (notice there are no new lines)
 
-9. Paste the Tenant's project id under PROJECT_ID variable in sources.local.conf
+10. Paste the Tenant's project id under PROJECT_ID variable in sources.local.conf
 
-10. Create an image in Image Builder for GCP https://console.stage.redhat.com/api/image-builder/v1. 
-Share that image with the **service account** you have created. 
+11. Create an image in Image Builder for GCP https://console.stage.redhat.com/api/image-builder/v1. 
+Share that image with the **service account** you have created (Copy the service account's email from the IAM console and paste it in Image builder wizard). 
 
 ## Configuring Sources microservice
 

@@ -218,6 +218,21 @@ func (x *reservationDao) GetAzureById(ctx context.Context, id int64) (*models.Az
 	return result, nil
 }
 
+func (x *reservationDao) GetGCPById(ctx context.Context, id int64) (*models.GCPReservation, error) {
+	query := `SELECT id, provider, account_id, created_at, steps, step, status, error, finished_at, success,
+    	pubkey_id, source_id, image_id, detail
+		FROM reservations, gcp_reservation_details
+		WHERE account_id = $1 AND id = $2 AND id = reservation_id AND provider = provider_type_gcp() LIMIT 1`
+	accountId := ctxval.AccountId(ctx)
+	result := &models.GCPReservation{}
+
+	err := pgxscan.Get(ctx, db.Pool, result, query, accountId, id)
+	if err != nil {
+		return nil, fmt.Errorf("pgx error: %w", err)
+	}
+	return result, nil
+}
+
 func (x *reservationDao) List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error) {
 	query := `SELECT * FROM reservations WHERE account_id = $1 ORDER BY id LIMIT $2 OFFSET $3`
 

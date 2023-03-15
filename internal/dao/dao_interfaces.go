@@ -76,6 +76,9 @@ type ReservationDao interface {
 	// GetAzureById returns Azure reservation for a given id.
 	GetAzureById(ctx context.Context, id int64) (*models.AzureReservation, error)
 
+	// GetGCPById returns reservation for a particular account.
+	GetGCPById(ctx context.Context, id int64) (*models.GCPReservation, error)
+
 	// List returns reservation for a particular account.
 	List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error)
 
