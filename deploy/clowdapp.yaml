@@ -26,7 +26,7 @@ objects:
         iqePlugin: provisioning
       deployments:
         - name: worker
-          replicas: 2
+          replicas: 3
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
@@ -178,7 +178,7 @@ objects:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
         - name: api
-          replicas: 2
+          replicas: 3
           webServices:
             public:
               enabled: true
@@ -331,7 +331,7 @@ parameters:
     required: true
   - description: Cpu limit of service
     name: CPU_LIMIT
-    value: "1"
+    value: 500m
   - description: Cpu request increment
     name: CPU_REQUESTS
     value: 100m
