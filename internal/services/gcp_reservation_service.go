@@ -140,8 +140,9 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	unused := make([]*models.ReservationInstance, 0, 0)
 	// Return response payload
-	if err := render.Render(w, r, payloads.NewGCPReservationResponse(reservation)); err != nil {
+	if err := render.Render(w, r, payloads.NewGCPReservationResponse(reservation, unused)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		return
 	}

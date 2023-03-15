@@ -130,7 +130,23 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		}
 	case models.ProviderTypeGCP:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "gcp reservation is not implemented", ProviderTypeNotImplementedError))
+		reservationGCP, err := rDao.GetGCPById(r.Context(), id)
+		if err != nil {
+			message := fmt.Sprintf("get GCP reservation with id %d", id)
+			renderNotFoundOrDAOError(w, r, err, message)
+			return
+		}
+
+		instances, err := rDao.ListInstances(r.Context(), id)
+		if err != nil {
+			message := fmt.Sprintf("get reservation with id %d", id)
+			renderNotFoundOrDAOError(w, r, err, message)
+			return
+		}
+
+		if err := render.Render(w, r, payloads.NewGCPReservationResponse(reservationGCP, instances)); err != nil {
+			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
+		}
 	default:
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ProviderTypeNotImplementedError))
 	}

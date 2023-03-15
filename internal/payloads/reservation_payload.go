@@ -142,6 +142,9 @@ type GCPReservationResponsePayload struct {
 
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff"`
+
+	// Instances IDs, only present for finished reservations.
+	Instances []InstanceResponse `json:"instances,omitempty"`
 }
 
 type NoopReservationResponsePayload struct {
@@ -306,7 +309,15 @@ func NewAzureReservationResponse(reservation *models.AzureReservation, instances
 	return &response
 }
 
-func NewGCPReservationResponse(reservation *models.GCPReservation) render.Renderer {
+func NewGCPReservationResponse(reservation *models.GCPReservation, instances []*models.ReservationInstance) render.Renderer {
+	instanceIds := make([]InstanceResponse, len(instances))
+	for iter, inst := range instances {
+		instanceIds[iter] = InstanceResponse{
+			InstanceID: inst.InstanceID,
+			Detail:     inst.Detail,
+		}
+	}
+
 	response := GCPReservationResponsePayload{
 		PubkeyID:         reservation.PubkeyID,
 		ImageID:          reservation.ImageID,
@@ -317,6 +328,7 @@ func NewGCPReservationResponse(reservation *models.GCPReservation) render.Render
 		GCPOperationName: reservation.GCPOperationName,
 		ID:               reservation.ID,
 		PowerOff:         reservation.Detail.PowerOff,
+		Instances:        instanceIds,
 	}
 	return &response
 }
