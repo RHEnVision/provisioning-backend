@@ -17,8 +17,6 @@ objects:
       labels:
         app: provisioning-backend
         service: provisioning
-      annotations:
-        ignore-check.kube-linter.io/minimum-three-replicas: "statuser pod runs in a single instance"
     spec:
       envName: ${ENV_NAME}
       featureFlags: true
