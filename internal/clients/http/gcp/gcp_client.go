@@ -4,16 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 
-	"cloud.google.com/go/compute/apiv1/computepb"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"google.golang.org/api/iterator"
-	"google.golang.org/api/option"
+	guuid "github.com/google/uuid"
 
 	compute "cloud.google.com/go/compute/apiv1"
+	"cloud.google.com/go/compute/apiv1/computepb"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
+	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 )
 
 type gcpClient struct {
@@ -24,6 +28,8 @@ type gcpClient struct {
 func init() {
 	clients.GetGCPClient = newGCPClient
 }
+
+const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 
 // GCP SDK does not provide a single client, so only configuration can be shared and
 // clients need to be created and closed in each function.
@@ -46,6 +52,9 @@ func (c *gcpClient) Status(ctx context.Context) error {
 }
 
 func (c *gcpClient) ListAllRegions(ctx context.Context) ([]clients.Region, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListAllRegions")
+	defer span.End()
+
 	client, err := compute.NewRegionsRESTClient(ctx, c.options...)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create GCP regions client: %w", err)
@@ -66,6 +75,7 @@ func (c *gcpClient) ListAllRegions(ctx context.Context) ([]clients.Region, error
 			break
 		}
 		if err != nil {
+			span.SetStatus(codes.Error, err.Error())
 			return nil, fmt.Errorf("iterator error: %w", err)
 		}
 		regions = append(regions, clients.Region(*region.Name))
@@ -81,13 +91,17 @@ func (c *gcpClient) newInstancesClient(ctx context.Context) (*compute.InstancesC
 	return client, nil
 }
 
-func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error) {
-	log := logger(ctx)
-	log.Trace().Msgf("Executing bulk insert for name: %s", *namePattern)
+func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType, zone, keyBody string) ([]*string, *string, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "InsertInstances")
+	defer span.End()
+
+	logger := logger(ctx)
+	logger.Trace().Msgf("Executing bulk insert for name: %s", *namePattern)
 
 	client, err := c.newInstancesClient(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("unable to bulk insert instances: %w", err)
+		logger.Error().Err(err).Msgf("Could not get instances client: %v", err)
+		return nil, nil, fmt.Errorf("unable to bulk insert instances: %w", err)
 	}
 	defer client.Close()
 
@@ -95,6 +109,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, im
 		zone = config.GCP.DefaultZone
 	}
 
+	uuid := guuid.New().String()
 	req := &computepb.BulkInsertInstanceRequest{
 		Project: c.auth.Payload,
 		Zone:    zone,
@@ -103,6 +118,9 @@ func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, im
 			Count:       &amount,
 			MinCount:    &amount,
 			InstanceProperties: &computepb.InstanceProperties{
+				Labels: map[string]string{
+					"rhhcc-rid": uuid,
+				},
 				Disks: []*computepb.AttachedDisk{
 					{
 						InitializeParams: &computepb.AttachedDiskInitializeParams{
@@ -133,8 +151,45 @@ func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, im
 
 	op, err := client.BulkInsert(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("cannot bulk insert instances: %w", err)
+		span.SetStatus(codes.Error, err.Error())
+		logger.Error().Err(err).Msgf("Bulk insert operation has failed: %v", err)
+		return nil, nil, fmt.Errorf("cannot bulk insert instances: %w", err)
+	}
+	if err := op.Wait(ctx); err != nil {
+		logger.Error().Err(err).Msgf("Bulk insert operation has failed: %v", err)
+		span.SetStatus(codes.Error, err.Error())
+		return nil, nil, fmt.Errorf("cannot bulk insert instances: %w", err)
 	}
 
-	return ptr.To(op.Name()), nil
+	filter := fmt.Sprintf("labels.rhhcc-id=%v", uuid)
+	lstReq := &computepb.AggregatedListInstancesRequest{
+		Project: c.auth.Payload,
+		Filter:  &filter,
+	}
+
+	if !op.Done() {
+		return nil, ptr.To(op.Name()), fmt.Errorf("an error occured on operation %s: %w", op.Name(), ErrOperationFailed)
+	}
+
+	ids := make([]*string, 0)
+	instances := client.AggregatedList(ctx, lstReq)
+	for {
+		pair, err := instances.Next()
+		if errors.Is(err, iterator.Done) {
+			logger.Error().Err(err).Msg("Instances iterator has finished")
+			break
+		} else if err != nil {
+			logger.Error().Err(err).Msgf("An error occured during fetching instance ids %s", err.Error())
+			span.SetStatus(codes.Error, err.Error())
+			return nil, nil, fmt.Errorf("cannot fetch instance ids: %w", err)
+		} else {
+			logger.Trace().Msg("Fetching instance ids")
+			instances := pair.Value.Instances
+			for _, o := range instances {
+				idAsString := strconv.FormatUint(o.GetId(), 10)
+				ids = append(ids, &idAsString)
+			}
+		}
+	}
+	return ids, ptr.To(op.Name()), nil
 }

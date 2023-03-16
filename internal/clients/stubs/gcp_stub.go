@@ -59,8 +59,8 @@ func (mock *GCPClientStub) Status(ctx context.Context) error {
 	return nil
 }
 
-func (mock *GCPClientStub) InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error) {
-	return nil, NotImplementedErr
+func (mock *GCPClientStub) InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType, zone, keyBody string) ([]*string, *string, error) {
+	return nil, nil, NotImplementedErr
 }
 
 func (mock *GCPServiceClientStub) ListMachineTypes(ctx context.Context, zone string) ([]*clients.InstanceType, error) {

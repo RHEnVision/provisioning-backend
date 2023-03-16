@@ -144,6 +144,6 @@ type GCP interface {
 	// ListAllRegions returns list of all GCP regions
 	ListAllRegions(ctx context.Context) ([]Region, error)
 
-	// InsertInstances launches one or more instances
-	InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType string, zone string, keyBody string) (*string, error)
+	// InsertInstances launches one or more instances and returns a list of instances ids that were created, the GCP operation name and error
+	InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType, zone, keyBody string) ([]*string, *string, error)
 }

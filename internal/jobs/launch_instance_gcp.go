@@ -71,7 +71,7 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 		return fmt.Errorf("cannot get gcp client: %w", err)
 	}
 
-	opName, err := gcpClient.InsertInstances(ctx, ptr.To("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
+	instances, opName, err := gcpClient.InsertInstances(ctx, ptr.To("inst-####"), &args.ImageName, args.Detail.Amount, args.Detail.MachineType, args.Zone, pk.Body)
 	if err != nil {
 		return fmt.Errorf("cannot run instances for gcp client: %w", err)
 	}
@@ -81,6 +81,18 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 	err = rDao.UpdateOperationNameForGCP(ctx, args.ReservationID, *opName)
 	if err != nil {
 		return fmt.Errorf("cannot update operation name for GCP : %w", err)
+	}
+
+	// For each instance that was created in GCP, add it as a DB record
+	for _, instanceId := range instances {
+		err = rDao.CreateInstance(ctx, &models.ReservationInstance{
+			ReservationID: args.ReservationID,
+			InstanceID:    *instanceId,
+		})
+		if err != nil {
+			return fmt.Errorf("cannot create instance reservation for id %d: %w", instanceId, err)
+		}
+		logger.Info().Str("instance_id", *instanceId).Msgf("Created new instance via GCP reservation %s", *opName)
 	}
 
 	return nil
