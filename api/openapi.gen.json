@@ -9,7 +9,7 @@
             }
           }
         },
-        "description": "The request's parameters are not sufficient"
+        "description": "The request's parameters are not valid"
       },
       "InternalError": {
         "content": {
@@ -19,7 +19,7 @@
             }
           }
         },
-        "description": "The server encountered with an internal error"
+        "description": "The server encountered an internal error"
       },
       "NotFound": {
         "content": {
@@ -29,7 +29,7 @@
             }
           }
         },
-        "description": "The specified resource was not found"
+        "description": "The requested resource was not found"
       }
     },
     "schemas": {

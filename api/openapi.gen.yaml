@@ -421,31 +421,13 @@ paths:
         "500":
           $ref: '#/components/responses/InternalError'
 components:
-  responses:
-    BadRequest:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/v1.ResponseError'
-      description: The request's parameters are not sufficient
-    InternalError:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/v1.ResponseError'
-      description: The server encountered with an internal error
-    NotFound:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/v1.ResponseError'
-      description: The specified resource was not found
   schemas:
     v1.AWSReservationRequest:
+      type: object
       properties:
         amount:
-          format: int32
           type: integer
+          format: int32
         image_id:
           type: string
         instance_type:
@@ -457,18 +439,18 @@ components:
         poweroff:
           type: boolean
         pubkey_id:
-          format: int64
           type: integer
+          format: int64
         region:
           type: string
         source_id:
           type: string
-      type: object
     v1.AWSReservationResponse:
+      type: object
       properties:
         amount:
-          format: int32
           type: integer
+          format: int32
         aws_reservation_id:
           type: string
         image_id:
@@ -476,19 +458,19 @@ components:
         instance_type:
           type: string
         instances:
+          type: array
           items:
+            type: object
             properties:
               detail:
+                type: object
                 properties:
                   public_dns:
                     type: string
                   public_ipv4:
                     type: string
-                type: object
               instance_id:
                 type: string
-            type: object
-          type: array
         launch_template_id:
           type: string
         name:
@@ -496,34 +478,34 @@ components:
         poweroff:
           type: boolean
         pubkey_id:
-          format: int64
           type: integer
+          format: int64
         region:
           type: string
         reservation_id:
-          format: int64
           type: integer
+          format: int64
         source_id:
           type: string
-      type: object
     v1.AccountIDTypeResponse:
+      type: object
       properties:
         aws:
+          type: object
           properties:
             account_id:
               type: string
-          type: object
-      type: object
     v1.AvailabilityStatusRequest:
+      type: object
       properties:
         source_id:
           type: string
-      type: object
     v1.AzureReservationRequest:
+      type: object
       properties:
         amount:
-          format: int64
           type: integer
+          format: int64
         image_id:
           type: string
         instance_size:
@@ -535,24 +517,24 @@ components:
         poweroff:
           type: boolean
         pubkey_id:
-          format: int64
           type: integer
+          format: int64
         source_id:
           type: string
-      type: object
     v1.AzureReservationResponse:
+      type: object
       properties:
         amount:
-          format: int64
           type: integer
+          format: int64
         image_id:
           type: string
         instance_size:
           type: string
         instances:
+          type: array
           items:
             type: string
-          type: array
         location:
           type: string
         name:
@@ -560,56 +542,56 @@ components:
         poweroff:
           type: boolean
         pubkey_id:
-          format: int64
           type: integer
+          format: int64
         reservation_id:
-          format: int64
           type: integer
+          format: int64
         source_id:
           type: string
-      type: object
     v1.InstanceTypeResponse:
+      type: object
       properties:
         architecture:
           type: string
         azure:
+          type: object
           properties:
             gen_v1:
               type: boolean
             gen_v2:
               type: boolean
-          type: object
         cores:
+          type: integer
           format: int32
-          type: integer
         memory_mib:
-          format: int64
           type: integer
+          format: int64
         name:
           type: string
         storage_gb:
-          format: int64
           type: integer
+          format: int64
         supported:
           type: boolean
         vcpus:
-          format: int32
           type: integer
-      type: object
+          format: int32
     v1.LaunchTemplatesResponse:
+      type: object
       properties:
         id:
           type: string
         name:
           type: string
-      type: object
     v1.NoopReservationResponse:
+      type: object
       properties:
         reservation_id:
-          format: int64
           type: integer
-      type: object
+          format: int64
     v1.PubkeyRequest:
+      type: object
       properties:
         body:
           type: string
@@ -618,14 +600,14 @@ components:
         fingerprint_legacy:
           type: string
         id:
-          format: int64
           type: integer
+          format: int64
         name:
           type: string
         type:
           type: string
-      type: object
     v1.PubkeyResponse:
+      type: object
       properties:
         body:
           type: string
@@ -634,46 +616,46 @@ components:
         fingerprint_legacy:
           type: string
         id:
-          format: int64
           type: integer
+          format: int64
         name:
           type: string
         type:
           type: string
-      type: object
     v1.ReservationResponse:
+      type: object
       properties:
         created_at:
-          format: date-time
           type: string
+          format: date-time
         error:
           type: string
         finished_at:
+          type: string
           format: date-time
           nullable: true
-          type: string
         id:
-          format: int64
           type: integer
+          format: int64
         provider:
           type: integer
         status:
           type: string
         step:
-          format: int32
           type: integer
+          format: int32
         step_titles:
+          type: array
           items:
             type: string
-          type: array
         steps:
-          format: int32
           type: integer
+          format: int32
         success:
-          nullable: true
           type: boolean
-      type: object
+          nullable: true
     v1.ResponseError:
+      type: object
       properties:
         build_time:
           type: string
@@ -685,8 +667,8 @@ components:
           type: string
         version:
           type: string
-      type: object
     v1.SourceResponse:
+      type: object
       properties:
         id:
           type: string
@@ -696,10 +678,28 @@ components:
           type: string
         uid:
           type: string
-      type: object
+  responses:
+    BadRequest:
+      description: The request's parameters are not valid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/v1.ResponseError'
+    InternalError:
+      description: The server encountered an internal error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/v1.ResponseError'
+    NotFound:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/v1.ResponseError'
 servers:
-- description: Local development
-  url: http://0.0.0.0:{port}/api/{applicationName}
+- url: http://0.0.0.0:{port}/api/{applicationName}
+  description: Local development
   variables:
     applicationName:
       default: provisioning
