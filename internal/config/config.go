@@ -92,7 +92,7 @@ var config struct {
 	GCP struct {
 		ProjectID   string `env:"PROJECT_ID" env-default:"" env-description:"GCP service account project id"`
 		JSON        string `env:"JSON" env-default:"e30K" env-description:"GCP service account credentials (base64 encoded)"`
-		DefaultZone string `env:"DEFAULT_ZONE" env-default:"us-central1-a" env-description:"GCP region when not provided"`
+		DefaultZone string `env:"DEFAULT_ZONE" env-default:"us-east4" env-description:"GCP region when not provided"`
 	} `env-prefix:"GCP_"`
 	Prometheus struct {
 		Port int    `env:"PORT" env-default:"9000" env-description:"prometheus HTTP port"`
