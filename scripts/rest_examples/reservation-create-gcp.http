@@ -4,8 +4,8 @@ Content-Type: application/json
 X-Rh-Identity: {{identity}}
 
 {
-  "name": "gcp-linux-us-central1-a",
-  "zone": "us-central1-a",
+  "name": "gcp-linux-us-east4-a",
+  "zone": "us-east4-a",
   "source_id": "3",
   "image_id": "80967e7f-efef-4eee-85b0-bd4cef4c455d",
   "amount": 1,
