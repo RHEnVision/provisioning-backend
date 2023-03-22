@@ -185,8 +185,16 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
 
+	req := &clients.AWSInstanceParams{
+		LaunchTemplateID: args.LaunchTemplateID,
+		InstanceType:     types.InstanceType(args.Detail.InstanceType),
+		AMI:              args.AMI,
+		KeyName:          reservation.Detail.PubkeyName,
+		UserData:         userData,
+	}
+
 	logger.Trace().Msg("Executing RunInstances")
-	instances, awsReservationId, err := ec2Client.RunInstances(ctx, args.LaunchTemplateID, args.Detail.Name, args.Detail.Amount, types.InstanceType(args.Detail.InstanceType), args.AMI, reservation.Detail.PubkeyName, userData)
+	instances, awsReservationId, err := ec2Client.RunInstances(ctx, req, args.Detail.Amount, args.Detail.Name)
 	if err != nil {
 		return fmt.Errorf("cannot run instances: %w", err)
 	}

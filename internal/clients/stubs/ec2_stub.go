@@ -159,7 +159,7 @@ func (mock *EC2ClientStub) CheckPermission(ctx context.Context, auth *clients.Au
 	return nil, nil
 }
 
-func (mock *EC2ClientStub) RunInstances(ctx context.Context, launchTemplateID string, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
+func (mock *EC2ClientStub) RunInstances(ctx context.Context, details *clients.AWSInstanceParams, amount int32, name *string) ([]*string, *string, error) {
 	return nil, nil, nil
 }
 

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
 // GetSourcesClient returns Sources interface implementation. There are currently
@@ -89,7 +88,7 @@ type EC2 interface {
 	//
 	// All arguments are required except: launchTemplateID (empty string means no template in use).
 	//
-	RunInstances(ctx context.Context, launchTemplateID string, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error)
+	RunInstances(ctx context.Context, details *AWSInstanceParams, amount int32, name *string) ([]*string, *string, error)
 
 	// Returns AWS account number.
 	GetAccountId(ctx context.Context) (string, error)
@@ -145,5 +144,5 @@ type GCP interface {
 	ListAllRegions(ctx context.Context) ([]Region, error)
 
 	// InsertInstances launches one or more instances and returns a list of instances ids that were created, the GCP operation name and error
-	InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType, zone, keyBody string) ([]*string, *string, error)
+	InsertInstances(ctx context.Context, params *GCPInstanceParams, amount int64) ([]*string, *string, error)
 }

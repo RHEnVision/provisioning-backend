@@ -366,7 +366,7 @@ func (c *ec2Client) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchT
 	return res, nil
 }
 
-func (c *ec2Client) RunInstances(ctx context.Context, launchTemplateID string, name *string, amount int32, instanceType types.InstanceType, AMI string, keyName string, userData []byte) ([]*string, *string, error) {
+func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanceParams, amount int32, name *string) ([]*string, *string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "RunInstances")
 	defer span.End()
 
@@ -377,20 +377,20 @@ func (c *ec2Client) RunInstances(ctx context.Context, launchTemplateID string, n
 	logger.Trace().Msg("Run AWS EC2 instance")
 
 	var templateSpec *types.LaunchTemplateSpecification
-	if launchTemplateID != "" {
+	if params.LaunchTemplateID != "" {
 		templateSpec = &types.LaunchTemplateSpecification{
-			LaunchTemplateId: ptr.To(launchTemplateID),
+			LaunchTemplateId: ptr.To(params.LaunchTemplateID),
 		}
 	}
 
-	encodedUserData := base64.StdEncoding.EncodeToString(userData)
+	encodedUserData := base64.StdEncoding.EncodeToString(params.UserData)
 	input := &ec2.RunInstancesInput{
 		LaunchTemplate: templateSpec,
 		MaxCount:       ptr.To(amount),
 		MinCount:       ptr.To(amount),
-		InstanceType:   instanceType,
-		ImageId:        ptr.To(AMI),
-		KeyName:        &keyName,
+		InstanceType:   params.InstanceType,
+		ImageId:        ptr.To(params.AMI),
+		KeyName:        &params.KeyName,
 		UserData:       &encodedUserData,
 	}
 	if name != nil {

@@ -91,12 +91,12 @@ func (c *gcpClient) newInstancesClient(ctx context.Context) (*compute.InstancesC
 	return client, nil
 }
 
-func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType, zone, keyBody string) ([]*string, *string, error) {
+func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInstanceParams, amount int64) ([]*string, *string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "InsertInstances")
 	defer span.End()
 
 	logger := logger(ctx)
-	logger.Trace().Msgf("Executing bulk insert for name: %s", *namePattern)
+	logger.Trace().Msgf("Executing bulk insert for name: %s", *params.NamePattern)
 
 	client, err := c.newInstancesClient(ctx)
 	if err != nil {
@@ -105,16 +105,16 @@ func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, im
 	}
 	defer client.Close()
 
-	if zone == "" {
-		zone = config.GCP.DefaultZone
+	if params.Zone == "" {
+		params.Zone = config.GCP.DefaultZone
 	}
 
 	uuid := guuid.New().String()
 	req := &computepb.BulkInsertInstanceRequest{
 		Project: c.auth.Payload,
-		Zone:    zone,
+		Zone:    params.Zone,
 		BulkInsertInstanceResourceResource: &computepb.BulkInsertInstanceResource{
-			NamePattern: namePattern,
+			NamePattern: params.NamePattern,
 			Count:       &amount,
 			MinCount:    &amount,
 			InstanceProperties: &computepb.InstanceProperties{
@@ -124,14 +124,14 @@ func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, im
 				Disks: []*computepb.AttachedDisk{
 					{
 						InitializeParams: &computepb.AttachedDiskInitializeParams{
-							SourceImage: imageName,
+							SourceImage: &params.ImageName,
 						},
 						AutoDelete: ptr.To(true),
 						Boot:       ptr.To(true),
 						Type:       ptr.To(computepb.AttachedDisk_PERSISTENT.String()),
 					},
 				},
-				MachineType: ptr.To(machineType),
+				MachineType: ptr.To(params.MachineType),
 				NetworkInterfaces: []*computepb.NetworkInterface{
 					{
 						Name: ptr.To("global/networks/default"),
@@ -141,7 +141,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, namePattern *string, im
 					Items: []*computepb.Items{
 						{
 							Key:   ptr.To("ssh-keys"),
-							Value: ptr.To(keyBody),
+							Value: ptr.To(params.KeyBody),
 						},
 					},
 				},

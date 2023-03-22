@@ -59,7 +59,7 @@ func (mock *GCPClientStub) Status(ctx context.Context) error {
 	return nil
 }
 
-func (mock *GCPClientStub) InsertInstances(ctx context.Context, namePattern *string, imageName *string, amount int64, machineType, zone, keyBody string) ([]*string, *string, error) {
+func (mock *GCPClientStub) InsertInstances(ctx context.Context, params *clients.GCPInstanceParams, amount int64) ([]*string, *string, error) {
 	return nil, nil, NotImplementedErr
 }
 
