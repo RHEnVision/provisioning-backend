@@ -41,19 +41,28 @@ var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
 		Name:        "provisioning_source_availability_check_request_duration_ms",
 		Help:        "availability check request duration partitioned by type and error",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
-		Buckets:     []float64{5, 10, 50, 100, 250, 500, 1000, 2500, 5000, 10000},
+		Buckets:     []float64{50, 100, 250, 500, 1000, 2500, 6000},
 	},
 	[]string{"type", "error"},
 )
 
 var BackgroundJobDuration = prometheus.NewHistogramVec(
 	prometheus.HistogramOpts{
-		Name:        "background_job_duration_ms",
-		Help:        "task queue job duration (ms)",
+		Name:        "provisioning_background_job_duration_ms",
+		Help:        "task queue job duration (ms) by type",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "worker"},
-		Buckets:     []float64{5, 10, 50, 100, 250, 500, 1000, 2500, 5000, 10000},
+		Buckets:     []float64{50, 100, 250, 500, 1000, 2500, 6000},
 	},
 	[]string{"type"},
+)
+
+var ReservationCount = prometheus.NewCounterVec(
+	prometheus.CounterOpts{
+		Name:        "provisioning_reservation_count",
+		Help:        "reservation count by result (success/failure) by type (aws/gcp/azure)",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "worker"},
+	},
+	[]string{"type", "result"},
 )
 
 func ObserveAvailabilityCheckReqsDuration(provider string, observedFunc func() error) {
@@ -98,14 +107,6 @@ func SetJobQueueInFlight(workerName string, inflight int64) {
 	JobQueueInFlight.WithLabelValues(workerName).Set(float64(inflight))
 }
 
-func RegisterStatuserMetrics() {
-	prometheus.MustRegister(TotalSentAvailabilityCheckReqs, AvailabilityCheckReqsDuration, TotalInvalidAvailabilityCheckReqs)
-}
-
-func RegisterApiMetrics() {
-	// no metrics
-}
-
-func RegisterWorkerMetrics() {
-	prometheus.MustRegister(JobQueueSize, JobQueueInFlight, BackgroundJobDuration)
+func IncReservationCount(rtype, result string) {
+	ReservationCount.WithLabelValues(rtype, result).Inc()
 }
