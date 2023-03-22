@@ -8,29 +8,34 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 )
 
 func finishJob(ctx context.Context, reservationId int64, jobErr error) {
 	if jobErr != nil {
-		// TODO: increase counter of failed jobs in Prometheus
 		finishWithError(ctx, reservationId, jobErr)
 	} else {
-		// TODO: increase counter of successful jobs in Prometheus
 		finishWithSuccess(ctx, reservationId)
 	}
 }
 
 func finishWithSuccess(ctx context.Context, reservationId int64) {
 	logger := ctxval.Logger(ctx)
+	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+		// the original context is expired and unusable at this point
+		ctx = ctxval.Copy(ctx)
+	}
 
 	rDao := dao.GetReservationDao(ctx)
-
 	reservation, err := rDao.GetById(ctx, reservationId)
 	if err != nil {
 		logger.Warn().Err(err).Msg("unable to update job status: get by id")
 		return
 	}
 	logger.Debug().Msgf("Job step: %d/%d", reservation.Step, reservation.Steps)
+
+	// total count of reservations
+	metrics.IncReservationCount(reservation.Provider.String(), "success")
 
 	// if this was the last step, set the success flag
 	if reservation.Step >= reservation.Steps {
@@ -46,14 +51,24 @@ func finishWithSuccess(ctx context.Context, reservationId int64) {
 // stored into the reservation.
 func finishWithError(ctx context.Context, reservationId int64, jobError error) {
 	logger := ctxval.Logger(ctx)
-	logger.Warn().Err(jobError).Msgf("Job returned an error: %s", jobError.Error())
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-		ctx = context.Background()
-		ctxval.Logger(ctx).Warn().Msgf("Updating reservation %d after context deadline", reservationId)
+		// the original context is expired and unusable at this point
+		ctx = ctxval.Copy(ctx)
 	}
 
 	rDao := dao.GetReservationDao(ctx)
-	err := rDao.FinishWithError(ctx, reservationId, jobError.Error())
+	reservation, err := rDao.GetById(ctx, reservationId)
+	if err != nil {
+		logger.Warn().Err(err).Msg("unable to update job status: get by id")
+		return
+	}
+	logger.Warn().Err(jobError).Msgf("Job of type %s (%d/%d) returned an error: %s",
+		reservation.Provider.String(), reservation.Step, reservation.Steps, jobError.Error())
+
+	// total count of reservations
+	metrics.IncReservationCount(reservation.Provider.String(), "failure")
+
+	err = rDao.FinishWithError(ctx, reservationId, jobError.Error())
 	if err != nil {
 		logger.Warn().Err(err).Msg("unable to update job status: finish")
 	}
@@ -71,8 +86,8 @@ func updateStatusAfter(ctx context.Context, id int64, status string, addSteps in
 	logger := ctxval.Logger(ctx)
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		status = "Timeout"
-		ctx = context.Background()
-		ctxval.Logger(ctx).Warn().Msgf("Updating reservation %d after context deadline", id)
+		// the original context is expired and unusable at this point
+		ctx = ctxval.Copy(ctx)
 	}
 
 	logger.Debug().Bool("step", true).Msgf("Reservation status change: '%s'", status)

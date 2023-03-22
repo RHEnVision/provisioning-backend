@@ -161,7 +161,7 @@ func recoverAndLog(ctx context.Context) {
 		logger := ctxval.Logger(ctx).Error().Stack()
 
 		if err, ok := rec.(error); ok {
-			logger.Err(err).Stack().Msgf("Job queue panic: %s", err.Error())
+			logger.Err(err).Stack().Msgf("Job queue panic: %s, stacktrace: %s", err.Error(), debug.Stack())
 		} else {
 			logger.Msgf("Error during job handling: %v, stacktrace: %s", rec, debug.Stack())
 		}
