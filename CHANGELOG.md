@@ -1,4 +1,31 @@
 <!-- insertion marker -->
+<a name="0.18.0"></a>
+
+## [0.18.0](https://github.com/RHEnVision/provisioning-backend/compare/0.17.0...0.18.0) (2023-03-22)
+
+### Features
+
+- **HMS-1001:** Add created instances ids to GCP reservation ([9e8d936](https://github.com/RHEnVision/provisioning-backend/commit/9e8d9367da43c341e13dacdf188f9150d6ec46a3))
+- Azure support for cloud init ([781753b](https://github.com/RHEnVision/provisioning-backend/commit/781753b02030dfc889a61faa8e890ec075a35260))
+- shorten Azure polling intervals ([d097a9f](https://github.com/RHEnVision/provisioning-backend/commit/d097a9f336bb6b236b71ca2dafbacad2b69933fa))
+- **HMS-761:** add instance description to aws job ([d0291d2](https://github.com/RHEnVision/provisioning-backend/commit/d0291d288f8a75ab3cc2c81db8922252514a6fbd))
+- Add sentry writer to zerolog ([3105091](https://github.com/RHEnVision/provisioning-backend/commit/31050918df0bad45d9834ccfb4f69296eebca5fa))
+- **HMS-1110:** Add source permission validation check endpoint ([e84ec81](https://github.com/RHEnVision/provisioning-backend/commit/e84ec81c966b7d47bfd156bbf4981d92d82c220a))
+- Azure lighthouse offering template ([2029433](https://github.com/RHEnVision/provisioning-backend/commit/20294330f9b82e703c799d7e87643e263210c816))
+
+### Bug Fixes
+
+- **HMS-1105:** add reservation counters ([2ac7e5b](https://github.com/RHEnVision/provisioning-backend/commit/2ac7e5bfdf8bea1714ce2bcb6c3bf015298b98e3))
+- **HMS-1396:** integration job queue test ([11f1ec6](https://github.com/RHEnVision/provisioning-backend/commit/11f1ec6bd19d725bfcf9e685405796b48289e8fc))
+- **HMS-1403:** timeout for job queue ([81582d2](https://github.com/RHEnVision/provisioning-backend/commit/81582d21702d79c294aa798fcbbf6f7fb9791942))
+- cascade delete of pubkey to Azure details ([a8c5208](https://github.com/RHEnVision/provisioning-backend/commit/a8c52088adb86f6f0cad7ac846464885dba7d6b6))
+
+### Code Refactoring
+
+- change zone to match image builder ([b97730e](https://github.com/RHEnVision/provisioning-backend/commit/b97730e9b637dceebebc789942f2d0e0a1ee029f))
+- Simplify OpenAPI generator ([4301088](https://github.com/RHEnVision/provisioning-backend/commit/43010881879b73b12f5f37ca651c9a0c7b18b666))
+- Add test for valid region/zone/location ([9630bbb](https://github.com/RHEnVision/provisioning-backend/commit/9630bbb79f38a1fce639d9cd1a788e6cebf75e3a))
+
 <a name="0.17.0"></a>
 
 ## [0.17.0](https://github.com/RHEnVision/provisioning-backend/compare/0.16.0...0.17.0) (2023-03-08)
