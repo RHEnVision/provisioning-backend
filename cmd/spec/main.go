@@ -25,6 +25,7 @@ func addPayloads(gen *APISchemaGen) {
 	gen.addSchema("v1.AzureReservationResponse", &payloads.AzureReservationResponsePayload{})
 	gen.addSchema("v1.AvailabilityStatusRequest", &payloads.AvailabilityStatusRequest{})
 	gen.addSchema("v1.AccountIDTypeResponse", &payloads.AccountIdentityResponse{})
+	gen.addSchema("v1.SourceUploadInfoResponse", &payloads.SourceUploadInfoResponse{})
 	gen.addSchema("v1.LaunchTemplatesResponse", &payloads.LaunchTemplateResponse{})
 }
 

@@ -67,3 +67,11 @@ func (stub *AzureClientStub) EnsureResourceGroup(ctx context.Context, name strin
 	stub.createdRgs = append(stub.createdRgs, &rg)
 	return &id, nil
 }
+
+func (stub *AzureClientStub) TenantId(ctx context.Context) (string, error) {
+	return "4645f0cb-43f5-4586-b2c9-8d5c58577e3e", nil
+}
+
+func (stub *AzureClientStub) ListResourceGroups(ctx context.Context) ([]string, error) {
+	return []string{"firstGroup", "secondGroup", "test"}, nil
+}

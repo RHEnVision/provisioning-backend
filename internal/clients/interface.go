@@ -90,7 +90,7 @@ type EC2 interface {
 	//
 	RunInstances(ctx context.Context, details *AWSInstanceParams, amount int32, name *string) ([]*string, *string, error)
 
-	// Returns AWS account number.
+	// GetAccountId returns AWS account number.
 	GetAccountId(ctx context.Context) (string, error)
 
 	CheckPermission(ctx context.Context, auth *Authentication) ([]string, error)
@@ -107,6 +107,9 @@ var GetServiceAzureClient func(ctx context.Context) (ServiceAzure, error)
 type Azure interface {
 	ClientStatuser
 
+	// TenantId returns current subscription's tenant
+	TenantId(ctx context.Context) (string, error)
+
 	// EnsureResourceGroup makes sure that group with give name exists in a location
 	EnsureResourceGroup(ctx context.Context, name string, location string) (*string, error)
 
@@ -115,6 +118,8 @@ type Azure interface {
 	// location - to deploy into
 	// imageName - the imageID will be inferred as /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName}
 	CreateVM(ctx context.Context, location string, resourceGroupName string, imageName string, pubkey *models.Pubkey, instanceType InstanceTypeName, vmName string, userData []byte) (*string, error)
+
+	ListResourceGroups(ctx context.Context) ([]string, error)
 }
 
 type ServiceAzure interface {

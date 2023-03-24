@@ -126,3 +126,37 @@ func (c *client) Status(ctx context.Context) error {
 	}
 	return nil
 }
+
+func (c *client) ListResourceGroups(ctx context.Context) ([]string, error) {
+	var list []string
+	rgClient, err := c.newResourceGroupsClient(ctx)
+	if err != nil {
+		return list, err
+	}
+
+	pager := rgClient.NewListPager(nil)
+	for pager.More() {
+		page, pagerErr := pager.NextPage(ctx)
+		if pagerErr != nil {
+			return list, fmt.Errorf("failed to fetch resource groups: %w", pagerErr)
+		}
+		for _, rg := range page.ResourceGroupListResult.Value {
+			list = append(list, *rg.Name)
+		}
+	}
+
+	return list, nil
+}
+
+func (c *client) TenantId(ctx context.Context) (string, error) {
+	subClient, err := c.newSubscriptionsClient(ctx)
+	if err != nil {
+		return "", err
+	}
+	response, err := subClient.Get(ctx, c.subscriptionID, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch subscription: %w", err)
+	}
+
+	return *response.TenantID, nil
+}
