@@ -123,7 +123,31 @@ paths:
           $ref: "#/components/responses/InternalError"
   /sources/{ID}/account_identity:
     get:
-        parameters:
+      description: 'This endpoint is deprecated. Please use upload_info instead'
+      deprecated: true
+      parameters:
+      - in: path
+        name: ID
+        schema:
+          type: integer
+          format: int64
+        required: true
+        description: 'Source ID from Sources Database'
+      responses:
+        '200':
+          description: Return on success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.AccountIDTypeResponse'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalError"
+  /sources/{ID}/upload_info:
+    get:
+      description: 'This endpoint provides all necessary information to upload an image for given Source.'
+      parameters:
         - in: path
           name: ID
           schema:
@@ -131,17 +155,17 @@ paths:
             format: int64
           required: true
           description: 'Source ID from Sources Database'
-        responses:
-          '200':
-            description: Return on success.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/v1.AccountIDTypeResponse'
-          '404':
-            $ref: "#/components/responses/NotFound"
-          '500':
-            $ref: "#/components/responses/InternalError"
+      responses:
+        '200':
+          description: Return on success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v1.SourceUploadInfoResponse'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalError"
   /sources/{ID}/instance_types:
     get:
       description: 'Return a list of instance types (DEPRECATED: use /instance_types)'
@@ -677,6 +701,29 @@ components:
         source_type_id:
           type: string
         uid:
+          type: string
+    v1.SourceUploadInfoResponse:
+      type: object
+      properties:
+        aws:
+          type: object
+          nullable: true
+          properties:
+            account_id:
+              type: string
+        azure:
+          type: object
+          nullable: true
+          properties:
+            resource_groups:
+              type: array
+              items:
+                type: string
+            subscription_id:
+              type: string
+            tenant_id:
+              type: string
+        provider:
           type: string
   responses:
     BadRequest:

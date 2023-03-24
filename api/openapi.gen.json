@@ -413,6 +413,41 @@
           }
         },
         "type": "object"
+      },
+      "v1.SourceUploadInfoResponse": {
+        "properties": {
+          "aws": {
+            "nullable": true,
+            "properties": {
+              "account_id": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "azure": {
+            "nullable": true,
+            "properties": {
+              "resource_groups": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "subscription_id": {
+                "type": "string"
+              },
+              "tenant_id": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "provider": {
+            "type": "string"
+          }
+        },
+        "type": "object"
       }
     }
   },
@@ -880,6 +915,8 @@
     },
     "/sources/{ID}/account_identity": {
       "get": {
+        "deprecated": true,
+        "description": "This endpoint is deprecated. Please use upload_info instead",
         "parameters": [
           {
             "description": "Source ID from Sources Database",
@@ -994,6 +1031,41 @@
                     "$ref": "#/components/schemas/v1.LaunchTemplatesResponse"
                   },
                   "type": "array"
+                }
+              }
+            },
+            "description": "Return on success."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/sources/{ID}/upload_info": {
+      "get": {
+        "description": "This endpoint provides all necessary information to upload an image for given Source.",
+        "parameters": [
+          {
+            "description": "Source ID from Sources Database",
+            "in": "path",
+            "name": "ID",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/v1.SourceUploadInfoResponse"
                 }
               }
             },

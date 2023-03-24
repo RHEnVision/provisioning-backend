@@ -11,12 +11,10 @@ type AccountIdentityResponse struct {
 	*clients.AccountIdentity
 }
 
-func NewAccountIdentityResponse(awsAccountId string) render.Renderer {
+func NewAccountIdentityResponse(accDetails *clients.AccountDetailsAWS) render.Renderer {
 	return &AccountIdentityResponse{
 		&clients.AccountIdentity{
-			AWSDetails: &clients.AccountDetailsAWS{
-				AccountID: awsAccountId,
-			},
+			AWSDetails: accDetails,
 		},
 	}
 }
