@@ -249,9 +249,10 @@ func filterSourceAuthentications(authentications []AuthenticationRead) (Authenti
 	for _, auth := range authentications {
 		if *auth.ResourceType == "Application" {
 			switch *auth.Authtype {
-			case AuthenticationReadAuthtypeProvisioningArn,
-				AuthenticationReadAuthtypeProvisioningLighthouseSubscriptionId,
-				AuthenticationReadAuthtypeProvisioningProjectId:
+			// Type of the authentication as stored in Sources by listing the source types or the application types
+			case "provisioning-arn",
+				"provisioning_lighthouse_subscription_id",
+				"provisioning_project_id":
 				return auth, nil
 			default:
 				continue

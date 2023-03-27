@@ -2722,29 +2722,8 @@
           },
           "authtype": {
             "type": "string",
-            "description": "The type of the authentication",
-            "enum": [
-              "access_key_secret_key",
-              "api_token_account_id",
-              "arn",
-              "bitbucket-app-password",
-              "cloud-meter-arn",
-              "docker-access-token",
-              "github-personal-access-token",
-              "gitlab-personal-access-token",
-              "lighthouse_subscription_id",
-              "marketplace-token",
-              "ocid",
-              "project_id_service_account_json",
-              "quay-encrypted-password",
-              "receptor_node",
-              "tenant_id_client_id_client_secret",
-              "token",
-              "username_password",
-              "provisioning-arn",
-              "provisioning_lighthouse_subscription_id",
-              "provisioning_project_id"
-            ]
+            "description": "The type of the authentication. You can find this by listing the source types or the application types",
+            "example": "arn"
           },
           "username": {
             "description": "The username for the authentication",
@@ -2790,29 +2769,8 @@
           },
           "authtype": {
             "type": "string",
-            "description": "The type of the authentication",
-            "enum": [
-              "access_key_secret_key",
-              "api_token_account_id",
-              "arn",
-              "bitbucket-app-password",
-              "cloud-meter-arn",
-              "docker-access-token",
-              "github-personal-access-token",
-              "gitlab-personal-access-token",
-              "lighthouse_subscription_id",
-              "marketplace-token",
-              "ocid",
-              "project_id_service_account_json",
-              "quay-encrypted-password",
-              "receptor_node",
-              "tenant_id_client_id_client_secret",
-              "token",
-              "username_password",
-              "provisioning-arn",
-              "provisioning_lighthouse_subscription_id",
-              "provisioning_project_id"
-            ]
+            "description": "The type of the authentication. You can find this by listing the source types or the application types",
+            "example": "arn"
           },
           "username": {
             "description": "The username for the authentication",
@@ -2890,29 +2848,8 @@
           },
           "authtype": {
             "type": "string",
-            "description": "The type of the authentication",
-            "enum": [
-              "access_key_secret_key",
-              "api_token_account_id",
-              "arn",
-              "bitbucket-app-password",
-              "cloud-meter-arn",
-              "docker-access-token",
-              "github-personal-access-token",
-              "gitlab-personal-access-token",
-              "lighthouse_subscription_id",
-              "marketplace-token",
-              "ocid",
-              "project_id_service_account_json",
-              "quay-encrypted-password",
-              "receptor_node",
-              "tenant_id_client_id_client_secret",
-              "token",
-              "username_password",
-              "provisioning-arn",
-              "provisioning_lighthouse_subscription_id",
-              "provisioning_project_id"
-            ]
+            "description": "The type of the authentication. You can find this by listing the source types or the application types",
+            "example": "arn"
           },
           "username": {
             "description": "The username for the authentication",
@@ -4130,28 +4067,6 @@
               "properties": {
                 "authtype": {
                   "description": "The type of the authentication. You can find this by listing the source types or the application types",
-                  "enum": [
-                    "access_key_secret_key",
-                    "api_token_account_id",
-                    "arn",
-                    "bitbucket-app-password",
-                    "cloud-meter-arn",
-                    "docker-access-token",
-                    "github-personal-access-token",
-                    "gitlab-personal-access-token",
-                    "lighthouse_subscription_id",
-                    "marketplace-token",
-                    "ocid",
-                    "project_id_service_account_json",
-                    "quay-encrypted-password",
-                    "receptor_node",
-                    "tenant_id_client_id_client_secret",
-                    "token",
-                    "username_password",
-                    "provisioning-arn",
-                    "provisioning_lighthouse_subscription_id",
-                    "provisioning_project_id"
-                  ],
                   "example": "arn",
                   "type": "string"
                 },

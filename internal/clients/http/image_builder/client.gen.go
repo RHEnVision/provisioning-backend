@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 )
 
 // Defines values for Distributions.
@@ -97,6 +98,7 @@ type AWSEC2Clone struct {
 	// ShareWithAccounts An array of AWS account IDs as described in
 	// https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html
 	ShareWithAccounts *[]string `json:"share_with_accounts,omitempty"`
+	ShareWithSources  *[]string `json:"share_with_sources,omitempty"`
 }
 
 // AWSS3UploadRequestOptions defines model for AWSS3UploadRequestOptions.
@@ -162,7 +164,7 @@ type CloneRequest struct {
 
 // CloneResponse defines model for CloneResponse.
 type CloneResponse struct {
-	Id string `json:"id"`
+	Id openapi_types.UUID `json:"id"`
 }
 
 // ClonesResponse defines model for ClonesResponse.
@@ -179,9 +181,9 @@ type ClonesResponse struct {
 
 // ClonesResponseItem defines model for ClonesResponseItem.
 type ClonesResponseItem struct {
-	CreatedAt string      `json:"created_at"`
-	Id        string      `json:"id"`
-	Request   interface{} `json:"request"`
+	CreatedAt string             `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	Request   interface{}        `json:"request"`
 }
 
 // ComposeMetadata defines model for ComposeMetadata.
@@ -205,7 +207,7 @@ type ComposeRequest struct {
 
 // ComposeResponse defines model for ComposeResponse.
 type ComposeResponse struct {
-	Id string `json:"id"`
+	Id openapi_types.UUID `json:"id"`
 }
 
 // ComposeStatus defines model for ComposeStatus.
@@ -234,10 +236,10 @@ type ComposesResponse struct {
 
 // ComposesResponseItem defines model for ComposesResponseItem.
 type ComposesResponseItem struct {
-	CreatedAt string      `json:"created_at"`
-	Id        string      `json:"id"`
-	ImageName *string     `json:"image_name,omitempty"`
-	Request   interface{} `json:"request"`
+	CreatedAt string             `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	ImageName *string            `json:"image_name,omitempty"`
+	Request   interface{}        `json:"request"`
 }
 
 // Customizations defines model for Customizations.
@@ -397,7 +399,10 @@ type Subscription struct {
 	BaseUrl       string `json:"base-url"`
 	Insights      bool   `json:"insights"`
 	Organization  int    `json:"organization"`
-	ServerUrl     string `json:"server-url"`
+
+	// Rhc Optional flag to use rhc to register the system, which also always enables Insights.
+	Rhc       *bool  `json:"rhc,omitempty"`
+	ServerUrl string `json:"server-url"`
 }
 
 // UploadRequest defines model for UploadRequest.
@@ -451,10 +456,10 @@ type GetComposesParams struct {
 
 // GetComposeClonesParams defines parameters for GetComposeClones.
 type GetComposeClonesParams struct {
-	// Limit max amount of composes, default 100
+	// Limit max amount of clones, default 100
 	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// Offset composes page offset, default 0
+	// Offset clones page offset, default 0
 	Offset *int `form:"offset,omitempty" json:"offset,omitempty"`
 }
 
@@ -826,7 +831,7 @@ type ClientInterface interface {
 	GetArchitectures(ctx context.Context, distribution string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetCloneStatus request
-	GetCloneStatus(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetCloneStatus(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ComposeImage request with any body
 	ComposeImageWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -837,18 +842,18 @@ type ClientInterface interface {
 	GetComposes(ctx context.Context, params *GetComposesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetComposeStatus request
-	GetComposeStatus(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetComposeStatus(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CloneCompose request with any body
-	CloneComposeWithBody(ctx context.Context, composeId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CloneComposeWithBody(ctx context.Context, composeId openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	CloneCompose(ctx context.Context, composeId string, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CloneCompose(ctx context.Context, composeId openapi_types.UUID, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetComposeClones request
-	GetComposeClones(ctx context.Context, composeId string, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetComposeClones(ctx context.Context, composeId openapi_types.UUID, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetComposeMetadata request
-	GetComposeMetadata(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetComposeMetadata(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetDistributions request
 	GetDistributions(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -878,7 +883,7 @@ func (c *Client) GetArchitectures(ctx context.Context, distribution string, reqE
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetCloneStatus(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetCloneStatus(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetCloneStatusRequest(c.Server, id)
 	if err != nil {
 		return nil, err
@@ -926,7 +931,7 @@ func (c *Client) GetComposes(ctx context.Context, params *GetComposesParams, req
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetComposeStatus(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetComposeStatus(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetComposeStatusRequest(c.Server, composeId)
 	if err != nil {
 		return nil, err
@@ -938,7 +943,7 @@ func (c *Client) GetComposeStatus(ctx context.Context, composeId string, reqEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) CloneComposeWithBody(ctx context.Context, composeId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) CloneComposeWithBody(ctx context.Context, composeId openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCloneComposeRequestWithBody(c.Server, composeId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -950,7 +955,7 @@ func (c *Client) CloneComposeWithBody(ctx context.Context, composeId string, con
 	return c.Client.Do(req)
 }
 
-func (c *Client) CloneCompose(ctx context.Context, composeId string, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) CloneCompose(ctx context.Context, composeId openapi_types.UUID, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCloneComposeRequest(c.Server, composeId, body)
 	if err != nil {
 		return nil, err
@@ -962,7 +967,7 @@ func (c *Client) CloneCompose(ctx context.Context, composeId string, body CloneC
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetComposeClones(ctx context.Context, composeId string, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetComposeClones(ctx context.Context, composeId openapi_types.UUID, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetComposeClonesRequest(c.Server, composeId, params)
 	if err != nil {
 		return nil, err
@@ -974,7 +979,7 @@ func (c *Client) GetComposeClones(ctx context.Context, composeId string, params 
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetComposeMetadata(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetComposeMetadata(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetComposeMetadataRequest(c.Server, composeId)
 	if err != nil {
 		return nil, err
@@ -1081,7 +1086,7 @@ func NewGetArchitecturesRequest(server string, distribution string) (*http.Reque
 }
 
 // NewGetCloneStatusRequest generates requests for GetCloneStatus
-func NewGetCloneStatusRequest(server string, id string) (*http.Request, error) {
+func NewGetCloneStatusRequest(server string, id openapi_types.UUID) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1218,7 +1223,7 @@ func NewGetComposesRequest(server string, params *GetComposesParams) (*http.Requ
 }
 
 // NewGetComposeStatusRequest generates requests for GetComposeStatus
-func NewGetComposeStatusRequest(server string, composeId string) (*http.Request, error) {
+func NewGetComposeStatusRequest(server string, composeId openapi_types.UUID) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1252,7 +1257,7 @@ func NewGetComposeStatusRequest(server string, composeId string) (*http.Request,
 }
 
 // NewCloneComposeRequest calls the generic CloneCompose builder with application/json body
-func NewCloneComposeRequest(server string, composeId string, body CloneComposeJSONRequestBody) (*http.Request, error) {
+func NewCloneComposeRequest(server string, composeId openapi_types.UUID, body CloneComposeJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
@@ -1263,7 +1268,7 @@ func NewCloneComposeRequest(server string, composeId string, body CloneComposeJS
 }
 
 // NewCloneComposeRequestWithBody generates requests for CloneCompose with any type of body
-func NewCloneComposeRequestWithBody(server string, composeId string, contentType string, body io.Reader) (*http.Request, error) {
+func NewCloneComposeRequestWithBody(server string, composeId openapi_types.UUID, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1299,7 +1304,7 @@ func NewCloneComposeRequestWithBody(server string, composeId string, contentType
 }
 
 // NewGetComposeClonesRequest generates requests for GetComposeClones
-func NewGetComposeClonesRequest(server string, composeId string, params *GetComposeClonesParams) (*http.Request, error) {
+func NewGetComposeClonesRequest(server string, composeId openapi_types.UUID, params *GetComposeClonesParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1369,7 +1374,7 @@ func NewGetComposeClonesRequest(server string, composeId string, params *GetComp
 }
 
 // NewGetComposeMetadataRequest generates requests for GetComposeMetadata
-func NewGetComposeMetadataRequest(server string, composeId string) (*http.Request, error) {
+func NewGetComposeMetadataRequest(server string, composeId openapi_types.UUID) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1656,7 +1661,7 @@ type ClientWithResponsesInterface interface {
 	GetArchitecturesWithResponse(ctx context.Context, distribution string, reqEditors ...RequestEditorFn) (*GetArchitecturesResponse, error)
 
 	// GetCloneStatus request
-	GetCloneStatusWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetCloneStatusResponse, error)
+	GetCloneStatusWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetCloneStatusResponse, error)
 
 	// ComposeImage request with any body
 	ComposeImageWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ComposeImageResponse, error)
@@ -1667,18 +1672,18 @@ type ClientWithResponsesInterface interface {
 	GetComposesWithResponse(ctx context.Context, params *GetComposesParams, reqEditors ...RequestEditorFn) (*GetComposesResponse, error)
 
 	// GetComposeStatus request
-	GetComposeStatusWithResponse(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*GetComposeStatusResponse, error)
+	GetComposeStatusWithResponse(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetComposeStatusResponse, error)
 
 	// CloneCompose request with any body
-	CloneComposeWithBodyWithResponse(ctx context.Context, composeId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error)
+	CloneComposeWithBodyWithResponse(ctx context.Context, composeId openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error)
 
-	CloneComposeWithResponse(ctx context.Context, composeId string, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error)
+	CloneComposeWithResponse(ctx context.Context, composeId openapi_types.UUID, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error)
 
 	// GetComposeClones request
-	GetComposeClonesWithResponse(ctx context.Context, composeId string, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*GetComposeClonesResponse, error)
+	GetComposeClonesWithResponse(ctx context.Context, composeId openapi_types.UUID, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*GetComposeClonesResponse, error)
 
 	// GetComposeMetadata request
-	GetComposeMetadataWithResponse(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*GetComposeMetadataResponse, error)
+	GetComposeMetadataWithResponse(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetComposeMetadataResponse, error)
 
 	// GetDistributions request
 	GetDistributionsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetDistributionsResponse, error)
@@ -1898,6 +1903,7 @@ func (r GetDistributionsResponse) StatusCode() int {
 type GetOpenapiJsonResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *map[string]interface{}
 }
 
 // Status returns HTTPResponse.Status
@@ -1992,7 +1998,7 @@ func (c *ClientWithResponses) GetArchitecturesWithResponse(ctx context.Context, 
 }
 
 // GetCloneStatusWithResponse request returning *GetCloneStatusResponse
-func (c *ClientWithResponses) GetCloneStatusWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*GetCloneStatusResponse, error) {
+func (c *ClientWithResponses) GetCloneStatusWithResponse(ctx context.Context, id openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetCloneStatusResponse, error) {
 	rsp, err := c.GetCloneStatus(ctx, id, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2027,7 +2033,7 @@ func (c *ClientWithResponses) GetComposesWithResponse(ctx context.Context, param
 }
 
 // GetComposeStatusWithResponse request returning *GetComposeStatusResponse
-func (c *ClientWithResponses) GetComposeStatusWithResponse(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*GetComposeStatusResponse, error) {
+func (c *ClientWithResponses) GetComposeStatusWithResponse(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetComposeStatusResponse, error) {
 	rsp, err := c.GetComposeStatus(ctx, composeId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2036,7 +2042,7 @@ func (c *ClientWithResponses) GetComposeStatusWithResponse(ctx context.Context, 
 }
 
 // CloneComposeWithBodyWithResponse request with arbitrary body returning *CloneComposeResponse
-func (c *ClientWithResponses) CloneComposeWithBodyWithResponse(ctx context.Context, composeId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error) {
+func (c *ClientWithResponses) CloneComposeWithBodyWithResponse(ctx context.Context, composeId openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error) {
 	rsp, err := c.CloneComposeWithBody(ctx, composeId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2044,7 +2050,7 @@ func (c *ClientWithResponses) CloneComposeWithBodyWithResponse(ctx context.Conte
 	return ParseCloneComposeResponse(rsp)
 }
 
-func (c *ClientWithResponses) CloneComposeWithResponse(ctx context.Context, composeId string, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error) {
+func (c *ClientWithResponses) CloneComposeWithResponse(ctx context.Context, composeId openapi_types.UUID, body CloneComposeJSONRequestBody, reqEditors ...RequestEditorFn) (*CloneComposeResponse, error) {
 	rsp, err := c.CloneCompose(ctx, composeId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2053,7 +2059,7 @@ func (c *ClientWithResponses) CloneComposeWithResponse(ctx context.Context, comp
 }
 
 // GetComposeClonesWithResponse request returning *GetComposeClonesResponse
-func (c *ClientWithResponses) GetComposeClonesWithResponse(ctx context.Context, composeId string, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*GetComposeClonesResponse, error) {
+func (c *ClientWithResponses) GetComposeClonesWithResponse(ctx context.Context, composeId openapi_types.UUID, params *GetComposeClonesParams, reqEditors ...RequestEditorFn) (*GetComposeClonesResponse, error) {
 	rsp, err := c.GetComposeClones(ctx, composeId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2062,7 +2068,7 @@ func (c *ClientWithResponses) GetComposeClonesWithResponse(ctx context.Context, 
 }
 
 // GetComposeMetadataWithResponse request returning *GetComposeMetadataResponse
-func (c *ClientWithResponses) GetComposeMetadataWithResponse(ctx context.Context, composeId string, reqEditors ...RequestEditorFn) (*GetComposeMetadataResponse, error) {
+func (c *ClientWithResponses) GetComposeMetadataWithResponse(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetComposeMetadataResponse, error) {
 	rsp, err := c.GetComposeMetadata(ctx, composeId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2367,6 +2373,16 @@ func ParseGetOpenapiJsonResponse(rsp *http.Response) (*GetOpenapiJsonResponse, e
 	response := &GetOpenapiJsonResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest map[string]interface{}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil
