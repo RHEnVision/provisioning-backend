@@ -10,6 +10,8 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
+	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
 )
@@ -140,7 +142,12 @@ func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadS
 	logger := logger(ctx)
 	logger.Trace().Msgf("Fetching image status %v from composes", composeID)
 
-	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
+	composeUUID, err := uuid.Parse(composeID)
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse UUID: %w", err)
+	}
+
+	resp, err := c.client.GetComposeStatusWithResponse(ctx, openapi_types.UUID(composeUUID), headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
@@ -166,7 +173,12 @@ func (c *ibClient) checkClone(ctx context.Context, composeID string) (*UploadSta
 	logger := logger(ctx)
 	logger.Trace().Msgf("Fetching image status %v from clones", composeID)
 
-	resp, err := c.client.GetCloneStatusWithResponse(ctx, composeID, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
+	composeUUID, err := uuid.Parse(composeID)
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse UUID: %w", err)
+	}
+
+	resp, err := c.client.GetCloneStatusWithResponse(ctx, composeUUID, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
 		return nil, fmt.Errorf("cannot get compose status: %w", err)

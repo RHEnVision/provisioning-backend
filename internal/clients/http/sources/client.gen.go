@@ -40,60 +40,12 @@ const (
 	ApplicationUpdateAvailabilityStatusUnavailable        ApplicationUpdateAvailabilityStatus = "unavailable"
 )
 
-// Defines values for AuthenticationReadAuthtype.
-const (
-	AuthenticationReadAuthtypeAccessKeySecretKey                   AuthenticationReadAuthtype = "access_key_secret_key"
-	AuthenticationReadAuthtypeApiTokenAccountId                    AuthenticationReadAuthtype = "api_token_account_id"
-	AuthenticationReadAuthtypeArn                                  AuthenticationReadAuthtype = "arn"
-	AuthenticationReadAuthtypeBitbucketAppPassword                 AuthenticationReadAuthtype = "bitbucket-app-password"
-	AuthenticationReadAuthtypeCloudMeterArn                        AuthenticationReadAuthtype = "cloud-meter-arn"
-	AuthenticationReadAuthtypeDockerAccessToken                    AuthenticationReadAuthtype = "docker-access-token"
-	AuthenticationReadAuthtypeGithubPersonalAccessToken            AuthenticationReadAuthtype = "github-personal-access-token"
-	AuthenticationReadAuthtypeGitlabPersonalAccessToken            AuthenticationReadAuthtype = "gitlab-personal-access-token"
-	AuthenticationReadAuthtypeLighthouseSubscriptionId             AuthenticationReadAuthtype = "lighthouse_subscription_id"
-	AuthenticationReadAuthtypeMarketplaceToken                     AuthenticationReadAuthtype = "marketplace-token"
-	AuthenticationReadAuthtypeOcid                                 AuthenticationReadAuthtype = "ocid"
-	AuthenticationReadAuthtypeProjectIdServiceAccountJson          AuthenticationReadAuthtype = "project_id_service_account_json"
-	AuthenticationReadAuthtypeProvisioningArn                      AuthenticationReadAuthtype = "provisioning-arn"
-	AuthenticationReadAuthtypeProvisioningLighthouseSubscriptionId AuthenticationReadAuthtype = "provisioning_lighthouse_subscription_id"
-	AuthenticationReadAuthtypeProvisioningProjectId                AuthenticationReadAuthtype = "provisioning_project_id"
-	AuthenticationReadAuthtypeQuayEncryptedPassword                AuthenticationReadAuthtype = "quay-encrypted-password"
-	AuthenticationReadAuthtypeReceptorNode                         AuthenticationReadAuthtype = "receptor_node"
-	AuthenticationReadAuthtypeTenantIdClientIdClientSecret         AuthenticationReadAuthtype = "tenant_id_client_id_client_secret"
-	AuthenticationReadAuthtypeToken                                AuthenticationReadAuthtype = "token"
-	AuthenticationReadAuthtypeUsernamePassword                     AuthenticationReadAuthtype = "username_password"
-)
-
 // Defines values for AuthenticationReadResourceType.
 const (
 	AuthenticationReadResourceTypeApplication    AuthenticationReadResourceType = "Application"
 	AuthenticationReadResourceTypeAuthentication AuthenticationReadResourceType = "Authentication"
 	AuthenticationReadResourceTypeEndpoint       AuthenticationReadResourceType = "Endpoint"
 	AuthenticationReadResourceTypeSource         AuthenticationReadResourceType = "Source"
-)
-
-// Defines values for BulkCreatePayloadAuthenticationsAuthtype.
-const (
-	BulkCreatePayloadAuthenticationsAuthtypeAccessKeySecretKey                   BulkCreatePayloadAuthenticationsAuthtype = "access_key_secret_key"
-	BulkCreatePayloadAuthenticationsAuthtypeApiTokenAccountId                    BulkCreatePayloadAuthenticationsAuthtype = "api_token_account_id"
-	BulkCreatePayloadAuthenticationsAuthtypeArn                                  BulkCreatePayloadAuthenticationsAuthtype = "arn"
-	BulkCreatePayloadAuthenticationsAuthtypeBitbucketAppPassword                 BulkCreatePayloadAuthenticationsAuthtype = "bitbucket-app-password"
-	BulkCreatePayloadAuthenticationsAuthtypeCloudMeterArn                        BulkCreatePayloadAuthenticationsAuthtype = "cloud-meter-arn"
-	BulkCreatePayloadAuthenticationsAuthtypeDockerAccessToken                    BulkCreatePayloadAuthenticationsAuthtype = "docker-access-token"
-	BulkCreatePayloadAuthenticationsAuthtypeGithubPersonalAccessToken            BulkCreatePayloadAuthenticationsAuthtype = "github-personal-access-token"
-	BulkCreatePayloadAuthenticationsAuthtypeGitlabPersonalAccessToken            BulkCreatePayloadAuthenticationsAuthtype = "gitlab-personal-access-token"
-	BulkCreatePayloadAuthenticationsAuthtypeLighthouseSubscriptionId             BulkCreatePayloadAuthenticationsAuthtype = "lighthouse_subscription_id"
-	BulkCreatePayloadAuthenticationsAuthtypeMarketplaceToken                     BulkCreatePayloadAuthenticationsAuthtype = "marketplace-token"
-	BulkCreatePayloadAuthenticationsAuthtypeOcid                                 BulkCreatePayloadAuthenticationsAuthtype = "ocid"
-	BulkCreatePayloadAuthenticationsAuthtypeProjectIdServiceAccountJson          BulkCreatePayloadAuthenticationsAuthtype = "project_id_service_account_json"
-	BulkCreatePayloadAuthenticationsAuthtypeProvisioningArn                      BulkCreatePayloadAuthenticationsAuthtype = "provisioning-arn"
-	BulkCreatePayloadAuthenticationsAuthtypeProvisioningLighthouseSubscriptionId BulkCreatePayloadAuthenticationsAuthtype = "provisioning_lighthouse_subscription_id"
-	BulkCreatePayloadAuthenticationsAuthtypeProvisioningProjectId                BulkCreatePayloadAuthenticationsAuthtype = "provisioning_project_id"
-	BulkCreatePayloadAuthenticationsAuthtypeQuayEncryptedPassword                BulkCreatePayloadAuthenticationsAuthtype = "quay-encrypted-password"
-	BulkCreatePayloadAuthenticationsAuthtypeReceptorNode                         BulkCreatePayloadAuthenticationsAuthtype = "receptor_node"
-	BulkCreatePayloadAuthenticationsAuthtypeTenantIdClientIdClientSecret         BulkCreatePayloadAuthenticationsAuthtype = "tenant_id_client_id_client_secret"
-	BulkCreatePayloadAuthenticationsAuthtypeToken                                BulkCreatePayloadAuthenticationsAuthtype = "token"
-	BulkCreatePayloadAuthenticationsAuthtypeUsernamePassword                     BulkCreatePayloadAuthenticationsAuthtype = "username_password"
 )
 
 // Defines values for BulkCreatePayloadAuthenticationsResourceType.
@@ -329,8 +281,8 @@ type ApplicationsCollection struct {
 
 // AuthenticationRead Authentication object
 type AuthenticationRead struct {
-	// Authtype The type of the authentication
-	Authtype *AuthenticationReadAuthtype `json:"authtype,omitempty"`
+	// Authtype The type of the authentication. You can find this by listing the source types or the application types
+	Authtype *string `json:"authtype,omitempty"`
 
 	// AvailabilityStatus The availability status of the authentication
 	AvailabilityStatus *interface{} `json:"availability_status,omitempty"`
@@ -370,9 +322,6 @@ type AuthenticationRead struct {
 	Username *string `json:"username,omitempty"`
 }
 
-// AuthenticationReadAuthtype The type of the authentication
-type AuthenticationReadAuthtype string
-
 // AuthenticationReadResourceType The type of the resource this authentication belongs to
 type AuthenticationReadResourceType string
 
@@ -407,7 +356,7 @@ type BulkCreatePayload struct {
 	// If the parent is a source, it looks up by name. If the parent is an endpoint, it looks up via host so the hostname must match. If the parent is an application, it looks up via application type so the value must match the application type which matches.
 	Authentications *[]struct {
 		// Authtype The type of the authentication. You can find this by listing the source types or the application types
-		Authtype *BulkCreatePayloadAuthenticationsAuthtype `json:"authtype,omitempty"`
+		Authtype *string `json:"authtype,omitempty"`
 
 		// Extra Any extra information you would like to store in JSON format
 		Extra *map[string]interface{} `json:"extra,omitempty"`
@@ -464,9 +413,6 @@ type BulkCreatePayload struct {
 		SourceTypeName BulkCreatePayloadSourcesSourceTypeName `json:"source_type_name"`
 	} `json:"sources,omitempty"`
 }
-
-// BulkCreatePayloadAuthenticationsAuthtype The type of the authentication. You can find this by listing the source types or the application types
-type BulkCreatePayloadAuthenticationsAuthtype string
 
 // BulkCreatePayloadAuthenticationsResourceType The type of the resource this authentication relates to
 type BulkCreatePayloadAuthenticationsResourceType string
