@@ -45,3 +45,9 @@ func AddImageBuilderIdentityHeader(ctx context.Context, req *http.Request) error
 	password := config.ImageBuilder.Password
 	return addIdentityHeader(ctx, req, username, password)
 }
+
+func AddRbacIdentityHeader(ctx context.Context, req *http.Request) error {
+	username := config.RBAC.Username
+	password := config.RBAC.Password
+	return addIdentityHeader(ctx, req, username, password)
+}

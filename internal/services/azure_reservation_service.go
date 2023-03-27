@@ -21,7 +21,7 @@ import (
 )
 
 func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
-	logger := *zerolog.Ctx(r.Context())
+	logger := zerolog.Ctx(r.Context())
 
 	payload := &payloads.AzureReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {

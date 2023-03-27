@@ -52,6 +52,7 @@ func MountAPI(r *chi.Mux) {
 	r.Get("/azure_offering_template", s.AzureOfferingTemplate)
 	r.Options("/azure_offering_template", s.AzureOfferingTemplate)
 
+	// Review permissions in https://github.com/RedHatInsights/rbac-config when editing this group
 	r.Group(func(r chi.Router) {
 		r.Use(render.SetContentType(render.ContentTypeJSON))
 
@@ -60,15 +61,19 @@ func MountAPI(r *chi.Mux) {
 
 		// OpenAPI documented and supported routes
 		r.Route("/sources", func(r chi.Router) {
+			r.Use(middleware.EnforcePermissions("source", "read"))
+
 			r.Get("/", s.ListSources)
 			r.Route("/{ID}", func(r chi.Router) {
 				r.Get("/status", s.SourcesStatus)
 
-				// TODO move this to outside of /sources (see below)
+				// TODO DEPRECATED: move this to outside of /sources (see below)
 				r.Get("/instance_types", s.ListInstanceTypes)
 
-				r.Get("/launch_templates", s.ListLaunchTemplates)
+				// TODO DEPRECATED: replaced with upload_info
 				r.Get("/account_identity", s.GetAWSAccountIdentity)
+
+				r.Get("/launch_templates", s.ListLaunchTemplates)
 				r.Get("/upload_info", s.GetSourceUploadInfo)
 				r.Route("/validate_permissions", func(r chi.Router) {
 					r.Get("/", s.ValidatePermissions)
@@ -77,26 +82,28 @@ func MountAPI(r *chi.Mux) {
 		})
 
 		r.Route("/pubkeys", func(r chi.Router) {
-			r.Post("/", s.CreatePubkey)
-			r.Get("/", s.ListPubkeys)
+			r.With(middleware.EnforcePermissions("pubkey", "write")).Post("/", s.CreatePubkey)
+			r.With(middleware.EnforcePermissions("pubkey", "read")).Get("/", s.ListPubkeys)
 			r.Route("/{ID}", func(r chi.Router) {
-				r.Get("/", s.GetPubkey)
-				r.Delete("/", s.DeletePubkey)
+				r.With(middleware.EnforcePermissions("pubkey", "read")).Get("/", s.GetPubkey)
+				r.With(middleware.EnforcePermissions("pubkey", "write")).Delete("/", s.DeletePubkey)
 			})
 		})
 
 		r.Route("/reservations", func(r chi.Router) {
-			r.Get("/", s.ListReservations)
+			r.With(middleware.EnforcePermissions("reservation", "read")).Get("/", s.ListReservations)
 			// Different types do have different payloads, therefore TYPE must be part of
 			// URL and not a URL (filter) parameter.
 			r.Route("/{TYPE}", func(r chi.Router) {
-				r.Get("/{ID}", s.GetReservationDetail)
-				r.Post("/", s.CreateReservation)
+				// additional permission checks are in the service functions
+				r.With(middleware.EnforcePermissions("reservation", "read")).Get("/{ID}", s.GetReservationDetail)
+				r.With(middleware.EnforcePermissions("reservation", "write")).Post("/", s.CreateReservation)
 			})
 			// Generic reservation detail request (no details provided)
-			r.Get("/{ID}", s.GetReservationDetail)
+			r.With(middleware.EnforcePermissions("reservation", "read")).Get("/{ID}", s.GetReservationDetail)
 		})
 
+		// Endpoint used by sources background checker (no permissions needed)
 		r.Route("/availability_status", func(r chi.Router) {
 			r.Route("/sources", func(r chi.Router) {
 				r.Post("/", s.AvailabilityStatus)

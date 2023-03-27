@@ -15,6 +15,9 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 
+	// RBAC
+	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/rbac"
+
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 )

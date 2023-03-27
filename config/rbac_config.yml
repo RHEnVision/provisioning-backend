@@ -1,0 +1,11 @@
+---
+package: rbac
+generate:
+  models: true
+  client: true
+output: ./internal/clients/http/rbac/client.gen.go
+output-options:
+  # the API is huge, we only need one endpoint tho
+  include-tags:
+    - Access
+    - Status

@@ -43,6 +43,15 @@ var JobQueueInFlight = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 	ConstLabels: prometheus.Labels{"service": "provisioning", "component": "stats"},
 }, []string{"worker"})
 
+var RbacAclFetchDuration = prometheus.NewHistogram(
+	prometheus.HistogramOpts{
+		Name:        "provisioning_rbac_acl_request_duration",
+		Help:        "duration of ACL request to RBAC service (ms)",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "api"},
+		Buckets:     []float64{5, 10, 25, 50, 100, 250, 500},
+	},
+)
+
 var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
 	prometheus.HistogramOpts{
 		Name:        "provisioning_source_availability_check_request_duration_ms",

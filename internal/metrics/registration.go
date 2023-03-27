@@ -7,6 +7,7 @@ func RegisterStatuserMetrics() {
 		TotalSentAvailabilityCheckReqs,
 		AvailabilityCheckReqsDuration,
 		TotalInvalidAvailabilityCheckReqs,
+		RbacAclFetchDuration,
 		CacheHits,
 	)
 }
@@ -23,6 +24,7 @@ func RegisterStatsMetrics() {
 
 func RegisterApiMetrics() {
 	prometheus.MustRegister(
+		RbacAclFetchDuration,
 		CacheHits,
 	)
 }
@@ -31,6 +33,7 @@ func RegisterWorkerMetrics() {
 	prometheus.MustRegister(
 		BackgroundJobDuration,
 		ReservationCount,
+		RbacAclFetchDuration,
 		CacheHits,
 	)
 }
