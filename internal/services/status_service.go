@@ -23,6 +23,13 @@ var UnknownReadinessServiceErr = errors.New("unknown service for readiness test"
 func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
 	service := chi.URLParam(r, "SRV")
 	switch strings.ToLower(service) {
+	case "rbac", "RBAC":
+		client := clients.GetRbacClient(r.Context())
+		err := client.Ready(r.Context())
+		if err != nil {
+			writeServiceUnavailable(w, r)
+			return
+		}
 	case "sources":
 		client, err := clients.GetSourcesClient(r.Context())
 		if err != nil {

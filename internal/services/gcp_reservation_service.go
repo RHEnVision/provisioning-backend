@@ -20,7 +20,7 @@ import (
 )
 
 func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
-	logger := *zerolog.Ctx(r.Context())
+	logger := zerolog.Ctx(r.Context())
 
 	var accountId int64 = identity.AccountId(r.Context())
 	var id identity.Principal = identity.Identity(r.Context())

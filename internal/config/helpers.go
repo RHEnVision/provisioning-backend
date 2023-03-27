@@ -104,6 +104,7 @@ func DumpClowder(logger zerolog.Logger) {
 		cfg.Logging.Type,
 		cfg.Logging.Cloudwatch.Region,
 		cfg.Logging.Cloudwatch.LogGroup)
+	logger.Info().Msgf("Clowder endpoints: %+v", clowder.DependencyEndpoints)
 }
 
 // DumpConfig writes configuration to a logger. It removes all secrets, however, it is never

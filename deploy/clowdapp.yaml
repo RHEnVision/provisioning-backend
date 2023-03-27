@@ -297,6 +297,10 @@ objects:
                 value: ${TELEMETRY_LOGGER_ENABLED}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
+              - name: APP_RBAC_ENABLED
+                value: ${APP_RBAC_ENABLED}
+              - name: REST_ENDPOINTS_RBAC_URL
+                value: ${REST_ENDPOINTS_RBAC_URL}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
               - name: APP_NOTIFICATIONS_ENABLED
@@ -380,6 +384,7 @@ objects:
         - topicName: platform.notifications.ingress
       inMemoryDb: true
       dependencies:
+        - rbac
         - sources-api
         - sources-superkey-worker
         - notifications-backend
@@ -517,6 +522,12 @@ parameters:
   - description: Postgres driver logging level (trace, debug, info, warn, error, fatal, panic)
     name: DATABASE_LOGGING_LEVEL
     value: "debug"
+  - description: RBAC checking enabled
+    name: APP_RBAC_ENABLED
+    value: "false"
+  - description: RBAC checking enabled
+    name: REST_ENDPOINTS_RBAC_URL
+    value: "http://rbac-service:8000/api/rbac/v1"
   - description: OpenTelemetry collecting
     name: TELEMETRY_ENABLED
     value: "true"

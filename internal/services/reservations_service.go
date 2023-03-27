@@ -30,6 +30,12 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	pType := models.ProviderTypeFromString(chi.URLParam(r, "TYPE"))
+
+	// Check permission for individual provider type
+	if CheckPermissionAndRender(w, r, fmt.Sprintf("reservation.%s", pType), "write") != nil {
+		return
+	}
+
 	switch pType {
 	case models.ProviderTypeNoop:
 		CreateNoopReservation(w, r)
@@ -67,9 +73,16 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 
 func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 	provider := chi.URLParam(r, "TYPE")
+	providerType := models.ProviderTypeFromString(provider)
+
 	id, err := ParseInt64(r, "ID")
 	if err != nil {
 		renderError(w, r, payloads.NewURLParsingError(r.Context(), "unable to parse ID parameter", err))
+		return
+	}
+
+	// Check permission for individual provider type
+	if CheckPermissionAndRender(w, r, fmt.Sprintf("reservation.%s", providerType), "read") != nil {
 		return
 	}
 
@@ -81,7 +94,6 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	providerType := models.ProviderTypeFromString(provider)
 	if providerType != models.ProviderTypeUnknown && reservation.Provider != providerType {
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider type", ProviderTypeMismatchError))
 		return

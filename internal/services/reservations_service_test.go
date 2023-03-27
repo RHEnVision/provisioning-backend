@@ -7,13 +7,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/clients/http/rbac"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
-	identity2 "github.com/RHEnVision/provisioning-backend/internal/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/factories"
-	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
+	tidentity "github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -23,9 +25,10 @@ func TestGetReservationDetail(t *testing.T) {
 	t.Run("Generic reservation", func(t *testing.T) {
 		var err error
 		ctx := stubs.WithAccountDaoOne(context.Background())
-		ctx = identity.WithTenant(t, ctx)
+		ctx = tidentity.WithTenant(t, ctx)
 		ctx = stubs.WithPubkeyDao(ctx)
 		ctx = stubs.WithReservationDao(ctx)
+		ctx = rbac.WithAcl(ctx, clients.AllPermissionsRbacAcl)
 		pk := &models.Pubkey{
 			Name: factories.SeqNameWithPrefix("pubkey"),
 			Body: factories.GenerateRSAPubKey(t),
@@ -45,7 +48,7 @@ func TestGetReservationDetail(t *testing.T) {
 			ImageID:  "ami-random",
 			Detail:   detail,
 		}
-		reservation.AccountID = identity2.AccountId(ctx)
+		reservation.AccountID = identity.AccountId(ctx)
 		reservation.Status = "Created"
 		reservation.Provider = models.ProviderTypeAWS
 		reservation.Steps = 2

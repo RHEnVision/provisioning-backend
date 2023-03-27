@@ -154,6 +154,16 @@ func NewNotFoundError(ctx context.Context, message string, err error) *ResponseE
 	return NewResponseError(ctx, http.StatusNotFound, message, err)
 }
 
+func NewMissingIdentityError(ctx context.Context, msg string, err error) *ResponseError {
+	message := fmt.Sprintf("Access denied: %s", msg)
+	return NewResponseError(ctx, http.StatusForbidden, message, err)
+}
+
+func NewMissingPermissionError(ctx context.Context, resource, permission string, err error) *ResponseError {
+	message := fmt.Sprintf("Access denied, missing permission %s on %s", permission, resource)
+	return NewResponseError(ctx, http.StatusForbidden, message, err)
+}
+
 func NewEnqueueTaskError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Task enqueue error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)

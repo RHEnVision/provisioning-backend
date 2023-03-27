@@ -49,7 +49,7 @@ Here are few points before you start contributing:
 * HTTP routes go into `internal/routes` package.
 * HTTP middleware go into `internal/middleware` package.
 * Monitoring metrics are in `internal/metrics` package.
-* Use the standard library context package for context operations. Context keys are defined in `internal/ctxval` as well as accessor functions.
+* Use the standard library context package for context operations.
 * Database connection is at `internal/db`, HTTP service clients are in `internal/clients`.
 * Do not introduce `utils` or `tools` common packages.
 * Keep the line of sight (happy code path).

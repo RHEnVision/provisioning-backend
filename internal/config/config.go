@@ -20,6 +20,7 @@ var config struct {
 	App struct {
 		Port           int    `env:"PORT" env-default:"8000" env-description:"HTTP port of the API service"`
 		InstancePrefix string `env:"INSTANCE_PREFIX" env-default:"" env-description:"prefix for all VMs names"`
+		RbacEnabled    bool   `env:"RBAC_ENABLED" env-default:"false" env-description:"RBAC checking (REST_ENDPOINTS_RBAC_URL must be present)"`
 		Notifications  struct {
 			Enabled bool `env:"ENABLED" env-default:"false" env-description:"notifications enabled"`
 		} `env-prefix:"NOTIFICATIONS_"`
@@ -112,6 +113,12 @@ var config struct {
 		Path string `env:"PATH" env-default:"/metrics" env-description:"prometheus metrics path"`
 	} `env-prefix:"PROMETHEUS_"`
 	RestEndpoints struct {
+		RBAC struct {
+			URL      string `env:"URL" env-default:"" env-description:"RBAC URL"`
+			Username string `env:"USERNAME" env-default:"" env-description:"RBAC credentials (dev only)"`
+			Password string `env:"PASSWORD" env-default:"" env-description:"RBAC credentials (dev only)"`
+			Proxy    proxy  `env-prefix:"PROXY_" env-description:"RBAC HTTP proxy (dev only)"`
+		} `env-prefix:"RBAC_"`
 		ImageBuilder struct {
 			URL      string `env:"URL" env-default:"" env-description:"image builder URL"`
 			Username string `env:"USERNAME" env-default:"" env-description:"image builder credentials (dev only)"`
@@ -171,6 +178,7 @@ var (
 	RestEndpoints = &config.RestEndpoints
 	ImageBuilder  = &config.RestEndpoints.ImageBuilder
 	Sources       = &config.RestEndpoints.Sources
+	RBAC          = &config.RestEndpoints.RBAC
 	Worker        = &config.Worker
 	Unleash       = &config.Unleash
 	Sentry        = &config.Sentry
@@ -305,6 +313,9 @@ func Initialize(configFiles ...string) {
 		config.RestEndpoints.ImageBuilder.Proxy.URL = ""
 
 		// endpoints configuration
+		if endpoint, ok := clowder.DependencyEndpoints["rbac"]["service"]; ok {
+			config.RestEndpoints.RBAC.URL = fmt.Sprintf("http://%s:%d/api/rbac/v1", endpoint.Hostname, endpoint.Port)
+		}
 		if endpoint, ok := clowder.DependencyEndpoints["sources-api"]["svc"]; ok {
 			config.RestEndpoints.Sources.URL = fmt.Sprintf("http://%s:%d/api/sources/v3.1", endpoint.Hostname, endpoint.Port)
 		}

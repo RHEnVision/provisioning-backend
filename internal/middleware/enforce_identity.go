@@ -10,23 +10,16 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/payloads"
+	"github.com/go-chi/render"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog"
 )
 
-var (
-	InvalidOrMissingOrgErr = errors.New("X-Rh-Identity header has an invalid or missing org_id")
-	MissingTypeErr         = errors.New("X-Rh-Identity header is missing type")
-)
-
-func doError(ctx context.Context, w http.ResponseWriter, code int, reason string) {
-	logger := zerolog.Ctx(ctx)
-	logger.Warn().Msgf("Failed to enforce the Identity header: %s", reason)
-	http.Error(w, reason, code)
-}
+var ErrIdentity = errors.New("identity error")
 
 // EnforceIdentity extracts the X-Rh-Identity header and places the contents into the
-// request context.  If the Identity is invalid, the request will be aborted.
+// request context. If the Identity is invalid, the request will be aborted.
 func EnforceIdentity(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger := zerolog.Ctx(r.Context())
@@ -34,29 +27,37 @@ func EnforceIdentity(next http.Handler) http.Handler {
 
 		// must have an x-rh-id header
 		if len(rawHeaders) != 1 {
-			doError(r.Context(), w, 400, "missing X-Rh-Identity header")
+			errRender := render.Render(w, r, payloads.NewMissingIdentityError(r.Context(), "missing X-Rh-Identity header", ErrIdentity))
+			if errRender != nil {
+				logger.Warn().Err(errRender).Msg("Cannot render permission middleware error")
+			}
 			return
 		}
 
 		// must be able to base64 decode header
 		idRaw, err := base64.StdEncoding.DecodeString(rawHeaders[0])
 		if err != nil {
-			doError(r.Context(), w, 400, "unable to b64 decode x-rh-identity header")
+			errRender := render.Render(w, r, payloads.NewMissingIdentityError(r.Context(), "unable to b64 decode X-Rh-Identity header", ErrIdentity))
+			if errRender != nil {
+				logger.Warn().Err(errRender).Msg("Cannot render permission middleware error")
+			}
 			return
 		}
 
 		var jsonData identity.XRHID
 		err = json.Unmarshal(idRaw, &jsonData)
 		if err != nil {
-			logger.Warn().Err(err).Msg("unable to unmarshal X-Rh-Identity header")
-			doError(r.Context(), w, 400, "X-Rh-Identity header does not contain valid JSON")
+			errRender := render.Render(w, r, payloads.NewMissingIdentityError(r.Context(), "X-Rh-Identity header does not contain valid JSON", ErrIdentity))
+			if errRender != nil {
+				logger.Warn().Err(errRender).Msg("Cannot render permission middleware error")
+			}
 			return
 		}
 
 		topLevelOrgIDFallback(&jsonData)
 
-		logger.Debug().RawJSON("user", []byte(idRaw)).Msg("Enforcing identity")
-		err = checkHeader(r.Context(), &jsonData, w)
+		logger.Debug().RawJSON("user", idRaw).Msg("Enforcing identity")
+		err = checkHeader(r.Context(), &jsonData, w, r)
 		if err != nil {
 			return
 		}
@@ -66,19 +67,25 @@ func EnforceIdentity(next http.Handler) http.Handler {
 	})
 }
 
-func checkHeader(ctx context.Context, id *identity.XRHID, w http.ResponseWriter) error {
+func checkHeader(ctx context.Context, id *identity.XRHID, w http.ResponseWriter, r *http.Request) error {
 	if (id.Identity.Type == "Associate" || id.Identity.Type == "X509") && id.Identity.AccountNumber == "" {
 		return nil
 	}
 
 	if id.Identity.OrgID == "" && id.Identity.Internal.OrgID == "" {
-		doError(ctx, w, 400, "X-Rh-Identity header has an invalid or missing org_id")
-		return InvalidOrMissingOrgErr
+		errRender := render.Render(w, r, payloads.NewMissingIdentityError(r.Context(), "X-Rh-Identity header has an invalid or missing org_id", ErrIdentity))
+		if errRender != nil {
+			zerolog.Ctx(ctx).Warn().Err(errRender).Msg("Cannot render permission middleware error")
+		}
+		return ErrIdentity
 	}
 
 	if id.Identity.Type == "" {
-		doError(ctx, w, 400, "X-Rh-Identity header is missing type")
-		return MissingTypeErr
+		errRender := render.Render(w, r, payloads.NewMissingIdentityError(r.Context(), "X-Rh-Identity header is missing type", ErrIdentity))
+		if errRender != nil {
+			zerolog.Ctx(ctx).Warn().Err(errRender).Msg("Cannot render permission middleware error")
+		}
+		return ErrIdentity
 	}
 
 	return nil
