@@ -63,15 +63,23 @@ data:
                    },
                    "mappings" : [],
                    "thresholds" : {
-                      "mode" : "percentage",
+                      "mode" : "absolute",
                       "steps" : [
                          {
-                            "color" : "green",
+                            "color" : "dark-red",
                             "value" : null
                          },
                          {
                             "color" : "red",
-                            "value" : 95.0007
+                            "value" : 0.8
+                         },
+                         {
+                            "color" : "#EAB839",
+                            "value" : 0.9
+                         },
+                         {
+                            "color" : "green",
+                            "value" : 0.95
                          }
                       ]
                    },
@@ -88,7 +96,7 @@ data:
              "id" : 59,
              "options" : {
                 "colorMode" : "value",
-                "graphMode" : "none",
+                "graphMode" : "area",
                 "justifyMode" : "auto",
                 "orientation" : "auto",
                 "reduceOptions" : {
@@ -108,13 +116,13 @@ data:
                       "uid" : "${datasource}"
                    },
                    "editorMode" : "code",
-                   "expr" : "sum(rate(provisioning_reservation_count{result=\"success\",type=\"aws\"}[$__interval])) /\nsum(rate(provisioning_reservation_count{type=\"aws\"}[$__interval]))",
+                   "expr" : "(sum(increase(provisioning_reservation_count{result=\"success\",type=~\"$type\"}[$__range]))\n/\nsum(increase(provisioning_reservation_count{type=~\"$type\"}[$__range]))) or on() vector(0)",
                    "legendFormat" : "__auto",
                    "range" : true,
                    "refId" : "A"
                 }
              ],
-             "title" : "AWS reservation success",
+             "title" : "Reservation success rate per hyperscaler",
              "type" : "stat"
           },
           {
@@ -127,27 +135,25 @@ data:
                    "color" : {
                       "mode" : "thresholds"
                    },
+                   "decimals" : 0,
                    "mappings" : [],
+                   "min" : 0,
                    "thresholds" : {
-                      "mode" : "percentage",
+                      "mode" : "absolute",
                       "steps" : [
                          {
-                            "color" : "green",
+                            "color" : "blue",
                             "value" : null
-                         },
-                         {
-                            "color" : "red",
-                            "value" : 95.0007
                          }
                       ]
                    },
-                   "unit" : "percentunit"
+                   "unit" : "none"
                 },
                 "overrides" : []
              },
              "gridPos" : {
                 "h" : 8,
-                "w" : 12,
+                "w" : 6,
                 "x" : 12,
                 "y" : 1
              },
@@ -174,13 +180,13 @@ data:
                       "uid" : "${datasource}"
                    },
                    "editorMode" : "code",
-                   "expr" : "sum(rate(provisioning_reservation_count{result=\"success\",type=\"azure\"}[$__interval])) /\nsum(rate(provisioning_reservation_count{type=\"azure\"}[$__interval]))",
+                   "expr" : "sum(increase(provisioning_reservation_count{type=~\"$type\"}[$__range]))",
                    "legendFormat" : "__auto",
                    "range" : true,
                    "refId" : "A"
                 }
              ],
-             "title" : "Azure reservation success",
+             "title" : "Total reservations per hyperscaler",
              "type" : "stat"
           },
           {
@@ -188,6 +194,165 @@ data:
                 "type" : "prometheus",
                 "uid" : "${datasource}"
              },
+             "fieldConfig" : {
+                "defaults" : {
+                   "color" : {
+                      "fixedColor" : "blue",
+                      "mode" : "fixed"
+                   },
+                   "decimals" : 0,
+                   "mappings" : [],
+                   "min" : 0,
+                   "thresholds" : {
+                      "mode" : "absolute",
+                      "steps" : [
+                         {
+                            "color" : "blue",
+                            "value" : null
+                         }
+                      ]
+                   },
+                   "unit" : "s"
+                },
+                "overrides" : []
+             },
+             "gridPos" : {
+                "h" : 8,
+                "w" : 6,
+                "x" : 18,
+                "y" : 1
+             },
+             "id" : 61,
+             "options" : {
+                "colorMode" : "value",
+                "graphMode" : "none",
+                "justifyMode" : "auto",
+                "orientation" : "auto",
+                "reduceOptions" : {
+                   "calcs" : [
+                      "lastNotNull"
+                   ],
+                   "fields" : "",
+                   "values" : false
+                },
+                "textMode" : "auto"
+             },
+             "pluginVersion" : "9.3.8",
+             "targets" : [
+                {
+                   "datasource" : {
+                      "type" : "prometheus",
+                      "uid" : "${datasource}"
+                   },
+                   "editorMode" : "code",
+                   "expr" : "histogram_quantile(0.95, sum(rate(provisioning_background_job_duration_bucket{type=~\"launch_instances_$type\"}[$__range])) by (le))",
+                   "legendFormat" : "__auto",
+                   "range" : true,
+                   "refId" : "A"
+                }
+             ],
+             "title" : "Reservation duration per hyperscaler (p95)",
+             "type" : "stat"
+          },
+          {
+             "datasource" : {
+                "type" : "prometheus",
+                "uid" : "${datasource}"
+             },
+             "fieldConfig" : {
+                "defaults" : {
+                   "color" : {
+                      "mode" : "continuous-GrYlRd"
+                   },
+                   "custom" : {
+                      "axisCenteredZero" : false,
+                      "axisColorMode" : "text",
+                      "axisLabel" : "",
+                      "axisPlacement" : "auto",
+                      "barAlignment" : 0,
+                      "drawStyle" : "bars",
+                      "fillOpacity" : 0,
+                      "gradientMode" : "none",
+                      "hideFrom" : {
+                         "legend" : false,
+                         "tooltip" : false,
+                         "viz" : false
+                      },
+                      "lineInterpolation" : "linear",
+                      "lineWidth" : 1,
+                      "pointSize" : 5,
+                      "scaleDistribution" : {
+                         "type" : "linear"
+                      },
+                      "showPoints" : "never",
+                      "spanNulls" : true,
+                      "stacking" : {
+                         "group" : "A",
+                         "mode" : "none"
+                      },
+                      "thresholdsStyle" : {
+                         "mode" : "off"
+                      }
+                   },
+                   "mappings" : [],
+                   "max" : 1,
+                   "min" : 0,
+                   "thresholds" : {
+                      "mode" : "absolute",
+                      "steps" : [
+                         {
+                            "color" : "green",
+                            "value" : null
+                         }
+                      ]
+                   },
+                   "unit" : "percentunit"
+                },
+                "overrides" : []
+             },
+             "gridPos" : {
+                "h" : 8,
+                "w" : 12,
+                "x" : 0,
+                "y" : 9
+             },
+             "id" : 54,
+             "options" : {
+                "legend" : {
+                   "calcs" : [],
+                   "displayMode" : "list",
+                   "placement" : "bottom",
+                   "showLegend" : false
+                },
+                "tooltip" : {
+                   "mode" : "single",
+                   "sort" : "none"
+                }
+             },
+             "targets" : [
+                {
+                   "datasource" : {
+                      "type" : "prometheus",
+                      "uid" : "${datasource}"
+                   },
+                   "editorMode" : "code",
+                   "exemplar" : false,
+                   "expr" : "(sum(rate(provisioning_reservation_count{result=\"failure\",type=~\"$type\"}[$__interval]))\n/\nsum(rate(provisioning_reservation_count{type=~\"$type\"}[$__interval]))) or on() vector(0)",
+                   "hide" : false,
+                   "legendFormat" : "{{type}} failure",
+                   "range" : true,
+                   "refId" : "B"
+                }
+             ],
+             "title" : "Reservation error rate per hyperscaler",
+             "type" : "timeseries"
+          },
+          {
+             "datasource" : {
+                "type" : "prometheus",
+                "uid" : "${datasource}"
+             },
+             "description" : "Duration of background job types",
              "fieldConfig" : {
                 "defaults" : {
                    "color" : {
@@ -200,14 +365,17 @@ data:
                       "axisPlacement" : "auto",
                       "barAlignment" : 0,
                       "drawStyle" : "line",
-                      "fillOpacity" : 0,
-                      "gradientMode" : "none",
+                      "fillOpacity" : 30,
+                      "gradientMode" : "opacity",
                       "hideFrom" : {
                          "legend" : false,
                          "tooltip" : false,
                          "viz" : false
                       },
                       "lineInterpolation" : "linear",
+                      "lineStyle" : {
+                         "fill" : "solid"
+                      },
                       "lineWidth" : 2,
                       "pointSize" : 5,
                       "scaleDistribution" : {
@@ -230,120 +398,10 @@ data:
                          {
                             "color" : "green",
                             "value" : null
-                         },
-                         {
-                            "color" : "red",
-                            "value" : 80
-                         }
-                      ]
-                   }
-                },
-                "overrides" : []
-             },
-             "gridPos" : {
-                "h" : 8,
-                "w" : 12,
-                "x" : 0,
-                "y" : 9
-             },
-             "id" : 54,
-             "options" : {
-                "legend" : {
-                   "calcs" : [],
-                   "displayMode" : "list",
-                   "placement" : "bottom",
-                   "showLegend" : true
-                },
-                "tooltip" : {
-                   "mode" : "single",
-                   "sort" : "none"
-                }
-             },
-             "targets" : [
-                {
-                   "datasource" : {
-                      "type" : "prometheus",
-                      "uid" : "${datasource}"
-                   },
-                   "editorMode" : "code",
-                   "exemplar" : false,
-                   "expr" : "sum (rate(provisioning_reservation_count{result=\"success\"}[$__interval])) by (type)",
-                   "legendFormat" : "{{type}} success",
-                   "range" : true,
-                   "refId" : "A"
-                },
-                {
-                   "datasource" : {
-                      "type" : "prometheus",
-                      "uid" : "${datasource}"
-                   },
-                   "editorMode" : "code",
-                   "exemplar" : false,
-                   "expr" : "sum (rate(provisioning_reservation_count{result=\"failure\"}[$__interval])) by (type)",
-                   "hide" : false,
-                   "legendFormat" : "{{type}} failure",
-                   "range" : true,
-                   "refId" : "B"
-                }
-             ],
-             "title" : "Reservation success/error rate",
-             "type" : "timeseries"
-          },
-          {
-             "datasource" : {
-                "type" : "prometheus",
-                "uid" : "${datasource}"
-             },
-             "description" : "Duration of background job types",
-             "fieldConfig" : {
-                "defaults" : {
-                   "color" : {
-                      "mode" : "palette-classic"
-                   },
-                   "custom" : {
-                      "axisCenteredZero" : false,
-                      "axisColorMode" : "text",
-                      "axisLabel" : "",
-                      "axisPlacement" : "auto",
-                      "barAlignment" : 0,
-                      "drawStyle" : "line",
-                      "fillOpacity" : 0,
-                      "gradientMode" : "none",
-                      "hideFrom" : {
-                         "legend" : false,
-                         "tooltip" : false,
-                         "viz" : false
-                      },
-                      "lineInterpolation" : "linear",
-                      "lineStyle" : {
-                         "fill" : "solid"
-                      },
-                      "lineWidth" : 2,
-                      "pointSize" : 5,
-                      "scaleDistribution" : {
-                         "type" : "linear"
-                      },
-                      "showPoints" : "auto",
-                      "spanNulls" : true,
-                      "stacking" : {
-                         "group" : "A",
-                         "mode" : "none"
-                      },
-                      "thresholdsStyle" : {
-                         "mode" : "off"
-                      }
-                   },
-                   "mappings" : [],
-                   "thresholds" : {
-                      "mode" : "absolute",
-                      "steps" : [
-                         {
-                            "color" : "green",
-                            "value" : null
                          }
                       ]
                    },
-                   "unit" : "ms"
+                   "unit" : "s"
                 },
                 "overrides" : []
              },
@@ -373,16 +431,29 @@ data:
                       "uid" : "${datasource}"
                    },
                    "editorMode" : "code",
-                   "exemplar" : false,
-                   "expr" : "histogram_quantile(0.95, sum by (type, le) (rate(background_job_duration_ms_bucket[$__interval])))",
+                   "exemplar" : true,
+                   "expr" : "histogram_quantile(0.95, sum(rate(provisioning_background_job_duration_bucket{type=~\"launch_instances_$type\"}[$__interval])) by (le)) OR on() vector(0)",
                    "format" : "time_series",
                    "instant" : false,
-                   "legendFormat" : "__auto",
+                   "legendFormat" : "p95",
                    "range" : true,
                    "refId" : "A"
+                },
+                {
+                   "datasource" : {
+                      "type" : "prometheus",
+                      "uid" : "${datasource}"
+                   },
+                   "editorMode" : "code",
+                   "exemplar" : true,
+                   "expr" : "histogram_quantile(0.99, sum(rate(provisioning_background_job_duration_bucket{type=~\"launch_instances_$type\"}[$__interval])) by (le)) OR on() vector(0)",
+                   "hide" : false,
+                   "legendFormat" : "p99",
+                   "range" : true,
+                   "refId" : "B"
                 }
              ],
-             "title" : "Job latency 95th percentile (ms)",
+             "title" : "Job duration per hyperscaler",
              "type" : "timeseries"
           },
           {
@@ -455,7 +526,7 @@ data:
                    "calcs" : [],
                    "displayMode" : "list",
                    "placement" : "bottom",
-                   "showLegend" : true
+                   "showLegend" : false
                 },
                 "tooltip" : {
                    "mode" : "single",
@@ -492,11 +563,12 @@ data:
                    "custom" : {
                       "axisCenteredZero" : false,
                       "axisColorMode" : "text",
+                      "axisGridShow" : false,
                       "axisLabel" : "",
                       "axisPlacement" : "auto",
                       "barAlignment" : 0,
-                      "drawStyle" : "line",
-                      "fillOpacity" : 0,
+                      "drawStyle" : "points",
+                      "fillOpacity" : 100,
                       "gradientMode" : "none",
                       "hideFrom" : {
                          "legend" : false,
@@ -504,12 +576,12 @@ data:
                          "viz" : false
                       },
                       "lineInterpolation" : "linear",
-                      "lineWidth" : 1,
-                      "pointSize" : 5,
+                      "lineWidth" : 0,
+                      "pointSize" : 3,
                       "scaleDistribution" : {
                          "type" : "linear"
                       },
-                      "showPoints" : "auto",
+                      "showPoints" : "never",
                       "spanNulls" : false,
                       "stacking" : {
                          "group" : "A",
@@ -519,20 +591,19 @@ data:
                          "mode" : "off"
                       }
                    },
+                   "decimals" : 0,
                    "mappings" : [],
+                   "min" : 0,
                    "thresholds" : {
                       "mode" : "absolute",
                       "steps" : [
                          {
                             "color" : "green",
                             "value" : null
-                         },
-                         {
-                            "color" : "red",
-                            "value" : 80
                          }
                       ]
-                   }
+                   },
+                   "unit" : "none"
                 },
                 "overrides" : []
              },
@@ -548,7 +619,7 @@ data:
                    "calcs" : [],
                    "displayMode" : "list",
                    "placement" : "bottom",
-                   "showLegend" : true
+                   "showLegend" : false
                 },
                 "tooltip" : {
                    "mode" : "single",
@@ -1514,8 +1585,8 @@ data:
                 "auto_min" : "10s",
                 "current" : {
                    "selected" : false,
-                   "text" : "6h",
-                   "value" : "6h"
+                   "text" : "1d",
+                   "value" : "1d"
                 },
                 "hide" : 0,
                 "name" : "interval",
@@ -1536,7 +1607,7 @@ data:
                       "value" : "1h"
                    },
                    {
-                      "selected" : true,
+                      "selected" : false,
                       "text" : "6h",
                       "value" : "6h"
                    },
@@ -1546,7 +1617,7 @@ data:
                       "value" : "12h"
                    },
                    {
-                      "selected" : false,
+                      "selected" : true,
                       "text" : "1d",
                       "value" : "1d"
                    },
@@ -1566,11 +1637,55 @@ data:
                 "refresh" : 2,
                 "skipUrlSync" : false,
                 "type" : "interval"
+             },
+             {
+                "allValue" : ".*",
+                "current" : {
+                   "selected" : true,
+                   "text" : [
+                      "All"
+                   ],
+                   "value" : [
+                      "$__all"
+                   ]
+                },
+                "description" : "Hyperscaler to display results for",
+                "hide" : 0,
+                "includeAll" : true,
+                "label" : "Hyperscaler type",
+                "multi" : true,
+                "name" : "type",
+                "options" : [
+                   {
+                      "selected" : true,
+                      "text" : "All",
+                      "value" : "$__all"
+                   },
+                   {
+                      "selected" : false,
+                      "text" : "aws",
+                      "value" : "aws"
+                   },
+                   {
+                      "selected" : false,
+                      "text" : "azure",
+                      "value" : "azure"
+                   },
+                   {
+                      "selected" : false,
+                      "text" : "gcp",
+                      "value" : "gcp"
+                   }
+                ],
+                "query" : "aws,azure,gcp",
+                "queryValue" : "",
+                "skipUrlSync" : false,
+                "type" : "custom"
              }
           ]
        },
        "time" : {
-          "from" : "now-6h",
+          "from" : "now-7d",
           "to" : "now"
        },
        "timepicker" : {
@@ -1601,6 +1716,6 @@ data:
        "timezone" : "",
        "title" : "Provisioning",
        "uid" : "211",
-       "version" : 2,
+       "version" : 7,
        "weekStart" : ""
     }

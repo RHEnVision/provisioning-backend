@@ -3,5 +3,4 @@
 #
 
 .PHONY: validate
-validate: validate-spec validate-clients validate-example-config
-
+validate: validate-spec validate-clients validate-example-config validate-dashboard
