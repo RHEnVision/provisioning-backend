@@ -48,10 +48,10 @@ var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
 
 var BackgroundJobDuration = prometheus.NewHistogramVec(
 	prometheus.HistogramOpts{
-		Name:        "provisioning_background_job_duration_ms",
-		Help:        "task queue job duration (ms) by type",
+		Name:        "provisioning_background_job_duration",
+		Help:        "task queue job duration (in seconds) by type",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "worker"},
-		Buckets:     []float64{50, 100, 250, 500, 1000, 2500, 6000},
+		Buckets:     []float64{1, 4, 5, 10, 30, 60 * 2, 60 * 5, 60 * 10, 60 * 20, 60 * 30, 60 * 60},
 	},
 	[]string{"type"},
 )
