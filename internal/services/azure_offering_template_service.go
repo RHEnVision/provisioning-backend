@@ -9,7 +9,7 @@ import (
 )
 
 func AzureOfferingTemplate(w http.ResponseWriter, r *http.Request) {
-	clientName := config.Azure.ClientName
+	clientName := config.Azure.ClientPrincipalName
 	if clientName == "" {
 		clientName = "Red Hat Launch images client"
 	}
@@ -18,8 +18,8 @@ func AzureOfferingTemplate(w http.ResponseWriter, r *http.Request) {
 		OfferingDefaultName:        "Red Hat Hybrid Cloud Console",
 		OfferingDefaultDescription: "Allows Red Hat to upload images and deploy Virtual Machines from Hybrid cloud console",
 		TenantID:                   config.Azure.TenantID,
-		EnterpriseAppID:            config.Azure.ClientID,
-		EnterpriseAppName:          clientName,
+		PrincipalID:                config.Azure.ClientPrincipalID,
+		PrincipalName:              clientName,
 	}
 
 	if err := tmpl.Render(r.Context(), w); err != nil {

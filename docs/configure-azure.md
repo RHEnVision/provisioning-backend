@@ -14,11 +14,12 @@ In our use case we use only permission delegation.
 The template we will prepare provides roles in target Tenant to the Principal from offering tenant.
 The template assigns following roles to the offering Principal:
 
-| Role name                                                                                                                                   | UUID                                 | Motivation                                                                                                                                         |
-|---------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| [Reader](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#reader)                                           | acdd72a7-3385-48ef-bd42-f606fba81ae7 | Allows us to fetch information about resources                                                                                                     |
-| [Virtual Machine Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#virtual-machine-contributor) | 9980e02c-c2be-4d73-94e8-173b1dc7cf3c | Allows to deploy virtual machines                                                                                                                  |
-| [Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#contributor) | b24988ac-6180-42a0-ab88-20f7382dd24c | Unfortunate wokaround for creating supporting resources, hopefully better solution will be found and this role will not be necessary in the future |
+| Role name                                                                                                                                                                     | UUID                                 | Motivation                                                                                                                                                                                                               |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Reader](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#reader)                                                                             | acdd72a7-3385-48ef-bd42-f606fba81ae7 | Allows us to fetch information about resources                                                                                                                                                                           |
+| [Virtual Machine Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#virtual-machine-contributor)                                   | 9980e02c-c2be-4d73-94e8-173b1dc7cf3c | Allows to deploy virtual machines                                                                                                                                                                                        |
+| [Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#contributor)                                                                   | b24988ac-6180-42a0-ab88-20f7382dd24c | Unfortunate wokaround for creating supporting resources, hopefully better solution will be found and this role will not be necessary in the future                                                                       |
+| [Registration assignment Delete Role](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#managed-services-registration-assignment-delete-role)  | 91c1777a-f3dc-4fae-b103-61d183457e46 | Enables to remove the delegation when no longer needed. It is [recommended best practice](https://learn.microsoft.com/en-us/azure/lighthouse/concepts/tenants-users-roles#best-practices-for-defining-users-and-roles).  |
 
 
 ### Prepare Azure offering tenant
@@ -45,11 +46,20 @@ Following steps get us the offering template:
 
 - Start with the template [`lighthouse_template.json`](./lighthouse.tmpl.json)
 - Replace `{{.TenantID}}` by value in `AZURE_TENANT_ID`
-- Go to Azure AD -> Enterprise applications
-  - Select the App that was automatically registered for the App registration (provisioning-service)
-  - Copy Object ID
-  - Replace `{{.EnterpriseAppID}}` by the value copied from above
-  - Replace `{{.EnterpriseAppName}}` by the name of the enterprise application (provisioning-service)
+- Set a Principal ID - there are two options
+  1. Use the Enterprise App as a principal.
+     1. Go to Azure AD -> Enterprise applications
+     2. Select the App that was automatically registered for the App registration (provisioning-service)
+     3. Copy Object ID
+     4. Replace `{{.PrincipalID}}` by the value copied from above
+     5. Replace `{{.PrincipalName}}` by the name of the enterprise application (provisioning-service)
+  2. Create a Security group and add the Enterprise App as its member
+     1. Go to Azure AD -> Groups
+     2. Create a group and name it
+     3. Go to members and add our Enterprise App
+     4. Go to the Group overview and copy its Object ID
+     5. Replace `{{.PrincipalID}}` by the value copied from above
+     6. Replace `{{.PrincipalName}}` by the name of the Group
 - Set default offering name and description
   - Tenant account can change this while accepting the offering
   - Replace `{{.OfferingDefaultName}}` by a default offering name

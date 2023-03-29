@@ -81,11 +81,12 @@ var config struct {
 		Logging       bool   `env:"LOGGING" env-default:"false" env-description:"AWS service account logging (verbose)"`
 	} `env-prefix:"AWS_"`
 	Azure struct {
-		TenantID      string `env:"TENANT_ID" env-default:"" env-description:"Azure service account tenant id"`
-		ClientID      string `env:"CLIENT_ID" env-default:"" env-description:"Azure service account client id"`
-		ClientSecret  string `env:"CLIENT_SECRET" env-default:"" env-description:"Azure service account client secret"`
-		ClientName    string `env:"CLIENT_NAME" env-default:"RH HCC" env-description:"Azure service account display name"`
-		DefaultRegion string `env:"DEFAULT_REGION" env-default:"eastus" env-description:"Azure region when not provided"`
+		TenantID            string `env:"TENANT_ID" env-default:"" env-description:"Azure service account tenant id"`
+		ClientID            string `env:"CLIENT_ID" env-default:"" env-description:"Azure service account client id"`
+		ClientSecret        string `env:"CLIENT_SECRET" env-default:"" env-description:"Azure service account client secret"`
+		ClientPrincipalID   string `env:"CLIENT_PRINCIPAL_ID" env-default:"" env-description:"Azure Principal ID. It is used for lighthouse delegation. It can be object ID of the service principal or Group object id having the service principal as a member"`
+		ClientPrincipalName string `env:"CLIENT_PRINCIPAL_NAME" env-default:"RH HCC" env-description:"Azure display name for the offering principal"`
+		DefaultRegion       string `env:"DEFAULT_REGION" env-default:"eastus" env-description:"Azure region when not provided"`
 		// SubscriptionID is not used in prod environments - used to fetch instance types
 		SubscriptionID string `env:"SUBSCRIPTION_ID" env-default:"" env-description:"Azure service account subscription id"`
 	} `env-prefix:"AZURE_"`
