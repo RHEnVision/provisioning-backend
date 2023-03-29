@@ -21,11 +21,11 @@ type AzureOfferingTemplate struct {
 	// TenantID of the offering tenant (Azure account)
 	TenantID string
 
-	// EnterpriseAppID of the App that will act as an offering Principal
-	EnterpriseAppID string
+	// PrincipalID of the App that will act as an offering Principal or a group that has the service principal as a member.
+	PrincipalID string
 
-	// EnterpriseAppName of the offering principal - the display name
-	EnterpriseAppName string
+	// PrincipalName of the offering principal - the display name
+	PrincipalName string
 }
 
 func (tempParams AzureOfferingTemplate) Render(ctx context.Context, wr io.Writer) error {
