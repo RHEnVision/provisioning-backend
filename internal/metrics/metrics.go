@@ -81,7 +81,7 @@ func ObserveAvailabilityCheckReqsDuration(provider string, observedFunc func() e
 func ObserveBackgroundJobDuration(jobType string, observedFunc func()) {
 	start := time.Now()
 	defer func() {
-		BackgroundJobDuration.WithLabelValues(jobType).Observe(float64(time.Since(start).Nanoseconds()) / 1000000)
+		BackgroundJobDuration.WithLabelValues(jobType).Observe(time.Since(start).Seconds())
 	}()
 
 	observedFunc()
