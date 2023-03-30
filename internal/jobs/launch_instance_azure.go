@@ -155,11 +155,11 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 	for _, instanceId := range instanceIds {
 		err = resDao.CreateInstance(ctx, &models.ReservationInstance{
 			ReservationID: args.ReservationID,
-			InstanceID:    *instanceId,
+			InstanceID:    string(instanceId),
 		})
 		if err != nil {
 			span.SetStatus(codes.Error, "failed to save instance to DB")
-			return fmt.Errorf("cannot create instance reservation for id %d: %w", instanceId, err)
+			return fmt.Errorf("cannot create instance reservation for id %s: %w", instanceId, err)
 		}
 	}
 
