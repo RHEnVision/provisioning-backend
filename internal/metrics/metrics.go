@@ -24,6 +24,12 @@ var TotalInvalidAvailabilityCheckReqs = prometheus.NewCounter(
 	},
 )
 
+var CacheHits = prometheus.NewCounterVec(prometheus.CounterOpts{
+	Name:        "provisioning_cache_hits",
+	Help:        "The total number of cache hits for individual resources with result (hit or miss)",
+	ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName},
+}, []string{"resource", "result"})
+
 var JobQueueSize = prometheus.NewGauge(prometheus.GaugeOpts{
 	Name:        "provisioning_job_queue_size",
 	Help:        "background job queue size (total pending jobs)",
@@ -97,6 +103,10 @@ func IncTotalSentAvailabilityCheckReqs(provider string, statusType string, err e
 
 func IncTotalInvalidAvailabilityCheckReqs() {
 	TotalInvalidAvailabilityCheckReqs.Inc()
+}
+
+func IncCacheHit(resource string, result string) {
+	CacheHits.WithLabelValues(resource, result).Inc()
 }
 
 func SetJobQueueSize(size uint64) {
