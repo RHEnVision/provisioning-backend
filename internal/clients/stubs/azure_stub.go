@@ -11,7 +11,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 )
 
-var NotStartedVMError = errors.New("the VM under given resumeToken not started")
+var ErrNotStartedVM = errors.New("the VM under given resumeToken not started")
 
 type AzureClientStub struct {
 	startedVms []*armcompute.VirtualMachine
@@ -44,20 +44,8 @@ func (stub *AzureClientStub) Status(ctx context.Context) error {
 	return nil
 }
 
-func (stub *AzureClientStub) CreateVM(ctx context.Context, vmParams clients.AzureInstanceParams, vmName string) (*string, error) {
-	id := strconv.Itoa(len(stub.createdVms) + 1)
-
-	vm := armcompute.VirtualMachine{
-		ID:       &id,
-		Name:     &vmName,
-		Location: &vmParams.Location,
-	}
-	stub.createdVms = append(stub.createdVms, &vm)
-	return &id, nil
-}
-
-func (stub *AzureClientStub) CreateVMs(ctx context.Context, vmParams clients.AzureInstanceParams, amount int64, vmNamePrefix string) ([]*string, error) {
-	vmIds := make([]*string, amount)
+func (stub *AzureClientStub) CreateVMs(ctx context.Context, vmParams clients.AzureInstanceParams, amount int64, vmNamePrefix string) ([]clients.AzureInstanceID, error) {
+	vmIds := make([]clients.AzureInstanceID, amount)
 	resumeTokens := make([]string, amount)
 	var i int64
 	var err error
@@ -91,15 +79,15 @@ func (stub *AzureClientStub) BeginCreateVM(ctx context.Context, vmParams clients
 	return id, nil
 }
 
-func (stub *AzureClientStub) WaitForVM(ctx context.Context, resumeToken string) (*string, error) {
+func (stub *AzureClientStub) WaitForVM(ctx context.Context, resumeToken string) (clients.AzureInstanceID, error) {
 	for i, vm := range stub.startedVms {
 		if *vm.ID == resumeToken {
 			stub.createdVms = append(stub.createdVms, vm)
 			stub.startedVms = append(stub.startedVms[:i], stub.startedVms[i+1:]...)
-			return vm.ID, nil
+			return clients.AzureInstanceID(*vm.ID), nil
 		}
 	}
-	return nil, NotStartedVMError
+	return "", ErrNotStartedVM
 }
 
 func (stub *AzureClientStub) EnsureResourceGroup(ctx context.Context, name string, location string) (*string, error) {

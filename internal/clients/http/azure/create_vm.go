@@ -66,7 +66,7 @@ func (c *client) BeginCreateVM(ctx context.Context, vmParams clients.AzureInstan
 	return resumeToken, nil
 }
 
-func (c *client) WaitForVM(ctx context.Context, resumeToken string) (*string, error) {
+func (c *client) WaitForVM(ctx context.Context, resumeToken string) (clients.AzureInstanceID, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "WaitForVM")
 	defer span.End()
 
@@ -75,7 +75,7 @@ func (c *client) WaitForVM(ctx context.Context, resumeToken string) (*string, er
 
 	vmClient, err := c.newVirtualMachinesClient(ctx)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	pollerResponse, err := vmClient.BeginCreateOrUpdate(ctx, "", "", armcompute.VirtualMachine{}, &armcompute.VirtualMachinesClientBeginCreateOrUpdateOptions{
@@ -83,42 +83,17 @@ func (c *client) WaitForVM(ctx context.Context, resumeToken string) (*string, er
 	})
 	if err != nil {
 		span.SetStatus(codes.Error, "polling of virtual machine creation status failed to start")
-		return nil, fmt.Errorf("polling of virtual machine creation status failed to start: %w", err)
+		return "", fmt.Errorf("polling of virtual machine creation status failed to start: %w", err)
 	}
 	resp, err := pollerResponse.PollUntilDone(ctx, nil)
 	if err != nil {
 		span.SetStatus(codes.Error, "failed to poll for create virtual machine status")
-		return nil, fmt.Errorf("failed to poll for create virtual machine status: %w", err)
+		return "", fmt.Errorf("failed to poll for create virtual machine status: %w", err)
 	}
 
 	logger.Debug().Msgf("Done creating virtual machine id=%s", *resp.VirtualMachine.ID)
 
-	return resp.VirtualMachine.ID, nil
-}
-
-func (c *client) CreateVM(ctx context.Context, vmParams clients.AzureInstanceParams, vmName string) (*string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "CreateVM")
-	defer span.End()
-
-	logger := logger(ctx)
-	logger.Debug().Msg("Creating Azure VM instance and waiting for it")
-
-	vmAzureParams, err := c.prepareVMresources(ctx, vmParams, vmName)
-	if err != nil {
-		span.SetStatus(codes.Error, "cannot prepare virtual machine parameters")
-		logger.Error().Err(err).Msg("cannot prepare virtual machine parameters")
-		return nil, err
-	}
-
-	virtualMachine, err := c.createVirtualMachine(ctx, vmParams.ResourceGroupName, vmName, vmAzureParams)
-	if err != nil {
-		span.SetStatus(codes.Error, "cannot create virtual machine")
-		logger.Error().Err(err).Msg("cannot create virtual machine")
-		return nil, err
-	}
-	logger.Debug().Msgf("Created virtual machine id=%s", *virtualMachine.ID)
-
-	return virtualMachine.ID, nil
+	return clients.AzureInstanceID(*resp.VirtualMachine.ID), nil
 }
 
 func (c *client) prepareVMresources(ctx context.Context, vmParams clients.AzureInstanceParams, vmName string) (*armcompute.VirtualMachine, error) {
@@ -503,21 +478,4 @@ func (c *client) beginCreateVM(ctx context.Context, resourceGroupName string, vm
 		return nil, fmt.Errorf("create of virtual machine failed to start: %w", err)
 	}
 	return pollerResponse, nil
-}
-
-func (c *client) createVirtualMachine(ctx context.Context, resourceGroupName string, vmName string, parameters *armcompute.VirtualMachine) (*armcompute.VirtualMachine, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "createVirtualMachine")
-	defer span.End()
-
-	pollerResponse, err := c.beginCreateVM(ctx, resourceGroupName, vmName, parameters)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := pollerResponse.PollUntilDone(ctx, &runtime.PollUntilDoneOptions{
-		Frequency: vmPollFrequency,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to poll for create virtual machine status: %w", err)
-	}
-	return &resp.VirtualMachine, nil
 }
