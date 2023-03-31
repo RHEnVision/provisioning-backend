@@ -65,7 +65,7 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 	logger := logger(ctx)
 	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
-		logger.Error().Err(err).Msgf("Readiness request failed for sources: %s", err.Error())
+		logger.Error().Err(err).Msg("Readiness request failed for sources")
 		return err
 	}
 	defer resp.Body.Close()

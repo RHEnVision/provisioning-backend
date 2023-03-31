@@ -125,7 +125,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 				} else if errors.Is(errAuth, httpClients.AuthenticationForSourcesNotFoundErr) {
 					logger.Warn().Msgf("Skipping source %s authorization which is no longer available", res.SourceID)
 				} else {
-					logger.Warn().Err(errAuth).Msgf("Skipping source %s authorization because sources returned an error: %s", res.SourceID, errAuth.Error())
+					logger.Warn().Err(errAuth).Msg("Skipping source authorization because sources returned an error")
 				}
 			} else {
 				logger.Warn().Msgf("Skipping pubkey resource %d with empty handle", res.ID)

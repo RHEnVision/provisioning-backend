@@ -100,7 +100,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 
 	client, err := c.newInstancesClient(ctx)
 	if err != nil {
-		logger.Error().Err(err).Msgf("Could not get instances client: %v", err)
+		logger.Error().Err(err).Msg("Could not get instances client")
 		return nil, nil, fmt.Errorf("unable to bulk insert instances: %w", err)
 	}
 	defer client.Close()
@@ -152,11 +152,11 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 	op, err := client.BulkInsert(ctx, req)
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
-		logger.Error().Err(err).Msgf("Bulk insert operation has failed: %v", err)
+		logger.Error().Err(err).Msg("Bulk insert operation failed")
 		return nil, nil, fmt.Errorf("cannot bulk insert instances: %w", err)
 	}
 	if err := op.Wait(ctx); err != nil {
-		logger.Error().Err(err).Msgf("Bulk insert operation has failed: %v", err)
+		logger.Error().Err(err).Msg("Bulk wait operation failed")
 		span.SetStatus(codes.Error, err.Error())
 		return nil, nil, fmt.Errorf("cannot bulk insert instances: %w", err)
 	}
@@ -179,7 +179,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 			logger.Error().Err(err).Msg("Instances iterator has finished")
 			break
 		} else if err != nil {
-			logger.Error().Err(err).Msgf("An error occured during fetching instance ids %s", err.Error())
+			logger.Error().Err(err).Msg("An error occurred during fetching instance ids")
 			span.SetStatus(codes.Error, err.Error())
 			return nil, nil, fmt.Errorf("cannot fetch instance ids: %w", err)
 		} else {

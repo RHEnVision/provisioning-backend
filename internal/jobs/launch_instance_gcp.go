@@ -37,7 +37,8 @@ type LaunchInstanceGCPTaskArgs struct {
 func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 	args, ok := job.Args.(LaunchInstanceGCPTaskArgs)
 	if !ok {
-		ctxval.Logger(ctx).Error().Msgf("Type assertion error for job %s, unable to finish reservation: %#v", job.ID, job.Args)
+		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
+		ctxval.Logger(ctx).Error().Err(err).Msg("Type assertion error for job")
 		return
 	}
 

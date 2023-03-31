@@ -11,6 +11,8 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 )
 
+var ErrTypeAssertion = errors.New("type assert error")
+
 func finishJob(ctx context.Context, reservationId int64, jobErr error) {
 	if jobErr != nil {
 		finishWithError(ctx, reservationId, jobErr)
@@ -62,8 +64,7 @@ func finishWithError(ctx context.Context, reservationId int64, jobError error) {
 		logger.Warn().Err(err).Msg("unable to update job status: get by id")
 		return
 	}
-	logger.Warn().Err(jobError).Msgf("Job of type %s (%d/%d) returned an error: %s",
-		reservation.Provider.String(), reservation.Step, reservation.Steps, jobError.Error())
+	logger.Warn().Err(jobError).Msg("Job returned an error")
 
 	// total count of reservations
 	metrics.IncReservationCount(reservation.Provider.String(), "failure")

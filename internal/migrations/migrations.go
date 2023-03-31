@@ -143,7 +143,7 @@ func Migrate(ctx context.Context, schema string) error {
 			logger.Info().Msgf("Migration callback for %s %s", name, direction)
 			callErr := CallCallback(ctx, sequence)
 			if callErr != nil {
-				logger.Error().Err(callErr).Msgf("Error during execution of callback script before %s, cannot continue: %s", name, callErr.Error())
+				logger.Error().Err(callErr).Str("script", name).Msg("Error during execution of callback script")
 				panic(callErr)
 			}
 		}

@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -21,7 +22,8 @@ var NoOperationFailure = errors.New("job failed on request")
 func HandleNoop(ctx context.Context, job *worker.Job) {
 	args, ok := job.Args.(NoopJobArgs)
 	if !ok {
-		ctxval.Logger(ctx).Error().Msgf("Type assertion error for job %s, unable to finish reservation: %#v", job.ID, job.Args)
+		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
+		ctxval.Logger(ctx).Error().Err(err).Msg("Type assertion error for job")
 		return
 	}
 

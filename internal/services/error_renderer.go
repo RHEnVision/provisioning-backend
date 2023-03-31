@@ -15,7 +15,7 @@ import (
 // be used for fatal errors which happens during rendering pipeline (e.g. JSON errors).
 func writeBasicError(w http.ResponseWriter, r *http.Request, err error) {
 	if logger := ctxval.Logger(r.Context()); logger != nil {
-		logger.Error().Msgf("unable to render error %v", err)
+		logger.Error().Err(err).Msg("Unable to render error")
 	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusInternalServerError)

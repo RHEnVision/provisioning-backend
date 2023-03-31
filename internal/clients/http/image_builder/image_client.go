@@ -48,7 +48,7 @@ func (c *ibClient) Ready(ctx context.Context) error {
 	logger := logger(ctx)
 	resp, err := c.client.GetReadiness(ctx, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
-		logger.Error().Err(err).Msgf("Readiness request failed for image builder: %s", err.Error())
+		logger.Error().Err(err).Msg("Readiness request failed for image builder")
 		return err
 	}
 	defer resp.Body.Close()

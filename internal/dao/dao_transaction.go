@@ -38,7 +38,7 @@ func WithTransaction(ctx context.Context, fn TxFn) error {
 	callErr := fn(tx)
 
 	if callErr != nil {
-		logger.Warn().Err(callErr).Msgf("DB error (rollback): %s", callErr.Error())
+		logger.Warn().Err(callErr).Msg("DB error (rollback)")
 		rollErr := tx.Rollback(ctx)
 		if rollErr != nil {
 			logger.Warn().Err(rollErr).Msg("Cannot rollback database transaction")

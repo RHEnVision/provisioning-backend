@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
@@ -54,7 +55,8 @@ func newResponse(ctx context.Context, status int, userMsg string, err error) *Re
 		strError = err.Error()
 	}
 	if userMsg == "" {
-		userMsg = err.Error()
+		// take only part up to the first colon to avoid unique ids (UUIDs, database IDs etc)
+		userMsg = strings.SplitN(err.Error(), ":", 2)[0]
 	}
 	event.Msg(userMsg)
 
