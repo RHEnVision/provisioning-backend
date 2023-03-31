@@ -45,7 +45,7 @@ func (pk *Pubkey) FindAwsFingerprint(ctx context.Context) string {
 	case "ssh-rsa":
 		fp, err := ssh.GenerateAWSFingerprint([]byte(pk.Body))
 		if err != nil {
-			ctxval.Logger(ctx).Warn().Err(err).Msgf("Unable to generate AWS fingerprint for pubkey %s: %s", pk.Name, err.Error())
+			ctxval.Logger(ctx).Warn().Err(err).Msg("Unable to generate AWS fingerprint for pubkey")
 			return ""
 		}
 		return string(fp)

@@ -50,7 +50,7 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	virtualNetwork, err := c.createVirtualNetwork(ctx, location, resourceGroupName, vnetName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create virtual network")
-		logger.Error().Err(err).Msgf("cannot create virtual network")
+		logger.Error().Err(err).Msg("cannot create virtual network")
 		return nil, err
 	}
 	logger.Trace().Msgf("Using virtual network id=%s", *virtualNetwork.ID)
@@ -58,7 +58,7 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	subnet, err := c.createSubnets(ctx, resourceGroupName, vnetName, subnetName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create subnet")
-		logger.Error().Err(err).Msgf("cannot create subnet")
+		logger.Error().Err(err).Msg("cannot create subnet")
 		return nil, err
 	}
 	logger.Trace().Msgf("Using subnet id=%s", *subnet.ID)
@@ -67,7 +67,7 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	nsg, err := c.createNetworkSecurityGroup(ctx, location, resourceGroupName, nsgName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create network security group")
-		logger.Error().Err(err).Msgf("cannot create network security group")
+		logger.Error().Err(err).Msg("cannot create network security group")
 		return nil, err
 	}
 	logger.Trace().Msgf("Using network security group id=%s", *nsg.ID)
@@ -76,7 +76,7 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	publicIP, err := c.createPublicIP(ctx, location, resourceGroupName, publicIPName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create public IP address")
-		logger.Error().Err(err).Msgf("cannot create public IP address")
+		logger.Error().Err(err).Msg("cannot create public IP address")
 		return nil, err
 	}
 	logger.Trace().Msgf("Using public IP address id=%s", *publicIP.ID)
@@ -85,7 +85,7 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	networkInterface, err := c.createNetworkInterface(ctx, location, resourceGroupName, subnet, publicIP, nsg, nicName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create network interface")
-		logger.Error().Err(err).Msgf("cannot create network interface")
+		logger.Error().Err(err).Msg("cannot create network interface")
 		return nil, err
 	}
 	logger.Trace().Msgf("Using network interface id=%s", *networkInterface.ID)
@@ -94,7 +94,7 @@ func (c *client) CreateVM(ctx context.Context, location string, resourceGroupNam
 	virtualMachine, err := c.createVirtualMachine(ctx, resourceGroupName, vmName, vmParams)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create virtual machine")
-		logger.Error().Err(err).Msgf("cannot create virtual machine")
+		logger.Error().Err(err).Msg("cannot create virtual machine")
 		return nil, err
 	}
 	logger.Debug().Msgf("Created virtual machine id=%s", *virtualMachine.ID)

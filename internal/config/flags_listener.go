@@ -11,12 +11,12 @@ type logListener struct {
 
 // OnError prints out errors.
 func (l logListener) OnError(err error) {
-	l.logger.Error().Err(err).Msgf("Unleash error: %s", err.Error())
+	l.logger.Error().Err(err).Msg("Unleash error")
 }
 
 // OnWarning prints out warning.
 func (l logListener) OnWarning(err error) {
-	l.logger.Warn().Err(err).Msgf("Unleash error: %s", err.Error())
+	l.logger.Warn().Err(err).Msg("Unleash warning")
 }
 
 // OnReady prints to the console when the repository is ready.

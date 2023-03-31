@@ -14,10 +14,11 @@ import (
 
 func AccountMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		logger := ctxval.Logger(r.Context())
 		rhId := ctxval.Identity(r.Context())
 		orgID := rhId.Identity.OrgID
 		accountNumber := rhId.Identity.AccountNumber
+		logger := ctxval.Logger(r.Context()).With().Str("account_number", accountNumber).
+			Str("org_id", orgID).Logger()
 
 		cachedAccount, err := cache.FindAccountId(r.Context(), orgID, accountNumber)
 		if errors.Is(err, cache.NotFound) {
@@ -26,19 +27,19 @@ func AccountMiddleware(next http.Handler) http.Handler {
 
 			cachedAccount, err = accDao.GetOrCreateByIdentity(r.Context(), orgID, accountNumber)
 			if err != nil {
-				logger.Error().Err(err).Msgf("Failed to fetch account by org_id=%s/account=%s", orgID, accountNumber)
+				logger.Error().Err(err).Msg("Failed to fetch account")
 				http.Error(w, err.Error(), 500)
 				return
 			}
 
 			err = cache.SetAccountId(r.Context(), orgID, accountNumber, cachedAccount)
 			if err != nil {
-				logger.Error().Err(err).Msgf("Unable to store account %s to cache", orgID)
+				logger.Error().Err(err).Msg("Unable to store account to cache")
 				http.Error(w, err.Error(), 500)
 				return
 			}
 		} else if err != nil {
-			logger.Error().Err(err).Msgf("Cache returned error")
+			logger.Error().Err(err).Msg("Cache returned error")
 			http.Error(w, err.Error(), 500)
 			return
 		}

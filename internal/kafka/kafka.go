@@ -198,7 +198,7 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time
 			logger.Debug().Msg("Kafka receiver has been cancelled")
 			break
 		} else if err != nil {
-			logger.Warn().Err(err).Msgf("Error when reading message: %s", err.Error())
+			logger.Warn().Err(err).Msg("Error when reading message")
 		} else {
 			logger.Trace().Bytes("payload", msg.Value).Msgf("Received message with key: %s, topic: %s, offset: %d, partition: %d",
 				msg.Key, msg.Topic, msg.Offset, msg.Partition)

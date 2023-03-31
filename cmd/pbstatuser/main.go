@@ -66,7 +66,7 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	// Get source id
 	asm, err := kafka.NewAvailabilityStatusMessage(message)
 	if err != nil {
-		logger.Warn().Err(err).Msgf("Could not get availability status message %s", err)
+		logger.Warn().Err(err).Msg("Could not get availability status message")
 		return
 	}
 	logger.Trace().Msgf("Received a message from sources to be processed with source id %s", asm.SourceID)
@@ -80,7 +80,7 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	// Get sources client
 	sourcesClient, err := clients.GetSourcesClient(ctx)
 	if err != nil {
-		logger.Warn().Err(err).Msgf("Could not get sources client %s", err)
+		logger.Warn().Err(err).Msg("Could not get sources client")
 		return
 	}
 
@@ -89,10 +89,10 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	if err != nil {
 		metrics.IncTotalInvalidAvailabilityCheckReqs()
 		if errors.Is(err, clients.NotFoundErr) {
-			logger.Warn().Err(err).Msgf("Not found error: %s", err)
+			logger.Warn().Err(err).Msg("Not found error from sources")
 			return
 		}
-		logger.Warn().Err(err).Msgf("Could not get authentication: %s", err)
+		logger.Warn().Err(err).Msg("Could not get authentication")
 		return
 	}
 
@@ -155,7 +155,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 			if err != nil {
 				sr.Status = kafka.StatusUnavailable
 				sr.Err = err
-				logger.Warn().Err(err).Msgf("Could not get aws assumed client %s", err)
+				logger.Warn().Err(err).Msg("Could not get aws assumed client")
 				chSend <- sr
 			} else {
 				sr.Status = kafka.StatusAvaliable
@@ -184,14 +184,14 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 			if err != nil {
 				sr.Status = kafka.StatusUnavailable
 				sr.Err = err
-				logger.Warn().Err(err).Msgf("Could not get gcp client %s", err)
+				logger.Warn().Err(err).Msg("Could not get gcp client")
 				chSend <- sr
 			}
 			_, err = gcpClient.ListAllRegions(ctx)
 			if err != nil {
 				sr.Status = kafka.StatusUnavailable
 				sr.Err = err
-				logger.Warn().Err(err).Msgf("Could not list gcp regions %s", err)
+				logger.Warn().Err(err).Msg("Could not list gcp regions")
 				chSend <- sr
 			} else {
 				sr.Status = kafka.StatusAvaliable
@@ -217,7 +217,7 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 			ctx = ctxval.WithIdentity(ctx, sr.Identity)
 			msg, err := sr.GenericMessage(ctx)
 			if err != nil {
-				logger.Warn().Err(err).Msgf("Could not generate generic message %s", err)
+				logger.Warn().Err(err).Msg("Could not generate generic message")
 				continue
 			}
 			messages = append(messages, &msg)
@@ -227,7 +227,7 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 				logger.Trace().Int("messages", length).Msgf("Sending %d source availability status messages (full buffer)", length)
 				err := kafka.Send(ctx, messages...)
 				if err != nil {
-					logger.Warn().Err(err).Msgf("Could not send source availability status messages (full buffer) %s", err)
+					logger.Warn().Err(err).Msg("Could not send source availability status messages (full buffer)")
 				}
 				messages = messages[:0]
 			}
@@ -237,7 +237,7 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 				logger.Trace().Int("messages", length).Msgf("Sending %d source availability status messages (tick)", length)
 				err := kafka.Send(ctx, messages...)
 				if err != nil {
-					logger.Warn().Err(err).Msgf("Could not send source availability status messages (tick) %s", err)
+					logger.Warn().Err(err).Msg("Could not send source availability status messages (tick)")
 				}
 				messages = messages[:0]
 			}
@@ -249,7 +249,7 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 				logger.Trace().Int("messages", length).Msgf("Sending %d source availability status messages (cancel)", length)
 				err := kafka.Send(ctx, messages...)
 				if err != nil {
-					logger.Warn().Err(err).Msgf("Could not send source availability status messages (cancel) %s", err)
+					logger.Warn().Err(err).Msg("Could not send source availability status messages (cancel)")
 				}
 			}
 

@@ -48,7 +48,8 @@ type LaunchInstanceAzureTaskArgs struct {
 func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 	args, ok := job.Args.(LaunchInstanceAzureTaskArgs)
 	if !ok {
-		ctxval.Logger(ctx).Error().Msgf("Type assertion error for job %s, unable to finish reservation: %#v", job.ID, job.Args)
+		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
+		ctxval.Logger(ctx).Error().Err(err).Msg("Type assertion error for job")
 		return
 	}
 
@@ -90,7 +91,7 @@ func DoEnsureAzureResourceGroup(ctx context.Context, args *LaunchInstanceAzureTa
 	resourceGroupID, err := azureClient.EnsureResourceGroup(ctx, resourceGroupName, location)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create resource group")
-		logger.Error().Err(err).Msgf("cannot create resource group")
+		logger.Error().Err(err).Msg("Cannot create resource group")
 		return fmt.Errorf("failed to ensure resource group: %w", err)
 	}
 	logger.Trace().Msgf("Using resource group id=%s", *resourceGroupID)
