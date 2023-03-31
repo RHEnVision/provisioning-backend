@@ -105,7 +105,7 @@ func main() {
 	apiRouter := chi.NewRouter()
 
 	apiRouter.Use(m.NewPatternMiddleware(version.PrometheusLabelName))
-	apiRouter.Use(telemetry.Middleware(apiRouter))
+	apiRouter.Use(telemetry.Middleware(rootRouter))
 	apiRouter.Use(m.VersionMiddleware)
 	apiRouter.Use(m.TraceID)
 	apiRouter.Use(m.LoggerMiddleware(&log.Logger))

@@ -19,11 +19,12 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
 
-const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
+const TraceName = telemetry.TracePrefix + "internal/clients/http/azure"
 
 const (
 	vnetName              = "redhat-vnet"

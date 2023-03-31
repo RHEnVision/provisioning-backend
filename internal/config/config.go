@@ -50,19 +50,16 @@ var config struct {
 		LogLevel    string        `env:"LOG_LEVEL" env-default:"info" env-description:"logging level of database logs"`
 	} `env-prefix:"DATABASE_"`
 	Logging struct {
-		Level    string `env:"LEVEL" env-default:"info" env-description:"logger level (trace, debug, info, warn, error, fatal, panic)"`
-		Stdout   bool   `env:"STDOUT" env-default:"true" env-description:"logger standard output, disabled in clowder by default, stdout is still used if there is no other writer"`
-		MaxField int    `env:"MAX_FIELD" env-default:"0" env-description:"logger maximum field length (dev only)"`
+		Level         string `env:"LEVEL" env-default:"info" env-description:"logger level (trace, debug, info, warn, error, fatal, panic)"`
+		Stdout        bool   `env:"STDOUT" env-default:"true" env-description:"logger standard output, disabled in clowder by default, stdout is still used if there is no other writer"`
+		MaxField      int    `env:"MAX_FIELD" env-default:"0" env-description:"logger maximum field length (dev only)"`
+		SentryEnabled bool   `env:"SENTRY_ENABLED" env-default:"false" env-description:"send errors from logger to sentry (requires SENTRY_DSN)"`
 	} `env-prefix:"LOGGING_"`
 	Telemetry struct {
-		Enabled bool `env:"ENABLED" env-default:"false" env-description:"open telemetry collecting"`
-		Jaeger  struct {
-			Enabled  bool   `env:"ENABLED" env-default:"false" env-description:"open telemetry jaeger exporter"`
+		Type   string `env:"TYPE" env-default:"" env-description:"open telemetry exporting, valid values: sentry, jaeger, logger or blank for no telemetry"`
+		Jaeger struct {
 			Endpoint string `env:"ENDPOINT" env-default:"http://localhost:14268/api/traces" env-description:"jaeger endpoint"`
 		} `env-prefix:"JAEGER_"`
-		Logger struct {
-			Enabled bool `env:"ENABLED" env-default:"false" env-description:"open telemetry logger output (dev only)"`
-		} `env-prefix:"LOGGER_"`
 	} `env-prefix:"TELEMETRY_"`
 	Cloudwatch struct {
 		Enabled bool   `env:"ENABLED" env-default:"false" env-description:"cloudwatch logging exporter (enabled in clowder)"`
@@ -128,7 +125,9 @@ var config struct {
 		Token       string `env:"TOKEN" env-default:"" env-description:"unleash service client access token"`
 	} `env-prefix:"UNLEASH_"`
 	Sentry struct {
-		Dsn string `env:"DSN" env-default:"" env-description:"data source name (empty value disables Sentry)"`
+		Dsn        string  `env:"DSN" env-default:"" env-description:"data source name (empty value disables Sentry)"`
+		SampleRate float64 `env:"SAMPLE_RATE" env-default:"1.0" env-description:"sample rate (0.0 - 1.0)"`
+		Debug      bool    `env:"DEBUG" env-default:"false" env-description:"debug sentry"`
 	} `env-prefix:"SENTRY_"`
 	Kafka struct {
 		Enabled  bool     `env:"ENABLED" env-default:"false" env-description:"kafka service enabled"`

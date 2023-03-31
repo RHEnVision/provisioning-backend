@@ -40,10 +40,14 @@ objects:
                 value: ${LOGGING_LEVEL}
               - name: DATABASE_LOGGING_LEVEL
                 value: ${DATABASE_LOGGING_LEVEL}
-              - name: TELEMETRY_ENABLED
-                value: ${TELEMETRY_ENABLED}
-              - name: TELEMETRY_LOGGER_ENABLED
-                value: ${TELEMETRY_LOGGER_ENABLED}
+              - name: LOGGING_SENTRY_ENABLED
+                value: ${LOGGING_SENTRY_ENABLED}
+              - name: TELEMETRY_TYPE
+                value: ${TELEMETRY_TYPE}
+              - name: SENTRY_DEBUG
+                value: ${SENTRY_DEBUG}
+              - name: SENTRY_SAMPLE_RATE
+                value: ${SENTRY_SAMPLE_RATE}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
@@ -117,10 +121,14 @@ objects:
                 value: ${LOGGING_LEVEL}
               - name: DATABASE_LOGGING_LEVEL
                 value: ${DATABASE_LOGGING_LEVEL}
-              - name: TELEMETRY_ENABLED
-                value: ${TELEMETRY_ENABLED}
-              - name: TELEMETRY_LOGGER_ENABLED
-                value: ${TELEMETRY_LOGGER_ENABLED}
+              - name: LOGGING_SENTRY_ENABLED
+                value: ${LOGGING_SENTRY_ENABLED}
+              - name: TELEMETRY_TYPE
+                value: ${TELEMETRY_TYPE}
+              - name: SENTRY_DEBUG
+                value: ${SENTRY_DEBUG}
+              - name: SENTRY_SAMPLE_RATE
+                value: ${SENTRY_SAMPLE_RATE}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
@@ -211,10 +219,14 @@ objects:
                 value: ${LOGGING_LEVEL}
               - name: DATABASE_LOGGING_LEVEL
                 value: ${DATABASE_LOGGING_LEVEL}
-              - name: TELEMETRY_ENABLED
-                value: ${TELEMETRY_ENABLED}
-              - name: TELEMETRY_LOGGER_ENABLED
-                value: ${TELEMETRY_LOGGER_ENABLED}
+              - name: LOGGING_SENTRY_ENABLED
+                value: ${LOGGING_SENTRY_ENABLED}
+              - name: TELEMETRY_TYPE
+                value: ${TELEMETRY_TYPE}
+              - name: SENTRY_DEBUG
+                value: ${SENTRY_DEBUG}
+              - name: SENTRY_SAMPLE_RATE
+                value: ${SENTRY_SAMPLE_RATE}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
@@ -351,15 +363,23 @@ parameters:
   - description: Logging level (trace, debug, info, warn, error, fatal, panic)
     name: LOGGING_LEVEL
     value: "debug"
+  - description: Log errors from logger to sentry
+    name: LOGGING_SENTRY_ENABLED
+    value: "false"
   - description: Postgres driver logging level (trace, debug, info, warn, error, fatal, panic)
     name: DATABASE_LOGGING_LEVEL
     value: "debug"
-  - description: OpenTelemetry collecting
-    name: TELEMETRY_ENABLED
-    value: "true"
-  - description: OpenTelemetry export into the logger
-    name: TELEMETRY_LOGGER_ENABLED
-    value: "true"
+  - description: "OpenTelemetry collecting (NOTE: do not enable sentry)"
+    # sentry cannot be configured concurrently: https://github.com/archdx/zerolog-sentry/pull/7
+    # also our platform instance currently ignores performance
+    name: TELEMETRY_TYPE
+    value: ""
+  - description: Sentry debug logs
+    name: SENTRY_DEBUG
+    value: "false"
+  - description: Sentry sample rate
+    name: SENTRY_SAMPLE_RATE
+    value: "1.0"
   - description: Enable compression of the API responses
     name: APP_COMPRESSION
     value: "true"

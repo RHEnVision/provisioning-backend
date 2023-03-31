@@ -12,6 +12,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5"
+	"go.opentelemetry.io/otel"
 )
 
 func init() {
@@ -51,6 +52,9 @@ func (x *accountDao) GetById(ctx context.Context, id int64) (*models.Account, er
 // this function into a single transaction at some point.
 func (x *accountDao) GetOrCreateByIdentity(ctx context.Context, orgId string, accountNumber string) (*models.Account, error) {
 	logger := ctxval.Logger(ctx)
+
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetOrCreateByIdentity")
+	defer span.End()
 
 	// Try to find by org ID first
 	acc, err := x.GetByOrgId(ctx, orgId)

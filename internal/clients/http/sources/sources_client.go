@@ -13,11 +13,12 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
 )
 
-const TraceName = "github.com/EnVision/provisioning/internal/clients/http/sources"
+const TraceName = telemetry.TracePrefix + "internal/clients/http/sources"
 
 type sourcesClient struct {
 	client *ClientWithResponses

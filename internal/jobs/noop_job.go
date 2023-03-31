@@ -8,6 +8,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
+	"go.opentelemetry.io/otel"
 )
 
 type NoopJobArgs struct {
@@ -20,6 +21,9 @@ var NoOperationFailure = errors.New("job failed on request")
 
 // Unmarshall arguments and handle error
 func HandleNoop(ctx context.Context, job *worker.Job) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "HandleNoop")
+	defer span.End()
+
 	args, ok := job.Args.(NoopJobArgs)
 	if !ok {
 		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)

@@ -10,13 +10,14 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
 )
 
-const TraceName = "github.com/EnVision/provisioning/internal/clients/http/image_builder"
+const TraceName = telemetry.TracePrefix + "internal/clients/http/image_builder"
 
 type ibClient struct {
 	client *ClientWithResponses

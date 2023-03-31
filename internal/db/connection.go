@@ -63,7 +63,7 @@ func Initialize(ctx context.Context, schema string) error {
 	poolConfig.MaxConnLifetime = config.Database.MaxLifetime
 	poolConfig.MaxConnIdleTime = config.Database.MaxIdleTime
 
-	if config.Telemetry.Enabled {
+	if config.Telemetry.Type != "" {
 		poolConfig.ConnConfig.Tracer = otelpgx.NewTracer()
 	} else {
 		logLevel, configErr := tracelog.LogLevelFromString(config.Database.LogLevel)

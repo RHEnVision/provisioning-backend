@@ -108,7 +108,8 @@ func InitializeLogger() (zerolog.Logger, func()) {
 		log.Trace().Msg("Cloudwatch not enabled, enabling stdout")
 		writers = append(writers, stdoutWriter(false))
 	}
-	if config.Sentry.Dsn != "" {
+	if config.Logging.SentryEnabled && config.Sentry.Dsn != "" {
+		log.Debug().Msg("Initializing logging sentry integration")
 		sWriter, closeFn, err := sentryWriter(config.Sentry.Dsn)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed to initialize sentry, disabling sentry monitoring")

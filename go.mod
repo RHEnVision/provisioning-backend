@@ -28,6 +28,7 @@ require (
 	github.com/georgysavva/scany/v2 v2.0.0
 	github.com/getkin/kin-openapi v0.115.0
 	github.com/getsentry/sentry-go v0.19.0
+	github.com/getsentry/sentry-go/otel v0.19.0
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-chi/render v1.0.2
 	github.com/go-openapi/runtime v0.25.0

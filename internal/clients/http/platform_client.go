@@ -27,7 +27,7 @@ func NewPlatformClient(ctx context.Context, proxy string) HttpRequestDoer {
 		}
 	}
 
-	if config.Telemetry.Enabled {
+	if config.Telemetry.Type != "" {
 		rt = otelhttp.NewTransport(rt)
 	}
 

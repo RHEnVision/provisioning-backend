@@ -14,8 +14,6 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-const TraceName = "github.com/RHEnVision/provisioning-backend/internal/jobs/launch_instance_azure"
-
 const (
 	resourceGroupName = "redhat-deployed"
 	location          = "eastus"
