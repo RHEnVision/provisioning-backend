@@ -30,6 +30,10 @@ Building
 Image building
   build-podman          Build container image using Podman
 
+Dashboard
+  generate-dashboard    Generate dashboard
+  validate-dashboard    Compare dashboard configmaps with git
+
 Database migrations
   migrate               Run database migration
   purgedb               Delete database (dangerous!)
