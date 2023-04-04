@@ -10,6 +10,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 )
 
@@ -72,12 +73,25 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 		return fmt.Errorf("cannot get gcp client: %w", err)
 	}
 
+	// Generate user data
+	userDataInput := userdata.UserData{
+		Type:         models.ProviderTypeGCP,
+		PowerOff:     args.Detail.PowerOff,
+		InsightsTags: true,
+	}
+	userData, err := userdata.GenerateUserData(&userDataInput)
+	if err != nil {
+		return fmt.Errorf("cannot generate user data: %w", err)
+	}
+	logger.Trace().Bool("userdata", true).Msg(string(userData))
+
 	params := &clients.GCPInstanceParams{
-		NamePattern: ptr.To("inst-####"),
-		ImageName:   args.ImageName,
-		MachineType: args.Detail.MachineType,
-		Zone:        args.Zone,
-		KeyBody:     pk.Body,
+		NamePattern:   ptr.To("inst-####"),
+		ImageName:     args.ImageName,
+		MachineType:   args.Detail.MachineType,
+		Zone:          args.Zone,
+		KeyBody:       pk.Body,
+		StartupScript: string(userData),
 	}
 
 	instances, opName, err := gcpClient.InsertInstances(ctx, params, args.Detail.Amount)

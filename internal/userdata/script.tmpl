@@ -1,0 +1,10 @@
+#! /bin/bash
+
+{{ if (and .InsightsTags .IsGCP) }}
+PUBLIC_IP4=$(/usr/bin/curl -sH "Metadata-Flavor: Google" --connect-timeout 5 http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
+test -d /etc/insights-client || mkdir /etc/insights-client
+echo "---" > /etc/insights-client/tags.yaml
+echo "Public IPv4: $PUBLIC_IP4" >> /etc/insights-client/tags.yaml
+{{- end }}
+
+exit 0

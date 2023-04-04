@@ -109,6 +109,19 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 		params.Zone = config.GCP.DefaultZone
 	}
 
+	metadata := []*computepb.Items{
+		{
+			Key:   ptr.To("ssh-keys"),
+			Value: ptr.To(params.KeyBody),
+		},
+	}
+	if params.StartupScript != "" {
+		metadata = append(metadata, &computepb.Items{
+			Key:   ptr.To("startup-script"),
+			Value: ptr.To(params.StartupScript),
+		})
+	}
+
 	uuid := guuid.New().String()
 	req := &computepb.BulkInsertInstanceRequest{
 		Project: c.auth.Payload,
@@ -138,12 +151,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 					},
 				},
 				Metadata: &computepb.Metadata{
-					Items: []*computepb.Items{
-						{
-							Key:   ptr.To("ssh-keys"),
-							Value: ptr.To(params.KeyBody),
-						},
-					},
+					Items: metadata,
 				},
 			},
 		},
