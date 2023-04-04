@@ -129,7 +129,9 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 	}
 	// Generate user data
 	userDataInput := userdata.UserData{
-		PowerOff: reservation.Detail.PowerOff,
+		Type:         models.ProviderTypeAzure,
+		PowerOff:     reservation.Detail.PowerOff,
+		InsightsTags: true,
 	}
 	userData, err := userdata.GenerateUserData(&userDataInput)
 	if err != nil {

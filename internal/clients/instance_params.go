@@ -20,6 +20,9 @@ type GCPInstanceParams struct {
 
 	// Pubkey to use for the instance access
 	KeyBody string
+
+	// StartupScript contains metadata startup script (GCP tools must be installed on the image)
+	StartupScript string
 }
 
 type AWSInstanceParams struct {

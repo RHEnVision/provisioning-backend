@@ -1,0 +1,46 @@
+#cloud-config
+{{- /* Do not remove the line above. Intent with two spaces. */ -}}
+
+{{ if (and .InsightsTags .IsAWS) }}
+write_files:
+- path: /etc/insights-client/tags-generate.sh
+  owner: root:root
+  permissions: '0770'
+  content: |
+    #!/bin/sh
+    TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+    PUBLIC_IP4=$(/usr/bin/curl -sH "X-aws-ec2-metadata-token: $TOKEN" --connect-timeout 5 http://169.254.169.254/latest/meta-data/public-ipv4)
+    PUBLIC_HOSTNAME=$(/usr/bin/curl -sH "X-aws-ec2-metadata-token: $TOKEN" --connect-timeout 5 http://169.254.169.254/latest/meta-data/public-hostname)
+    test -d /etc/insights-client || mkdir /etc/insights-client
+    echo "---" > /etc/insights-client/tags.yaml
+    echo "Public hostname: $PUBLIC_HOSTNAME" >> /etc/insights-client/tags.yaml
+    echo "Public IPv4: $PUBLIC_IP4" >> /etc/insights-client/tags.yaml
+runcmd:
+- [ "/bin/sh", "-xc", "/etc/insights-client/tags-generate.sh" ]
+{{- end }}
+
+{{ if (and .InsightsTags .IsAzure) }}
+write_files:
+- path: /etc/insights-client/tags-generate.sh
+  owner: root:root
+  permissions: '0770'
+  content: |
+    #!/bin/sh
+    PUBLIC_IP4=$(curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance?api-version=2021-02-01" | /usr/libexec/platform-python -c 'import json,sys;print(json.load(sys.stdin)["network"]["interface"][0]["ipv4"]["ipAddress"][0]["publicIpAddress"])')
+    LOADBALANCER_IP4=$(/usr/bin/curl -sH "Metadata:true" --connect-timeout 5 http://169.254.169.254/metadata/loadbalancer?api-version=2020-10-01 | /usr/libexec/platform-python -c 'import json,sys;print(json.load(sys.stdin)["loadbalancer"]["publicIpAddresses"][0]["frontendIpAddress"])' 2>/dev/null)
+    test -d /etc/insights-client || mkdir /etc/insights-client
+    echo "---" > /etc/insights-client/tags.yaml
+    echo "Public IPv4: $PUBLIC_IP4" >> /etc/insights-client/tags.yaml
+    echo "Public LB IPv4: $LOADBALANCER_IP4" >> /etc/insights-client/tags.yaml
+runcmd:
+- [ "/bin/sh", "-xc", "/etc/insights-client/tags-generate.sh" ]
+{{- end }}
+
+{{ if .PowerOff }}
+power_state:
+  mode: poweroff
+  delay: "+{{ .PowerOffDelayMin }}"
+  message: "{{ .PowerOffMessage }}"
+  timeout: 60
+{{- end }}
+

@@ -173,7 +173,9 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 
 	// Generate user data
 	userDataInput := userdata.UserData{
-		PowerOff: args.Detail.PowerOff,
+		Type:         models.ProviderTypeAWS,
+		PowerOff:     args.Detail.PowerOff,
+		InsightsTags: true,
 	}
 	userData, err := userdata.GenerateUserData(&userDataInput)
 	if err != nil {

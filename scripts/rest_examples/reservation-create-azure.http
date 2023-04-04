@@ -7,9 +7,9 @@ X-Rh-Identity: {{identity}}
   "name": "azure-linux-us-east",
   "location": "eastus_1",
   "source_id": "{{azure-source-id}}",
-  "image_id": "RedHat:RHEL:8_7:8.7.2023022801",
+  "image_id": "composer-api-081fc867-838f-44a5-af03-8b8def808431",
   "amount": 1,
   "instance_size": "Standard_B1ls",
-  "pubkey_id": {{pubkey_id}},
+  "pubkey_id": 2,
   "poweroff": true
 }

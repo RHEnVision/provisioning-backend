@@ -8,7 +8,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3gen"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // addPayloads - MAKE SURE THE TYPE HAS JSON/YAML Go STRUCT TAGS (or "map key XXX not found" error occurs)
