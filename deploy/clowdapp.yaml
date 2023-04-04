@@ -99,6 +99,9 @@ objects:
                 memory: ${MEMORY_REQUESTS}
         - name: statuser
           replicas: 1
+          metadata:
+            annotations:
+              ignore-check.kube-linter.io/minimum-three-replicas: "statuser pod runs in a single instance"
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
