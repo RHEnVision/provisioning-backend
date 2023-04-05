@@ -248,13 +248,13 @@ objects:
                     name: provisioning-azure-acc
                     key: client_secret
                     optional: true
-              - name: AZURE_PRINCIPAL_ID
+              - name: AZURE_CLIENT_PRINCIPAL_ID
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: principal_id
                     optional: true
-              - name: AZURE_PRINCIPAL_NAME
+              - name: AZURE_CLIENT_PRINCIPAL_NAME
                 valueFrom:
                   secretKeyRef:
                     name: provisioning-azure-acc
