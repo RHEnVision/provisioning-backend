@@ -113,7 +113,7 @@ type AzureReservationResponsePayload struct {
 	PowerOff bool `json:"poweroff"`
 
 	// Instances IDs, only present for finished reservations.
-	Instances []string `json:"instances,omitempty"`
+	Instances []InstanceResponse `json:"instances,omitempty"`
 }
 
 type GCPReservationResponsePayload struct {
@@ -286,9 +286,9 @@ func NewAWSReservationResponse(reservation *models.AWSReservation, instances []*
 }
 
 func NewAzureReservationResponse(reservation *models.AzureReservation, instances []*models.ReservationInstance) render.Renderer {
-	instanceIds := make([]string, len(instances))
+	instanceIds := make([]InstanceResponse, len(instances))
 	for iter, inst := range instances {
-		instanceIds[iter] = inst.InstanceID
+		instanceIds[iter] = InstanceResponse{InstanceID: inst.InstanceID, Detail: inst.Detail}
 	}
 
 	response := AzureReservationResponsePayload{

@@ -196,7 +196,23 @@
           },
           "instances": {
             "items": {
-              "type": "string"
+              "properties": {
+                "detail": {
+                  "properties": {
+                    "public_dns": {
+                      "type": "string"
+                    },
+                    "public_ipv4": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "instance_id": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
             },
             "type": "array"
           },

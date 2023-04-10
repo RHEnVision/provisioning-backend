@@ -143,11 +143,12 @@ func (x *reservationDao) createGenericReservation(ctx context.Context, reservati
 }
 
 func (x *reservationDao) CreateInstance(ctx context.Context, instance *models.ReservationInstance) error {
-	query := `INSERT INTO reservation_instances (reservation_id, instance_id) VALUES ($1, $2)`
+	query := `INSERT INTO reservation_instances (reservation_id, instance_id, detail) VALUES ($1, $2, $3)`
 
 	tag, err := db.Pool.Exec(ctx, query,
 		instance.ReservationID,
-		instance.InstanceID)
+		instance.InstanceID,
+		instance.Detail)
 	if err != nil {
 		return fmt.Errorf("pgx error: %w", err)
 	}

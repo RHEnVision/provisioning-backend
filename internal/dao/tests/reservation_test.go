@@ -30,10 +30,13 @@ func newNoopReservation() *models.NoopReservation {
 	}
 }
 
-func newInstancesReservation(reservationId int64) *models.ReservationInstance {
+func newReservationInstance(reservationId int64) *models.ReservationInstance {
 	return &models.ReservationInstance{
 		ReservationID: reservationId,
 		InstanceID:    "1",
+		Detail: models.ReservationInstanceDetail{
+			PublicIPv4: "198.51.100.1",
+		},
 	}
 }
 
@@ -159,12 +162,15 @@ func TestReservationCreateAWSInstance(t *testing.T) {
 		err := reservationDao.CreateAWS(ctx, reservation)
 		require.NoError(t, err)
 
-		err = reservationDao.CreateInstance(ctx, newInstancesReservation(reservation.ID))
+		instance := newReservationInstance(reservation.ID)
+		err = reservationDao.CreateInstance(ctx, instance)
 		require.NoError(t, err)
 
-		reservations, err := reservationDao.ListInstances(ctx, reservation.ID)
+		instancesList, err := reservationDao.ListInstances(ctx, reservation.ID)
 		require.NoError(t, err)
-		assert.Equal(t, 1, len(reservations))
+		assert.Equal(t, 1, len(instancesList))
+		assert.Equal(t, instance.InstanceID, instancesList[0].InstanceID)
+		assert.Equal(t, instance.Detail.PublicIPv4, instancesList[0].Detail.PublicIPv4)
 	})
 }
 

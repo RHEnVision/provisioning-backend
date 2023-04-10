@@ -1,6 +1,8 @@
 package clients
 
-// InstanceInfo defines a model for an instance description
+type AzureInstanceID string
+
+// InstanceDescription defines a model for an instance description
 type InstanceDescription struct {
 	// The id of the instance
 	ID string `json:"id,omitempty" yaml:"id"`

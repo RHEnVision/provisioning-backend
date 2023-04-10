@@ -44,8 +44,8 @@ func (stub *AzureClientStub) Status(ctx context.Context) error {
 	return nil
 }
 
-func (stub *AzureClientStub) CreateVMs(ctx context.Context, vmParams clients.AzureInstanceParams, amount int64, vmNamePrefix string) ([]clients.AzureInstanceID, error) {
-	vmIds := make([]clients.AzureInstanceID, amount)
+func (stub *AzureClientStub) CreateVMs(ctx context.Context, vmParams clients.AzureInstanceParams, amount int64, vmNamePrefix string) ([]clients.InstanceDescription, error) {
+	vmIds := make([]clients.InstanceDescription, amount)
 	resumeTokens := make([]string, amount)
 	var i int64
 	var err error
@@ -57,10 +57,12 @@ func (stub *AzureClientStub) CreateVMs(ctx context.Context, vmParams clients.Azu
 		}
 	}
 	for i = 0; i < amount; i++ {
-		vmIds[i], err = stub.WaitForVM(ctx, resumeTokens[i])
+		instanceID, err := stub.WaitForVM(ctx, resumeTokens[i])
 		if err != nil {
 			return vmIds, err
 		}
+		vmIds[i].ID = string(instanceID)
+		vmIds[i].PublicIPv4 = fmt.Sprintf("198.51.100.%d", i+1)
 	}
 
 	return vmIds, nil
