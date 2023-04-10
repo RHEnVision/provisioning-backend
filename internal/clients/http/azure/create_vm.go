@@ -23,8 +23,6 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-var subscriptionId string
-
 const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
 
 const (
@@ -37,23 +35,27 @@ const (
 	vmPollFrequency       = 10 * time.Second
 )
 
-func (c *client) BeginCreateVM(ctx context.Context, vmParams clients.AzureInstanceParams, vmName string) (string, error) {
+func (c *client) BeginCreateVM(ctx context.Context, networkInterface *armnetwork.Interface, vmParams clients.AzureInstanceParams, vmName string) (string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "BeginCreateVM")
 	defer span.End()
 
 	logger := logger(ctx)
 	logger.Debug().Msg("Creating Azure VM instance without waiting")
 
-	vmAzureParams, err := c.prepareVMresources(ctx, vmParams, vmName)
+	vmClient, err := c.newVirtualMachinesClient(ctx)
 	if err != nil {
 		return "", err
 	}
 
-	poller, err := c.beginCreateVM(ctx, vmParams.ResourceGroupName, vmName, vmAzureParams)
+	imageID := c.getImageId(ctx, vmParams.ResourceGroupName, vmParams.ImageName)
+
+	vmAzureParams := c.prepareVirtualMachineParameters(vmParams.Location, armcompute.VirtualMachineSizeTypes(vmParams.InstanceType), networkInterface, imageID, vmParams.Pubkey.Body, vmParams.UserData, vmName)
+
+	poller, err := vmClient.BeginCreateOrUpdate(ctx, vmParams.ResourceGroupName, vmName, *vmAzureParams, nil)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create virtual machine")
 		logger.Error().Err(err).Msg("cannot create virtual machine")
-		return "", err
+		return "", fmt.Errorf("create of virtual machine failed to start: %w", err)
 	}
 
 	resumeToken, err := poller.ResumeToken()
@@ -85,7 +87,9 @@ func (c *client) WaitForVM(ctx context.Context, resumeToken string) (clients.Azu
 		span.SetStatus(codes.Error, "polling of virtual machine creation status failed to start")
 		return "", fmt.Errorf("polling of virtual machine creation status failed to start: %w", err)
 	}
-	resp, err := pollerResponse.PollUntilDone(ctx, nil)
+	resp, err := pollerResponse.PollUntilDone(ctx, &runtime.PollUntilDoneOptions{
+		Frequency: vmPollFrequency,
+	})
 	if err != nil {
 		span.SetStatus(codes.Error, "failed to poll for create virtual machine status")
 		return "", fmt.Errorf("failed to poll for create virtual machine status: %w", err)
@@ -96,54 +100,62 @@ func (c *client) WaitForVM(ctx context.Context, resumeToken string) (clients.Azu
 	return clients.AzureInstanceID(*resp.VirtualMachine.ID), nil
 }
 
-func (c *client) prepareVMresources(ctx context.Context, vmParams clients.AzureInstanceParams, vmName string) (*armcompute.VirtualMachine, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "prepareVMresources")
+func (c *client) ensureSharedNetworking(ctx context.Context, location, resourceGroupName string) (*armnetwork.Subnet, *armnetwork.SecurityGroup, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ensureSharedNetworking")
 	defer span.End()
 
 	logger := logger(ctx)
-	imageID := c.getImageId(ctx, vmParams.ResourceGroupName, vmParams.ImageName)
-
-	virtualNetwork, err := c.createVirtualNetwork(ctx, vmParams.Location, vmParams.ResourceGroupName, vnetName)
+	virtualNetwork, err := c.createVirtualNetwork(ctx, location, resourceGroupName, vnetName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create virtual network")
 		logger.Error().Err(err).Msg("cannot create virtual network")
-		return nil, err
+		return nil, nil, err
 	}
 	logger.Trace().Msgf("Using virtual network id=%s", *virtualNetwork.ID)
 
-	subnet, err := c.createSubnets(ctx, vmParams.ResourceGroupName, vnetName, subnetName)
+	subnet, err := c.createSubnets(ctx, resourceGroupName, vnetName, subnetName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create subnet")
 		logger.Error().Err(err).Msg("cannot create subnet")
-		return nil, err
+		return nil, nil, err
 	}
 	logger.Trace().Msgf("Using subnet id=%s", *subnet.ID)
 
 	// network security group
-	nsg, err := c.createNetworkSecurityGroup(ctx, vmParams.Location, vmParams.ResourceGroupName, nsgName)
+	nsg, err := c.createNetworkSecurityGroup(ctx, location, resourceGroupName, nsgName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create network security group")
 		logger.Error().Err(err).Msg("cannot create network security group")
-		return nil, err
+		return nil, nil, err
 	}
 	logger.Trace().Msgf("Using network security group id=%s", *nsg.ID)
+
+	return subnet, nsg, nil
+}
+
+func (c *client) prepareVMNetworking(ctx context.Context, subnet *armnetwork.Subnet, securityGroup *armnetwork.SecurityGroup, vmParams clients.AzureInstanceParams, vmName string) (*armnetwork.Interface, *armnetwork.PublicIPAddress, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "prepareVMNetworking")
+	defer span.End()
+
+	logger := logger(ctx)
+
 	publicIPName := vmName + "_ip"
 	publicIP, err := c.createPublicIP(ctx, vmParams.Location, vmParams.ResourceGroupName, publicIPName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create public IP address")
 		logger.Error().Err(err).Msg("cannot create public IP address")
-		return nil, err
+		return nil, nil, err
 	}
 	logger.Trace().Msgf("Using public IP address id=%s", *publicIP.ID)
 	nicName := vmName + "_nic"
-	networkInterface, err := c.createNetworkInterface(ctx, vmParams.Location, vmParams.ResourceGroupName, subnet, publicIP, nsg, nicName)
+	networkInterface, err := c.createNetworkInterface(ctx, vmParams.Location, vmParams.ResourceGroupName, subnet, publicIP, securityGroup, nicName)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create network interface")
 		logger.Error().Err(err).Msg("cannot create network interface")
-		return nil, err
+		return nil, publicIP, err
 	}
 	logger.Trace().Msgf("Using network interface id=%s", *networkInterface.ID)
-	return c.prepareVirtualMachineParameters(vmParams.Location, armcompute.VirtualMachineSizeTypes(vmParams.InstanceType), networkInterface, imageID, vmParams.Pubkey.Body, vmParams.UserData, vmName), nil
+	return networkInterface, publicIP, nil
 }
 
 func (c *client) EnsureResourceGroup(ctx context.Context, name string, location string) (*string, error) {
@@ -465,17 +477,4 @@ func (c *client) prepareVirtualMachineParameters(location string, instanceType a
 			UserData: to.Ptr(string(userDataEncoded)),
 		},
 	}
-}
-
-func (c *client) beginCreateVM(ctx context.Context, resourceGroupName string, vmName string, parameters *armcompute.VirtualMachine) (*runtime.Poller[armcompute.VirtualMachinesClientCreateOrUpdateResponse], error) {
-	vmClient, err := c.newVirtualMachinesClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	pollerResponse, err := vmClient.BeginCreateOrUpdate(ctx, resourceGroupName, vmName, *parameters, nil)
-	if err != nil {
-		return nil, fmt.Errorf("create of virtual machine failed to start: %w", err)
-	}
-	return pollerResponse, nil
 }

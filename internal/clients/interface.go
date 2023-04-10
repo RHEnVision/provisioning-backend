@@ -6,8 +6,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 )
 
-type AzureInstanceID string
-
 // GetSourcesClient returns Sources interface implementation. There are currently
 // two implementations available: HTTP and stub
 var GetSourcesClient func(ctx context.Context) (Sources, error)
@@ -117,7 +115,7 @@ type Azure interface {
 
 	// CreateVMs creates multiple Azure virtual machines
 	// Returns array of instance IDs and error if something went wrong
-	CreateVMs(ctx context.Context, instanceParams AzureInstanceParams, amount int64, vmNamePrefix string) (vmIds []AzureInstanceID, err error)
+	CreateVMs(ctx context.Context, instanceParams AzureInstanceParams, amount int64, vmNamePrefix string) (vmIds []InstanceDescription, err error)
 
 	ListResourceGroups(ctx context.Context) ([]string, error)
 }

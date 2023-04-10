@@ -146,20 +146,23 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 		UserData:          userData,
 	}
 
-	instanceIds, err := azureClient.CreateVMs(ctx, vmParams, reservation.Detail.Amount, vmNamePrefix)
+	instanceDescriptions, err := azureClient.CreateVMs(ctx, vmParams, reservation.Detail.Amount, vmNamePrefix)
 	if err != nil {
 		span.SetStatus(codes.Error, "failed to create instances")
 		return fmt.Errorf("cannot create Azure instance: %w", err)
 	}
 
-	for _, instanceId := range instanceIds {
+	for _, instanceDescription := range instanceDescriptions {
 		err = resDao.CreateInstance(ctx, &models.ReservationInstance{
 			ReservationID: args.ReservationID,
-			InstanceID:    string(instanceId),
+			InstanceID:    instanceDescription.ID,
+			Detail: models.ReservationInstanceDetail{
+				PublicIPv4: instanceDescription.PublicIPv4,
+			},
 		})
 		if err != nil {
 			span.SetStatus(codes.Error, "failed to save instance to DB")
-			return fmt.Errorf("cannot create instance reservation for id %s: %w", instanceId, err)
+			return fmt.Errorf("cannot create instance reservation for id %s: %w", instanceDescription.ID, err)
 		}
 	}
 
