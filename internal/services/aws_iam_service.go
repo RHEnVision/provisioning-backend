@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -15,8 +16,9 @@ func ValidatePermissions(w http.ResponseWriter, r *http.Request) {
 	logger := ctxval.Logger(r.Context())
 	sourceId := chi.URLParam(r, "ID")
 	region := r.URL.Query().Get("region")
+
 	if region == "" {
-		renderError(w, r, payloads.NewMissingRequestParameterError(r.Context(), "region parameter is missing"))
+		region = config.AWS.DefaultRegion
 	}
 
 	// Get Sources client
