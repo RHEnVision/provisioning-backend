@@ -25,6 +25,9 @@ func TraceID(next http.Handler) http.Handler {
 			traceId = random.TraceID()
 		}
 
+		// Store in response headers for easier debugging
+		w.Header().Set("X-Trace-Id", traceId.String())
+
 		ctx = ctxval.WithTraceId(ctx, traceId.String())
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
