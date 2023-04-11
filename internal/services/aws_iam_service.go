@@ -33,8 +33,11 @@ func ValidatePermissions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if typeErr := authentication.MustBe(models.ProviderTypeAWS); typeErr != nil {
-		renderError(w, r, payloads.NewClientError(r.Context(), typeErr))
+	if !authentication.Is(models.ProviderTypeAWS) {
+		if err = render.Render(w, r, payloads.NewPermissionsResponse(nil)); err != nil {
+			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render missing permissions", err))
+			return
+		}
 		return
 	}
 
