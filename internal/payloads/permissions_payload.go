@@ -7,8 +7,8 @@ import (
 )
 
 type PermissionsResponse struct {
-	Valid           bool
-	MissingEntities []string
+	Valid           bool     `json:"valid"`
+	MissingEntities []string `json:"missing_entities,omitempty"`
 }
 
 func (s *PermissionsResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
