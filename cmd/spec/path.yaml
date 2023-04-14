@@ -1,41 +1,53 @@
 ---
 openapi: 3.0.0
 info:
-  description: "THIS API IS IN DEVELOPMENT - ENDPOINTS MIGHT CHANGE"
+  description: "Provisioning service API"
   license:
     name: GPL-3.0
   title: provisioning-api
   version: 1.0.0
-
+tags:
+  - name: Pubkey
+    description: Public SSH keys operations
 paths:
   /pubkeys/{ID}:
     get:
       operationId: getPubkeyById
+      tags:
+        - Pubkey
       description: >
         A pubkey represents an SSH public portion of a key pair with name and body.
         Pubkeys must have unique name and body (SSH public key fingerprint) per each account.
-        To find if a pubkey was uploaded to particular cloud, check PubkeyResource resource.
+        Pubkey type is detected during create operation as well as fingerprints.
+        Currently two types are supported: RSA and ssh-ed25519. Also, two fingerprint
+        types are calculated: standard SHA fingerprint and legacy MD5 fingerprint available
+        under fingerprint_legacy field. Fingerprints are used to check uniqueness of key.
       parameters:
         - name: ID
           in: path
           required: true
-          description: 'Database ID of resource.'
+          description: 'Database ID to search for'
           schema:
             type: integer
             format: int64
       responses:
         "200":
-          description: 'Returned on success.'
+          description: 'Returned on success'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/v1.PubkeyResponse'
+              examples:
+                example:
+                  $ref: '#/components/examples/v1.PubkeyResponseExample'
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
           $ref: '#/components/responses/InternalError'
     delete:
       operationId: removePubkeyById
+      tags:
+        - Pubkey
       description: >
         A pubkey represents an SSH public portion of a key pair with name and body.
         If a pubkey was uploaded to one or more clouds, the deletion request will
@@ -43,6 +55,7 @@ paths:
         a pubkey the account must have valid credentials to all cloud accounts the pubkey
         was uploaded to, otherwise the delete operation will fail and the pubkey will
         not be deleted from Provisioning database.
+        This operation returns no body.
       parameters:
         - name: ID
           in: path
@@ -61,15 +74,21 @@ paths:
   /pubkeys:
     post:
       operationId: createPubkey
+      tags:
+        - Pubkey
       description: >
         A pubkey represents an SSH public portion of a key pair with name and body.
         When pubkey is created, it is stored in the Provisioning database. Pubkeys are
-        uploaded to clouds when an instance is launched.
+        uploaded to clouds when an instance is launched. Some fields (e.g. type or
+        fingerprint) are read only.
       requestBody:
         content:
           application/json:
             schema:
               "$ref": "#/components/schemas/v1.PubkeyRequest"
+            examples:
+              example:
+                $ref: '#/components/examples/v1.PubkeyRequestExample'
         description: request body
         required: true
       responses:
@@ -79,10 +98,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/v1.PubkeyResponse'
+              examples:
+                example:
+                  $ref: '#/components/examples/v1.PubkeyRequestExample'
         "500":
           $ref: '#/components/responses/InternalError'
     get:
       operationId: getPubkeyList
+      tags:
+        - Pubkey
       description: >
         A pubkey represents an SSH public portion of a key pair with name and body.
         This operation returns list of all pubkeys for particular account.
@@ -95,6 +119,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/v1.PubkeyResponse'
+              examples:
+                example:
+                  $ref: '#/components/examples/v1.PubkeyListResponseExample'
         "500":
           $ref: '#/components/responses/InternalError'
   /sources:

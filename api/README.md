@@ -1,8 +1,5 @@
 # `/api`
 
-OpenAPI 3.1 specs, JSON schema files, protocol definition files.
+OpenAPI 3.1 specification generated from /cmd/spec/path.yaml and Go types.
 
-Examples:
-
-* https://github.com/kubernetes/kubernetes/tree/master/api
-* https://github.com/moby/moby/tree/master/api
+To see the latest version, visit [README](../README.md) and click on the OpenAPI link.

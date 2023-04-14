@@ -29,15 +29,24 @@ func addPayloads(gen *APISchemaGen) {
 	gen.addSchema("v1.LaunchTemplatesResponse", &payloads.LaunchTemplateResponse{})
 }
 
+func addExamples(gen *APISchemaGen) {
+	gen.addExample("v1.PubkeyRequestExample", PubkeyRequest)
+	gen.addExample("v1.PubkeyResponseExample", PubkeyResponse)
+	gen.addExample("v1.PubkeyListResponseExample", PubkeyListResponse)
+
+	gen.addExample("v1.ResponseErrorGenericExample", ResponseErrorGenericExample)
+	gen.addExample("v1.ResponseErrorUserFriendlyExample", ResponseErrorUserFriendlyExample)
+}
+
 // addErrorSchemas all generic errors, that can be returned.
 func addErrorSchemas(gen *APISchemaGen) {
 	// error payloads
 	gen.addSchema("v1.ResponseError", &payloads.ResponseError{})
 
 	// errors
-	gen.addResponse("NotFound", "The requested resource was not found", "#/components/schemas/v1.ResponseError")
-	gen.addResponse("InternalError", "The server encountered an internal error", "#/components/schemas/v1.ResponseError")
-	gen.addResponse("BadRequest", "The request's parameters are not valid", "#/components/schemas/v1.ResponseError")
+	gen.addResponse("NotFound", "The requested resource was not found", "#/components/schemas/v1.ResponseError", ResponseNotFoundErrorExample)
+	gen.addResponse("InternalError", "The server encountered an internal error", "#/components/schemas/v1.ResponseError", ResponseErrorGenericExample)
+	gen.addResponse("BadRequest", "The request's parameters are not valid", "#/components/schemas/v1.ResponseError", ResponseBadRequestErrorExample)
 }
 
 type APISchemaGen struct {
@@ -60,6 +69,7 @@ func NewSchemaGenerator() *APISchemaGen {
 	s.Components = openapi3.NewComponents()
 	s.Components.Schemas = make(map[string]*openapi3.SchemaRef)
 	s.Components.Responses = make(map[string]*openapi3.ResponseRef)
+	s.Components.Examples = make(map[string]*openapi3.ExampleRef)
 
 	return s
 }
@@ -82,15 +92,23 @@ func (s *APISchemaGen) addSchema(name string, model interface{}) {
 	s.Components.Schemas[name] = schema
 }
 
-func (s *APISchemaGen) addResponse(name string, description string, ref string) {
+func (s *APISchemaGen) addResponse(name string, description string, ref string, example interface{}) {
 	response := openapi3.NewResponse().WithDescription(description).WithJSONSchemaRef(&openapi3.SchemaRef{Ref: ref})
+	response.Content.Get("application/json").Examples = make(map[string]*openapi3.ExampleRef)
+	response.Content.Get("application/json").Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(example)}
 	s.Components.Responses[name] = &openapi3.ResponseRef{Value: response}
+}
+
+func (s *APISchemaGen) addExample(name string, value interface{}) {
+	example := openapi3.NewExample(value)
+	s.Components.Examples[name] = &openapi3.ExampleRef{Value: example}
 }
 
 func main() {
 	gen := NewSchemaGenerator()
 	addErrorSchemas(gen)
 	addPayloads(gen)
+	addExamples(gen)
 
 	bufferYAML, err := os.ReadFile("./cmd/spec/path.yaml")
 	if err != nil {

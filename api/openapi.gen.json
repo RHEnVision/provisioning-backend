@@ -1,9 +1,72 @@
 {
   "components": {
+    "examples": {
+      "v1.PubkeyListResponseExample": {
+        "value": [
+          {
+            "body": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
+            "fingerprint": "gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk=",
+            "fingerprint_legacy": "ee:f1:d4:62:99:ab:17:d9:3b:00:66:62:32:b2:55:9e",
+            "id": 1,
+            "name": "My key",
+            "type": "ssh-ed25519"
+          }
+        ]
+      },
+      "v1.PubkeyRequestExample": {
+        "value": {
+          "body": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
+          "name": "My key"
+        }
+      },
+      "v1.PubkeyResponseExample": {
+        "value": {
+          "body": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
+          "fingerprint": "gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk=",
+          "fingerprint_legacy": "ee:f1:d4:62:99:ab:17:d9:3b:00:66:62:32:b2:55:9e",
+          "id": 1,
+          "name": "My key",
+          "type": "ssh-ed25519"
+        }
+      },
+      "v1.ResponseErrorGenericExample": {
+        "value": {
+          "build_time": "2023-04-14_17:15:02",
+          "edgeid": "",
+          "environment": "",
+          "error": "error: this can be pretty long string",
+          "trace_id": "b57f7b78c",
+          "version": "df8a489"
+        }
+      },
+      "v1.ResponseErrorUserFriendlyExample": {
+        "value": {
+          "build_time": "2023-04-14_17:15:02",
+          "edgeid": "",
+          "environment": "",
+          "error": "cannot run instances: cannot run instances: operation error EC2: RunInstances, https response error StatusCode: 400, RequestID: af6e10a0-75c9-47e1-a83c-872494250322, VcpuLimitExceeded: You have requested more vCPU capacity than your current vCPU limit of 128 allows for the instance bucket that the specified instance type belongs to. Please visit http://aws.amazon.com/contact-us/ec2-request to request an adjustment to this limit.",
+          "msg": "vCPU limit reached, contact AWS support",
+          "trace_id": "b57f7b78c",
+          "version": "df8a489"
+        }
+      }
+    },
     "responses": {
       "BadRequest": {
         "content": {
           "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "build_time": "2023-04-14_17:15:02",
+                  "edgeid": "",
+                  "environment": "",
+                  "error": "error: bad request: details can be long",
+                  "trace_id": "b57f7b78c",
+                  "version": "df8a489"
+                }
+              }
+            },
             "schema": {
               "$ref": "#/components/schemas/v1.ResponseError"
             }
@@ -14,6 +77,18 @@
       "InternalError": {
         "content": {
           "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "build_time": "2023-04-14_17:15:02",
+                  "edgeid": "",
+                  "environment": "",
+                  "error": "error: this can be pretty long string",
+                  "trace_id": "b57f7b78c",
+                  "version": "df8a489"
+                }
+              }
+            },
             "schema": {
               "$ref": "#/components/schemas/v1.ResponseError"
             }
@@ -24,6 +99,18 @@
       "NotFound": {
         "content": {
           "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "build_time": "2023-04-14_17:15:02",
+                  "edgeid": "",
+                  "environment": "",
+                  "error": "error: resource not found: details can be long",
+                  "trace_id": "b57f7b78c",
+                  "version": "df8a489"
+                }
+              }
+            },
             "schema": {
               "$ref": "#/components/schemas/v1.ResponseError"
             }
@@ -305,20 +392,7 @@
           "body": {
             "type": "string"
           },
-          "fingerprint": {
-            "type": "string"
-          },
-          "fingerprint_legacy": {
-            "type": "string"
-          },
-          "id": {
-            "format": "int64",
-            "type": "integer"
-          },
           "name": {
-            "type": "string"
-          },
-          "type": {
             "type": "string"
           }
         },
@@ -474,7 +548,7 @@
     }
   },
   "info": {
-    "description": "THIS API IS IN DEVELOPMENT - ENDPOINTS MIGHT CHANGE",
+    "description": "Provisioning service API",
     "license": {
       "name": "GPL-3.0"
     },
@@ -571,6 +645,11 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "example": {
+                    "$ref": "#/components/examples/v1.PubkeyListResponseExample"
+                  }
+                },
                 "schema": {
                   "items": {
                     "$ref": "#/components/schemas/v1.PubkeyResponse"
@@ -584,14 +663,22 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Pubkey"
+        ]
       },
       "post": {
-        "description": "A pubkey represents an SSH public portion of a key pair with name and body. When pubkey is created, it is stored in the Provisioning database. Pubkeys are uploaded to clouds when an instance is launched.\n",
+        "description": "A pubkey represents an SSH public portion of a key pair with name and body. When pubkey is created, it is stored in the Provisioning database. Pubkeys are uploaded to clouds when an instance is launched. Some fields (e.g. type or fingerprint) are read only.\n",
         "operationId": "createPubkey",
         "requestBody": {
           "content": {
             "application/json": {
+              "examples": {
+                "example": {
+                  "$ref": "#/components/examples/v1.PubkeyRequestExample"
+                }
+              },
               "schema": {
                 "$ref": "#/components/schemas/v1.PubkeyRequest"
               }
@@ -604,6 +691,11 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "example": {
+                    "$ref": "#/components/examples/v1.PubkeyRequestExample"
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/v1.PubkeyResponse"
                 }
@@ -614,12 +706,15 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Pubkey"
+        ]
       }
     },
     "/pubkeys/{ID}": {
       "delete": {
-        "description": "A pubkey represents an SSH public portion of a key pair with name and body. If a pubkey was uploaded to one or more clouds, the deletion request will attempt to delete those SSH keys from all clouds. This means in order to delete a pubkey the account must have valid credentials to all cloud accounts the pubkey was uploaded to, otherwise the delete operation will fail and the pubkey will not be deleted from Provisioning database.\n",
+        "description": "A pubkey represents an SSH public portion of a key pair with name and body. If a pubkey was uploaded to one or more clouds, the deletion request will attempt to delete those SSH keys from all clouds. This means in order to delete a pubkey the account must have valid credentials to all cloud accounts the pubkey was uploaded to, otherwise the delete operation will fail and the pubkey will not be deleted from Provisioning database. This operation returns no body.\n",
         "operationId": "removePubkeyById",
         "parameters": [
           {
@@ -643,14 +738,17 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Pubkey"
+        ]
       },
       "get": {
-        "description": "A pubkey represents an SSH public portion of a key pair with name and body. Pubkeys must have unique name and body (SSH public key fingerprint) per each account. To find if a pubkey was uploaded to particular cloud, check PubkeyResource resource.\n",
+        "description": "A pubkey represents an SSH public portion of a key pair with name and body. Pubkeys must have unique name and body (SSH public key fingerprint) per each account. Pubkey type is detected during create operation as well as fingerprints. Currently two types are supported: RSA and ssh-ed25519. Also, two fingerprint types are calculated: standard SHA fingerprint and legacy MD5 fingerprint available under fingerprint_legacy field. Fingerprints are used to check uniqueness of key.\n",
         "operationId": "getPubkeyById",
         "parameters": [
           {
-            "description": "Database ID of resource.",
+            "description": "Database ID to search for",
             "in": "path",
             "name": "ID",
             "required": true,
@@ -664,12 +762,17 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "example": {
+                    "$ref": "#/components/examples/v1.PubkeyResponseExample"
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/v1.PubkeyResponse"
                 }
               }
             },
-            "description": "Returned on success."
+            "description": "Returned on success"
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
@@ -677,7 +780,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Pubkey"
+        ]
       }
     },
     "/reservations": {
@@ -1115,6 +1221,12 @@
           "default": "8000"
         }
       }
+    }
+  ],
+  "tags": [
+    {
+      "description": "Public SSH keys operations",
+      "name": "Pubkey"
     }
   ]
 }
