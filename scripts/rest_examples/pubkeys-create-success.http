@@ -5,6 +5,6 @@ X-Rh-Identity: {{identity}}
 
 {
   "account_id": 1,
-  "name": "lzap-rsa-2010-{{$randomInt}}",
-  "body": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8w6DONv1qn3IdgxSpkYOClq7oe7davWFqKVHPbLoS6+dFInru7gdEO5byhTih6+PwRhHv/b1I+Mtt5MDZ8Sv7XFYpX/3P/u5zQiy1PkMSFSz0brRRUfEQxhXLW97FJa7l+bej2HJDt7f9Gvcj+d/fNWC9Z58/GX11kWk4SIXaKotkN+kWn54xGGS7Zvtm86fP59Srt6wlklSsG8mZBF7jVUjyhAgm/V5gDFb2/6jfiwSb2HyJ9/NbhLkWNdwrvpdGZqQlYhnwTfEZdpwizW/Mj3MxP5O31HN45aE0wog0UeWY4gvTl4Ogb6kescizAM6pCff3RBslbFxLdOO7cR17 lzap+rsakey+{{$randomInt}}@redhat.com"
+  "name": "random-key-{{$randomInt}}",
+  "body": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvquRAb8jVK8k7im+Rsie768LEHgd3BmSureOpjVpgc/EjtZPR2kmt5wVkgufBqsOO9zftUbbN+THhxMi1EKnIqNkTypiaSFqKuKKx/G4Qp4NhYaXBMomlMdSJggM+/Uuves2LWgq+B58X3z0qhRaGMK1S3Dze7jkY/OkYLPHUguLniJ1SZY4xrCeemUUO+TEZisLoE1AH/51cwaOxfFqkM8k+OSPveJ2LDYROgdSMssnKWh0z9yfR9FgUn7d0Jiyjm4d3D4QdLT3TRF3uxTlQ0BBFEq3B94RrP0c/cz9j0oduKNovigDYxkZWudCdg/gg8plK6YXavdzhcHsnB7K3 {{$randomInt}}"
 }

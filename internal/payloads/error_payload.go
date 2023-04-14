@@ -9,38 +9,38 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/go-chi/render"
 	"github.com/rs/zerolog"
 )
 
-// ResponseError is used as a payload for all errors
+// ResponseError is used as a payload for all errors. Use NewResponseError function
+// to create new type to set some fields correctly.
 type ResponseError struct {
 	// HTTP status code
-	HTTPStatusCode int `json:"-"`
+	HTTPStatusCode int `json:"-" yaml:"-"`
 
 	// user facing error message
-	Message string `json:"msg"`
+	Message string `json:"msg,omitempty" yaml:"msg,omitempty"`
 
 	// trace id from context (if provided)
-	TraceId string `json:"trace_id,omitempty"`
+	TraceId string `json:"trace_id,omitempty" yaml:"trace_id"`
 
 	// edge id from context (if provided)
 	EdgeId string `json:"edge_id,omitempty"`
 
 	// full root cause
-	Error string `json:"error"`
+	Error string `json:"error" yaml:"error"`
 
 	// build commit
-	Version string `json:"version"`
+	Version string `json:"version" yaml:"version"`
 
 	// build time
-	BuildTime string `json:"build_time"`
+	BuildTime string `json:"build_time" yaml:"build_time"`
 
 	// environment (prod or stage or ephemeral)
-	Environment string `json:"environment,omitempty"`
+	Environment string `json:"environment,omitempty" yaml:"environment"`
 }
 
 func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
@@ -48,7 +48,7 @@ func (e *ResponseError) Render(_ http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func NewResponseError(ctx context.Context, status int, userMsg string, err error) render.Renderer {
+func NewResponseError(ctx context.Context, status int, userMsg string, err error) *ResponseError {
 	var event *zerolog.Event
 	var strError string
 
@@ -71,28 +71,26 @@ func NewResponseError(ctx context.Context, status int, userMsg string, err error
 		HTTPStatusCode: status,
 		Message:        userMsg,
 		TraceId:        ctxval.TraceId(ctx),
-		EdgeId:         ctxval.EdgeRequestId(ctx),
 		Error:          strError,
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,
-		Environment:    config.Environment(),
 	}
 }
 
-func NewInvalidRequestError(ctx context.Context, message string, err error) render.Renderer {
+func NewInvalidRequestError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Invalid request: %s", message)
 	return NewResponseError(ctx, http.StatusBadRequest, message, err)
 }
 
-func NewWrongArchitectureUserError(ctx context.Context, err error) render.Renderer {
+func NewWrongArchitectureUserError(ctx context.Context, err error) *ResponseError {
 	return NewResponseError(ctx, http.StatusBadRequest, "Image and type architecture mismatch", err)
 }
 
-func NewMissingRequestParameterError(ctx context.Context, message string) render.Renderer {
+func NewMissingRequestParameterError(ctx context.Context, message string) *ResponseError {
 	return NewResponseError(ctx, http.StatusBadRequest, message, nil)
 }
 
-func PubkeyDuplicateError(ctx context.Context, message string, err error) render.Renderer {
+func PubkeyDuplicateError(ctx context.Context, message string, err error) *ResponseError {
 	return NewResponseError(ctx, http.StatusUnprocessableEntity, message, err)
 }
 
@@ -137,7 +135,7 @@ func ImageBuilderHelper(err error) (int, string) {
 	return 0, ""
 }
 
-func NewClientError(ctx context.Context, err error) render.Renderer {
+func NewClientError(ctx context.Context, err error) *ResponseError {
 	if errors.Is(err, clients.UnknownAuthenticationTypeErr) {
 		return NewResponseError(ctx, 500, "Unknown authentication type", err)
 	}
@@ -153,47 +151,47 @@ func NewClientError(ctx context.Context, err error) render.Renderer {
 	return NewResponseError(ctx, 500, "HTTP service returned unknown client error", err)
 }
 
-func NewNotFoundError(ctx context.Context, message string, err error) render.Renderer {
+func NewNotFoundError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Not found: %s", message)
 	return NewResponseError(ctx, http.StatusNotFound, message, err)
 }
 
-func NewEnqueueTaskError(ctx context.Context, message string, err error) render.Renderer {
+func NewEnqueueTaskError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Task enqueue error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)
 }
 
-func NewDAOError(ctx context.Context, message string, err error) render.Renderer {
+func NewDAOError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("DAO error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)
 }
 
-func NewRenderError(ctx context.Context, message string, err error) render.Renderer {
+func NewRenderError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Rendering error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)
 }
 
-func NewURLParsingError(ctx context.Context, message string, err error) render.Renderer {
+func NewURLParsingError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("URL parsing error: %s", message)
 	return NewResponseError(ctx, http.StatusBadRequest, message, err)
 }
 
-func NewStatusError(ctx context.Context, message string, err error) render.Renderer {
+func NewStatusError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Status error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)
 }
 
-func NewAWSError(ctx context.Context, message string, err error) render.Renderer {
+func NewAWSError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("AWS API error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)
 }
 
-func NewAzureError(ctx context.Context, message string, err error) render.Renderer {
+func NewAzureError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Azure API error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)
 }
 
-func NewGCPError(ctx context.Context, message string, err error) render.Renderer {
+func NewGCPError(ctx context.Context, message string, err error) *ResponseError {
 	message = fmt.Sprintf("Google API error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)
 }

@@ -4,7 +4,8 @@ Provisioning backend service for cloud.redhat.com.
 
 Requirements: Go 1.18+
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/RHEnVision/provisioning-backend.svg)](https://pkg.go.dev/github.com/RHEnVision/provisioning-backend)
+* [Go Reference](https://pkg.go.dev/github.com/RHEnVision/provisioning-backend)
+* [OpenAPI Specification](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/RHEnVision/provisioning-backend/main/api/openapi.gen.json)
 
 ## Components
 

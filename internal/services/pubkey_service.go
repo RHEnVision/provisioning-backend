@@ -30,7 +30,8 @@ func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 
 	pkDao := dao.GetPubkeyDao(r.Context())
 
-	err := pkDao.Create(r.Context(), payload.Pubkey)
+	pk := payload.NewModel()
+	err := pkDao.Create(r.Context(), pk)
 	if err != nil {
 		if db.IsPostgresError(err, db.UniqueConstraintErrorCode) != nil {
 			renderError(w, r, payloads.PubkeyDuplicateError(r.Context(), "pubkey with such name or fingerprint already exists for this account", err))
@@ -40,7 +41,7 @@ func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := render.Render(w, r, payloads.NewPubkeyResponse(payload.Pubkey)); err != nil {
+	if err := render.Render(w, r, payloads.NewPubkeyResponse(pk)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render pubkey", err))
 	}
 }
