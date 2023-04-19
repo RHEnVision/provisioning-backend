@@ -120,7 +120,9 @@ type GCPReservation struct {
 	// The ID of the gcp reservation which was created.
 	GCPOperationName string `db:"gcp_operation_name"`
 
-	// The ID of the image from which the instance is created.
+	// The ID of the image from which the instance is created. Can be either UUID
+	// which represents an image-builder compose ID, or Google Image URL which is
+	// passed into the Google API directly.
 	ImageID string `json:"image_id"`
 
 	// Detail information is stored as JSON in DB

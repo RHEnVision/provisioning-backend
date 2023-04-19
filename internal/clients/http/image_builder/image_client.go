@@ -102,14 +102,13 @@ func (c *ibClient) GetAzureImageName(ctx context.Context, composeID string) (str
 
 func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (string, error) {
 	logger := logger(ctx)
-	logger.Trace().Msgf("Getting Name of image %v", composeID)
+	logger.Trace().Str("compose_id", composeID).Msgf("Getting Google image id of compose %s", composeID)
 
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)
 	if err != nil {
 		return "", err
 	}
 
-	logger.Trace().Msg("Verifying GCP type")
 	if imageStatus.Type != UploadTypesGcp {
 		return "", fmt.Errorf("%w: expected image type GCP", http.UnknownImageTypeErr)
 	}
@@ -118,7 +117,11 @@ func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (strin
 		return "", fmt.Errorf("%w: not a GCP status", http.UploadStatusErr)
 	}
 
-	return fmt.Sprintf("projects/%s/global/images/%s", uploadStatus.ProjectId, uploadStatus.ImageName), nil
+	result := fmt.Sprintf("projects/%s/global/images/%s", uploadStatus.ProjectId, uploadStatus.ImageName)
+	logger.Info().Str("compose_id", composeID).Str("ami", result).
+		Msgf("Translated compose ID %s to AMI %s", composeID, result)
+
+	return result, nil
 }
 
 func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {

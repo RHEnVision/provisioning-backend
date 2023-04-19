@@ -4,12 +4,12 @@ Content-Type: application/json
 X-Rh-Identity: {{identity}}
 
 {
-  "name": "gcp-linux-us-east4-a",
-  "zone": "us-east4-a",
+  "name": "gcp-linux-eu-west8-c",
+  "zone": "europe-west8-c",
   "source_id": "3",
-  "image_id": "80967e7f-efef-4eee-85b0-bd4cef4c455d",
+  "image_id": "https://www.googleapis.com/compute/v1/projects/rhel-cloud/global/images/rhel-9-v20230411",
   "amount": 1,
-  "machine_type": "n1-standard-1",
+  "machine_type": "e2-micro",
   "pubkey_id": {{pubkey_id}},
   "poweroff": true
 }

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/preload"
+	"github.com/google/uuid"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -96,21 +97,28 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	// TODO: upload key job if needed
 
 	// Get Image builder client
-	IBClient, ibErr := clients.GetImageBuilderClient(r.Context())
+	ibc, ibErr := clients.GetImageBuilderClient(r.Context())
 	logger.Trace().Msg("Creating IB client")
 	if ibErr != nil {
 		renderError(w, r, payloads.NewClientError(r.Context(), ibErr))
 		return
 	}
 
-	// Get Image Name
-	name, ibErr := IBClient.GetGCPImageName(r.Context(), reservation.ImageID)
-	if ibErr != nil {
-		renderError(w, r, payloads.NewClientError(r.Context(), ibErr))
-		return
-	}
+	// Validate image
+	var name string
+	if _, pErr := uuid.Parse(payload.ImageID); pErr == nil {
+		// Composer-built image
+		name, ibErr = ibc.GetGCPImageName(r.Context(), reservation.ImageID)
+		if ibErr != nil {
+			renderError(w, r, payloads.NewClientError(r.Context(), ibErr))
+			return
+		}
 
-	logger.Trace().Msgf("Image Name is %s", name)
+		logger.Trace().Msgf("Image Name is %s", name)
+	} else {
+		// Treat HTTP(S) URLs like direct image ID (e.g. from https://imagedirectory.cloud)
+		name = payload.ImageID
+	}
 
 	launchJob := worker.Job{
 		Type:      jobs.TypeLaunchInstanceGcp,
