@@ -50,13 +50,13 @@ func ValidatePermissions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	logger.Info().Msgf("Listing permissions.")
-	permissions, err := ec2Client.CheckPermission(r.Context(), authentication)
-	if err != nil {
+	missingPermissions, err := ec2Client.CheckPermission(r.Context(), authentication)
+	if err != nil && missingPermissions == nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "unable to check aws permissions", err))
 		return
 	}
 
-	if err := render.Render(w, r, payloads.NewPermissionsResponse(permissions)); err != nil {
+	if err := render.Render(w, r, payloads.NewPermissionsResponse(missingPermissions)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render missing permissions", err))
 		return
 	}

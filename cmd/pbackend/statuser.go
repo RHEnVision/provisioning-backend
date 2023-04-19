@@ -130,8 +130,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 				Identity:     s.Identity,
 				ResourceType: "Application",
 			}
-			// TODO: check if source is avavliable - WIP
-			sr.Status = kafka.StatusAvaliable
+			sr.Status = kafka.StatusAvailable
 			chSend <- sr
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure.String(), sr.Status.String(), nil)
 
@@ -148,21 +147,28 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 		logger.Trace().Msgf("Checking AWS source availability status %s", s.SourceApplicationID)
 		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAWS.String(), func() error {
 			var err error
+			var permissions []string
 			sr := kafka.SourceResult{
 				ResourceID:   s.SourceApplicationID,
 				Identity:     s.Identity,
 				ResourceType: "Application",
 			}
-			_, err = clients.GetEC2Client(ctx, &s.Authentication, "")
+			ec2Client, err := clients.GetEC2Client(ctx, &s.Authentication, "")
 			if err != nil {
 				sr.Status = kafka.StatusUnavailable
 				sr.Err = err
 				logger.Warn().Err(err).Msg("Could not get aws assumed client")
-				chSend <- sr
 			} else {
-				sr.Status = kafka.StatusAvaliable
-				chSend <- sr
+				sr.Status = kafka.StatusAvailable
+				permissions, err = ec2Client.CheckPermission(ctx, &s.Authentication)
+				if err != nil {
+					sr.Err = err
+					sr.Status = kafka.StatusUnavailable
+					sr.MissingPermissions = permissions
+					logger.Warn().Err(err).Bool("missing_permissions", true).Str("source_id", sr.ResourceID).Msg("AWS permission check failed")
+				}
 			}
+			chSend <- sr
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS.String(), sr.Status.String(), err)
 			return fmt.Errorf("error during check: %w", err)
 		})
@@ -196,7 +202,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 				logger.Warn().Err(err).Msg("Could not list gcp regions")
 				chSend <- sr
 			} else {
-				sr.Status = kafka.StatusAvaliable
+				sr.Status = kafka.StatusAvailable
 				chSend <- sr
 			}
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeGCP.String(), sr.Status.String(), err)
