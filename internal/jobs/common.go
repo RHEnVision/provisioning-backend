@@ -45,6 +45,7 @@ func finishWithSuccess(ctx context.Context, reservationId int64) {
 	// if this was the last step, set the success flag
 	if reservation.Step >= reservation.Steps {
 		logger.Info().Msgf("All jobs executed, marking job as success")
+
 		err = rDao.FinishWithSuccess(ctx, reservationId)
 		if err != nil {
 			logger.Warn().Err(err).Msg("unable to update job status: finish")

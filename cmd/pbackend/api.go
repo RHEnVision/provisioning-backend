@@ -17,6 +17,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
+	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/routes"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
@@ -64,12 +65,13 @@ func api() {
 	// initialize cache
 	cache.Initialize()
 
-	// initialize platform kafka
+	// initialize platform kafka and notifications
 	if config.Kafka.Enabled {
 		err = kafka.InitializeKafkaBroker(ctx)
 		if err != nil {
 			logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
 		}
+		notifications.Initialize(ctx)
 	}
 
 	// initialize background goroutines

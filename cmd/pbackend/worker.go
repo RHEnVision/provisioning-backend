@@ -13,8 +13,10 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
+	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
+	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/go-chi/chi/v5"
@@ -51,6 +53,15 @@ func worker() {
 		log.Fatal().Err(err).Msg("Error initializing database")
 	}
 	defer db.Close()
+
+	// initialize platform kafka and notifications
+	if config.Kafka.Enabled {
+		err = kafka.InitializeKafkaBroker(ctx)
+		if err != nil {
+			logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
+		}
+		notifications.Initialize(ctx)
+	}
 
 	// initialize the job queue
 	err = jq.Initialize(ctx, &logger)

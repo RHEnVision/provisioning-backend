@@ -1,0 +1,17 @@
+POST https://internal.cloud.stage.redhat.com/api/notifications-gw/notifications HTTP/1.1
+cookie: session={{sessionCookie}}
+content-type: application/json
+
+{
+    "version":"v2.0.0",
+    "bundle":"rhel",
+    "application":"image-builder",
+    "event_type":"launch-failed",
+    "timestamp":"2023-04-18T21:07:34.935",
+    "account_id":"{{accountId}}",
+    "org_id":"{{orgId}}",
+    "context":{"some":"context"},
+    "events":[{"payload":{"error":"an error"}}],
+    "recipients":[],
+    "id":"{{uuid}}"
+}

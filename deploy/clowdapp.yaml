@@ -51,6 +51,8 @@ objects:
                 value: ${TELEMETRY_LOGGER_ENABLED}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
+              - name: APP_NOTIFICATIONS_ENABLED
+                value: ${APP_NOTIFICATIONS_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
               - name: AWS_KEY
@@ -138,6 +140,8 @@ objects:
                 value: ${TELEMETRY_LOGGER_ENABLED}
               - name: CLOWDER_ENABLED
                 value: ${CLOWDER_ENABLED}
+              - name: APP_NOTIFICATIONS_ENABLED
+                value: ${APP_NOTIFICATIONS_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
               - name: AWS_KEY
@@ -246,6 +250,8 @@ objects:
                 value: ${CLOWDER_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
+              - name: APP_NOTIFICATIONS_ENABLED
+                value: ${APP_NOTIFICATIONS_ENABLED}  
               - name: AWS_KEY
                 valueFrom:
                   secretKeyRef:
@@ -322,13 +328,48 @@ objects:
           replicas: 3
         - topicName: platform.sources.event-stream
         - topicName: platform.sources.status
+        - topicName: platform.notifications.ingress
       inMemoryDb: true
       dependencies:
         - sources-api
         - sources-superkey-worker
+        - notifications-backend
       optionalDependencies:
         - image-builder
 
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: notifications-ephemeral-data
+    data:
+      ephemeral_data.json: |
+        {
+          "bundles": [
+            {
+              "name": "rhel",
+              "display_name": "Red Hat Enterprise Linux",
+              "applications": [
+                {
+                  "name": "image-builder",
+                  "display_name": "Image Builder",
+                  "event_types": [
+                    {
+                      "name": "launch-success",
+                      "display_name": "Launch Success",
+                      "description": "Triggers an notification when a launch is successful"
+                    },
+                    {
+                      "name": "launch-failed",
+                      "display_name": "Launch Failed",
+                      "description": "Triggers an notification when a launch fails"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+  
   - apiVersion: metrics.console.redhat.com/v1alpha1
     kind: FloorPlan
     metadata:
@@ -452,3 +493,6 @@ parameters:
   - description: Internal queue type (memory/sqs/postgres).
     name: WORKER_QUEUE
     value: "redis"
+  - description: Notification service enabled
+    name: APP_NOTIFICATIONS_ENABLED
+    value: "true"

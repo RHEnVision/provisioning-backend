@@ -7,6 +7,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/rs/zerolog"
@@ -56,15 +57,20 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 	logger.Info().Msg("Started launch instance Azure job")
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "LaunchInstanceAzureJob")
 	defer span.End()
-
+	nc := notifications.GetNotificationClient(ctx)
 	jobErr := DoEnsureAzureResourceGroup(ctx, &args)
 	if jobErr != nil {
 		finishWithError(ctx, args.ReservationID, jobErr)
+		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
 		return
 	}
 
 	jobErr = DoLaunchInstanceAzure(ctx, &args)
-
+	if jobErr != nil {
+		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
+	} else {
+		nc.SuccessfulLaunch(ctx, args.ReservationID)
+	}
 	finishJob(ctx, args.ReservationID, jobErr)
 
 	logger.Info().Msg("Finished launch instance Azure job")
