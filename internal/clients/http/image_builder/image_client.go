@@ -62,14 +62,13 @@ func (c *ibClient) Ready(ctx context.Context) error {
 
 func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
 	logger := logger(ctx)
-	logger.Trace().Msgf("Getting AMI of image %v", composeID)
+	logger.Trace().Str("compose_id", composeID).Msgf("Getting AMI of compose ID %v", composeID)
 
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)
 	if err != nil {
 		return "", err
 	}
 
-	logger.Trace().Msgf("Verifying AWS type")
 	if imageStatus.Type != UploadTypesAws {
 		return "", fmt.Errorf("%w: expected image type AWS", http.UnknownImageTypeErr)
 	}
@@ -77,6 +76,10 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, err
 	if err != nil {
 		return "", fmt.Errorf("%w: not an AWS status", http.UploadStatusErr)
 	}
+
+	logger.Info().Str("compose_id", composeID).Str("ami", uploadStatus.Ami).
+		Msgf("Translated compose ID %s to AMI %s", composeID, uploadStatus.Ami)
+
 	return uploadStatus.Ami, nil
 }
 

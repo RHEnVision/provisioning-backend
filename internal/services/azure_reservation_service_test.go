@@ -36,7 +36,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 	source, err := Clientstubs.AddSource(ctx, models.ProviderTypeAzure)
 	require.NoError(t, err, "failed to generate Azure source")
 
-	t.Run("successful reservation", func(t *testing.T) {
+	t.Run("successful reservation with compose ID", func(t *testing.T) {
 		var err error
 		values := map[string]interface{}{
 			"source_id":     source.Id,
