@@ -10,7 +10,7 @@ type StatusType string
 
 const (
 	StatusUnavailable StatusType = "unavailable"
-	StatusAvaliable   StatusType = "available"
+	StatusAvailable   StatusType = "available"
 )
 
 type SourceResult struct {
@@ -24,6 +24,8 @@ type SourceResult struct {
 	Err error `json:"error"`
 
 	Identity identity.Principal `json:"-"`
+
+	MissingPermissions []string `json:"-"`
 }
 
 func (sr SourceResult) GenericMessage(ctx context.Context) (GenericMessage, error) {

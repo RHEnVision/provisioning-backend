@@ -3,6 +3,7 @@ package ec2
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -14,6 +15,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 )
+
+var AWSPermissionsMissing = errors.New("AWS permissions missing")
 
 // Statement is a main policy element.
 type Statement struct {
@@ -271,7 +274,11 @@ func (c *ec2Client) checkInlinePolicies(ctx context.Context, missingPermissions 
 		Effect: "Allow",
 		Action: missingPermissions,
 	}
-	return listMissingPermissions(inlinePoliciesStatement, missingStatement), nil
+	missing := listMissingPermissions(inlinePoliciesStatement, missingStatement)
+	if len(missingPermissions) != 0 {
+		return missing, fmt.Errorf("%w: %s", AWSPermissionsMissing, strings.Join(missing, ", "))
+	}
+	return nil, nil
 }
 
 func (c *ec2Client) CheckPermission(ctx context.Context, auth *clients.Authentication) ([]string, error) {
