@@ -3,7 +3,6 @@ package services
 import (
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -16,6 +15,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 )
 
 func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
@@ -76,15 +76,17 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var azureImageName string
-	if strings.HasPrefix(payload.ImageID, "composer-api") {
-		// Azure name was provided directly, no need to call image builder
-		azureImageName = payload.ImageID
-	} else {
+	// Azure image IDs are "free form", if it's a UUID we treat it like a compose ID
+	if _, pErr := uuid.Parse(payload.ImageID); pErr == nil {
+		// Composer-built image
 		azureImageName, err = ibClient.GetAzureImageName(r.Context(), payload.ImageID)
 		if err != nil {
 			renderError(w, r, payloads.NewClientError(r.Context(), err))
 			return
 		}
+	} else {
+		// Anything else is treated like a direct Azure image ID (e.g. from https://imagedirectory.cloud)
+		azureImageName = payload.ImageID
 	}
 
 	supportedArch := "x86_64"

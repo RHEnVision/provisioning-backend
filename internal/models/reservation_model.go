@@ -152,7 +152,7 @@ type AzureReservation struct {
 	// Source ID.
 	SourceID string `db:"source_id" json:"source_id"`
 
-	// The ID of the image from which the instance is created.
+	// The image-builder compose ID of the image or valid Azure Image ID from Azure Marketplace.
 	ImageID string `json:"image_id"`
 
 	// Detail information is stored as JSON in DB
