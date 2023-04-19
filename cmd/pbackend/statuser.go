@@ -14,6 +14,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 
@@ -277,6 +278,9 @@ func statuser() {
 	if err != nil {
 		logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
 	}
+
+	// initialize notifications
+	notifications.Initialize(ctx)
 
 	// metrics
 	logger.Info().Msgf("Starting new instance on port %d with prometheus on %d", config.Application.Port, config.Prometheus.Port)

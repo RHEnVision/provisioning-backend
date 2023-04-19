@@ -8,6 +8,7 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
@@ -50,15 +51,21 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 
 	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
 	ctx = logger.WithContext(ctx)
+	nc := notifications.GetNotificationClient(ctx)
 
 	jobErr := DoLaunchInstanceGCP(ctx, &args)
 	if jobErr != nil {
 		finishWithError(ctx, args.ReservationID, jobErr)
+		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
 		return
 	}
 
 	jobErr = FetchInstancesDescriptionGCP(ctx, &args)
-
+	if jobErr != nil {
+		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
+	} else {
+		nc.SuccessfulLaunch(ctx, args.ReservationID)
+	}
 	finishJob(ctx, args.ReservationID, jobErr)
 }
 

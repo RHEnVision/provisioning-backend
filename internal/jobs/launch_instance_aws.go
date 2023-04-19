@@ -10,6 +10,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
@@ -53,19 +54,27 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 
 	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
 	ctx = logger.WithContext(ctx)
+	nc := notifications.GetNotificationClient(ctx)
 
 	jobErr := DoEnsurePubkeyOnAWS(ctx, &args)
 	if jobErr != nil {
 		finishWithError(ctx, args.ReservationID, jobErr)
+		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
 		return
 	}
 
 	jobErr = DoLaunchInstanceAWS(ctx, &args)
 	if jobErr != nil {
 		finishWithError(ctx, args.ReservationID, jobErr)
+		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
 		return
 	}
 	jobErr = FetchInstancesDescriptionAWS(ctx, &args)
+	if jobErr != nil {
+		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
+	} else {
+		nc.SuccessfulLaunch(ctx, args.ReservationID)
+	}
 
 	finishJob(ctx, args.ReservationID, jobErr)
 }

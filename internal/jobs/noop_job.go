@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/rs/zerolog"
 )
@@ -29,8 +30,14 @@ func HandleNoop(ctx context.Context, job *worker.Job) {
 
 	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
 	ctx = logger.WithContext(ctx)
+	nc := notifications.GetNotificationClient(ctx)
 
 	jobErr := DoNoop(ctx, &args)
+	if jobErr != nil {
+		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
+	} else {
+		nc.SuccessfulLaunch(ctx, args.ReservationID)
+	}
 
 	finishJob(ctx, args.ReservationID, jobErr)
 }

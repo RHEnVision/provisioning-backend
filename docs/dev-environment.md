@@ -126,6 +126,12 @@ Tip: Alternatively, the application supports connecting to the stage environment
 
 Because Image Builder is more complex for installation, we do not recommend installing it on your local machine right now. Configure connection through HTTP proxy to the stage environment in `config/api.env`. See [configuration example](../config/api.env.example) for an example, you will need to ask someone from the company for real URLs for the service and the proxy.
 
+## Notifications
+
+[Notifications](https://github.com/RedHatInsights/notifications-backend) service handles notifications across services and allows email templates, webhooks triggering and 3rd party apps integration (i.e slack)
+For local development, you can use [provisioning-compose](https://github.com/RHEnVision/provisioning-compose) to roll up notifications setup.
+When you just want to verify a notification kafka's messages, you can use `send-notification.http` to send a message directly to stage env, please notice that a cookie session is required, [click here](https://internal.console.stage.redhat.com/api/turnpike/session/) to generate one. 
+
 ## Writing Go code
 
 Ready to write some Go code? Read [contributing guide](../CONTRIBUTING.md).
