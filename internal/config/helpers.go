@@ -17,9 +17,19 @@ func InClowder() bool {
 	return clowder.IsClowderEnabled()
 }
 
+// Environment returns clowder environment (stage, prod or ephemeral) or "dev" in case the app
+// is not running in Clowder.
+func Environment() string {
+	if InClowder() && clowder.LoadedConfig != nil && clowder.LoadedConfig.Metadata != nil && clowder.LoadedConfig.Metadata.EnvName != nil {
+		return *clowder.LoadedConfig.Metadata.EnvName
+	}
+
+	return "dev"
+}
+
 // InEphemeralClowder returns true, when the app is running in ephemeral clowder environment.
 func InEphemeralClowder() bool {
-	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "env-ephemeral")
+	return InClowder() && strings.Contains(*clowder.LoadedConfig.Metadata.EnvName, "ephemeral")
 }
 
 func RedisHostAndPort() string {
@@ -28,12 +38,12 @@ func RedisHostAndPort() string {
 
 // InStageClowder returns true, when the app is running in stage clowder environment.
 func InStageClowder() bool {
-	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "stage")
+	return InClowder() && strings.Contains(*clowder.LoadedConfig.Metadata.EnvName, "stage")
 }
 
 // InProdClowder returns true, when the app is running in production clowder environment.
 func InProdClowder() bool {
-	return clowder.IsClowderEnabled() && strings.HasPrefix(*clowder.LoadedConfig.Metadata.EnvName, "prod")
+	return InClowder() && strings.Contains(*clowder.LoadedConfig.Metadata.EnvName, "prod")
 }
 
 // TopicName returns mapped topic from Clowder. When not running in Clowder mode, it returns the input topic name.
