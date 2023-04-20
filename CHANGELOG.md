@@ -1,4 +1,30 @@
 <!-- insertion marker -->
+<a name="0.19.0"></a>
+
+## [0.19.0](https://github.com/RHEnVision/provisioning-backend/compare/0.18.0...0.19.0) (2023-04-14)
+
+### Features
+
+- store Azure instance's IP address ([df8a489](https://github.com/RHEnVision/provisioning-backend/commit/df8a489f4023d78c0a5fb510da5ae4c27418456c))
+- allow Azure group principal in Lighthouse ([18db8e8](https://github.com/RHEnVision/provisioning-backend/commit/18db8e87c7ea137decf1f121574815d006016dff))
+- details of Azure source ([7c681c4](https://github.com/RHEnVision/provisioning-backend/commit/7c681c49d6d4d8b23f207d6d07708bbe128cd3f2))
+- Create Azure VMs in paralel ([e4d146c](https://github.com/RHEnVision/provisioning-backend/commit/e4d146c4e7b1f3d39c13a4cd960c4f4cd5afb281))
+
+### Bug Fixes
+
+- **HMS-1110:** use default region for perm check ([dec69bc](https://github.com/RHEnVision/provisioning-backend/commit/dec69bc2ee3a61dfcef555b32a56038708b50778))
+- **HMS-1105:** measure jobs in seconds ([cf16b81](https://github.com/RHEnVision/provisioning-backend/commit/cf16b8191d4736b5769aad43642672cd953f0161))
+- **HMS-1105:** check for make dashboard target ([c05c618](https://github.com/RHEnVision/provisioning-backend/commit/c05c6181e8d7788a27686456c85545a5a8d88653))
+- **HMS-1105:** improve reservations dashboard ([92428fa](https://github.com/RHEnVision/provisioning-backend/commit/92428faaaca22e8db03858c7e9dd360aca0bae30))
+- **HMS-1105:** add makefile dashboard target ([983b11c](https://github.com/RHEnVision/provisioning-backend/commit/983b11ce9e426491d98138344bbb41c9e6231425))
+- **HMS-1105:** add reservations and jobs to dash ([3e71bf1](https://github.com/RHEnVision/provisioning-backend/commit/3e71bf16387954ad3e51ba1653fbc00e1e8698f7))
+
+### Code Refactoring
+
+- move cache hit metrics into the proper package ([12f1bf3](https://github.com/RHEnVision/provisioning-backend/commit/12f1bf3a5957efbde63ae2f2dac358b1c98ee3f5))
+- remove unused singular CreateVM for Azure ([f26c527](https://github.com/RHEnVision/provisioning-backend/commit/f26c527c85d5ff364390d15e83cc4198e071c983))
+- Create struct for create instances requests ([5e9a849](https://github.com/RHEnVision/provisioning-backend/commit/5e9a849dde52f962148e1045ff9e072a264c457f))
+
 <a name="0.18.0"></a>
 
 ## [0.18.0](https://github.com/RHEnVision/provisioning-backend/compare/0.17.0...0.18.0) (2023-03-22)
