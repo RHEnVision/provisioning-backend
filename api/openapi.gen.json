@@ -398,6 +398,12 @@
           "build_time": {
             "type": "string"
           },
+          "edge_id": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
           "error": {
             "type": "string"
           },
