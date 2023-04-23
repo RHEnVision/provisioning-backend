@@ -912,7 +912,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(provisioning_http_request_total{code=~\"2.*\"}[$__range]))/sum(rate(provisioning_http_request_total[$__range]))",
+          "expr": "sum(rate(api_3scale_gateway_api_status{exported_service=\"provisioning\",status!=\"5xx\"}[$__range]))/sum(rate(api_3scale_gateway_api_status{exported_service=\"provisioning\"}[$__range]))",
           "hide": false,
           "range": true,
           "refId": "A"
@@ -1201,7 +1201,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(provisioning_http_request_duration_ms_bucket{le=\"200\"}[$__range])) / sum(rate(provisioning_http_request_duration_ms_count[$__range]))",
+          "expr": "sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"200\"}[$__range])) / sum(rate(provisioning_http_request_duration_ms_count[$__range]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
