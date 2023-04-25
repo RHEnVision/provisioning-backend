@@ -31,6 +31,8 @@ objects:
           env:
           - name: ENV_FOR_DYNACONF
             value: ${ENV_FOR_DYNACONF}
+          - name: DYNACONF_MAIN__use_beta
+            value: ${USE_BETA}
           - name: IQE_PLUGINS
             value: ${IQE_PLUGINS}
           - name: IQE_MARKER_EXPRESSION
@@ -107,6 +109,8 @@ parameters:
   value: quay.io/cloudservices/iqe-tests:hms-integration
 - name: ENV_FOR_DYNACONF
   value: stage_proxy
+- name: USE_BETA
+  value: "true"
 - name: IQE_PLUGINS
   value: hms_integration
 - name: IQE_MARKER_EXPRESSION
