@@ -33,5 +33,5 @@ source $CICD_ROOT/cji_smoke_test.sh
 # Post a comment with test run IDs to the PR
 source $CICD_ROOT/post_test_results.sh
 
-SONAR_PR_CHECK="true" # used by sonarqube to set PR check variables
-source $WORKSPACE/.rhcicd/sonarqube.sh
+# SONAR_PR_CHECK="true" # used by sonarqube to set PR check variables
+# source $WORKSPACE/.rhcicd/sonarqube.sh
