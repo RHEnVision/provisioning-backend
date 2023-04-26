@@ -87,7 +87,6 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	// Fetch authentication from Sources
 	authentication, err := sourcesClient.GetAuthentication(ctx, sourceId)
 	if err != nil {
-		metrics.IncTotalInvalidAvailabilityCheckReqs()
 		if errors.Is(err, clients.NotFoundErr) {
 			logger.Warn().Err(err).Msg("Not found error from sources")
 			return
@@ -128,10 +127,10 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 				Identity:     s.Identity,
 				ResourceType: "Application",
 			}
-			// TODO: check if source is avavliable - WIP
+			// TODO: https://issues.redhat.com/browse/HMS-1674
 			sr.Status = kafka.StatusAvaliable
 			chSend <- sr
-			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure.String(), sr.Status.String(), nil)
+			metrics.IncSourceAvailabilityCheck(models.ProviderTypeAzure.String(), "ok")
 
 			return fmt.Errorf("error during check: %w", err)
 		})
@@ -157,11 +156,12 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 				sr.Err = err
 				logger.Warn().Err(err).Msg("Could not get aws assumed client")
 				chSend <- sr
+				metrics.IncSourceAvailabilityCheck(models.ProviderTypeAWS.String(), "err")
 			} else {
 				sr.Status = kafka.StatusAvaliable
 				chSend <- sr
+				metrics.IncSourceAvailabilityCheck(models.ProviderTypeAWS.String(), "ok")
 			}
-			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS.String(), sr.Status.String(), err)
 			return fmt.Errorf("error during check: %w", err)
 		})
 	}
@@ -193,11 +193,12 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 				sr.Err = err
 				logger.Warn().Err(err).Msg("Could not list gcp regions")
 				chSend <- sr
+				metrics.IncSourceAvailabilityCheck(models.ProviderTypeGCP.String(), "err")
 			} else {
 				sr.Status = kafka.StatusAvaliable
 				chSend <- sr
+				metrics.IncSourceAvailabilityCheck(models.ProviderTypeGCP.String(), "ok")
 			}
-			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeGCP.String(), sr.Status.String(), err)
 
 			return fmt.Errorf("error during check: %w", err)
 		})

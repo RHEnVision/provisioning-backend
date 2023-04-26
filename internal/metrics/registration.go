@@ -3,7 +3,7 @@ package metrics
 import "github.com/prometheus/client_golang/prometheus"
 
 func RegisterStatuserMetrics() {
-	prometheus.MustRegister(TotalSentAvailabilityCheckReqs, AvailabilityCheckReqsDuration, TotalInvalidAvailabilityCheckReqs, CacheHits)
+	prometheus.MustRegister(SourceAvailabilityCheck, AvailabilityCheckReqsDuration, CacheHits)
 }
 
 func RegisterApiMetrics() {

@@ -7,21 +7,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-var TotalSentAvailabilityCheckReqs = prometheus.NewCounterVec(
+var SourceAvailabilityCheck = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
-		Name:        "provisioning_source_availability_check_request_total",
-		Help:        "availability check requests count partitioned by type (aws/gcp/azure), source status, component and error",
+		Name:        "provisioning_source_availability_check",
+		Help:        "availability check requests count partitioned by type (aws/gcp/azure) and result (ok/err)",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
 	},
-	[]string{"type", "status", "error"},
-)
-
-var TotalInvalidAvailabilityCheckReqs = prometheus.NewCounter(
-	prometheus.CounterOpts{
-		Name:        "provisioning_invalid_source_availability_check_request_total",
-		Help:        "invalid availability check requests count partitioned by component",
-		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
-	},
+	[]string{"type", "result"},
 )
 
 var CacheHits = prometheus.NewCounterVec(prometheus.CounterOpts{
@@ -93,16 +85,10 @@ func ObserveBackgroundJobDuration(jobType string, observedFunc func()) {
 	observedFunc()
 }
 
-func IncTotalSentAvailabilityCheckReqs(provider string, statusType string, err error) {
-	errString := "false"
-	if err != nil {
-		errString = "true"
-	}
-	TotalSentAvailabilityCheckReqs.WithLabelValues(provider, string(statusType), errString).Inc()
-}
-
-func IncTotalInvalidAvailabilityCheckReqs() {
-	TotalInvalidAvailabilityCheckReqs.Inc()
+// IncSourceAvailabilityCheck needs provider type and result ("ok" or "err"). Do not set actual
+// go errors!
+func IncSourceAvailabilityCheck(provider string, result string) {
+	SourceAvailabilityCheck.WithLabelValues(provider, result).Inc()
 }
 
 func IncCacheHit(resource string, result string) {
