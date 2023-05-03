@@ -15,11 +15,17 @@ import (
 	"github.com/go-chi/render"
 )
 
+var ErrMissingNameOrBody = errors.New("name or body missing")
+
 func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 	payload := &payloads.PubkeyRequest{}
 	if err := render.Bind(r, payload); err != nil {
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "create pubkey", err))
 		return
+	}
+
+	if payload.Name == "" || payload.Body == "" {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), ErrMissingNameOrBody.Error(), ErrMissingNameOrBody))
 	}
 
 	pkDao := dao.GetPubkeyDao(r.Context())
