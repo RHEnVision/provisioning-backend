@@ -661,7 +661,7 @@
             "axisLabel": "milliseconds",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "line",
+            "drawStyle": "points",
             "fillOpacity": 36,
             "gradientMode": "scheme",
             "hideFrom": {
@@ -673,8 +673,8 @@
             "lineStyle": {
               "fill": "solid"
             },
-            "lineWidth": 3,
-            "pointSize": 5,
+            "lineWidth": 0,
+            "pointSize": 7,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -746,7 +746,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "red",
+                  "fixedColor": "orange",
                   "mode": "fixed"
                 }
               }
@@ -755,8 +755,8 @@
         ]
       },
       "gridPos": {
-        "h": 9,
-        "w": 19,
+        "h": 13,
+        "w": 24,
         "x": 0,
         "y": 26
       },
@@ -826,7 +826,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 39
       },
       "id": 24,
       "panels": [],
@@ -847,11 +847,13 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Our SLO target",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 0,
           "mappings": [
             {
               "options": {
@@ -864,6 +866,7 @@
             }
           ],
           "max": 1,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -883,16 +886,16 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 5,
+        "w": 7,
         "x": 0,
-        "y": 36
+        "y": 40
       },
       "id": 32,
       "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
@@ -926,6 +929,92 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Our SLO target",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 90
+              },
+              {
+                "color": "green",
+                "value": 95
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 7,
+        "x": 7,
+        "y": 40
+      },
+      "id": 62,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.8",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"200\"}[$__range])) / sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"+Inf\"}[$__range]))",
+          "hide": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP Success Latency 200ms Target",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -946,7 +1035,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "blue",
                 "value": null
               }
             ]
@@ -957,9 +1046,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 5,
-        "x": 5,
-        "y": 36
+        "w": 10,
+        "x": 14,
+        "y": 40
       },
       "id": 41,
       "links": [],
@@ -1020,7 +1109,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1046,13 +1135,13 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "ops"
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "success/sec"
+              "options": "success"
             },
             "properties": [
               {
@@ -1067,10 +1156,10 @@
         ]
       },
       "gridPos": {
-        "h": 7,
-        "w": 14,
+        "h": 8,
+        "w": 24,
         "x": 0,
-        "y": 43
+        "y": 47
       },
       "id": 34,
       "links": [],
@@ -1096,7 +1185,7 @@
           "editorMode": "code",
           "exemplar": true,
           "expr": "(sum(rate(provisioning_http_request_total{code!~\"4.*\"}[$interval])) OR on() vector(0)) - (sum(rate(provisioning_http_request_total{code=~\"5.*\"}[$interval])) OR on() vector(0)) ",
-          "legendFormat": "success/sec",
+          "legendFormat": "success",
           "range": true,
           "refId": "A"
         },
@@ -1109,105 +1198,12 @@
           "exemplar": true,
           "expr": "(sum(rate(provisioning_http_request_total{code=~\"5.*\"}[$interval])) OR on() vector(0))",
           "hide": false,
-          "legendFormat": "errors/sec",
+          "legendFormat": "error",
           "range": true,
           "refId": "B"
         }
       ],
       "title": "HTTP  Throughput Rate",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 11,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 14,
-        "x": 0,
-        "y": 50
-      },
-      "id": 43,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.0.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"200\"}[$__range])) / sum(rate(provisioning_http_request_duration_ms_count[$__range]))",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "HTTP  Request Latency",
       "type": "timeseries"
     },
     {
@@ -1220,7 +1216,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 55
       },
       "id": 26,
       "panels": [],
@@ -1241,11 +1237,13 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "Percentage of source availability checks processed and delivered back to sources.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 0,
           "mappings": [
             {
               "options": {
@@ -1279,14 +1277,14 @@
         "h": 7,
         "w": 5,
         "x": 0,
-        "y": 58
+        "y": 56
       },
       "id": 33,
       "links": [],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
@@ -1309,7 +1307,7 @@
           "refId": "A"
         }
       ],
-      "title": "Source Availability Success Rate",
+      "title": "Source Availability Delivery Rate",
       "type": "stat"
     },
     {
@@ -1337,7 +1335,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1363,13 +1361,28 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "opm"
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "success/sec"
+              "options": "error"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "success"
             },
             "properties": [
               {
@@ -1384,7 +1397,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "success/hour"
+              "options": "total"
             },
             "properties": [
               {
@@ -1400,9 +1413,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 14,
+        "w": 19,
         "x": 5,
-        "y": 58
+        "y": 56
       },
       "id": 42,
       "interval": "1h",
@@ -1429,7 +1442,7 @@
           "editorMode": "code",
           "exemplar": true,
           "expr": "(sum(rate(provisioning_source_availability_check_request_total{error=\"false\"}[$__interval])) OR on() vector(0))",
-          "legendFormat": "success/sec",
+          "legendFormat": "success",
           "range": true,
           "refId": "A"
         },
@@ -1442,9 +1455,22 @@
           "exemplar": true,
           "expr": "(sum(rate(provisioning_source_availability_check_request_total{error=\"true\"}[$__interval])) OR on() vector(0))",
           "hide": false,
-          "legendFormat": "errors/sec",
+          "legendFormat": "error",
           "range": true,
           "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "(sum(rate(provisioning_source_availability_check_request_total[$__interval])) OR on() vector(0))",
+          "hide": false,
+          "legendFormat": "total",
+          "range": true,
+          "refId": "C"
         }
       ],
       "title": "Source Availability Throughput Rate",
@@ -1455,6 +1481,7 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
+      "description": "The latency (p99, p90, p50) for source checks.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1463,35 +1490,39 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "milliseconds",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 11,
-            "gradientMode": "none",
+            "drawStyle": "points",
+            "fillOpacity": 36,
+            "gradientMode": "scheme",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 0,
+            "pointSize": 7,
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "always",
             "spanNulls": false,
             "stacking": {
               "group": "A",
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "line"
             }
           },
           "links": [],
           "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1501,17 +1532,63 @@
               }
             ]
           },
-          "unit": "none"
+          "unit": "ms"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p99"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p95"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p50"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 7,
-        "w": 14,
-        "x": 1,
-        "y": 65
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 63
       },
-      "id": 44,
+      "id": 63,
       "links": [],
       "options": {
         "legend": {
@@ -1534,13 +1611,37 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(rate(provisioning_source_availability_check_request_duration_ms_bucket{le=\"5000\"}[$__range])) / sum(rate(provisioning_source_availability_check_request_duration_ms_count[$__range]))",
-          "legendFormat": "__auto",
+          "expr": "histogram_quantile(0.99, sum(rate(provisioning_source_availability_check_request_duration_ms_bucket[$__interval])) by (le))",
+          "legendFormat": "p99",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum(rate(provisioning_source_availability_check_request_duration_ms_bucket[$__interval]))by (le))",
+          "hide": false,
+          "legendFormat": "p95",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.5, sum(rate(provisioning_source_availability_check_request_duration_ms_bucket[$__interval]))by (le))",
+          "hide": false,
+          "legendFormat": "p50",
+          "range": true,
+          "refId": "C"
         }
       ],
-      "title": "Source Availability Request Latency",
+      "title": "Source Availability Check Latency",
       "type": "timeseries"
     }
   ],
@@ -1574,8 +1675,8 @@
         "auto_min": "10s",
         "current": {
           "selected": false,
-          "text": "1d",
-          "value": "1d"
+          "text": "12h",
+          "value": "12h"
         },
         "hide": 0,
         "name": "interval",
@@ -1601,12 +1702,12 @@
             "value": "6h"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "12h",
             "value": "12h"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "1d",
             "value": "1d"
           },
