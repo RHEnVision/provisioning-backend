@@ -1,4 +1,19 @@
 <!-- insertion marker -->
+<a name="0.20.0"></a>
+
+## [0.20.0](https://github.com/RHEnVision/provisioning-backend/compare/0.19.0...0.20.0) (2023-05-03)
+
+### Bug Fixes
+
+- **HMS-1671:** re-enable sonarcube ([25b0abe](https://github.com/RHEnVision/provisioning-backend/commit/25b0abe04b50e253e9f9ba3bf6cfe08f3f7f4a3e))
+- **HMS-719:** Azure image check ([5d5e207](https://github.com/RHEnVision/provisioning-backend/commit/5d5e207778a114bd51ae87a73272e82f557c6256))
+- **HMS-1567:** insights tags support ([7c71a2e](https://github.com/RHEnVision/provisioning-backend/commit/7c71a2e41cd66ee37b4853a1573842895298bd8d))
+
+### Code Refactoring
+
+- Change metrics according to app-sre notes ([cf3616e](https://github.com/RHEnVision/provisioning-backend/commit/cf3616e0278e5693e4b24b599983185dfffc8d9c))
+- Update permission check for not implemented sources ([4217524](https://github.com/RHEnVision/provisioning-backend/commit/4217524d57861ca006ca29a1a9c98146a7405c00))
+
 <a name="0.19.0"></a>
 
 ## [0.19.0](https://github.com/RHEnVision/provisioning-backend/compare/0.18.0...0.19.0) (2023-04-14)
