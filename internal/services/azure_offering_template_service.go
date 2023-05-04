@@ -22,6 +22,7 @@ func AzureOfferingTemplate(w http.ResponseWriter, r *http.Request) {
 		PrincipalName:              clientName,
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if err := tmpl.Render(r.Context(), w); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "failed to render the Azure template", err))
 		return
