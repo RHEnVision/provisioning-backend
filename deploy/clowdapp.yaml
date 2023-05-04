@@ -360,9 +360,10 @@ parameters:
   - description: OpenTelemetry export into the logger
     name: TELEMETRY_LOGGER_ENABLED
     value: "true"
+  # Turned off as we think Azure Lighthouse does not support it
   - description: Enable compression of the API responses
     name: APP_COMPRESSION
-    value: "true"
+    value: "false"
   - description: Determines Clowder deployment
     name: CLOWDER_ENABLED
     value: "true"
