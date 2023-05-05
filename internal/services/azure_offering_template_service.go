@@ -24,6 +24,8 @@ func AzureOfferingTemplate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Allow", "GET, HEAD, OPTIONS")
+	w.Header().Set("Cache-Control", "no-transform")
+	w.Header().Set("content-security-policy", "default-src 'none'; style-src 'unsafe-inline'; sandbox")
 	if err := tmpl.Render(r.Context(), w); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "failed to render the Azure template", err))
 		return
