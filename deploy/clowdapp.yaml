@@ -219,8 +219,6 @@ objects:
                 value: ${CLOWDER_ENABLED}
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
-              - name: APP_COMPRESSION
-                value: ${APP_COMPRESSION}
               - name: AWS_KEY
                 valueFrom:
                   secretKeyRef:
@@ -359,9 +357,6 @@ parameters:
     value: "true"
   - description: OpenTelemetry export into the logger
     name: TELEMETRY_LOGGER_ENABLED
-    value: "true"
-  - description: Enable compression of the API responses
-    name: APP_COMPRESSION
     value: "true"
   - description: Determines Clowder deployment
     name: CLOWDER_ENABLED

@@ -5,12 +5,10 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/api"
-	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
 	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	s "github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/go-chi/chi/v5"
-	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	redoc "github.com/go-openapi/runtime/middleware"
 	"github.com/rs/zerolog/log"
@@ -27,21 +25,6 @@ func redocMiddleware(handler http.Handler) http.Handler {
 func logETags() {
 	for _, etag := range middleware.AllETags() {
 		log.Logger.Trace().Msgf("Calculated '%s' etag '%s' in %dms", etag.Name, etag.Value, etag.HashTime.Milliseconds())
-	}
-}
-
-// Setup optional compressor, chi uses sync.Pool so this is cheap.
-// This setup only uses the default gzip which is widely supported
-// across the globe, including HTTP proxies which do have problems with
-// modern algorithms like brotli or zstd to this day.
-// This middleware must be inserted after Content-Type header is set.
-func useCompression(r chi.Router) {
-	if config.Application.Compression {
-		compressor := chiMiddleware.NewCompressor(5,
-			"application/json",
-			"application/x-yaml",
-			"text/plain")
-		r.Use(compressor.Handler)
 	}
 }
 
@@ -70,11 +53,8 @@ func MountAPI(r *chi.Mux) {
 	r.Options("/azure_offering_template", s.AzureOfferingTemplate)
 
 	r.Group(func(r chi.Router) {
-		// Set Content-Type to JSON for chi renderer. Warning: Non-chi routes
-		// MUST set Content-Type header on their own!
 		r.Use(render.SetContentType(render.ContentTypeJSON))
 
-		useCompression(r)
 		r.Use(middleware.EnforceIdentity)
 		r.Use(middleware.AccountMiddleware)
 
