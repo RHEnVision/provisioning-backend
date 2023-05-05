@@ -19,7 +19,6 @@ type proxy struct {
 var config struct {
 	App struct {
 		Port           int    `env:"PORT" env-default:"8000" env-description:"HTTP port of the API service"`
-		Compression    bool   `env:"COMPRESSION" env-default:"false" env-description:"HTTP payload compression"`
 		InstancePrefix string `env:"INSTANCE_PREFIX" env-default:"" env-description:"prefix for all VMs names"`
 		Cache          struct {
 			Type       string        `env:"TYPE" env-default:"none" env-description:"application cache (none, memory, redis)"`
