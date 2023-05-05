@@ -67,6 +67,7 @@ func MountAPI(r *chi.Mux) {
 
 	// Please make sure this is not gziped, Azure does not like it
 	r.Get("/azure_offering_template", s.AzureOfferingTemplate)
+	r.Options("/azure_offering_template", s.AzureOfferingTemplate)
 
 	r.Group(func(r chi.Router) {
 		// Set Content-Type to JSON for chi renderer. Warning: Non-chi routes
