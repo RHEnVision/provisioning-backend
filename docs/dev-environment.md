@@ -4,22 +4,17 @@ This document elaborates the main [README](../README.md) into more details.
 
 ## Go
 
-We do recommend to use the [official Go build](https://go.dev/doc/install) in the version that is the minimum required version as specified in the README. Avoid using distributions from Linux package management or MacOS Homebrew because they may carry additional patches and the update pace is different.
+The project Makefile contains a target which downloads required version of Go and required tools. The only prerequisite is any version of Go present on the system. We do recommend to use the [official Go build](https://go.dev/doc/install), just make sure the command `go` is on the `PATH`. To install the required version of go:
 
-The ideal installation location is `~/go`, then just add `~/go/bin` to PATH and restart all terminals. If you choose a different location, make sure to also set GOROOT [environment variable](https://pkg.go.dev/cmd/go#hdr-Environment_variables). There are also other variables available to change specific directories, this can be useful for moving cache or temp directories outside of your home directory and out of your backups.
+    make install-go
 
-Tip: Go installation can be fully done in GoLang preferences, the default installation location is `~/go`.
+This will download `go1.YY.ZZ` into `GOROOT` directory (`~/go` when not specified) and then downloads the Go SDK and unpacks is into the subdirectory. See the official Go documentation on how this works, you can change the GOROOT [environment variable](https://pkg.go.dev/cmd/go#hdr-Environment_variables) in order to use a different directory. There are also other variables available to change specific directories, this can be useful for moving cache or temp directories outside of your home directory and out of your backups.
 
-A great tool is [.envrc](https://direnv.net) which allows automatic switching of Go versions (or any environmental variables or PATH):
+To install required utilities (linter, OpenAPI generator):
 
-```
-$ cat .envrc
-GOVER=1.18
-export GOROOT="$(go$GOVER env GOROOT)"
-PATH_add "$(go$GOVER env GOROOT)/bin"
-export GOBIN="$(pwd)/bin"
-PATH_add "$(pwd)/bin"
-```
+        make install-tools
+
+Utilities are installed into `./bin` subdirectory of the project folder. The specific Go version and the tools from the `bin` directory are used in all targets in the `Makefile`. When using IDE, make sure to use this version of Go and these tools too, or use `make` to perform compilation or run tests.
 
 ## Editor or IDE
 
@@ -32,11 +27,13 @@ Most of our team members use either Jetbrains GoLand, or VSCode. Here are the re
 * Make sure to select the correct Go version in Preferences - Go - GOROOT.
 * You need to set `goimports` import sort style in Preferences - Editor - Code Style - Go, otherwise our CI job (and your `make fmt` target) will complain about it all the time.
 * GoLand comes with batteries included, no other changes or plugins are needed.
+* Make sure to use the correct version of Go and utilities from the `bin` project subdirectory.
 
 **VSCode** recommended settings:
 
 * Install the official Go language plugin and HTTP Client plugin.
 * For the HTTP plugin to work with the provided [HTTP files](../scripts/rest_examples), open up the user settings JSON file and enter the snippet from below (copy variables from `http-client.env.json`).
+* Make sure to use the correct version of Go and utilities from the `bin` project subdirectory.
 
 ```json
 {

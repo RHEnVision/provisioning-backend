@@ -46,7 +46,7 @@ jobs:
         with:
           go-version: "1.18"
       - run: |
-          make test
+          make test GO=go
 
   test-dao:
     name: "🗄 Integration tests"
@@ -87,7 +87,7 @@ jobs:
           DATABASE_PASSWORD: foobar
           DATABASE_NAME: provisioning_test
           WORKER_QUEUE: redis
-        run: make integration-test check-migrations
+        run: make integration-test check-migrations GO=go
 
   openapi:
     name: "🪆 Generated code diff check"
@@ -102,4 +102,4 @@ jobs:
           generator: python
           openapi-file: api/openapi.gen.json
       - run: |
-          make validate
+          make validate GO=go
