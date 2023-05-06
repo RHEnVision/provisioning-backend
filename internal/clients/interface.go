@@ -37,8 +37,10 @@ type ImageBuilder interface {
 	// GetAWSAmi returns related AWS image AMI identifier
 	GetAWSAmi(ctx context.Context, composeID string) (string, error)
 
-	// GetAzureImageName returns name of the Azure image, without the subscription and resource group scope
-	GetAzureImageName(ctx context.Context, composeID string) (string, error)
+	// GetAzureImageID returns partial image id, that is missing the subscription prefix
+	// Full name is /subscriptions/<subscription-id>/resourceGroups/<Group>/providers/Microsoft.Compute/images/<ImageName>
+	// GetAzureImageID returns /resourceGroups/<Group>/providers/Microsoft.Compute/images/<ImageName>
+	GetAzureImageID(ctx context.Context, composeID string) (string, error)
 
 	// GetGCPImageName returns GCP image name
 	GetGCPImageName(ctx context.Context, composeID string) (string, error)

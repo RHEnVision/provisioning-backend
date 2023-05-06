@@ -47,9 +47,7 @@ func (c *client) BeginCreateVM(ctx context.Context, networkInterface *armnetwork
 		return "", err
 	}
 
-	imageID := c.getImageId(ctx, vmParams.ResourceGroupName, vmParams.ImageName)
-
-	vmAzureParams := c.prepareVirtualMachineParameters(vmParams.Location, armcompute.VirtualMachineSizeTypes(vmParams.InstanceType), networkInterface, imageID, vmParams.Pubkey.Body, vmParams.UserData, vmName)
+	vmAzureParams := c.prepareVirtualMachineParameters(vmParams.Location, armcompute.VirtualMachineSizeTypes(vmParams.InstanceType), networkInterface, vmParams.ImageID, vmParams.Pubkey.Body, vmParams.UserData, vmName)
 
 	poller, err := vmClient.BeginCreateOrUpdate(ctx, vmParams.ResourceGroupName, vmName, *vmAzureParams, nil)
 	if err != nil {
@@ -191,10 +189,6 @@ func (c *client) EnsureResourceGroup(ctx context.Context, name string, location 
 	}
 
 	return resp.ResourceGroup.ID, nil
-}
-
-func (c *client) getImageId(ctx context.Context, resourceGroupName string, imageName string) string {
-	return fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/images/%s", c.subscriptionID, resourceGroupName, imageName)
 }
 
 func (c *client) createVirtualNetwork(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.VirtualNetwork, error) {
