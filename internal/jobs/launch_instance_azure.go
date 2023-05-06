@@ -142,7 +142,7 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 	vmParams := clients.AzureInstanceParams{
 		Location:          location,
 		ResourceGroupName: resourceGroupName,
-		ImageName:         args.AzureImageID,
+		ImageID:           args.AzureImageID,
 		Pubkey:            pubkey,
 		InstanceType:      clients.InstanceTypeName(reservation.Detail.InstanceSize),
 		UserData:          userData,

@@ -10,7 +10,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
-	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
@@ -83,24 +82,34 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, err
 	return uploadStatus.Ami, nil
 }
 
-func (c *ibClient) GetAzureImageName(ctx context.Context, composeID string) (string, error) {
+func (c *ibClient) GetAzureImageID(ctx context.Context, composeID string) (string, error) {
 	logger := logger(ctx)
 	logger.Trace().Msgf("Getting Azure ID of image %v", composeID)
 
-	imageStatus, err := c.fetchImageStatus(ctx, composeID)
+	composeStatus, err := c.getComposeStatus(ctx, composeID)
 	if err != nil {
 		return "", err
 	}
 
 	logger.Trace().Msgf("Verifying Azure type")
-	if imageStatus.Type != UploadTypesAzure {
-		return "", fmt.Errorf("%w: expected image type Azure, got %s", http.UnknownImageTypeErr, imageStatus.Type)
+	if composeStatus.ImageStatus.UploadStatus.Type != UploadTypesAzure {
+		return "", fmt.Errorf("%w: expected image type Azure, got %s", http.UnknownImageTypeErr, composeStatus.ImageStatus.UploadStatus.Type)
 	}
-	uploadStatus, err := imageStatus.Options.AsAzureUploadStatus()
+	if len(composeStatus.Request.ImageRequests) < 1 {
+		logger.Error().Msg(http.ImageRequestNotFoundErr.Error())
+		return "", http.ImageRequestNotFoundErr
+	}
+
+	uploadOptions, err := composeStatus.ImageStatus.UploadStatus.Options.AsAzureUploadStatus()
 	if err != nil {
 		return "", fmt.Errorf("%w: not an Azure status", http.UploadStatusErr)
 	}
-	return uploadStatus.ImageName, nil
+
+	azureUploadRequest, err := composeStatus.Request.ImageRequests[0].UploadRequest.Options.AsAzureUploadRequestOptions()
+	if err != nil {
+		return "", fmt.Errorf("failed to decode Azure upload request from IB: %w", err)
+	}
+	return fmt.Sprintf("/resourceGroups/%s/providers/Microsoft.Compute/images/%s", azureUploadRequest.ResourceGroup, uploadOptions.ImageName), nil
 }
 
 func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (string, error) {
@@ -144,16 +153,15 @@ func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*Upl
 	return composeResp, nil
 }
 
-func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadStatus, error) {
+func (c *ibClient) getComposeStatus(ctx context.Context, composeID string) (*ComposeStatus, error) {
 	logger := logger(ctx)
-	logger.Trace().Msgf("Fetching image status %v from composes", composeID)
 
 	composeUUID, err := uuid.Parse(composeID)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse UUID: %w", err)
 	}
 
-	resp, err := c.client.GetComposeStatusWithResponse(ctx, openapi_types.UUID(composeUUID), headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
+	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeUUID, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch image status from image builder")
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
@@ -167,12 +175,24 @@ func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadS
 		return nil, fmt.Errorf("fetch image status call: %w", err)
 	}
 
-	if resp.JSON200.ImageStatus.Status != ImageStatusStatusSuccess {
+	return resp.JSON200, nil
+}
+
+func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadStatus, error) {
+	logger := logger(ctx)
+	logger.Trace().Msgf("Fetching image status %v from composes", composeID)
+
+	composeStatus, err := c.getComposeStatus(ctx, composeID)
+	if err != nil {
+		return nil, err
+	}
+
+	if composeStatus.ImageStatus.Status != ImageStatusStatusSuccess {
 		logger.Warn().Msg("Compose status is not ready")
 		return nil, http.ImageStatusErr
 	}
 
-	return resp.JSON200.ImageStatus.UploadStatus, nil
+	return composeStatus.ImageStatus.UploadStatus, nil
 }
 
 func (c *ibClient) checkClone(ctx context.Context, composeID string) (*UploadStatus, error) {

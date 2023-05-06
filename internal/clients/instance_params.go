@@ -53,8 +53,9 @@ type AzureInstanceParams struct {
 	// ResourceGroupName to launch the instance in
 	ResourceGroupName string
 
-	// ImageName - the imageID will be inferred as /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName}
-	ImageName string
+	// ImageID - the Image ID in format of full Azure ID as
+	// for example /subscriptions/{subscriptionID}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName}
+	ImageID string
 
 	// Pubkey to use for the instance access
 	Pubkey *models.Pubkey

@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -79,14 +80,21 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	// Azure image IDs are "free form", if it's a UUID we treat it like a compose ID
 	if _, pErr := uuid.Parse(payload.ImageID); pErr == nil {
 		// Composer-built image
-		azureImageName, err = ibClient.GetAzureImageName(r.Context(), payload.ImageID)
+		azureImageName, err = ibClient.GetAzureImageID(r.Context(), payload.ImageID)
 		if err != nil {
 			renderError(w, r, payloads.NewClientError(r.Context(), err))
 			return
 		}
+		azureImageName = fmt.Sprintf("/subscriptions/%s%s", authentication.Payload, azureImageName)
 	} else {
-		// Anything else is treated like a direct Azure image ID (e.g. from https://imagedirectory.cloud)
-		azureImageName = payload.ImageID
+		// Format Image ID for image names passed manually in here.
+		// Assumes 'redhat-deployed' resource group.
+		if strings.HasPrefix(payload.ImageID, "composer-api") {
+			azureImageName = fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/images/%s", authentication.Payload, "redhat-deployed", payload.ImageID)
+		} else {
+			// Anything else is treated like a direct Azure image ID (e.g. from https://imagedirectory.cloud)
+			azureImageName = payload.ImageID
+		}
 	}
 
 	supportedArch := "x86_64"

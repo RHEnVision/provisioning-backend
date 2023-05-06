@@ -65,7 +65,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 		assert.Equal(t, 1, len(stub.EnqueuedJobs(ctx)), "Expected exactly one job to be planned")
 		assert.IsType(t, jobs.LaunchInstanceAzureTaskArgs{}, stub.EnqueuedJobs(ctx)[0].Args, "Unexpected type of arguments for the planned job")
 		jobArgs := stub.EnqueuedJobs(ctx)[0].Args.(jobs.LaunchInstanceAzureTaskArgs)
-		assert.Equal(t, "composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7", jobArgs.AzureImageID, "Expected translated image to real name - one from IB client stub")
+		assert.Equal(t, "/subscriptions/4b9d213f-712f-4d17-a483-8a10bbe9df3a/resourceGroups/redhat-deployed/providers/Microsoft.Compute/images/composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7", jobArgs.AzureImageID, "Expected translated image to real name - one from IB client stub")
 	})
 
 	t.Run("failed reservation with invalid location", func(t *testing.T) {
