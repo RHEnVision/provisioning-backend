@@ -2,7 +2,7 @@
 
 .PHONY: generate-spec
 generate-spec: ## Generate OpenAPI spec
-	go run ./cmd/spec
+	$(GO) run ./cmd/spec
 
 .PHONY: validate-spec
 validate-spec: generate-spec ## Compare OpenAPI spec with git

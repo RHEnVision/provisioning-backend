@@ -8,10 +8,10 @@ update-clients: ## Update OpenAPI specs from upstream
 generate-clients: internal/clients/http/image_builder/client.gen.go internal/clients/http/sources/client.gen.go ## Generate HTTP client stubs
 
 internal/clients/http/sources/client.gen.go: config/sources_config.yml config/sources_api.json
-	oapi-codegen -config ./config/sources_config.yml ./config/sources_api.json
+	$(OAPICODEGEN) -config ./config/sources_config.yml ./config/sources_api.json
 
 internal/clients/http/image_builder/client.gen.go: config/ib_config.yaml config/ib_api.yaml
-	oapi-codegen -config ./config/ib_config.yaml ./config/ib_api.yaml
+	$(OAPICODEGEN) -config ./config/ib_config.yaml ./config/ib_api.yaml
 
 .PHONY: validate-clients
 validate-clients: generate-clients ## Compare generated client code with git

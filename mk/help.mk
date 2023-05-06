@@ -29,7 +29,7 @@ validate-help-doc: generate-help-doc ## Compare example configuration
 
 .PHONY: generate-example-config
 generate-example-config: ## Generate example configuration
-	go run cmd/confgen/main.go > config/api.env.example
+	$(GO) run cmd/confgen/main.go > config/api.env.example
 
 .PHONY: validate-example-config
 validate-example-config: generate-example-config ## Compare example configuration

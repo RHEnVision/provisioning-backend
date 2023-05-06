@@ -143,13 +143,19 @@ type AzureUploadRequestOptions struct {
 	// ResourceGroup Name of the resource group where the image should be uploaded.
 	ResourceGroup string `json:"resource_group"`
 
+	// SourceId ID of the source that will be used to resolve the tenant and subscription IDs.
+	// Do not provide a tenant_id or subscription_id when providing a source_id.
+	SourceId *string `json:"source_id,omitempty"`
+
 	// SubscriptionId ID of subscription where the image should be uploaded.
-	SubscriptionId string `json:"subscription_id"`
+	// When providing a subscription_id, also be sure to provide a tenant_id and do not include a source_id.
+	SubscriptionId *string `json:"subscription_id,omitempty"`
 
 	// TenantId ID of the tenant where the image should be uploaded. This link explains how
 	// to find it in the Azure Portal:
 	// https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-how-to-find-tenant
-	TenantId string `json:"tenant_id"`
+	// When providing a tenant_id, also be sure to provide a subscription_id and do not include a source_id.
+	TenantId *string `json:"tenant_id,omitempty"`
 }
 
 // AzureUploadStatus defines model for AzureUploadStatus.
@@ -212,7 +218,8 @@ type ComposeResponse struct {
 
 // ComposeStatus defines model for ComposeStatus.
 type ComposeStatus struct {
-	ImageStatus ImageStatus `json:"image_status"`
+	ImageStatus ImageStatus    `json:"image_status"`
+	Request     ComposeRequest `json:"request"`
 }
 
 // ComposeStatusError defines model for ComposeStatusError.
@@ -242,12 +249,34 @@ type ComposesResponseItem struct {
 	Request   interface{}        `json:"request"`
 }
 
+// CustomRepository Repository configuration for custom repositories.
+// At least one of the 'baseurl', 'mirrorlist', 'metalink' properties must
+// be specified. If more of them are specified, the order of precedence is
+// the same as listed above. Id is required.
+type CustomRepository struct {
+	Baseurl      *[]string `json:"baseurl,omitempty"`
+	CheckGpg     *bool     `json:"check_gpg,omitempty"`
+	CheckRepoGpg *bool     `json:"check_repo_gpg,omitempty"`
+	Enabled      *bool     `json:"enabled,omitempty"`
+	Filename     *string   `json:"filename,omitempty"`
+
+	// Gpgkey GPG key used to sign packages in this repository. Can be a gpg key or a URL
+	Gpgkey     *[]string `json:"gpgkey,omitempty"`
+	Id         string    `json:"id"`
+	Metalink   *string   `json:"metalink,omitempty"`
+	Mirrorlist *string   `json:"mirrorlist,omitempty"`
+	Name       *string   `json:"name,omitempty"`
+	Priority   *int      `json:"priority,omitempty"`
+	SslVerify  *bool     `json:"ssl_verify,omitempty"`
+}
+
 // Customizations defines model for Customizations.
 type Customizations struct {
-	Filesystem          *[]Filesystem `json:"filesystem,omitempty"`
-	Packages            *[]string     `json:"packages,omitempty"`
-	PayloadRepositories *[]Repository `json:"payload_repositories,omitempty"`
-	Subscription        *Subscription `json:"subscription,omitempty"`
+	CustomRepositories  *[]CustomRepository `json:"custom_repositories,omitempty"`
+	Filesystem          *[]Filesystem       `json:"filesystem,omitempty"`
+	Packages            *[]string           `json:"packages,omitempty"`
+	PayloadRepositories *[]Repository       `json:"payload_repositories,omitempty"`
+	Subscription        *Subscription       `json:"subscription,omitempty"`
 
 	// Users list of users that a customer can add, also specifying their respective groups and SSH keys
 	Users *[]User `json:"users,omitempty"`
@@ -384,13 +413,16 @@ type Readiness struct {
 
 // Repository defines model for Repository.
 type Repository struct {
-	Baseurl    *string `json:"baseurl,omitempty"`
-	CheckGpg   *bool   `json:"check_gpg,omitempty"`
-	Gpgkey     *string `json:"gpgkey,omitempty"`
-	IgnoreSsl  *bool   `json:"ignore_ssl,omitempty"`
-	Metalink   *string `json:"metalink,omitempty"`
-	Mirrorlist *string `json:"mirrorlist,omitempty"`
-	Rhsm       bool    `json:"rhsm"`
+	Baseurl  *string `json:"baseurl,omitempty"`
+	CheckGpg *bool   `json:"check_gpg,omitempty"`
+
+	// CheckRepoGpg Enables gpg verification of the repository metadata
+	CheckRepoGpg *bool   `json:"check_repo_gpg,omitempty"`
+	Gpgkey       *string `json:"gpgkey,omitempty"`
+	IgnoreSsl    *bool   `json:"ignore_ssl,omitempty"`
+	Metalink     *string `json:"metalink,omitempty"`
+	Mirrorlist   *string `json:"mirrorlist,omitempty"`
+	Rhsm         bool    `json:"rhsm"`
 }
 
 // Subscription defines model for Subscription.

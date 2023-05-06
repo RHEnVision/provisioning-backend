@@ -2,22 +2,22 @@
 
 .PHONY: format-fmt
 format-fmt:
-	gofmt -l -w -s .
+	$(GOFMT) -l -w -s .
 
 .PHONY: format-fumpt
 format-fumpt:
-	gofumpt -l -w .
+	$(GOFUMPT) -l -w .
 
 .PHONY: format
 format: format-fmt format-fumpt ## Format Go source code using `go fmt`
 
 .PHONY: imports
 imports: ## Rearrange imports using `goimports`
-	goimports -w .
+	$(GOIMPORTS) -w .
 
 .PHONY: lint
 lint: ## Run Go language linter `golangci-lint`
-	golangci-lint run
+	$(GOLINT) run
 
 .PHONY: check-migrations
 check-migrations: ## Check migration files for changes
