@@ -21,6 +21,7 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 			bytesIn, _ := strconv.Atoi(r.Header.Get("Content-Length"))
 			traceId := ctxval.TraceId(r.Context())
 			edgeId := ctxval.EdgeRequestId(r.Context())
+			corrId := ctxval.CorrelationId(r.Context())
 			lctx := rootLogger.With().
 				Timestamp().
 				Str("trace_id", traceId).
@@ -30,6 +31,9 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 				Int("bytes_in", bytesIn)
 			if edgeId != "" {
 				lctx = lctx.Str("request_id", edgeId)
+			}
+			if corrId != "" {
+				lctx = lctx.Str("correlation_id", corrId)
 			}
 			logger := lctx.Logger()
 			t1 := time.Now()
