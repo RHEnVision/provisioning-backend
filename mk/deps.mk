@@ -19,16 +19,8 @@ list-deps: ## List dependencies and their versions
 .PHONY: update-deps
 update-deps: ## Update Go modules to latest versions
 	$(GO) get -u ./...
-	# Needs Go 1.19: https://github.com/jackc/puddle/issues/26
-	$(GO) get github.com/jackc/puddle/v2@v2.0.0
-	# Compile errors with Go 1.18
-	$(GO) get go.opentelemetry.io/contrib@v1.15.0
-	$(GO) get go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp@v0.40.0
-	$(GO) get go.opentelemetry.io/otel@v1.14.0
-	$(GO) get go.opentelemetry.io/otel/exporters/jaeger@v1.14.0
-	$(GO) get go.opentelemetry.io/otel/metric@v0.37.0
-	$(GO) get go.opentelemetry.io/otel/sdk@v1.14.0
-	$(GO) get go.opentelemetry.io/otel/trace@v1.14.0
+	@# Pinned versions:
+	@#$(GO) get github.com/jackc/puddle/v2@v2.0.0
 	$(GO) mod tidy
 
 # alias for download-deps
