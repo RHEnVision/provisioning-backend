@@ -20,6 +20,7 @@ linters:
     - gci # too strict
     - contextcheck # too restrictive
     - gomoddirectives # TODO remove after scany/tern v2 are released
+    - musttag # cache uses JSON for models (Account)
 linters-settings:
   govet:
     check-shadowing: true
