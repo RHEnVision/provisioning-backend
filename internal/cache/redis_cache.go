@@ -1,12 +1,14 @@
 package cache
 
 import (
+	"bytes"
 	"context"
-	"encoding/json"
+	"encoding/gob"
 	"errors"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/redis/go-redis/v9"
 )
@@ -15,7 +17,10 @@ type redisCache struct {
 	client *redis.Client
 }
 
-func NewRedisCache() *redisCache {
+func NewRedisCache() AccountIdCache {
+	// register gob types
+	gob.Register(&models.Account{})
+
 	client := redis.NewClient(&redis.Options{
 		Addr:     config.RedisHostAndPort(),
 		Username: config.Application.Cache.Redis.User,
@@ -43,9 +48,13 @@ func (c *redisCache) FindAccountId(ctx context.Context, OrgID, AccountNumber str
 		return nil, fmt.Errorf("redis bytes conversion error: %w", err)
 	}
 
-	err = json.Unmarshal(buf, &account)
+	dec := gob.NewDecoder(bytes.NewReader(buf))
+
+	err = dec.Decode(&account)
 	if err != nil {
-		return nil, fmt.Errorf("redis unmarshal error: %w", err)
+		// decode error can be thrown if previous cache entry was JSON-encoded, return not found to overwrite it
+		ctxval.Logger(ctx).Warn().Err(err).Bool("cache", true).Msgf("redis cache decode error: %s", err.Error())
+		return nil, NotFound
 	}
 
 	return &account, nil
@@ -54,11 +63,14 @@ func (c *redisCache) FindAccountId(ctx context.Context, OrgID, AccountNumber str
 func (c *redisCache) SetAccountId(ctx context.Context, OrgID, AccountNumber string, account *models.Account) error {
 	key := OrgID + AccountNumber
 
-	buf, err := json.Marshal(account)
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+
+	err := enc.Encode(account)
 	if err != nil {
-		return fmt.Errorf("unable to marshal for Redis cache: %w", err)
+		return fmt.Errorf("unable to encode for Redis cache: %w", err)
 	}
 
-	c.client.Set(ctx, key, string(buf), config.Application.Cache.Expiration)
+	c.client.Set(ctx, key, buf.String(), config.Application.Cache.Expiration)
 	return nil
 }
