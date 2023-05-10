@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/go-toolset:1.18 as build
+FROM registry.access.redhat.com/ubi9/go-toolset:1.19 as build
 USER 0
 RUN mkdir /build
 WORKDIR /build

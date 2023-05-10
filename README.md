@@ -2,8 +2,6 @@
 
 Provisioning backend service for cloud.redhat.com.
 
-Requirements: Go 1.18+
-
 * [Go Reference](https://pkg.go.dev/github.com/RHEnVision/provisioning-backend)
 * [OpenAPI Specification](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/RHEnVision/provisioning-backend/main/api/openapi.gen.json)
 
@@ -15,7 +13,11 @@ Requirements: Go 1.18+
 
 ## Building
 
+Particular version of Go and tools are required for successful build. The `install-go` make target will use already installed version of go to perform `go download` commend to install Go into `$HOME/sdk`.
+
 ```
+make install-go
+make install-tools
 make build
 ```
 

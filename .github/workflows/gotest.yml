@@ -1,9 +1,15 @@
 name: checks
+
 on:
   push:
     branches:
       - main
   pull_request:
+
+env:
+  # this must match the version in mk/0_initial.mk
+  GO_SVR: 1.19.6
+
 jobs:
   commit:
     name: "💾 Commit message"
@@ -30,12 +36,12 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
-          go-version: "1.18"
+          go-version: ${{ env.GO_SVR }}
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
           # https://github.com/golangci/golangci-lint-action/issues/535
-          version: v1.47.3
+          version: v1.52.2
 
   testing:
     name: "📎 Unit tests"
@@ -44,9 +50,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
-          go-version: "1.18"
+          go-version: ${{ env.GO_SVR }}
       - run: |
-          make test GO=go
+          make check-system-go test GO=go
 
   test-dao:
     name: "🗄 Integration tests"
@@ -80,14 +86,14 @@ jobs:
           fetch-depth: 2
       - uses: actions/setup-go@v3
         with:
-          go-version: "1.18"
+          go-version: ${{ env.GO_SVR }}
       - name: "Run tests"
         env:
           DATABASE_USER: postgres
           DATABASE_PASSWORD: foobar
           DATABASE_NAME: provisioning_test
           WORKER_QUEUE: redis
-        run: make integration-test check-migrations GO=go
+        run: make check-system-go integration-test check-migrations GO=go
 
   openapi:
     name: "🪆 Generated code diff check"
@@ -96,10 +102,10 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
-          go-version: "1.18"
+          go-version: ${{ env.GO_SVR }}
       - uses: openapi-generators/openapitools-generator-action@v1
         with:
           generator: python
           openapi-file: api/openapi.gen.json
       - run: |
-          make validate GO=go
+          make check-system-go validate GO=go

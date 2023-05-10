@@ -2,7 +2,7 @@
 
 .PHONY: format-fmt
 format-fmt:
-	$(GOFMT) -l -w -s .
+	$(GO) fmt ./...
 
 .PHONY: format-fumpt
 format-fumpt:
