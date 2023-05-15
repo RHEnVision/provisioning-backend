@@ -104,6 +104,9 @@ type GCPDetail struct {
 	// Amount of instances to provision of type: Instance type.
 	Amount int64 `json:"amount"`
 
+	// UUID of instances created in the same reservation
+	UUID string `json:"uuid"`
+
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff"`
 }

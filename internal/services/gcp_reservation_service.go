@@ -41,11 +41,13 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	resUUID := uuid.New().String()
 	detail := &models.GCPDetail{
 		Zone:        payload.Zone,
 		MachineType: payload.MachineType,
 		Amount:      payload.Amount,
 		PowerOff:    payload.PowerOff,
+		UUID:        resUUID,
 	}
 	reservation := &models.GCPReservation{
 		PubkeyID: payload.PubkeyID,

@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
-	guuid "github.com/google/uuid"
 
 	compute "cloud.google.com/go/compute/apiv1"
 	"cloud.google.com/go/compute/apiv1/computepb"
@@ -102,7 +101,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 	client, err := c.newInstancesClient(ctx)
 	if err != nil {
 		logger.Error().Err(err).Msg("Could not get instances client")
-		return nil, nil, fmt.Errorf("unable to bulk insert instances: %w", err)
+		return nil, nil, fmt.Errorf("unable to get instances client: %w", err)
 	}
 	defer client.Close()
 
@@ -123,7 +122,6 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 		})
 	}
 
-	uuid := guuid.New().String()
 	req := &computepb.BulkInsertInstanceRequest{
 		Project: c.auth.Payload,
 		Zone:    params.Zone,
@@ -133,7 +131,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 			MinCount:    &amount,
 			InstanceProperties: &computepb.InstanceProperties{
 				Labels: map[string]string{
-					"rhhcc-rid": uuid,
+					"rhhcc-rid": params.UUID,
 				},
 				Disks: []*computepb.AttachedDisk{
 					{
@@ -164,41 +162,89 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 		logger.Error().Err(err).Msg("Bulk insert operation failed")
 		return nil, nil, fmt.Errorf("cannot bulk insert instances: %w", err)
 	}
-	if err := op.Wait(ctx); err != nil {
+	if err = op.Wait(ctx); err != nil {
 		logger.Error().Err(err).Msg("Bulk wait operation failed")
 		span.SetStatus(codes.Error, err.Error())
 		return nil, nil, fmt.Errorf("cannot bulk insert instances: %w", err)
-	}
-
-	filter := fmt.Sprintf("labels.rhhcc-rid=%s", uuid)
-	lstReq := &computepb.AggregatedListInstancesRequest{
-		Project: c.auth.Payload,
-		Filter:  &filter,
 	}
 
 	if !op.Done() {
 		return nil, ptr.To(op.Name()), fmt.Errorf("an error occured on operation %s: %w", op.Name(), ErrOperationFailed)
 	}
 
+	ids, err := c.ListInstancesIDsByTag(ctx, params.UUID)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot list instances ids: %w", err)
+	}
+	return ids, ptr.To(op.Name()), nil
+}
+
+func (c *gcpClient) ListInstancesIDsByTag(ctx context.Context, uuid string) ([]*string, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListInstancesIDsByTag")
+	defer span.End()
+
+	logger := logger(ctx)
 	ids := make([]*string, 0)
-	instancesIt := client.AggregatedList(ctx, lstReq)
+	filter := fmt.Sprintf("labels.rhhcc-rid=%v", uuid)
+	lstReq := &computepb.AggregatedListInstancesRequest{
+		Project: c.auth.Payload,
+		Filter:  &filter,
+	}
+
+	client, err := c.newInstancesClient(ctx)
+	if err != nil {
+		logger.Error().Err(err).Msg("Could not get instances client")
+		return nil, fmt.Errorf("unable to get instances client: %w", err)
+	}
+	defer client.Close()
+
+	instances := client.AggregatedList(ctx, lstReq)
+	logger.Trace().Msg("Fetching instance ids")
 	for {
-		pair, err := instancesIt.Next()
+		pair, err := instances.Next()
 		if errors.Is(err, iterator.Done) {
-			logger.Error().Err(err).Msg("Instances iterator has finished")
 			break
 		} else if err != nil {
 			logger.Error().Err(err).Msg("An error occurred during fetching instance ids")
 			span.SetStatus(codes.Error, err.Error())
-			return nil, nil, fmt.Errorf("cannot fetch instance ids: %w", err)
+			return nil, fmt.Errorf("cannot fetch instance ids: %w", err)
 		} else {
-			logger.Trace().Msg("Fetching instance ids")
 			instances := pair.Value.Instances
-			for _, o := range instances {
-				idAsString := strconv.FormatUint(o.GetId(), 10)
+			for _, insta := range instances {
+				idAsString := strconv.FormatUint(insta.GetId(), 10)
 				ids = append(ids, &idAsString)
 			}
 		}
 	}
-	return ids, ptr.To(op.Name()), nil
+	return ids, nil
+}
+
+func (c *gcpClient) GetInstanceDescriptionByID(ctx context.Context, id string) (*clients.InstanceDescription, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetInstanceDescriptionByID")
+	defer span.End()
+
+	logger := logger(ctx)
+
+	client, err := c.newInstancesClient(ctx)
+	if err != nil {
+		logger.Error().Err(err).Msg("Could not get instances client")
+		return nil, fmt.Errorf("unable to get instances client: %w", err)
+	}
+	defer client.Close()
+
+	projectId := c.auth.String()
+
+	instance, err := client.Get(ctx, &computepb.GetInstanceRequest{Instance: id, Project: projectId})
+	if err != nil {
+		return nil, fmt.Errorf("unable to get instance: %w", err)
+	}
+	instanceId := strconv.FormatUint(instance.GetId(), 10)
+	instanceDesc := clients.InstanceDescription{ID: instanceId}
+	for _, n := range instance.NetworkInterfaces {
+		if len(n.AccessConfigs) > 0 && n.AccessConfigs[0] != nil {
+			instanceDesc.PublicIPv4 = *n.AccessConfigs[0].NatIP
+			break
+		}
+	}
+	return &instanceDesc, nil
 }

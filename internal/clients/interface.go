@@ -150,4 +150,8 @@ type GCP interface {
 
 	// InsertInstances launches one or more instances and returns a list of instances ids that were created, the GCP operation name and error
 	InsertInstances(ctx context.Context, params *GCPInstanceParams, amount int64) ([]*string, *string, error)
+
+	ListInstancesIDsByTag(ctx context.Context, uuid string) ([]*string, error)
+
+	GetInstanceDescriptionByID(ctx context.Context, id string) (*InstanceDescription, error)
 }
