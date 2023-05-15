@@ -45,7 +45,7 @@ func Initialize(_ context.Context, logger *zerolog.Logger) error {
 		wk, err := worker.NewRedisWorker(config.RedisHostAndPort(),
 			config.Application.Cache.Redis.User, config.Application.Cache.Redis.Password,
 			config.Application.Cache.Redis.DB, "provisioning-job-queue",
-			config.Worker.PollInterval, config.Worker.MaxThreads)
+			config.Worker.PollInterval, config.Worker.Concurrency)
 		if err != nil {
 			return fmt.Errorf("cannot initialize redis worker queue: %w", err)
 		}

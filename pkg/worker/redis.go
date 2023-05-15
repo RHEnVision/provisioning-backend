@@ -6,7 +6,6 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
-	"runtime"
 	"runtime/debug"
 	"strings"
 	"sync"
@@ -15,7 +14,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-	"github.com/RHEnVision/provisioning-backend/internal/math"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
@@ -37,9 +35,8 @@ type RedisWorker struct {
 
 	// polling and wait groups
 	pollInterval time.Duration
-	numPollers   int
+	concurrency  int
 	loopWG       sync.WaitGroup
-	handleWG     sync.WaitGroup
 
 	// number of in-flight jobs (must be use via atomic functions)
 	inFlight int64
@@ -47,24 +44,23 @@ type RedisWorker struct {
 
 var _ JobWorker = &RedisWorker{}
 
-// NewRedisWorker creates new worker that keeps all jobs in a single queue (list), starts CPU+1 polling
-// goroutines which fetch jobs from the queue and process them in separate goroutines. There is no limit
-// on how many jobs can be processed, use Stats function to track number of in-flight jobs.
-func NewRedisWorker(address, username, password string, db int, queueName string, pollInterval time.Duration, numPollers int) (*RedisWorker, error) {
-	pollers := math.Min(numPollers, runtime.NumCPU()+1)
+// NewRedisWorker creates new worker that keeps all jobs in a single queue (list), starts N polling
+// goroutines which fetch jobs from the queue and process them in the same goroutine. Use the
+// Stats function to track number of in-flight jobs.
+func NewRedisWorker(address, username, password string, db int, queueName string, pollInterval time.Duration, concurrency int) (*RedisWorker, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     address,
 		Username: username,
 		Password: password,
 		DB:       db,
-		PoolSize: pollers + 10, // number of polling goroutines + room for Stats call
+		PoolSize: concurrency + 2, // number of polling goroutines + room for Stats call
 	})
 	return &RedisWorker{
 		handlers:     make(map[JobType]JobHandler),
 		client:       rdb,
 		queueName:    queueName,
 		pollInterval: pollInterval,
-		numPollers:   pollers,
+		concurrency:  concurrency,
 		closeCh:      make(chan interface{}),
 	}, nil
 }
@@ -120,22 +116,24 @@ func (w *RedisWorker) Stop(ctx context.Context) {
 	close(w.closeCh)
 	logger.Info().Msg("Waiting for all workers to finish")
 	w.loopWG.Wait()
-	w.handleWG.Wait()
 	logger.Info().Msg("Done waiting for all workers to finish")
 }
 
 func (w *RedisWorker) DequeueLoop(ctx context.Context) {
 	logger := ctxval.Logger(ctx)
-	logger.Info().Msgf("Starting Redis dequeuer with %d polling goroutines", w.numPollers)
-	for i := 1; i <= w.numPollers; i++ {
+	logger.Info().Msgf("Starting Redis dequeuer with %d polling goroutines", w.concurrency)
+	for i := 1; i <= w.concurrency; i++ {
 		w.loopWG.Add(1)
-		go w.dequeueLoop(ctx, i, w.numPollers)
+		go w.dequeueLoop(ctx, i, w.concurrency)
 	}
 }
 
 func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 	defer w.loopWG.Done()
 	logger := ctxval.Logger(ctx)
+
+	// do not crash the program on fatal errors
+	debug.SetPanicOnFault(true)
 
 	// spread polling intervals
 	delayMs := (int(w.pollInterval.Milliseconds()) / total) * (i - 1)
@@ -169,8 +167,6 @@ func recoverAndLog(ctx context.Context) {
 }
 
 func (w *RedisWorker) fetchJob(ctx context.Context) {
-	// recover from segfault panics for the fetch goroutine
-	debug.SetPanicOnFault(true)
 	defer recoverAndLog(ctx)
 
 	res, err := w.client.BLPop(ctx, w.pollInterval, w.queueName).Result()
@@ -192,17 +188,13 @@ func (w *RedisWorker) fetchJob(ctx context.Context) {
 		logger.Error().Err(err).Msg("Unable to unmarshal job payload, skipping")
 	}
 
-	w.handleWG.Add(1)
 	atomic.AddInt64(&w.inFlight, 1)
-	go w.processJob(ctx, &job)
+	w.processJob(ctx, &job)
 }
 
 func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
-	// recover from segfault panics for the execution goroutine
-	debug.SetPanicOnFault(true)
 	defer recoverAndLog(ctx)
 
-	defer w.handleWG.Done()
 	defer atomic.AddInt64(&w.inFlight, -1)
 	logger := loggerWithJob(ctx, job)
 
