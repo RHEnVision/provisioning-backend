@@ -9,7 +9,10 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 )
+
+const TraceName = telemetry.TracePrefix + "internal/jobs"
 
 var ErrTypeAssertion = errors.New("type assert error")
 

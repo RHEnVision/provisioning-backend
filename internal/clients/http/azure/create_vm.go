@@ -23,8 +23,6 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
-
 const (
 	vnetName              = "redhat-vnet"
 	subnetName            = "redhat-subnet"

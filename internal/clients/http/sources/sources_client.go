@@ -13,11 +13,12 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
 )
 
-const TraceName = "github.com/EnVision/provisioning/internal/clients/http/sources"
+const TraceName = telemetry.TracePrefix + "internal/clients/http/sources"
 
 type sourcesClient struct {
 	client *ClientWithResponses
@@ -79,7 +80,8 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 
 func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*clients.Source, error) {
 	logger := logger(ctx)
-	logger.Trace().Msgf("Listing provisioning sources of provider %s", provider)
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListProvisioningSourcesByProvider")
+	defer span.End()
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
 	if err != nil {
@@ -125,7 +127,8 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 
 func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
 	logger := logger(ctx)
-	logger.Trace().Msg("Listing all provisioning sources")
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListAllProvisioningSources")
+	defer span.End()
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
 	if err != nil {
@@ -162,7 +165,8 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 
 func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.ID) (*clients.Authentication, error) {
 	logger := logger(ctx)
-	logger.Trace().Msgf("Getting authentication from source %s", sourceId)
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetAuthentication")
+	defer span.End()
 
 	// Get all the authentications linked to a specific source
 	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
@@ -264,7 +268,8 @@ func filterSourceAuthentications(authentications []AuthenticationRead) (Authenti
 
 func (c *sourcesClient) GetSourceTypeName(ctx context.Context, sourceTypeID string) (models.ProviderType, error) {
 	logger := logger(ctx)
-	logger.Trace().Msg("Getting source types list from sources")
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetSourceTypeName")
+	defer span.End()
 
 	// Get all the source types
 	resp, err := c.client.ListSourceTypesWithResponse(ctx, &ListSourceTypesParams{}, headers.AddSourcesIdentityHeader)
