@@ -116,7 +116,7 @@ var config struct {
 	Worker struct {
 		Queue        string        `env:"QUEUE" env-default:"memory" env-description:"job worker implementation (memory, redis, sqs, postgres)"`
 		PollInterval time.Duration `env:"POLL_INTERVAL" env-default:"5s" env-description:"polling interval (network timeout)"`
-		MaxThreads   int           `env:"MAX_THREADS" env-default:"64" env-description:"maximum allowed amount of polling goroutines (CPUs + 1)"`
+		Concurrency  int           `env:"CONCURRENCY" env-default:"33" env-description:"amount of worker polling goroutines (effective concurrency)"`
 		Timeout      time.Duration `env:"TIMEOUT" env-default:"30m" env-description:"total timeout for a single job to complete (duration)"`
 	} `env-prefix:"WORKER_"`
 	Unleash struct {
