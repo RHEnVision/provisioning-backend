@@ -99,7 +99,7 @@ jobs:
           go-version: "1.18"
       - uses: openapi-generators/openapitools-generator-action@v1
         with:
-          generator: python
+          generator: python-nextgen
           openapi-file: api/openapi.gen.json
       - run: |
           make validate GO=go
