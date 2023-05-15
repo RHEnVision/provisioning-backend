@@ -1,3 +1,4 @@
+---
 name: checks
 
 on:
@@ -103,5 +104,15 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_SVR }}
-      - run: |
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: bin
+          key: bin-go${{ env.GO_SVR }}-tools-${{ hashFiles('mk/tools.mk') }}
+      - name: Install Go Tools
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: make install-tools GO=go
+      - name: Generate and validate
+        run: |
+          touch config/_config.yaml
           make check-system-go validate GO=go
