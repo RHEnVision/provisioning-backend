@@ -47,6 +47,12 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 	ctx = logger.WithContext(ctx)
 
 	jobErr := DoLaunchInstanceGCP(ctx, &args)
+	if jobErr != nil {
+		finishWithError(ctx, args.ReservationID, jobErr)
+		return
+	}
+
+	jobErr = FetchInstancesDescriptionGCP(ctx, &args)
 
 	finishJob(ctx, args.ReservationID, jobErr)
 }
@@ -92,6 +98,7 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 		Zone:          args.Zone,
 		KeyBody:       pk.Body,
 		StartupScript: string(userData),
+		UUID:          args.Detail.UUID,
 	}
 
 	instances, opName, err := gcpClient.InsertInstances(ctx, params, args.Detail.Amount)
@@ -118,5 +125,34 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 		logger.Info().Str("instance_id", *instanceId).Msgf("Created new instance via GCP reservation %s", *opName)
 	}
 
+	return nil
+}
+
+func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
+	logger := *zerolog.Ctx(ctx)
+	logger.Debug().Msg("Started Fetch Instances Description GCP")
+
+	rDao := dao.GetReservationDao(ctx)
+
+	gcpClient, err := clients.GetGCPClient(ctx, args.ProjectID)
+	if err != nil {
+		return fmt.Errorf("cannot get gcp client: %w", err)
+	}
+	ids, err := gcpClient.ListInstancesIDsByTag(ctx, args.Detail.UUID)
+	if err != nil {
+		return fmt.Errorf("cannot list instances ids by tag: %w", err)
+	}
+
+	for _, id := range ids {
+		instanceDesc, err := gcpClient.GetInstanceDescriptionByID(ctx, *id)
+		if err != nil {
+			return fmt.Errorf("cannot get instance description : %w", err)
+		}
+
+		err = rDao.UpdateReservationInstance(ctx, args.ReservationID, instanceDesc)
+		if err != nil {
+			return fmt.Errorf("cannot update instance description: %w", err)
+		}
+	}
 	return nil
 }

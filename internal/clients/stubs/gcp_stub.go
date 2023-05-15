@@ -59,8 +59,16 @@ func (mock *GCPClientStub) Status(ctx context.Context) error {
 	return nil
 }
 
+func (mock *GCPClientStub) GetInstanceDescriptionByID(ctx context.Context, id string) (*clients.InstanceDescription, error) {
+	return nil, nil
+}
+
 func (mock *GCPClientStub) InsertInstances(ctx context.Context, params *clients.GCPInstanceParams, amount int64) ([]*string, *string, error) {
 	return nil, nil, NotImplementedErr
+}
+
+func (mock *GCPClientStub) ListInstancesIDsByTag(ctx context.Context, uuid string) ([]*string, error) {
+	return nil, nil
 }
 
 func (mock *GCPServiceClientStub) ListMachineTypes(ctx context.Context, zone string) ([]*clients.InstanceType, error) {

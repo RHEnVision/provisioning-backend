@@ -15,6 +15,9 @@ type GCPInstanceParams struct {
 	// InstanceType to launch
 	MachineType string
 
+	// UUID for instance that was created in a reservation
+	UUID string
+
 	// Zone - to deploy into
 	Zone string
 
