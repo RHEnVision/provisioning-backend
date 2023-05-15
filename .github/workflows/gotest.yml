@@ -103,9 +103,5 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_SVR }}
-      - uses: openapi-generators/openapitools-generator-action@v1
-        with:
-          generator: python
-          openapi-file: api/openapi.gen.json
       - run: |
           make check-system-go validate GO=go
