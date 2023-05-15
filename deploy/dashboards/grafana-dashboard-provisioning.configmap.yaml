@@ -1012,13 +1012,13 @@ data:
                       "uid" : "${datasource}"
                    },
                    "editorMode" : "code",
-                   "expr" : "sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"200\"}[$__range])) / sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"+Inf\"}[$__range]))",
+                   "expr" : "sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"500\"}[$__range])) / sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"+Inf\"}[$__range]))",
                    "hide" : false,
                    "range" : true,
                    "refId" : "A"
                 }
              ],
-             "title" : "HTTP Success Latency 200ms Target",
+             "title" : "HTTP Success Latency 500ms Target",
              "type" : "stat"
           },
           {
@@ -1686,8 +1686,8 @@ data:
                 "auto_min" : "10s",
                 "current" : {
                    "selected" : false,
-                   "text" : "12h",
-                   "value" : "12h"
+                   "text" : "1h",
+                   "value" : "1h"
                 },
                 "hide" : 0,
                 "name" : "interval",
@@ -1703,7 +1703,7 @@ data:
                       "value" : "30m"
                    },
                    {
-                      "selected" : false,
+                      "selected" : true,
                       "text" : "1h",
                       "value" : "1h"
                    },
@@ -1713,7 +1713,7 @@ data:
                       "value" : "6h"
                    },
                    {
-                      "selected" : true,
+                      "selected" : false,
                       "text" : "12h",
                       "value" : "12h"
                    },
@@ -1786,7 +1786,7 @@ data:
           ]
        },
        "time" : {
-          "from" : "now-7d",
+          "from" : "now-24h",
           "to" : "now"
        },
        "timepicker" : {
@@ -1817,6 +1817,6 @@ data:
        "timezone" : "",
        "title" : "Provisioning",
        "uid" : "211",
-       "version" : 7,
+       "version" : 1,
        "weekStart" : ""
     }
