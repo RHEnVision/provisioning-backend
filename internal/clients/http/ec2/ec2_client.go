@@ -11,6 +11,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsCfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -24,7 +25,7 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
+const TraceName = telemetry.TracePrefix + "internal/clients/http/ec2"
 
 type ec2Client struct {
 	ec2     *ec2.Client

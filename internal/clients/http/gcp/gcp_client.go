@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	guuid "github.com/google/uuid"
 
 	compute "cloud.google.com/go/compute/apiv1"
@@ -29,7 +30,7 @@ func init() {
 	clients.GetGCPClient = newGCPClient
 }
 
-const TraceName = "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
+const TraceName = telemetry.TracePrefix + "internal/clients/http/gcp"
 
 // GCP SDK does not provide a single client, so only configuration can be shared and
 // clients need to be created and closed in each function.

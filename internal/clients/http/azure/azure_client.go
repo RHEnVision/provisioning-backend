@@ -11,6 +11,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armsubscriptions"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"go.opentelemetry.io/otel"
 )
 
 type client struct {
@@ -116,6 +117,9 @@ func (c *client) newInterfacesClient(ctx context.Context) (*armnetwork.Interface
 }
 
 func (c *client) Status(ctx context.Context) error {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "Status")
+	defer span.End()
+
 	client, err := c.newSubscriptionsClient(ctx)
 	if err != nil {
 		return fmt.Errorf("unable to initialize status request: %w", err)
@@ -128,6 +132,9 @@ func (c *client) Status(ctx context.Context) error {
 }
 
 func (c *client) ListResourceGroups(ctx context.Context) ([]string, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListResourceGroups")
+	defer span.End()
+
 	var list []string
 	rgClient, err := c.newResourceGroupsClient(ctx)
 	if err != nil {
@@ -149,6 +156,9 @@ func (c *client) ListResourceGroups(ctx context.Context) ([]string, error) {
 }
 
 func (c *client) TenantId(ctx context.Context) (string, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "TenantId")
+	defer span.End()
+
 	subClient, err := c.newSubscriptionsClient(ctx)
 	if err != nil {
 		return "", err

@@ -19,13 +19,15 @@ import (
 
 const AppName = "provisioning-backend"
 
+const TracePrefix = AppName + "/"
+
 type Telemetry struct {
 	tracerProvider *trace.TracerProvider
 	propagator     propagation.TextMapPropagator
 }
 
 func Middleware(routes chi.Routes) func(next http.Handler) http.Handler {
-	return otelchi.Middleware(AppName, otelchi.WithChiRoutes(routes))
+	return otelchi.Middleware(AppName, otelchi.WithChiRoutes(routes), otelchi.WithRequestMethodInSpanName(true))
 }
 
 func Initialize(rootLogger *zerolog.Logger) *Telemetry {
@@ -69,9 +71,9 @@ func Initialize(rootLogger *zerolog.Logger) *Telemetry {
 	return &Telemetry{tracerProvider: tp, propagator: propagator}
 }
 
-func (t *Telemetry) Close(ctx context.Context) {
+func (t *Telemetry) Close(_ context.Context) {
 	if t.tracerProvider == nil {
 		return
 	}
-	_ = t.tracerProvider.Shutdown(ctx)
+	_ = t.tracerProvider.Shutdown(context.Background())
 }
