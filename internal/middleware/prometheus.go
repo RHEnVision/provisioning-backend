@@ -14,7 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-var buckets = []float64{100, 200, 500, 5000}
+var buckets = []float64{100, 200, 500, 750, 1000, 2000, 5000}
 
 const (
 	metricNameHttpRequestTotal    = "provisioning_http_request_total"
