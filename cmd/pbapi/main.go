@@ -29,6 +29,9 @@ import (
 	// DAO implementation, must be initialized before any database packages.
 	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
 
+	// set GOMAXPROC to ideal value for Kubernetes
+	_ "go.uber.org/automaxprocs"
+
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"

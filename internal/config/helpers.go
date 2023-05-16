@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"runtime"
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -114,4 +115,7 @@ func DumpConfig(logger zerolog.Logger) {
 		configCopy.Sentry.Dsn = replacement
 	}
 	logger.Info().Msgf("Configuration: %+v", configCopy)
+
+	gmp := runtime.GOMAXPROCS(0)
+	logger.Info().Int("gomaxproc", gmp).Msgf("GOMAXPROC value: %d", gmp)
 }
