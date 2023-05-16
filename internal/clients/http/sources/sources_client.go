@@ -200,7 +200,7 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.
 
 func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
 	appTypeId, err := cache.FindAppTypeId(ctx)
-	if errors.Is(err, cache.NotFound) {
+	if errors.Is(err, cache.ErrNotFound) {
 		appTypeId, err = c.loadAppId(ctx)
 		if err != nil {
 			return "", err

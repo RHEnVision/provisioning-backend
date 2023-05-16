@@ -8,6 +8,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	ucontext "github.com/Unleash/unleash-client-go/v3/context"
 )
@@ -20,8 +21,9 @@ func AccountMiddleware(next http.Handler) http.Handler {
 		logger := ctxval.Logger(r.Context()).With().Str("account_number", accountNumber).
 			Str("org_id", orgID).Logger()
 
-		cachedAccount, err := cache.FindAccountId(r.Context(), orgID, accountNumber)
-		if errors.Is(err, cache.NotFound) {
+		cachedAccount := &models.Account{}
+		err := cache.Find(r.Context(), orgID+accountNumber, cachedAccount)
+		if errors.Is(err, cache.ErrNotFound) {
 			// account not found in cache
 			accDao := dao.GetAccountDao(r.Context())
 
@@ -32,7 +34,7 @@ func AccountMiddleware(next http.Handler) http.Handler {
 				return
 			}
 
-			err = cache.SetAccountId(r.Context(), orgID, accountNumber, cachedAccount)
+			err = cache.Set(r.Context(), orgID+accountNumber, cachedAccount)
 			if err != nil {
 				logger.Error().Err(err).Msg("Unable to store account to cache")
 				http.Error(w, err.Error(), 500)

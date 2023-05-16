@@ -2,9 +2,11 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -65,7 +67,7 @@ func GetAWSAccountIdentity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uploadInfo, err := getAWSUploadInfo(r.Context(), authentication)
+	uploadInfo, err := getAWSAccountDetails(r.Context(), sourceId, authentication)
 	if err != nil {
 		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
@@ -95,12 +97,12 @@ func GetSourceUploadInfo(w http.ResponseWriter, r *http.Request) {
 	payload := payloads.SourceUploadInfoResponse{Provider: models.ProviderTypeAzure.String()}
 	switch authentication.ProviderType {
 	case models.ProviderTypeAWS:
-		if payload.AwsInfo, err = getAWSUploadInfo(r.Context(), authentication); err != nil {
+		if payload.AwsInfo, err = getAWSAccountDetails(r.Context(), sourceId, authentication); err != nil {
 			renderError(w, r, payloads.NewAWSError(r.Context(), "unable to get AWS upload info", err))
 			return
 		}
 	case models.ProviderTypeAzure:
-		if payload.AzureInfo, err = getAzureUploadInfo(r.Context(), authentication); err != nil {
+		if payload.AzureInfo, err = getAzureAccountDetails(r.Context(), sourceId, authentication); err != nil {
 			renderError(w, r, payloads.NewAzureError(r.Context(), "unable to fetch Azure upload info", err))
 			return
 		}
@@ -115,33 +117,63 @@ func GetSourceUploadInfo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getAWSUploadInfo(ctx context.Context, authentication *clients.Authentication) (*clients.AccountDetailsAWS, error) {
-	ec2Client, err := clients.GetEC2Client(ctx, authentication, "")
-	if err != nil {
-		return nil, fmt.Errorf("unable to initialize AWS client: %w", err)
+func getAWSAccountDetails(ctx context.Context, sourceId string, authentication *clients.Authentication) (*clients.AccountDetailsAWS, error) {
+	result := &clients.AccountDetailsAWS{}
+
+	err := cache.Find(ctx, sourceId, result)
+	if errors.Is(err, cache.ErrNotFound) {
+		ec2Client, clientErr := clients.GetEC2Client(ctx, authentication, "")
+		if clientErr != nil {
+			return nil, fmt.Errorf("unable to initialize AWS client: %w", clientErr)
+		}
+
+		result.AccountID, clientErr = ec2Client.GetAccountId(ctx)
+		if clientErr != nil {
+			return nil, fmt.Errorf("unable to get account id: %w", clientErr)
+		}
+
+		clientErr = cache.SetForever(ctx, sourceId, result)
+		if clientErr != nil {
+			return nil, fmt.Errorf("cache set error: %w", clientErr)
+		}
+	} else if err != nil {
+		return nil, fmt.Errorf("cache find error: %w", err)
 	}
 
-	accountId, err := ec2Client.GetAccountId(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("unable to get account id: %w", err)
-	}
-	return &clients.AccountDetailsAWS{AccountID: accountId}, nil
+	return result, nil
 }
 
-func getAzureUploadInfo(ctx context.Context, authentication *clients.Authentication) (*clients.AzureSourceDetail, error) {
+func getAzureAccountDetails(ctx context.Context, sourceId string, authentication *clients.Authentication) (*clients.AccountDetailsAzure, error) {
+	var tenantId clients.AzureTenantId
+
 	azureClient, err := clients.GetAzureClient(ctx, authentication)
 	if err != nil {
 		return nil, fmt.Errorf("unable to initialize Azure client: %w", err)
 	}
 
-	tenantId, err := azureClient.TenantId(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("unable to fetch Tenant ID: %w", err)
+	err = cache.Find(ctx, sourceId, &tenantId)
+	if errors.Is(err, cache.ErrNotFound) {
+		tenantId, err = azureClient.TenantId(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("unable to fetch Tenant ID: %w", err)
+		}
+
+		err = cache.SetForever(ctx, sourceId, &tenantId)
+		if err != nil {
+			return nil, fmt.Errorf("cache set error: %w", err)
+		}
+	} else if err != nil {
+		return nil, fmt.Errorf("cache find error: %w", err)
 	}
+
 	groupList, err := azureClient.ListResourceGroups(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch Resource Group list: %w", err)
 	}
 
-	return &clients.AzureSourceDetail{TenantID: tenantId, SubscriptionID: authentication.Payload, ResourceGroups: groupList}, nil
+	return &clients.AccountDetailsAzure{
+		TenantID:       tenantId,
+		SubscriptionID: authentication.Payload,
+		ResourceGroups: groupList,
+	}, nil
 }

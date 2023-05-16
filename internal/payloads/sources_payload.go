@@ -31,9 +31,9 @@ func NewListSourcesResponse(sourceList []*clients.Source) []render.Renderer {
 }
 
 type SourceUploadInfoResponse struct {
-	Provider  string                     `json:"provider"`
-	AwsInfo   *clients.AccountDetailsAWS `json:"aws" nullable:"true"`
-	AzureInfo *clients.AzureSourceDetail `json:"azure" nullable:"true"`
+	Provider  string                       `json:"provider"`
+	AwsInfo   *clients.AccountDetailsAWS   `json:"aws" nullable:"true"`
+	AzureInfo *clients.AccountDetailsAzure `json:"azure" nullable:"true"`
 }
 
 func (s SourceUploadInfoResponse) Render(_ http.ResponseWriter, _ *http.Request) error {

@@ -155,7 +155,7 @@ func (c *client) ListResourceGroups(ctx context.Context) ([]string, error) {
 	return list, nil
 }
 
-func (c *client) TenantId(ctx context.Context) (string, error) {
+func (c *client) TenantId(ctx context.Context) (clients.AzureTenantId, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "TenantId")
 	defer span.End()
 
@@ -168,5 +168,5 @@ func (c *client) TenantId(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("failed to fetch subscription: %w", err)
 	}
 
-	return *response.TenantID, nil
+	return clients.AzureTenantId(*response.TenantID), nil
 }

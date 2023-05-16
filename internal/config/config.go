@@ -21,7 +21,7 @@ var config struct {
 		Port           int    `env:"PORT" env-default:"8000" env-description:"HTTP port of the API service"`
 		InstancePrefix string `env:"INSTANCE_PREFIX" env-default:"" env-description:"prefix for all VMs names"`
 		Cache          struct {
-			Type       string        `env:"TYPE" env-default:"none" env-description:"application cache (none, memory, redis)"`
+			Type       string        `env:"TYPE" env-default:"none" env-description:"application cache (none, redis)"`
 			Expiration time.Duration `env:"EXPIRATION" env-default:"1h" env-description:"expiration for both memory and Redis (time interval syntax)"`
 			Redis      struct {
 				Host     string `env:"HOST" env-default:"localhost" env-description:"redis hostname"`
