@@ -104,7 +104,7 @@ func (stub *AzureClientStub) EnsureResourceGroup(ctx context.Context, name strin
 	return &id, nil
 }
 
-func (stub *AzureClientStub) TenantId(ctx context.Context) (string, error) {
+func (stub *AzureClientStub) TenantId(ctx context.Context) (clients.AzureTenantId, error) {
 	return "4645f0cb-43f5-4586-b2c9-8d5c58577e3e", nil
 }
 

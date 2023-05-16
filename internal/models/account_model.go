@@ -13,3 +13,7 @@ type Account struct {
 	// EBS account number. Can be NULL but not blank.
 	AccountNumber sql.NullString `db:"account_number"`
 }
+
+func (a Account) CacheKeyName() string {
+	return "account"
+}

@@ -110,7 +110,7 @@ type Azure interface {
 	ClientStatuser
 
 	// TenantId returns current subscription's tenant
-	TenantId(ctx context.Context) (string, error)
+	TenantId(ctx context.Context) (AzureTenantId, error)
 
 	// EnsureResourceGroup makes sure that group with give name exists in a location
 	EnsureResourceGroup(ctx context.Context, name string, location string) (*string, error)
