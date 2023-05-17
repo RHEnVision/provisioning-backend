@@ -30,6 +30,10 @@ check-commits: ## Check commit format
 .PHONY: fmt ## Alias to perform all code formatting and linting
 fmt: format imports lint
 
-.PHONY: check ## Alias to perform all checking (commits, migrations)
+.PHONY: check-fmt ## Reformat the code and check git diff
+check-fmt: format imports
+	git diff --exit-code
+
+.PHONY: check ## Alias to perform commit message and migration checking
 check: check-commits check-migrations
 
