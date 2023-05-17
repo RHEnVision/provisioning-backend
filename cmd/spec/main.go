@@ -33,9 +33,14 @@ func addExamples(gen *APISchemaGen) {
 	gen.addExample("v1.PubkeyRequestExample", PubkeyRequest)
 	gen.addExample("v1.PubkeyResponseExample", PubkeyResponse)
 	gen.addExample("v1.PubkeyListResponseExample", PubkeyListResponse)
+	gen.addExample("v1.SourceListResponseExample", SourceListResponse)
+	gen.addExample("v1.SourceUploadInfoAWSResponse", SourceUploadInfoAWSResponse)
+	gen.addExample("v1.SourceUploadInfoAzureResponse", SourceUploadInfoAzureResponse)
+	gen.addExample("v1.LaunchTemplateListResponse", LaunchTemplateListResponse)
+	gen.addExample("v1.AvailabilityStatusRequest", AvailabilityStatusRequest)
 
-	gen.addExample("v1.ResponseErrorGenericExample", ResponseErrorGenericExample)
-	gen.addExample("v1.ResponseErrorUserFriendlyExample", ResponseErrorUserFriendlyExample)
+	gen.addExample("v1.InstanceTypesAWSResponse", InstanceTypesAWSResponse)
+	gen.addExample("v1.InstanceTypesAzureResponse", InstanceTypesAzureResponse)
 }
 
 // addErrorSchemas all generic errors, that can be returned.
