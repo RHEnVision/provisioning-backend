@@ -1,4 +1,40 @@
 <!-- insertion marker -->
+<a name="0.21.0"></a>
+
+## [0.21.0](https://github.com/RHEnVision/provisioning-backend/compare/summit23a...0.21.0) (2023-05-17)
+
+### Features
+
+- **HMSPROV-449:** Add correlation id to logger and context ([a7d6c6e](https://github.com/RHEnVision/provisioning-backend/commit/a7d6c6e2208ad9e4a393d0464de62424810d6b30))
+
+### Bug Fixes
+
+- **HMS-1784:** set GOMAXPROC for API workers ([dcceb5e](https://github.com/RHEnVision/provisioning-backend/commit/dcceb5ec6813d26e8fef19bfa96934921d0a0438))
+- **HMS-1782:** cap job concurrency at 100 ([19655a6](https://github.com/RHEnVision/provisioning-backend/commit/19655a6b8faa763cf1fe16cc3f722633d8362233))
+- **HMS-1616:** split payload and model for better OpenAPI ([539f62c](https://github.com/RHEnVision/provisioning-backend/commit/539f62c2257da91d1434fafc069e0788d6cbb5e6))
+
+### Code Refactoring
+
+- use Gob encoding for cache ([b31d961](https://github.com/RHEnVision/provisioning-backend/commit/b31d96170b977178f5dc14a6f416a63915feb06d))
+
+<a name="summit23a"></a>
+
+## [summit23a](https://github.com/RHEnVision/provisioning-backend/compare/0.20.0...summit23a) (2023-05-06)
+
+### Features
+
+- Fetch Azure image resource group from IB ([19d1704](https://github.com/RHEnVision/provisioning-backend/commit/19d1704828c8bc514f7f8c49e9fff09c0cc3de68))
+
+### Bug Fixes
+
+- Allow OPTIONS method for Azure template ([db88d24](https://github.com/RHEnVision/provisioning-backend/commit/db88d24fc36b68e7a5fbe6ab3e3c680ba809f424))
+- Disable gzip on Azure Lighthouse template ([74ccf45](https://github.com/RHEnVision/provisioning-backend/commit/74ccf45e75e5e3183ff9244b726516084a38f4de))
+- Allow access from Azure portal ([55b38dd](https://github.com/RHEnVision/provisioning-backend/commit/55b38dd495f7fb82ebf748004c57a8c695cca47f))
+
+### Code Refactoring
+
+- remove compression ([d479702](https://github.com/RHEnVision/provisioning-backend/commit/d479702dfc8f28810b2f14e065bfd12381b10ca1))
+
 <a name="0.20.0"></a>
 
 ## [0.20.0](https://github.com/RHEnVision/provisioning-backend/compare/0.19.0...0.20.0) (2023-05-03)
