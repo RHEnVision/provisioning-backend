@@ -30,14 +30,51 @@ jobs:
           make check-commits
         working-directory: code
 
-  linting:
-    name: "🎯 Code format, imports and style"
+  build:
+    name: "🛠️ Go Build"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_SVR }}
+          cache: true
+      - name: Build all artifacts
+        run: |
+          make check-system-go build GO=go
+
+  lint:
+    name: "🎯 Code format & OpenAPI lint"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_SVR }}
+          # disabled until 'lookup-only' is implemented for setup-go or cache prefix is added
+          cache: false
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: bin
+          key: bin-go${{ env.GO_SVR }}-tools-${{ hashFiles('mk/tools.mk') }}
+      - name: Install Go Tools
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: make install-tools GO=go
+      - name: Generate and validate
+        run: |
+          touch config/_config.yaml
+          make check-system-go check-fmt validate GO=go
+
+  golint:
+    name: "🎯 Go linter"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_SVR }}
+          cache: false
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -52,6 +89,8 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_SVR }}
+          # disabled until 'lookup-only' is implemented for setup-go or cache prefix is added
+          cache: false
       - run: |
           make check-system-go test GO=go
 
@@ -88,6 +127,8 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_SVR }}
+          # disabled until 'lookup-only' is implemented for setup-go or cache prefix is added
+          cache: false
       - name: "Run tests"
         env:
           DATABASE_USER: postgres
@@ -95,24 +136,3 @@ jobs:
           DATABASE_NAME: provisioning_test
           WORKER_QUEUE: redis
         run: make check-system-go integration-test check-migrations GO=go
-
-  openapi:
-    name: "🪆 Generated code diff check"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
-        with:
-          go-version: ${{ env.GO_SVR }}
-      - uses: actions/cache@v3
-        id: cache
-        with:
-          path: bin
-          key: bin-go${{ env.GO_SVR }}-tools-${{ hashFiles('mk/tools.mk') }}
-      - name: Install Go Tools
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: make install-tools GO=go
-      - name: Generate and validate
-        run: |
-          touch config/_config.yaml
-          make check-system-go validate GO=go
