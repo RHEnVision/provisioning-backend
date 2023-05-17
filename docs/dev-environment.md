@@ -126,6 +126,52 @@ Tip: Alternatively, the application supports connecting to the stage environment
 
 Because Image Builder is more complex for installation, we do not recommend installing it on your local machine right now. Configure connection through HTTP proxy to the stage environment in `config/api.env`. See [configuration example](../config/api.env.example) for an example, you will need to ask someone from the company for real URLs for the service and the proxy.
 
+## Containerized environment
+
+A `docker-compose.yml` file helps rolling up the provisioning application, including frontend and other services such as sources locally for development purpose or demo with no extra setup.
+
+Please notice that the compose file use a dedicated dev Dockerfile.dev both for backend and frontend, it uses [CompileDaemon](github.com/githubnemo/CompileDaemon) for live reloading, it watches for changes and re-build using `go build` command when a change occurs, no need to build the container after code changes.
+
+### Install
+A docker or podman (with [podman-compose](https://github.com/containers/podman-compose)) is needed, the folder structure should be:
+```
+.
+├── provisioning-backend
+├── provisioning-frontend
+├── sources-api-go
+└── image-builder-frontend
+```
+
+Edit [app.env](/config/api.env.example) to fit containerized services (i.e db, redis, kafka), these are not exposed directly to your localhost ports.
+
+Run 
+```sh
+$ COMPOSE_PROFILES=migrate docker compose up 
+```
+This command also migrates data to postgres db, using the `migrate` profile.
+
+Alternatively do:
+```sh
+$ COMPOSE_PROFILES=migrate podman-compose up 
+```
+
+
+### Profiles
+A compose profile allows you to run a subset of containers. When no profile is given, 
+the provisioning backend, postgres and redis will run by default.
+
+Currently there are a few profiles:
+- migrate: migrate provisioning backend, terminates after migration
+- kafka: run kafka with zookeeper, register topics
+- frontend: run local provisioning frontend
+- sources: run local sources with postgres db, on first use notice that you will need to run `/script/sources.seed.sh` for seeding your local sources data.
+
+For example, in order to run sources, kafka and frontend profiles, run
+```sh
+# using docker
+$ COMPOSE_PROFILES=frontend,kafka,sources docker compose up 
+```
+
 ## Writing Go code
 
 Ready to write some Go code? Read [contributing guide](../CONTRIBUTING.md).

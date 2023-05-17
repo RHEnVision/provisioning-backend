@@ -1,0 +1,15 @@
+FROM registry.access.redhat.com/ubi9/go-toolset:1.19
+USER 0
+ENV PROJECT_DIR=/backend \
+    GO111MODULE=on \
+    CGO_ENABLED=0
+
+WORKDIR /backend
+RUN mkdir "/build"
+
+COPY . .
+RUN go get github.com/githubnemo/CompileDaemon
+RUN go install github.com/githubnemo/CompileDaemon
+RUN make prep GO=go
+
+ENTRYPOINT $HOME/go/bin/CompileDaemon -build=" go build -o /build/pbackend ./cmd/pbackend" -command="/build/pbackend api"
