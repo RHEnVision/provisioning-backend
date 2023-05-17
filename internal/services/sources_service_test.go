@@ -59,14 +59,12 @@ func TestListSourcesHandler(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-		var result []sources.Source
+		var result []payloads.SourceResponse
 
 		err = json.NewDecoder(rr.Body).Decode(&result)
 		require.NoError(t, err, "failed to decode response body")
 
 		assert.Equal(t, 2, len(result), "expected two result in response json")
-		assert.Equal(t, "1", *result[0].SourceTypeId, "source is of type aws")
-		assert.Equal(t, "1", *result[1].SourceTypeId, "source is of type aws")
 	})
 
 	t.Run("with invalid provider", func(t *testing.T) {
@@ -97,8 +95,8 @@ func TestGetAzureSourceDetails(t *testing.T) {
 
 		rctx := chi.NewRouteContext()
 		ctx = context.WithValue(ctx, chi.RouteCtxKey, rctx)
-		rctx.URLParams.Add("ID", *sourceStub.Id)
-		req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("/api/provisioning/sources/%s/upload_info", *sourceStub.Id), nil)
+		rctx.URLParams.Add("ID", sourceStub.ID)
+		req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("/api/provisioning/sources/%s/upload_info", sourceStub.ID), nil)
 		require.NoError(t, err, "failed to create request")
 
 		rr := httptest.NewRecorder()

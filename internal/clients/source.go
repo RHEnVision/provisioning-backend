@@ -1,18 +1,16 @@
 package clients
 
-type ID = string
-
-// Source defines model for Source.
+// Source defines model for Source. Maps 1:1 to Source Database.
 type Source struct {
 	// ID of the resource
-	Id *ID `json:"id,omitempty"`
+	ID string
 
 	// The name of the source
-	Name *string `json:"name,omitempty"`
+	Name string
 
-	// ID of the resource
-	SourceTypeId *ID `json:"source_type_id,omitempty"`
+	// Source Type ID (number assigned to AWS source or Azure source)
+	SourceTypeID string
 
-	// Unique ID of the inventory source installation
-	Uid *string `json:"uid,omitempty"`
+	// UUID of the inventory source installation
+	Uid string
 }

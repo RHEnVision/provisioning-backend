@@ -8,7 +8,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 )
 
 type sourcesCtxKeyType string
@@ -58,8 +57,8 @@ func getSourcesClientStub(ctx context.Context) (si *SourcesClientStub, err error
 func (stub *SourcesClientStub) addSource(ctx context.Context, provider models.ProviderType) (*clients.Source, error) {
 	id := strconv.Itoa(len(stub.sources) + 2) // starts at 2 as 1 is reserved - TODO migrate users of the implicit id = 1
 	source := &clients.Source{
-		Id:   ptr.To(id),
-		Name: ptr.To("source-" + id),
+		ID:   id,
+		Name: "source-" + id,
 	}
 	switch provider {
 	case models.ProviderTypeAWS:
@@ -83,7 +82,7 @@ func (*SourcesClientStub) Ready(ctx context.Context) error {
 	return nil
 }
 
-func (stub *SourcesClientStub) GetAuthentication(ctx context.Context, sourceId sources.ID) (*clients.Authentication, error) {
+func (stub *SourcesClientStub) GetAuthentication(ctx context.Context, sourceId string) (*clients.Authentication, error) {
 	if sourceId == "1" {
 		return clients.NewAuthentication("arn:aws:iam::230214684733:role/Test", models.ProviderTypeAWS), nil
 	}
@@ -102,16 +101,16 @@ func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (strin
 func (mock *SourcesClientStub) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
 	TestSourceData := []*clients.Source{
 		{
-			Id:           ptr.To("1"),
-			Name:         ptr.To("source1"),
-			SourceTypeId: ptr.To("1"),
-			Uid:          ptr.To("5eebe172-7baa-4280-823f-19e597d091e9"),
+			ID:           "1",
+			Name:         "source1",
+			SourceTypeID: "1",
+			Uid:          "5eebe172-7baa-4280-823f-19e597d091e9",
 		},
 		{
-			Id:           ptr.To("2"),
-			Name:         ptr.To("source2"),
-			SourceTypeId: ptr.To("2"),
-			Uid:          ptr.To("31b5338b-685d-4056-ba39-d00b4d7f19cc"),
+			ID:           "2",
+			Name:         "source2",
+			SourceTypeID: "2",
+			Uid:          "31b5338b-685d-4056-ba39-d00b4d7f19cc",
 		},
 	}
 	return TestSourceData, nil
@@ -120,16 +119,16 @@ func (mock *SourcesClientStub) ListAllProvisioningSources(ctx context.Context) (
 func (mock *SourcesClientStub) ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*clients.Source, error) {
 	TestSourceData := []*clients.Source{
 		{
-			Id:           ptr.To("1"),
-			Name:         ptr.To("source1"),
-			SourceTypeId: ptr.To("1"),
-			Uid:          ptr.To("5eebe172-7baa-4280-823f-19e597d091e9"),
+			ID:           "1",
+			Name:         "source1",
+			SourceTypeID: "1",
+			Uid:          "5eebe172-7baa-4280-823f-19e597d091e9",
 		},
 		{
-			Id:           ptr.To("2"),
-			Name:         ptr.To("source2"),
-			SourceTypeId: ptr.To("1"),
-			Uid:          ptr.To("31b5338b-685d-4056-ba39-d00b4d7f19cc"),
+			ID:           "2",
+			Name:         "source2",
+			SourceTypeID: "1",
+			Uid:          "31b5338b-685d-4056-ba39-d00b4d7f19cc",
 		},
 	}
 	return TestSourceData, nil

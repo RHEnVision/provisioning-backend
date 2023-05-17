@@ -126,8 +126,13 @@ paths:
           $ref: '#/components/responses/InternalError'
   /sources:
     get:
-      description: 'Return list of provisioning sources'
+      description: >
+        Cloud credentials are kept in the sources application. This endpoint lists available
+        sources for the particular account per individual type (AWS, Azure, ...). All the fields
+        in the response are optional and can be omitted if Sources application also omits them.
       operationId: getSourceList
+      tags:
+        - Source
       parameters:
       - name: provider
         in: query
@@ -146,12 +151,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/v1.SourceResponse'
+              examples:
+                example:
+                  $ref: '#/components/examples/v1.SourceListResponseExample'
         '500':
           $ref: "#/components/responses/InternalError"
   /sources/{ID}/account_identity:
     get:
       description: 'This endpoint is deprecated. Please use upload_info instead'
       deprecated: true
+      operationId: getSourceAccountIdentity
+      tags:
+        - Source
       parameters:
       - in: path
         name: ID
@@ -173,7 +184,18 @@ paths:
           $ref: "#/components/responses/InternalError"
   /sources/{ID}/upload_info:
     get:
-      description: 'This endpoint provides all necessary information to upload an image for given Source.'
+      operationId: getSourceUploadInfo
+      tags:
+        - Source
+      description: >
+        Provides all necessary information to upload an image for given Source. Typically, this
+        is account number, subscription ID but some hyperscaler types also provide additional data.
+
+        The response contains "provider" field which can be one of aws, azure or gcp and then exactly
+        one field named "aws", "azure" or "gcp". Enum is not used due to limitation of the language (Go).
+
+        Some types may perform more than one calls (e.g. Azure) so latency might be increased. Caching
+        of static information is performed to improve latency of consequent calls.
       parameters:
         - in: path
           name: ID
@@ -189,14 +211,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/v1.SourceUploadInfoResponse'
+              examples:
+                aws:
+                  $ref: '#/components/examples/v1.SourceUploadInfoAWSResponse'
+                azure:
+                  $ref: '#/components/examples/v1.SourceUploadInfoAzureResponse'
         '404':
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalError"
   /sources/{ID}/instance_types:
     get:
-      description: 'Return a list of instance types (DEPRECATED: use /instance_types)'
+      description: 'Deprecated endpoint, use /instance_types instead.'
+      deprecated: true
       operationId: getInstanceTypeList
+      tags:
+        - Source
       parameters:
         - in: path
           name: ID
@@ -226,8 +256,17 @@ paths:
           $ref: "#/components/responses/InternalError"
   /sources/{ID}/launch_templates:
     get:
-      description: Return a list of launch templates
+      description: >
+        Return a list of launch templates.
+
+        A launch template is a configuration set with a name that is available through hyperscaler
+        API. When creating reservations, launch template can be provided in order to set additional
+        configuration for instances.
+
+        Currently only AWS Launch Templates are supported.
       operationId: getLaunchTemplatesList
+      tags:
+        - Source
       parameters:
         - in: path
           name: ID
@@ -251,6 +290,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/v1.LaunchTemplatesResponse'
+              examples:
+                example:
+                  $ref: '#/components/examples/v1.LaunchTemplateListResponse'
         '404':
           $ref: "#/components/responses/NotFound"
         '500':
@@ -261,6 +303,8 @@ paths:
         Return a list of instance types for particular provider. A region must be provided. A zone must be provided
         for Azure.
       operationId: getInstanceTypeListAll
+      tags:
+        - InstanceType
       parameters:
         - in: path
           name: PROVIDER
@@ -293,6 +337,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/v1.InstanceTypeResponse'
+              examples:
+                aws:
+                  $ref: '#/components/examples/v1.InstanceTypesAWSResponse'
+                azure:
+                  $ref: '#/components/examples/v1.InstanceTypesAzureResponse'
         '404':
           $ref: "#/components/responses/NotFound"
         '500':
@@ -454,6 +503,8 @@ paths:
   /availability_status/sources:
     post:
       operationId: availabilityStatus
+      tags:
+        - AvailabilityStatus
       description: >
         Schedules a background operation of Sources availability check. These checks are
         are performed in separate process at it's own pace. Results are sent via Kafka
@@ -464,6 +515,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/v1.AvailabilityStatusRequest'
+            examples:
+              example:
+                $ref: '#/components/examples/v1.AvailabilityStatusRequest'
         description: availability status request with source id
         required: true
       responses:
@@ -804,6 +858,35 @@ components:
                                 build_time: 2023-04-14_17:15:02
                                 environment: ""
     examples:
+        v1.AvailabilityStatusRequest:
+            value:
+                sourceid: "463243"
+        v1.InstanceTypesAWSResponse:
+            value:
+                - name: c5a.8xlarge
+                  vcpus: 32
+                  cores: 16
+                  memory_mib: 65536
+                  storage_gb: 0
+                  supported: true
+                  arch: x86_64
+                  azure: null
+        v1.InstanceTypesAzureResponse:
+            value:
+                - name: Standard_M128s
+                  vcpus: 128
+                  cores: 64
+                  memory_mib: 2000000
+                  storage_gb: 4096
+                  supported: true
+                  arch: x86_64
+                  azure:
+                    gen_v1: true
+                    gen_v2: true
+        v1.LaunchTemplateListResponse:
+            value:
+                - id: lt-9843797432897342
+                  name: XXL large backend API
         v1.PubkeyListResponseExample:
             value:
                 - id: 1
@@ -824,23 +907,32 @@ components:
                 type: ssh-ed25519
                 fingerprint: gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk=
                 fingerprint_legacy: ee:f1:d4:62:99:ab:17:d9:3b:00:66:62:32:b2:55:9e
-        v1.ResponseErrorGenericExample:
+        v1.SourceListResponseExample:
             value:
-                trace_id: b57f7b78c
-                edgeid: ""
-                error: 'error: this can be pretty long string'
-                version: df8a489
-                build_time: 2023-04-14_17:15:02
-                environment: ""
-        v1.ResponseErrorUserFriendlyExample:
+                - id: "654321"
+                  name: My AWS account
+                  source_type_id: ""
+                  uid: ""
+                - id: "543621"
+                  name: My other AWS account
+                  source_type_id: ""
+                  uid: ""
+        v1.SourceUploadInfoAWSResponse:
             value:
-                msg: vCPU limit reached, contact AWS support
-                trace_id: b57f7b78c
-                edgeid: ""
-                error: 'cannot run instances: cannot run instances: operation error EC2: RunInstances, https response error StatusCode: 400, RequestID: af6e10a0-75c9-47e1-a83c-872494250322, VcpuLimitExceeded: You have requested more vCPU capacity than your current vCPU limit of 128 allows for the instance bucket that the specified instance type belongs to. Please visit http://aws.amazon.com/contact-us/ec2-request to request an adjustment to this limit.'
-                version: df8a489
-                build_time: 2023-04-14_17:15:02
-                environment: ""
+                provider: aws
+                aws:
+                    account_id: "78462784632"
+                azure: null
+        v1.SourceUploadInfoAzureResponse:
+            value:
+                provider: azure
+                aws: null
+                azure:
+                    tenantid: 617807e1-e4e0-481c-983c-be3ce1e49253
+                    subscriptionid: 617807e1-e4e0-4855-983c-1e3ce1e49674
+                    resourcegroups:
+                        - MyGroup 1
+                        - MyGroup 42
 servers:
     - url: http://0.0.0.0:{port}/api/{applicationName}
       description: Local development

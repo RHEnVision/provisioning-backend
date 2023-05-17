@@ -114,8 +114,8 @@ func TestSourcesClient_ListAllProvisioningSources(t *testing.T) {
 	sources, clientErr := client.ListAllProvisioningSources(ctx)
 	assert.NoError(t, clientErr, "Could not list all provisioning sources")
 	assert.Equal(t, 2, len(sources))
-	assert.Equal(t, "1", *sources[0].SourceTypeId)
-	assert.Equal(t, "2", *sources[1].SourceTypeId)
+	assert.Equal(t, "1", sources[0].SourceTypeID)
+	assert.Equal(t, "2", sources[1].SourceTypeID)
 }
 
 func TestSourcesClient_ListProvisioningSourcesByProvider(t *testing.T) {
@@ -152,6 +152,6 @@ func TestSourcesClient_ListProvisioningSourcesByProvider(t *testing.T) {
 		sources, clientErr := client.ListProvisioningSourcesByProvider(ctx, models.ProviderTypeAWS)
 		assert.NoError(t, clientErr, "Could not list all provisioning sources")
 		assert.Equal(t, 1, len(sources))
-		assert.Equal(t, "1", *sources[0].SourceTypeId)
+		assert.Equal(t, "1", sources[0].SourceTypeID)
 	})
 }

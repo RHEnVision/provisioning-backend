@@ -1,6 +1,50 @@
 {
   "components": {
     "examples": {
+      "v1.AvailabilityStatusRequest": {
+        "value": {
+          "sourceid": "463243"
+        }
+      },
+      "v1.InstanceTypesAWSResponse": {
+        "value": [
+          {
+            "arch": "x86_64",
+            "azure": null,
+            "cores": 16,
+            "memory_mib": 65536,
+            "name": "c5a.8xlarge",
+            "storage_gb": 0,
+            "supported": true,
+            "vcpus": 32
+          }
+        ]
+      },
+      "v1.InstanceTypesAzureResponse": {
+        "value": [
+          {
+            "arch": "x86_64",
+            "azure": {
+              "gen_v1": true,
+              "gen_v2": true
+            },
+            "cores": 64,
+            "memory_mib": 2000000,
+            "name": "Standard_M128s",
+            "storage_gb": 4096,
+            "supported": true,
+            "vcpus": 128
+          }
+        ]
+      },
+      "v1.LaunchTemplateListResponse": {
+        "value": [
+          {
+            "id": "lt-9843797432897342",
+            "name": "XXL large backend API"
+          }
+        ]
+      },
       "v1.PubkeyListResponseExample": {
         "value": [
           {
@@ -29,25 +73,43 @@
           "type": "ssh-ed25519"
         }
       },
-      "v1.ResponseErrorGenericExample": {
+      "v1.SourceListResponseExample": {
+        "value": [
+          {
+            "id": "654321",
+            "name": "My AWS account",
+            "source_type_id": "",
+            "uid": ""
+          },
+          {
+            "id": "543621",
+            "name": "My other AWS account",
+            "source_type_id": "",
+            "uid": ""
+          }
+        ]
+      },
+      "v1.SourceUploadInfoAWSResponse": {
         "value": {
-          "build_time": "2023-04-14_17:15:02",
-          "edgeid": "",
-          "environment": "",
-          "error": "error: this can be pretty long string",
-          "trace_id": "b57f7b78c",
-          "version": "df8a489"
+          "aws": {
+            "account_id": "78462784632"
+          },
+          "azure": null,
+          "provider": "aws"
         }
       },
-      "v1.ResponseErrorUserFriendlyExample": {
+      "v1.SourceUploadInfoAzureResponse": {
         "value": {
-          "build_time": "2023-04-14_17:15:02",
-          "edgeid": "",
-          "environment": "",
-          "error": "cannot run instances: cannot run instances: operation error EC2: RunInstances, https response error StatusCode: 400, RequestID: af6e10a0-75c9-47e1-a83c-872494250322, VcpuLimitExceeded: You have requested more vCPU capacity than your current vCPU limit of 128 allows for the instance bucket that the specified instance type belongs to. Please visit http://aws.amazon.com/contact-us/ec2-request to request an adjustment to this limit.",
-          "msg": "vCPU limit reached, contact AWS support",
-          "trace_id": "b57f7b78c",
-          "version": "df8a489"
+          "aws": null,
+          "azure": {
+            "resourcegroups": [
+              "MyGroup 1",
+              "MyGroup 42"
+            ],
+            "subscriptionid": "617807e1-e4e0-4855-983c-1e3ce1e49674",
+            "tenantid": "617807e1-e4e0-481c-983c-be3ce1e49253"
+          },
+          "provider": "azure"
         }
       }
     },
@@ -564,6 +626,11 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "examples": {
+                "example": {
+                  "$ref": "#/components/examples/v1.AvailabilityStatusRequest"
+                }
+              },
               "schema": {
                 "$ref": "#/components/schemas/v1.AvailabilityStatusRequest"
               }
@@ -579,7 +646,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "AvailabilityStatus"
+        ]
       }
     },
     "/instance_types/{PROVIDER}": {
@@ -618,6 +688,14 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "aws": {
+                    "$ref": "#/components/examples/v1.InstanceTypesAWSResponse"
+                  },
+                  "azure": {
+                    "$ref": "#/components/examples/v1.InstanceTypesAzureResponse"
+                  }
+                },
                 "schema": {
                   "items": {
                     "$ref": "#/components/schemas/v1.InstanceTypeResponse"
@@ -634,7 +712,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "InstanceType"
+        ]
       }
     },
     "/pubkeys": {
@@ -1005,7 +1086,7 @@
     },
     "/sources": {
       "get": {
-        "description": "Return list of provisioning sources",
+        "description": "Cloud credentials are kept in the sources application. This endpoint lists available sources for the particular account per individual type (AWS, Azure, ...). All the fields in the response are optional and can be omitted if Sources application also omits them.\n",
         "operationId": "getSourceList",
         "parameters": [
           {
@@ -1025,6 +1106,11 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "example": {
+                    "$ref": "#/components/examples/v1.SourceListResponseExample"
+                  }
+                },
                 "schema": {
                   "items": {
                     "$ref": "#/components/schemas/v1.SourceResponse"
@@ -1038,13 +1124,17 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Source"
+        ]
       }
     },
     "/sources/{ID}/account_identity": {
       "get": {
         "deprecated": true,
         "description": "This endpoint is deprecated. Please use upload_info instead",
+        "operationId": "getSourceAccountIdentity",
         "parameters": [
           {
             "description": "Source ID from Sources Database",
@@ -1074,12 +1164,16 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Source"
+        ]
       }
     },
     "/sources/{ID}/instance_types": {
       "get": {
-        "description": "Return a list of instance types (DEPRECATED: use /instance_types)",
+        "deprecated": true,
+        "description": "Deprecated endpoint, use /instance_types instead.",
         "operationId": "getInstanceTypeList",
         "parameters": [
           {
@@ -1122,12 +1216,15 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Source"
+        ]
       }
     },
     "/sources/{ID}/launch_templates": {
       "get": {
-        "description": "Return a list of launch templates",
+        "description": "Return a list of launch templates.\nA launch template is a configuration set with a name that is available through hyperscaler API. When creating reservations, launch template can be provided in order to set additional configuration for instances.\nCurrently only AWS Launch Templates are supported.\n",
         "operationId": "getLaunchTemplatesList",
         "parameters": [
           {
@@ -1154,6 +1251,11 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "example": {
+                    "$ref": "#/components/examples/v1.LaunchTemplateListResponse"
+                  }
+                },
                 "schema": {
                   "items": {
                     "$ref": "#/components/schemas/v1.LaunchTemplatesResponse"
@@ -1170,12 +1272,16 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Source"
+        ]
       }
     },
     "/sources/{ID}/upload_info": {
       "get": {
-        "description": "This endpoint provides all necessary information to upload an image for given Source.",
+        "description": "Provides all necessary information to upload an image for given Source. Typically, this is account number, subscription ID but some hyperscaler types also provide additional data.\nThe response contains \"provider\" field which can be one of aws, azure or gcp and then exactly one field named \"aws\", \"azure\" or \"gcp\". Enum is not used due to limitation of the language (Go).\nSome types may perform more than one calls (e.g. Azure) so latency might be increased. Caching of static information is performed to improve latency of consequent calls.\n",
+        "operationId": "getSourceUploadInfo",
         "parameters": [
           {
             "description": "Source ID from Sources Database",
@@ -1192,6 +1298,14 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "aws": {
+                    "$ref": "#/components/examples/v1.SourceUploadInfoAWSResponse"
+                  },
+                  "azure": {
+                    "$ref": "#/components/examples/v1.SourceUploadInfoAzureResponse"
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/v1.SourceUploadInfoResponse"
                 }
@@ -1205,7 +1319,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Source"
+        ]
       }
     }
   },

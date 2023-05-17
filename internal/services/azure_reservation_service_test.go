@@ -39,7 +39,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 	t.Run("successful reservation with compose ID", func(t *testing.T) {
 		var err error
 		values := map[string]interface{}{
-			"source_id":     source.Id,
+			"source_id":     source.ID,
 			"image_id":      "92ea98f8-7697-472e-80b1-7454fa0e7fa7",
 			"amount":        1,
 			"instance_size": "Basic_A0",
@@ -71,7 +71,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 	t.Run("failed reservation with invalid location", func(t *testing.T) {
 		var err error
 		values := map[string]interface{}{
-			"source_id":     source.Id,
+			"source_id":     source.ID,
 			"location":      "blank",
 			"image_id":      "92ea98f8-7697-472e-80b1-7454fa0e7fa7",
 			"amount":        1,

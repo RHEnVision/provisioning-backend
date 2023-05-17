@@ -36,7 +36,7 @@ func TestCreateGCPReservationHandler(t *testing.T) {
 	t.Run("successful reservation", func(t *testing.T) {
 		var err error
 		values := map[string]interface{}{
-			"source_id":    source.Id,
+			"source_id":    source.ID,
 			"image_id":     "80967e7f-efef-4eee-85b0-bd4cef4c455d",
 			"amount":       1,
 			"zone":         "us-central1-a",
@@ -64,7 +64,7 @@ func TestCreateGCPReservationHandler(t *testing.T) {
 	t.Run("failed reservation with invalid zone", func(t *testing.T) {
 		var err error
 		values := map[string]interface{}{
-			"source_id":    source.Id,
+			"source_id":    source.ID,
 			"image_id":     "80967e7f-efef-4eee-85b0-bd4cef4c455d",
 			"amount":       1,
 			"zone":         "us-central",

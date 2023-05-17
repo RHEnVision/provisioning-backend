@@ -13,6 +13,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
@@ -113,10 +114,10 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 
 		if sourceTypeName == models.ProviderTypeFromString(provider.String()) {
 			newSrc := clients.Source{
-				Id:           src.Id,
-				Name:         src.Name,
-				SourceTypeId: src.SourceTypeId,
-				Uid:          src.Uid,
+				ID:           ptr.From(src.Id),
+				Name:         ptr.From(src.Name),
+				SourceTypeID: ptr.From(src.SourceTypeId),
+				Uid:          ptr.From(src.Uid),
 			}
 			result = append(result, &newSrc)
 		}
@@ -153,17 +154,17 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 	result := make([]*clients.Source, len(*resp.JSON200.Data))
 	for i, src := range *resp.JSON200.Data {
 		newSrc := clients.Source{
-			Id:           src.Id,
-			Name:         src.Name,
-			SourceTypeId: src.SourceTypeId,
-			Uid:          src.Uid,
+			ID:           ptr.From(src.Id),
+			Name:         ptr.From(src.Name),
+			SourceTypeID: ptr.From(src.SourceTypeId),
+			Uid:          ptr.From(src.Uid),
 		}
 		result[i] = &newSrc
 	}
 	return result, nil
 }
 
-func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId clients.ID) (*clients.Authentication, error) {
+func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) (*clients.Authentication, error) {
 	logger := logger(ctx)
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetAuthentication")
 	defer span.End()
