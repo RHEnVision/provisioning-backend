@@ -23,6 +23,13 @@ update-deps: ## Update Go modules to latest versions
 	@#$(GO) get github.com/jackc/puddle/v2@v2.0.0
 	$(GO) mod tidy
 
-# alias for download-deps
+# aliases
 .PHONY: prep
 prep: download-deps
+
+.PHONY: tidy
+tidy: tidy-deps
+
+.PHONY: bump
+bump: update-deps
+
