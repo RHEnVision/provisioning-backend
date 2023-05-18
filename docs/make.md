@@ -62,7 +62,8 @@ Testing
   integration-test      Run integration tests (require database)
 
 Go commands
-  install-tools         Install required Go commands
+  install-go            Install required Go version
+  install-tools         Install required Go commands into ./bin
   update-tools          Update required Go commands
   generate-changelog    Generate CHANGELOG.md from git history
 
