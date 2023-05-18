@@ -445,8 +445,8 @@ func (c *ec2Client) parseDescribeInstances(respAWS *ec2.DescribeInstancesOutput)
 	for i, instance := range instances {
 		list[i] = &clients.InstanceDescription{
 			ID:         *instance.InstanceId,
-			PublicIPv4: *instance.PublicIpAddress,
-			PublicDNS:  *instance.PublicDnsName,
+			PublicIPv4: ptr.FromOrEmpty(instance.PublicIpAddress),
+			PublicDNS:  ptr.FromOrEmpty(instance.PublicDnsName),
 		}
 	}
 	return list, nil
