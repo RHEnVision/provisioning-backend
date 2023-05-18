@@ -18,3 +18,12 @@ func From[T any](ref *T) (value T) {
 	}
 	return
 }
+
+func FromOrEmpty[T any](ref *T) (value T) {
+	if ref != nil {
+		value = *ref
+	} else {
+		value = *new(T)
+	}
+	return
+}
