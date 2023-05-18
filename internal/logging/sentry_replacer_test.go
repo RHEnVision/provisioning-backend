@@ -69,3 +69,10 @@ func TestARNSplit(t *testing.T) {
 	_, _ = repl.Write([]byte("4328974392798432:role/my-role-123\n"))
 	require.Equal(t, "?\n", buf.String())
 }
+
+func TestIPv4(t *testing.T) {
+	buf := bytes.NewBufferString("")
+	repl := NewSentryReplacer(buf)
+	_, _ = repl.Write([]byte("read tcp 10.128.24.14:42094->10.0.217.126:6379: i/o timeout\n"))
+	require.Equal(t, "read tcp ?->?: i/o timeout\n", buf.String())
+}
