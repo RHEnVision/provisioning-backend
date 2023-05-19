@@ -94,7 +94,7 @@ func GetSourceUploadInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload := payloads.SourceUploadInfoResponse{Provider: models.ProviderTypeAzure.String()}
+	payload := payloads.SourceUploadInfoResponse{Provider: authentication.ProviderType.String()}
 	switch authentication.ProviderType {
 	case models.ProviderTypeAWS:
 		if payload.AwsInfo, err = getAWSAccountDetails(r.Context(), sourceId, authentication); err != nil {

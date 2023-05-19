@@ -118,12 +118,13 @@ func Find(ctx context.Context, key string, value Cacheable) error {
 	err = dec.Decode(value)
 	if err != nil {
 		// decode error can be thrown if previous cache entry was JSON-encoded, return not found to overwrite it
-		ctxval.Logger(ctx).Warn().Err(err).Bool("cache", true).Msgf("redis cache decode error: %s", err.Error())
+		ctxval.Logger(ctx).Warn().Err(err).Bool("cache", true).Msgf("Redis cache decode error: %s", err.Error())
 		metrics.IncCacheHit(prefix, "err")
 		return ErrNotFound
 	}
 
 	metrics.IncCacheHit(prefix, "hit")
+	ctxval.Logger(ctx).Trace().Bool("cache", true).Msgf("Cache hit for key '%s' type %T", key, value)
 	return nil
 }
 
