@@ -5,7 +5,7 @@ WORKDIR /build
 COPY . .
 RUN make prep build strip GO=go
 
-FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
 COPY --from=build /build/pbapi /pbapi
 COPY --from=build /build/pbworker /pbworker
 COPY --from=build /build/pbstatuser /pbstatuser
