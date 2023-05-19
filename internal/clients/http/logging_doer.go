@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -29,13 +29,13 @@ func NewLoggingDoer(ctx context.Context, doer HttpRequestDoer) *LoggingDoer {
 func (c *LoggingDoer) Do(req *http.Request) (*http.Response, error) {
 	if req.Body != nil {
 		// read request data into a byte slice
-		requestData, err := ioutil.ReadAll(req.Body)
+		requestData, err := io.ReadAll(req.Body)
 		if err != nil {
 			return nil, fmt.Errorf("cannot read request data: %w", err)
 		}
 
 		// rewind the original request reader
-		req.Body = ioutil.NopCloser(bytes.NewReader(requestData))
+		req.Body = io.NopCloser(bytes.NewReader(requestData))
 
 		// perform logging
 		c.log.Trace().Str("method", req.Method).
@@ -53,13 +53,13 @@ func (c *LoggingDoer) Do(req *http.Request) (*http.Response, error) {
 
 	if resp.Body != nil {
 		// read response data into a byte slice
-		responseData, err := ioutil.ReadAll(resp.Body)
+		responseData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, fmt.Errorf("cannot read response data: %w", err)
 		}
 
 		// rewind the original response reader
-		resp.Body = ioutil.NopCloser(bytes.NewReader(responseData))
+		resp.Body = io.NopCloser(bytes.NewReader(responseData))
 
 		// perform logging
 		c.log.Trace().Str("status", resp.Status).

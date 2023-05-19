@@ -5,8 +5,8 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
-	"io/ioutil"
 	"strings"
 	"time"
 
@@ -197,7 +197,7 @@ func Seed(ctx context.Context, seedScript string) error {
 		return fmt.Errorf("unable to open seed script %s: %w", seedScript, err)
 	}
 	defer file.Close()
-	buffer, err := ioutil.ReadAll(file)
+	buffer, err := io.ReadAll(file)
 	if err != nil {
 		return fmt.Errorf("unable to read seed script %s: %w", seedScript, err)
 	}
