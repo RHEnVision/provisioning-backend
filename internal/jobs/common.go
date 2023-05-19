@@ -67,7 +67,7 @@ func finishWithError(ctx context.Context, reservationId int64, jobError error) {
 		logger.Warn().Err(err).Msg("unable to update job status: get by id")
 		return
 	}
-	logger.Warn().Err(jobError).Msg("Job returned an error")
+	logger.Error().Err(jobError).Msgf("Reservation for %s returned an error", reservation.Provider.String())
 
 	// total count of reservations
 	metrics.IncReservationCount(reservation.Provider.String(), "failure")
