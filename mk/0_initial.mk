@@ -8,6 +8,8 @@ PROJECT_DIR:=$(shell dirname $(abspath $(firstword $(MAKEFILE_LIST))))
 GO_VERSION?=1.19.6
 GOBIN:=$(PROJECT_DIR)/bin
 GO?=$(shell go env GOPATH)/bin/go$(GO_VERSION)
+GOROOT?=$(shell $(GO) env GOROOT)
+GOCACHE?=$(shell $(GO) env GOCACHE)
 
 GOLINT?=$(GOBIN)/golangci-lint
 GOFUMPT?=$(GOBIN)/gofumpt

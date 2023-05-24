@@ -36,5 +36,7 @@ run: pbapi ## Build and run backend API
 	./pbapi
 
 .PHONY: clean
-clean: ## Clean build artifacts
-	-rm pbapi pbmigrate pbworker
+clean: ## Clean build artifacts and cache
+	-rm pb*
+	$(GO) clean -cache -modcache -testcache -fuzzcache
+	GOROOT=$(GOROOT) GOCACHE=$(GOCACHE) $(GOLINT) cache clean
