@@ -21,11 +21,11 @@ var GetAccountDao func(ctx context.Context) AccountDao
 
 // AccountDao represents an account (tenant)
 type AccountDao interface {
+	// Create is meant for integration tests, use GetOrCreateByIdentity instead.
 	Create(ctx context.Context, pk *models.Account) error
 	GetById(ctx context.Context, id int64) (*models.Account, error)
 	GetOrCreateByIdentity(ctx context.Context, orgId string, accountNumber string) (*models.Account, error)
 	GetByOrgId(ctx context.Context, orgId string) (*models.Account, error)
-	GetByAccountNumber(ctx context.Context, number string) (*models.Account, error)
 	List(ctx context.Context, limit, offset int64) ([]*models.Account, error)
 }
 

@@ -3,15 +3,12 @@ package pgx
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/georgysavva/scany/v2/pgxscan"
-	"github.com/jackc/pgx/v5"
 )
 
 func init() {
@@ -45,50 +42,40 @@ func (x *accountDao) GetById(ctx context.Context, id int64) (*models.Account, er
 	return result, nil
 }
 
-// GetOrCreateByIdentity is not in a single transaction because it's used heavily in each request.
-// This can result in duplicate error if two requests try this at once in which case an error is returned
-// leading to 500 HTTP failure. Since caching of accounts was recently added, we might consider rewriting
-// this function into a single transaction at some point.
+// GetOrCreateByIdentity can be called multiple times on concurrent requests of new user accounts.
+// Parameter accountNumber is stored as NULL when empty.
 func (x *accountDao) GetOrCreateByIdentity(ctx context.Context, orgId string, accountNumber string) (*models.Account, error) {
-	logger := ctxval.Logger(ctx)
-
-	// Try to find by org ID first
-	acc, err := x.GetByOrgId(ctx, orgId)
-	if err == nil {
-		// Found it
-		logger.Trace().Msgf("Account found via org id: %s", orgId)
-		return acc, nil
-	} else if !errors.Is(err, pgx.ErrNoRows) {
-		// An error that is not "no rows" was returned
-		return nil, err
-	}
-
-	// Previous search returned "no rows" error, try with account number
-	acc, err = x.GetByAccountNumber(ctx, accountNumber)
-	if err == nil {
-		// Found it
-		logger.Trace().Msgf("Account found via account number: %s", accountNumber)
-		return acc, nil
-	} else if !errors.Is(err, pgx.ErrNoRows) {
-		// An error that is not "no rows" was returned
-		return nil, err
-	}
-
-	acc = &models.Account{OrgID: orgId, AccountNumber: sql.NullString{String: accountNumber, Valid: accountNumber != ""}}
-	if err := x.Create(ctx, acc); err != nil {
-		return nil, err
-	}
-	return acc, nil
-}
-
-func (x *accountDao) GetByAccountNumber(ctx context.Context, number string) (*models.Account, error) {
-	query := `SELECT * FROM accounts WHERE account_number = $1 LIMIT 1`
 	result := &models.Account{}
+	account := sql.NullString{
+		String: accountNumber,
+		Valid:  accountNumber != "",
+	}
 
-	err := pgxscan.Get(ctx, db.Pool, result, query, number)
+	// Step 1: try to find the record by org or account (to prevent sequence gaps)
+	// Step 2: create new record ignoring errors
+	// Step 3: find the inserted record
+	// Response is limited by 1, so it stops execution once at least one row is found.
+	query := `
+		WITH insert_and_select AS (
+			INSERT INTO accounts (org_id, account_number) VALUES ($1, $2)
+			ON CONFLICT DO NOTHING RETURNING *
+		)
+		SELECT * FROM accounts WHERE org_id=$1
+		UNION
+		SELECT * FROM accounts WHERE $2 IS NOT NULL AND account_number=$2
+		UNION
+		SELECT * FROM insert_and_select
+		UNION
+		SELECT * FROM accounts WHERE org_id=$1
+		UNION
+		SELECT * FROM accounts WHERE $2 IS NOT NULL AND account_number=$2
+		LIMIT 1;`
+
+	err := pgxscan.Get(ctx, db.Pool, result, query, orgId, account)
 	if err != nil {
 		return nil, fmt.Errorf("pgx error: %w", err)
 	}
+
 	return result, nil
 }
 

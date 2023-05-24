@@ -70,7 +70,7 @@ func (stub *accountDaoStub) GetOrCreateByIdentity(ctx context.Context, orgId str
 	if err == nil {
 		return acc, nil
 	}
-	acc, err = stub.GetByAccountNumber(ctx, accountNumber)
+	acc, err = stub.getByAccountNumber(ctx, accountNumber)
 	if err == nil {
 		return acc, nil
 	}
@@ -90,7 +90,7 @@ func (stub *accountDaoStub) GetByOrgId(ctx context.Context, orgId string) (*mode
 	return nil, dao.ErrNoRows
 }
 
-func (stub *accountDaoStub) GetByAccountNumber(ctx context.Context, number string) (*models.Account, error) {
+func (stub *accountDaoStub) getByAccountNumber(ctx context.Context, number string) (*models.Account, error) {
 	for _, acc := range stub.store {
 		if acc.AccountNumber.Valid && acc.AccountNumber.String == number {
 			return acc, nil
