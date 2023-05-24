@@ -113,22 +113,6 @@ func TestAccountGetById(t *testing.T) {
 	})
 }
 
-func TestAccountGetByAccountNumber(t *testing.T) {
-	accDao, ctx := setupAccount(t)
-	defer reset()
-
-	t.Run("success", func(t *testing.T) {
-		account, err := accDao.GetByAccountNumber(ctx, "1")
-		require.NoError(t, err)
-		assert.Equal(t, "1", account.OrgID)
-	})
-
-	t.Run("success", func(t *testing.T) {
-		_, err := accDao.GetByAccountNumber(ctx, "0")
-		require.ErrorIs(t, err, dao.ErrNoRows)
-	})
-}
-
 func TestAccountGetByOrgId(t *testing.T) {
 	accDao, ctx := setupAccount(t)
 	defer reset()
@@ -155,8 +139,6 @@ func TestAccountGetOrCreateByIdentity(t *testing.T) {
 		require.NoError(t, err)
 		account, err = accDao.GetByOrgId(ctx, "101")
 		assert.Equal(t, "101", account.OrgID)
-		account, err = accDao.GetByAccountNumber(ctx, "101")
-		assert.Equal(t, "101", account.AccountNumber.String)
 	})
 
 	t.Run("already exists by org id", func(t *testing.T) {
