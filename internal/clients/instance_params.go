@@ -18,6 +18,9 @@ type GCPInstanceParams struct {
 	// UUID for instance that was created in a reservation
 	UUID string
 
+	// The template name to use in order to launch an instance
+	LaunchTemplateName string
+
 	// Zone - to deploy into
 	Zone string
 
