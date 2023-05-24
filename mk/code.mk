@@ -17,7 +17,7 @@ imports: ## Rearrange imports using `goimports`
 
 .PHONY: lint
 lint: ## Run Go language linter `golangci-lint`
-	$(GOLINT) run
+	GOROOT=$(GOROOT) GOCACHE=$(GOCACHE) $(GOLINT) run
 
 .PHONY: check-migrations
 check-migrations: ## Check migration files for changes
