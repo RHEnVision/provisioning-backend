@@ -42,11 +42,12 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	resUUID := uuid.New().String()
 	detail := &models.GCPDetail{
-		Zone:        payload.Zone,
-		MachineType: payload.MachineType,
-		Amount:      payload.Amount,
-		PowerOff:    payload.PowerOff,
-		UUID:        resUUID,
+		Zone:               payload.Zone,
+		MachineType:        payload.MachineType,
+		Amount:             payload.Amount,
+		PowerOff:           payload.PowerOff,
+		UUID:               resUUID,
+		LaunchTemplateName: payload.LaunchTemplateName,
 	}
 	reservation := &models.GCPReservation{
 		PubkeyID: payload.PubkeyID,
@@ -96,8 +97,6 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: upload key job if needed
-
 	// Get Image builder client
 	ibc, ibErr := clients.GetImageBuilderClient(r.Context())
 	logger.Trace().Msg("Creating IB client")
@@ -127,12 +126,13 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		AccountID: accountId,
 		Identity:  id,
 		Args: jobs.LaunchInstanceGCPTaskArgs{
-			ReservationID: reservation.ID,
-			Zone:          reservation.Detail.Zone,
-			PubkeyID:      reservation.PubkeyID,
-			Detail:        reservation.Detail,
-			ImageName:     name,
-			ProjectID:     authentication,
+			ReservationID:      reservation.ID,
+			Zone:               reservation.Detail.Zone,
+			PubkeyID:           reservation.PubkeyID,
+			Detail:             reservation.Detail,
+			ImageName:          name,
+			ProjectID:          authentication,
+			LaunchTemplateName: reservation.Detail.LaunchTemplateName,
 		},
 	}
 

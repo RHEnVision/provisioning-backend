@@ -10,6 +10,7 @@ X-Rh-Identity: {{identity}}
   "image_id": "https://www.googleapis.com/compute/v1/projects/rhel-cloud/global/images/rhel-9-v20230411",
   "amount": 1,
   "machine_type": "e2-micro",
+  "launch_template_name": "{{launch_template_name}}",
   "pubkey_id": {{pubkey_id}},
   "poweroff": true
 }

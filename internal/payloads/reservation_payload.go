@@ -140,6 +140,9 @@ type GCPReservationResponsePayload struct {
 	// The name of the gcp operation which was created.
 	GCPOperationName string `json:"gcp_operation_name,omitempty" yaml:"gcp_operation_name"`
 
+	// Optional launch template name global/instanceTemplates/NAME or empty string
+	LaunchTemplateName string `json:"launch_template_name,omitempty"`
+
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 
@@ -210,6 +213,9 @@ type GCPReservationRequestPayload struct {
 
 	// Source ID.
 	SourceID string `json:"source_id" yaml:"source_id"`
+
+	// Optional launch template name global/instanceTemplates/NAME or empty string
+	LaunchTemplateName string `json:"launch_template_name,omitempty"`
 
 	// GCP zone.
 	Zone string `json:"zone" yaml:"zone"`

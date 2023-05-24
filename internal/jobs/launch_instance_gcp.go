@@ -32,6 +32,9 @@ type LaunchInstanceGCPTaskArgs struct {
 
 	// The project id from Sources which is linked to a specific source
 	ProjectID *clients.Authentication
+
+	// Launch template name or empty string when no template in use
+	LaunchTemplateName string
 }
 
 // Unmarshall arguments and handle error
@@ -92,13 +95,14 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 	logger.Trace().Bool("userdata", true).Msg(string(userData))
 
 	params := &clients.GCPInstanceParams{
-		NamePattern:   ptr.To("inst-####"),
-		ImageName:     args.ImageName,
-		MachineType:   args.Detail.MachineType,
-		Zone:          args.Zone,
-		KeyBody:       pk.Body,
-		StartupScript: string(userData),
-		UUID:          args.Detail.UUID,
+		NamePattern:        ptr.To("inst-####"),
+		ImageName:          args.ImageName,
+		MachineType:        args.Detail.MachineType,
+		Zone:               args.Zone,
+		KeyBody:            pk.Body,
+		StartupScript:      string(userData),
+		UUID:               args.Detail.UUID,
+		LaunchTemplateName: args.LaunchTemplateName,
 	}
 
 	instances, opName, err := gcpClient.InsertInstances(ctx, params, args.Detail.Amount)

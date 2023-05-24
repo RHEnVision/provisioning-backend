@@ -63,6 +63,10 @@ func (mock *GCPClientStub) GetInstanceDescriptionByID(ctx context.Context, id st
 	return nil, nil
 }
 
+func (mock *GCPClientStub) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, error) {
+	return nil, nil
+}
+
 func (mock *GCPClientStub) InsertInstances(ctx context.Context, params *clients.GCPInstanceParams, amount int64) ([]*string, *string, error) {
 	return nil, nil, NotImplementedErr
 }

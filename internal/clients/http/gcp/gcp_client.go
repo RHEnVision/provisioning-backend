@@ -91,6 +91,54 @@ func (c *gcpClient) newInstancesClient(ctx context.Context) (*compute.InstancesC
 	return client, nil
 }
 
+func (c *gcpClient) NewInstanceTemplatesClient(ctx context.Context) (*compute.InstanceTemplatesClient, error) {
+	client, err := compute.NewInstanceTemplatesRESTClient(ctx, c.options...)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create GCP templates client: %w", err)
+	}
+	return client, nil
+}
+
+func (c *gcpClient) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListLaunchTemplates")
+	defer span.End()
+
+	logger := logger(ctx)
+	logger.Trace().Msgf("Listing launch templates")
+
+	templatesClient, err := c.NewInstanceTemplatesClient(ctx)
+	if err != nil {
+		logger.Error().Err(err).Msg("Could not get instances client")
+		return nil, fmt.Errorf("unable to get instances client: %w", err)
+	}
+	defer templatesClient.Close()
+
+	req := &computepb.AggregatedListInstanceTemplatesRequest{
+		Project: c.auth.Payload,
+	}
+
+	var templatesList []*clients.LaunchTemplate
+	templates := templatesClient.AggregatedList(ctx, req)
+	for {
+		pair, err := templates.Next()
+		if errors.Is(err, iterator.Done) {
+			break
+		} else if err != nil {
+			logger.Error().Err(err).Msg("An error occurred during listing launch templates")
+			span.SetStatus(codes.Error, err.Error())
+			return nil, fmt.Errorf("cannot list launch templates: %w", err)
+		} else {
+			instancesTemplates := pair.Value.InstanceTemplates
+			for _, template := range instancesTemplates {
+				id := strconv.FormatUint(*template.Id, 10)
+				templatesList = append(templatesList, &clients.LaunchTemplate{ID: id, Name: template.GetName()})
+			}
+		}
+	}
+
+	return templatesList, nil
+}
+
 func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInstanceParams, amount int64) ([]*string, *string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "InsertInstances")
 	defer span.End()
@@ -154,6 +202,11 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 				},
 			},
 		},
+	}
+
+	if params.LaunchTemplateName != "" {
+		template := fmt.Sprintf("global/instanceTemplates/%s", params.LaunchTemplateName)
+		req.BulkInsertInstanceResourceResource.SourceInstanceTemplate = &template
 	}
 
 	op, err := client.BulkInsert(ctx, req)
