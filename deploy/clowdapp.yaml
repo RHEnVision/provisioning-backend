@@ -78,6 +78,12 @@ objects:
                     name: provisioning-azure-acc
                     key: client_secret
                     optional: true
+              - name: GCP_JSON
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-gcp-acc
+                    key: json
+                    optional: true
               - name: SENTRY_DSN
                 valueFrom:
                   secretKeyRef:
@@ -154,6 +160,12 @@ objects:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: client_secret
+                    optional: true
+              - name: GCP_JSON
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-gcp-acc
+                    key: json
                     optional: true
               - name: SENTRY_DSN
                 valueFrom:
@@ -260,6 +272,12 @@ objects:
                   secretKeyRef:
                     name: provisioning-azure-acc
                     key: principal_name
+                    optional: true
+              - name: GCP_JSON
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-gcp-acc
+                    key: json
                     optional: true
               - name: SENTRY_DSN
                 valueFrom:
