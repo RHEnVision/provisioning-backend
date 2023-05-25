@@ -1,11 +1,16 @@
 package version
 
+import "runtime/debug"
+
 var (
-	// Git SHA commit set via -ldflags
+	// Git SHA commit (first 4 characters)
 	BuildCommit string
 
-	// Build date and time in UTC set via -ldflags
+	// Build date and time
 	BuildTime string
+
+	// BuildGoVersion carries Go version the binary was built with
+	BuildGoVersion string
 )
 
 const (
@@ -32,11 +37,23 @@ const (
 )
 
 func init() {
-	if BuildTime == "" {
+	bi, ok := debug.ReadBuildInfo()
+
+	if !ok {
 		BuildTime = "N/A"
+		BuildCommit = "HEAD"
 	}
 
-	if BuildCommit == "" {
-		BuildCommit = "HEAD"
+	BuildGoVersion = bi.GoVersion
+
+	for _, bs := range bi.Settings {
+		switch bs.Key {
+		case "vcs.revision":
+			if len(bs.Value) > 4 {
+				BuildCommit = bs.Value[0:4]
+			}
+		case "vcs.time":
+			BuildTime = bs.Value
+		}
 	}
 }

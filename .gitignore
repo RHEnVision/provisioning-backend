@@ -11,6 +11,7 @@ tags
 TAGS
 
 # binaries
+/pbackend
 /pbapi
 /pbmigrate
 /pbworker

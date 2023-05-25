@@ -4,36 +4,33 @@ SRC_GO := $(shell find . -name \*.go -print)
 SRC_SQL := $(shell find . -name \*.sql -print)
 SRC_YAML := $(shell find . -name \*.yaml -print)
 
-PACKAGE_BASE = github.com/RHEnVision/provisioning-backend/internal
-LDFLAGS = "-X $(PACKAGE_BASE)/version.BuildCommit=$(shell git rev-parse --short HEAD) -X $(PACKAGE_BASE)/version.BuildTime=$(shell date +'%Y-%m-%d_%T')"
-
-build: pbapi pbmigrate pbworker pbstatuser ## Build all binaries
+build: pbackend ## Build all binaries
 
 all-deps: $(SRC_GO) $(SRC_SQL) $(SRC_YAML)
 
-pbapi: check-go all-deps ## Build backend API service
-	CGO_ENABLED=0 $(GO) build -ldflags $(LDFLAGS) -o pbapi ./cmd/pbapi
-
-pbworker: check-go all-deps ## Build worker service
-	CGO_ENABLED=0 $(GO) build -ldflags $(LDFLAGS) -o pbworker ./cmd/pbworker
-
-pbstatuser: check-go all-deps ## Build status worker command
-	CGO_ENABLED=0 $(GO) build -o pbstatuser ./cmd/pbstatuser
-
-pbmigrate: check-go all-deps ## Build migration command
-	CGO_ENABLED=0 $(GO) build -o pbmigrate ./cmd/pbmigrate
+pbackend: check-go all-deps ## Build backend
+	CGO_ENABLED=0 $(GO) build -o pbackend ./cmd/pbackend
 
 .PHONY: strip
 strip: build ## Strip debug information
-	strip pbapi pbworker pbmigrate
+	strip pbackend
 
-.PHONY: run-go
-run-go: check-go ## Run backend API using `go run`
-	$(GO) run ./cmd/pbapi
+.PHONY: run-api
+run-api: check-go ## Run backend API using `go run`
+	$(GO) run ./cmd/pbackend api
 
+.PHONY: run-worker
+run-worker: check-go ## Run backend API using `go run`
+	$(GO) run ./cmd/pbackend worker
+
+.PHONY: run-statuser
+run-statuser: check-go ## Run backend API using `go run`
+	$(GO) run ./cmd/pbackend statuser
+
+CMD?=version
 .PHONY: run
-run: pbapi ## Build and run backend API
-	./pbapi
+run: pbackend ## Build and run backend API
+	./pbackend $(CMD)
 
 .PHONY: clean
 clean: ## Clean build artifacts and cache

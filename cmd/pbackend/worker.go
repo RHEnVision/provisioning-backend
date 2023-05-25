@@ -11,33 +11,18 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/background"
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/db"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
-	"github.com/RHEnVision/provisioning-backend/internal/random"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-
-	"github.com/RHEnVision/provisioning-backend/internal/config"
-
-	// HTTP client implementations
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
-
-	// Performs initialization of DAO implementation, must be initialized before any database packages.
-	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
-
-	"github.com/RHEnVision/provisioning-backend/internal/db"
-	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/rs/zerolog/log"
 )
 
-func init() {
-	random.SeedGlobal()
-}
-
-func main() {
+func worker() {
 	ctx := context.Background()
 	config.Initialize("config/api.env", "config/worker.env")
 

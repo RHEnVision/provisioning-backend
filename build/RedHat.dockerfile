@@ -6,9 +6,6 @@ COPY . .
 RUN make prep build strip GO=go
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
-COPY --from=build /build/pbapi /pbapi
-COPY --from=build /build/pbworker /pbworker
-COPY --from=build /build/pbstatuser /pbstatuser
-COPY --from=build /build/pbmigrate /pbmigrate
+COPY --from=build /build/pbackend /pbackend
 USER 1001
-CMD ["/pbapi"]
+CMD ["/pbackend", "api"]
