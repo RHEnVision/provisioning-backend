@@ -4,22 +4,14 @@ import (
 	"context"
 	"os"
 
-	// DAO implementation, must be initialized before any database packages.
-	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
-
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/migrations"
-	"github.com/RHEnVision/provisioning-backend/internal/random"
 	"github.com/rs/zerolog/log"
 )
 
-func init() {
-	random.SeedGlobal()
-}
-
-func main() {
+func migrate() {
 	ctx := context.Background()
 	config.Initialize("config/api.env", "config/migrate.env")
 
@@ -34,7 +26,7 @@ func main() {
 	}
 	defer db.Close()
 
-	if len(os.Args[1:]) > 0 && os.Args[1] == "purgedb" {
+	if len(os.Args[2:]) > 0 && os.Args[2] == "purgedb" {
 		logger.Warn().Msg("Database purge: all data is being dropped")
 		err = migrations.Seed(ctx, "drop_all")
 		if err != nil {

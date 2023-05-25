@@ -28,12 +28,14 @@ objects:
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
-              - /pbworker
+              - /pbackend
+              - worker
             initContainers:
               - name: run-migrations
                 image: "${IMAGE}:${IMAGE_TAG}"
                 command:
-                  - /pbmigrate
+                  - /pbackend
+                  - migrate
                 inheritEnv: true
             env:
               - name: LOGGING_LEVEL
@@ -105,12 +107,14 @@ objects:
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
-              - /pbstatuser
+              - /pbackend
+              - statuser
             initContainers:
               - name: run-migrations
                 image: "${IMAGE}:${IMAGE_TAG}"
                 command:
-                  - /pbmigrate
+                  - /pbackend
+                  - migrate
                 inheritEnv: true
             env:
               - name: LOGGING_LEVEL
@@ -180,11 +184,15 @@ objects:
               apiPath: provisioning
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
+            command:
+              - /pbackend
+              - api
             initContainers:
               - name: run-migrations
                 image: "${IMAGE}:${IMAGE_TAG}"
                 command:
-                  - /pbmigrate
+                  - /pbackend
+                  - migrate
                 inheritEnv: true
             livenessProbe:
               failureThreshold: 3

@@ -300,7 +300,10 @@ func Initialize(configFiles ...string) {
 }
 
 func BinaryName() string {
-	return path.Base(os.Args[0])
+	if len(os.Args) < 2 {
+		return "unknown"
+	}
+	return path.Base(os.Args[1])
 }
 
 func Hostname() string {

@@ -258,7 +258,7 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 	}
 }
 
-func main() {
+func statuser() {
 	ctx := context.Background()
 	config.Initialize("config/api.env", "config/statuser.env")
 

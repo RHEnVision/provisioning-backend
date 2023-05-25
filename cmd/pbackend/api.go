@@ -11,42 +11,24 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/background"
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/ec2"
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
-	"github.com/RHEnVision/provisioning-backend/internal/kafka"
-	"github.com/RHEnVision/provisioning-backend/internal/metrics"
-	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
-	"github.com/RHEnVision/provisioning-backend/internal/random"
-	s "github.com/RHEnVision/provisioning-backend/internal/services"
-
-	// HTTP client implementations
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
-	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
-	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
-	"github.com/RHEnVision/provisioning-backend/internal/version"
-
-	// DAO implementation, must be initialized before any database packages.
-	_ "github.com/RHEnVision/provisioning-backend/internal/dao/pgx"
-
-	// set GOMAXPROC to ideal value for Kubernetes
-	_ "go.uber.org/automaxprocs"
-
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
+	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	m "github.com/RHEnVision/provisioning-backend/internal/middleware"
+	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
 	"github.com/RHEnVision/provisioning-backend/internal/routes"
+	s "github.com/RHEnVision/provisioning-backend/internal/services"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
+	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
+	"go.uber.org/automaxprocs/maxprocs"
 )
 
-func init() {
-	random.SeedGlobal()
-}
-
-func main() {
+func api() {
 	ctx := context.Background()
 	config.Initialize("config/api.env")
 
@@ -62,6 +44,11 @@ func main() {
 		log.Fatal().Err(err).Msg("Error initializing feature flags")
 	}
 	defer config.StopFeatureFlags(ctx)
+
+	// set GOMAXPROCs for Kubernetes
+	_, _ = maxprocs.Set(maxprocs.Logger(func(format string, args ...interface{}) {
+		log.Info().Msgf(format, args...)
+	}))
 
 	// initialize telemetry
 	tel := telemetry.Initialize(&log.Logger)
