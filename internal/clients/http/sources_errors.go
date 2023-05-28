@@ -15,4 +15,5 @@ var (
 	AuthenticationForSourcesNotFoundErr = fmt.Errorf("authentications for source weren't found in sources app: %w", clients.NotFoundErr)
 	ApplicationReadErr                  = fmt.Errorf("application read returned no application type in sources: %w", clients.NotFoundErr)
 	SourceTypeNameNotFoundErr           = fmt.Errorf("source type name not found: %w", clients.NotFoundErr)
+	NotEvenErr                          = fmt.Errorf("number of keys and values is not even when building a query")
 )
