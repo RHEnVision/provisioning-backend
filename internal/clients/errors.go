@@ -16,4 +16,5 @@ var (
 	// Sources errors (some others are defined in http package too)
 	UnknownAuthenticationTypeErr = errors.New("unknown authentication type")
 	UnknownProviderErr           = errors.New("unknown provider type")
+	MissingProvisioningSources   = errors.New("missing provisioning source authentication")
 )

@@ -36,6 +36,22 @@ func ProviderTypeFromString(str string) ProviderType {
 	}
 }
 
+func (pt ProviderType) SourcesProviderName() string {
+	switch pt {
+	case ProviderTypeAWS:
+		return "amazon"
+	case ProviderTypeGCP:
+		return "google"
+	case ProviderTypeAzure:
+		return "azure"
+	case ProviderTypeNoop:
+	case ProviderTypeUnknown:
+	default:
+		return ""
+	}
+	return ""
+}
+
 func (pt ProviderType) String() string {
 	switch pt {
 	case ProviderTypeNoop:

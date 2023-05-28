@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	stdhttp "net/http"
+	"net/url"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -89,7 +92,14 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 		return nil, fmt.Errorf("failed to get provisioning app type: %w", err)
 	}
 
-	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
+	sourcesProviderName := provider.SourcesProviderName()
+	if err != nil {
+		logger.Warn().Err(err).Msg("Failed to get provider name according to sources service")
+		return nil, fmt.Errorf("failed to get provider name according to sources service: %w", err)
+	}
+
+	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, &ListApplicationTypeSourcesParams{}, headers.AddSourcesIdentityHeader,
+		headers.AddEdgeRequestIdHeader, BuildQuery("filter[source_type][name]", sourcesProviderName))
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return nil, fmt.Errorf("failed to get ApplicationTypes: %w", err)
@@ -106,20 +116,13 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 	result := make([]*clients.Source, 0, len(*resp.JSON200.Data))
 
 	for _, src := range *resp.JSON200.Data {
-		sourceTypeName, err := c.GetSourceTypeName(ctx, *src.SourceTypeId)
-		if err != nil {
-			return nil, fmt.Errorf("could not get source type name for source type id %d: %w", src.SourceTypeId, err)
+		newSrc := clients.Source{
+			ID:           ptr.From(src.Id),
+			Name:         ptr.From(src.Name),
+			SourceTypeID: ptr.From(src.SourceTypeId),
+			Uid:          ptr.From(src.Uid),
 		}
-
-		if sourceTypeName == models.ProviderTypeFromString(provider.String()) {
-			newSrc := clients.Source{
-				ID:           ptr.From(src.Id),
-				Name:         ptr.From(src.Name),
-				SourceTypeID: ptr.From(src.SourceTypeId),
-				Uid:          ptr.From(src.Uid),
-			}
-			result = append(result, &newSrc)
-		}
+		result = append(result, &newSrc)
 	}
 
 	return result, nil
@@ -169,9 +172,10 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 	defer span.End()
 
 	// Get all the authentications linked to a specific source
-	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
+	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader,
+		headers.AddEdgeRequestIdHeader, BuildQuery("filter[resource_type]", "Application", "filter[authtype][starts_with]", "provisioning"))
 	if err != nil {
-		return nil, fmt.Errorf("cannot list source authentication: %w", err)
+		return nil, fmt.Errorf("cannot list provisioning source authentication of type application: %w", err)
 	}
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
@@ -182,20 +186,14 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 		return nil, fmt.Errorf("get source authentication call: %w", err)
 	}
 
-	// Filter authentications to include only auth where resource_type == "Application". We do this because
-	// Sources API currently does not provide a good server-side filtering.
-	auth, err := filterSourceAuthentications(*resp.JSON200.Data)
-	if err != nil {
-		at := make([]string, 0)
-		for _, auth := range *resp.JSON200.Data {
-			at = append(at, string(*auth.Authtype))
-		}
-		logger.Warn().Msgf("Sources did not return any Provisioning authentication for source(auth types): %s(%v)", sourceId, at)
-		return nil, err
+	if len(*resp.JSON200.Data) != 0 {
+		auth := (*resp.JSON200.Data)[0]
+		authentication := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, string(*auth.Authtype), *auth.ResourceId)
+		return authentication, nil
+	} else {
+		logger.Trace().Msgf("Source does not have provisioning authentications of type application")
+		return nil, clients.MissingProvisioningSources
 	}
-
-	authentication := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, string(*auth.Authtype), *auth.ResourceId)
-	return authentication, nil
 }
 
 func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
@@ -248,49 +246,19 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 	return "", http.ApplicationTypeNotFoundErr
 }
 
-//nolint:exhaustive
-func filterSourceAuthentications(authentications []AuthenticationRead) (AuthenticationRead, error) {
-	for _, auth := range authentications {
-		if *auth.ResourceType == "Application" {
-			switch *auth.Authtype {
-			// Type of the authentication as stored in Sources by listing the source types or the application types
-			case "provisioning-arn",
-				"provisioning_lighthouse_subscription_id",
-				"provisioning_project_id":
-				return auth, nil
-			default:
-				continue
-			}
+func BuildQuery(keysAndValues ...string) func(ctx context.Context, req *stdhttp.Request) error {
+	return func(ctx context.Context, req *stdhttp.Request) error {
+		if len(keysAndValues)%2 != 0 {
+			return http.NotEvenErr
 		}
-	}
-	return AuthenticationRead{}, http.ApplicationReadErr
-}
-
-func (c *sourcesClient) GetSourceTypeName(ctx context.Context, sourceTypeID string) (models.ProviderType, error) {
-	logger := logger(ctx)
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetSourceTypeName")
-	defer span.End()
-
-	// Get all the source types
-	resp, err := c.client.ListSourceTypesWithResponse(ctx, &ListSourceTypesParams{}, headers.AddSourcesIdentityHeader)
-	if err != nil {
-		return models.ProviderTypeUnknown, fmt.Errorf("cannot list source types: %w", err)
-	}
-
-	for _, st := range *resp.JSON200.Data {
-		if sourceTypeID == *st.Id {
-			logger.Trace().Msg("Found source type id from sources")
-			switch *st.Name {
-			case "amazon":
-				return models.ProviderTypeAWS, nil
-			case "google":
-				return models.ProviderTypeGCP, nil
-			case "azure":
-				return models.ProviderTypeAzure, nil
-			default:
-				return models.ProviderTypeUnknown, fmt.Errorf("provider unknown %w", clients.UnknownProviderErr)
-			}
+		queryParams := make([]string, 0)
+		for i := 0; i < len(keysAndValues); i += 2 {
+			key := url.QueryEscape(keysAndValues[i])
+			value := url.QueryEscape(keysAndValues[i+1])
+			queryParams = append(queryParams, fmt.Sprintf("%s=%s", key, value))
 		}
+
+		req.URL.RawQuery = strings.Join(queryParams, "&")
+		return nil
 	}
-	return models.ProviderTypeUnknown, fmt.Errorf("cannot find source type name for source type id %s: %w", sourceTypeID, http.SourceTypeNameNotFoundErr)
 }
