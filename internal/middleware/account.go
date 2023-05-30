@@ -11,6 +11,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	ucontext "github.com/Unleash/unleash-client-go/v3/context"
+	"github.com/rs/zerolog/log"
 )
 
 func AccountMiddleware(next http.Handler) http.Handler {
@@ -18,8 +19,7 @@ func AccountMiddleware(next http.Handler) http.Handler {
 		rhId := ctxval.Identity(r.Context())
 		orgID := rhId.Identity.OrgID
 		accountNumber := rhId.Identity.AccountNumber
-		logger := ctxval.Logger(r.Context()).With().Str("account_number", accountNumber).
-			Str("org_id", orgID).Logger()
+		logger := log.Ctx(r.Context()).With().Str("account_number", accountNumber).Str("org_id", orgID).Logger()
 
 		cachedAccount := &models.Account{}
 		err := cache.Find(r.Context(), orgID+accountNumber, cachedAccount)

@@ -63,7 +63,8 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 						r.Method, r.URL.Path, duration.Round(time.Millisecond).String(), ww.Status())
 			}()
 
-			ctx := ctxval.WithLogger(r.Context(), &logger)
+			// store logger under zerolog context key
+			ctx := logger.WithContext(r.Context())
 			next.ServeHTTP(ww, r.WithContext(ctx))
 		}
 		return http.HandlerFunc(fn)
