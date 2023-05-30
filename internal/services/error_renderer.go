@@ -9,12 +9,13 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
+	"github.com/rs/zerolog"
 )
 
 // writeBasicError returns an error code without utilizing the Chi rendering stack. It can
 // be used for fatal errors which happens during rendering pipeline (e.g. JSON errors).
 func writeBasicError(w http.ResponseWriter, r *http.Request, err error) {
-	if logger := ctxval.Logger(r.Context()); logger != nil {
+	if logger := zerolog.Ctx(r.Context()); logger != nil {
 		logger.Error().Err(err).Msg("Unable to render error")
 	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")

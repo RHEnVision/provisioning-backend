@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/ssh"
 	"github.com/go-playground/mold/v4"
+	"github.com/rs/zerolog"
 )
 
 var transform *mold.Transformer
@@ -31,7 +31,7 @@ func generateFingerprints(ctx context.Context, sl mold.StructLevel) error {
 
 	pkf, err := ssh.GenerateOpenSSHFingerprints([]byte(pk.Body))
 	if err != nil {
-		ctxval.Logger(ctx).Warn().Err(err).Str("pubkey", pk.Body).Msg("OpenSSH fingerprint generation error")
+		zerolog.Ctx(ctx).Warn().Err(err).Str("pubkey", pk.Body).Msg("OpenSSH fingerprint generation error")
 		return fmt.Errorf("key generate error %s: %w", pk.Name, err)
 	}
 
@@ -55,7 +55,7 @@ func validateAWS(ctx context.Context, sl mold.StructLevel) error {
 
 	_, err := ssh.GenerateAWSFingerprint([]byte(pk.Body))
 	if err != nil {
-		ctxval.Logger(ctx).Warn().Err(err).Str("pubkey", pk.Body).Msg("AWS fingerprint validation error")
+		zerolog.Ctx(ctx).Warn().Err(err).Str("pubkey", pk.Body).Msg("AWS fingerprint validation error")
 		return fmt.Errorf("invalid public key type (only ed25519 and rsa keys are supported): %w", err)
 	}
 	sl.Struct().Set(reflect.ValueOf(pk))

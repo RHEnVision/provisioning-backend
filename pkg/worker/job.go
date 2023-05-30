@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/rs/zerolog"
 
 	"github.com/google/uuid"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
@@ -75,12 +76,12 @@ type Stats struct {
 func contextLogger(ctx context.Context, job *Job) context.Context {
 	accountId := job.AccountID
 	id := job.Identity
-	logger := ctxval.Logger(ctx).With().
+	logger := zerolog.Ctx(ctx).With().
 		Str("job_id", job.ID.String()).
 		Int64("account_id", accountId).
 		Str("account_number", id.Identity.AccountNumber).
 		Str("org_id", id.Identity.OrgID).Logger()
-	newContext := ctxval.WithLogger(ctx, &logger)
+	newContext := logger.WithContext(ctx)
 	newContext = ctxval.WithIdentity(newContext, id)
 	newContext = ctxval.WithAccountId(newContext, accountId)
 

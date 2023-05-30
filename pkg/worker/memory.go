@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
 )
 
 type MemoryWorker struct {
@@ -44,7 +44,7 @@ func (w *MemoryWorker) Stop(_ context.Context) {
 }
 
 func (w *MemoryWorker) DequeueLoop(ctx context.Context) {
-	ctxval.Logger(ctx).Info().Msg("Starting memory dequeuer")
+	zerolog.Ctx(ctx).Info().Msg("Starting memory dequeuer")
 	go w.dequeueLoop(ctx)
 }
 
@@ -61,7 +61,7 @@ func (w *MemoryWorker) processJob(ctx context.Context, job *Job) {
 		defer cFunc()
 		h(cCtx, job)
 	} else {
-		ctxval.Logger(ctx).Warn().Msgf("Memory worker handler not found for job type: %s", job.Type)
+		zerolog.Ctx(ctx).Warn().Msgf("Memory worker handler not found for job type: %s", job.Type)
 	}
 }
 

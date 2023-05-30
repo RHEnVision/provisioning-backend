@@ -33,6 +33,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -61,7 +62,7 @@ func init() {
 }
 
 func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
-	logger := ctxval.Logger(origCtx)
+	logger := zerolog.Ctx(origCtx)
 
 	// Get source id
 	asm, err := kafka.NewAvailabilityStatusMessage(message)
@@ -75,7 +76,7 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 
 	// Set source id as logging field
 	logger = ptr.To(logger.With().Str("source_id", sourceId).Logger())
-	ctx := ctxval.WithLogger(origCtx, logger)
+	ctx := logger.WithContext(origCtx)
 
 	// Get sources client
 	sourcesClient, err := clients.GetSourcesClient(ctx)
@@ -116,7 +117,7 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 }
 
 func checkSourceAvailabilityAzure(ctx context.Context) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	defer processingWG.Done()
 
 	for s := range chAzure {
@@ -139,7 +140,7 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 }
 
 func checkSourceAvailabilityAWS(ctx context.Context) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	defer processingWG.Done()
 
 	for s := range chAws {
@@ -168,7 +169,7 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 }
 
 func checkSourceAvailabilityGCP(ctx context.Context) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	defer processingWG.Done()
 
 	for s := range chGcp {
@@ -205,7 +206,7 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 }
 
 func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	messages := make([]*kafka.GenericMessage, 0, batchSize)
 	ticker := time.NewTicker(tickDuration)
 	defer senderWG.Done()

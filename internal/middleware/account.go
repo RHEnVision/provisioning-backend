@@ -58,7 +58,7 @@ func AccountMiddleware(next http.Handler) http.Handler {
 			Str("org_id", cachedAccount.OrgID).
 			Str("account_number", cachedAccount.AccountNumber.String).
 			Logger()
-		ctx = ctxval.WithLogger(ctx, &newLogger)
+		ctx = newLogger.WithContext(ctx)
 
 		// unleash context
 		uctx := ucontext.Context{

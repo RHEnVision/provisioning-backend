@@ -8,12 +8,12 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/rs/zerolog"
 )
 
 type LaunchInstanceAWSTaskArgs struct {
@@ -47,12 +47,12 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 	args, ok := job.Args.(LaunchInstanceAWSTaskArgs)
 	if !ok {
 		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
-		ctxval.Logger(ctx).Error().Err(err).Msg("Type assertion error for job")
+		zerolog.Ctx(ctx).Error().Err(err).Msg("Type assertion error for job")
 		return
 	}
 
-	logger := ctxval.Logger(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
-	ctx = ctxval.WithLogger(ctx, &logger)
+	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	ctx = logger.WithContext(ctx)
 
 	jobErr := DoEnsurePubkeyOnAWS(ctx, &args)
 	if jobErr != nil {
@@ -72,7 +72,7 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 
 // Job logic, when error is returned the job status is updated accordingly
 func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started pubkey upload AWS job")
 
 	logger.Info().Interface("args", args).Msg("Processing pubkey upload AWS job")
@@ -155,7 +155,7 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 }
 
 func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started launch instance AWS job")
 
 	logger.Info().Interface("args", args).Msg("Processing launch instance AWS job")
@@ -225,7 +225,7 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 }
 
 func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started fetch instances description")
 
 	updateStatusBefore(ctx, args.ReservationID, "Fetching instance(s) description")

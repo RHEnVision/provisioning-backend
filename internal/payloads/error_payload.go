@@ -53,9 +53,9 @@ func NewResponseError(ctx context.Context, status int, userMsg string, err error
 	var strError string
 
 	if status < 500 {
-		event = ctxval.Logger(ctx).Warn().Stack()
+		event = zerolog.Ctx(ctx).Warn().Stack()
 	} else {
-		event = ctxval.Logger(ctx).Error().Stack()
+		event = zerolog.Ctx(ctx).Error().Stack()
 	}
 	if err != nil {
 		event = event.Err(err)

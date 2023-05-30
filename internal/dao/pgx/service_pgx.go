@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/rs/zerolog"
 )
 
 func init() {
@@ -47,7 +47,7 @@ func UnscopedUpdatePubkey(ctx context.Context, pubkey *models.Pubkey) error {
 func (x *serviceDao) RecalculatePubkeyFingerprints(ctx context.Context) (int, error) {
 	total := 0
 	query := `SELECT * FROM pubkeys WHERE type = '' OR type = 'test' OR fingerprint LIKE 'SHA256:%' OR fingerprint = '' OR fingerprint_legacy = ''`
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 
 	rows, err := db.Pool.Query(ctx, query)
 	if err != nil {

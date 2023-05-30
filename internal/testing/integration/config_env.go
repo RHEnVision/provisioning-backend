@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/rs/zerolog/log"
 )
@@ -12,5 +11,5 @@ import (
 func InitConfigEnvironment(ctx context.Context, envPath string) context.Context {
 	config.Initialize("config/test.env", envPath)
 	logging.InitializeStdout()
-	return ctxval.WithLogger(ctx, &log.Logger)
+	return log.Logger.WithContext(ctx)
 }

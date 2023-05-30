@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/rs/zerolog"
 )
 
 // An InstanceTypeExpiration represents the default expiration time for instance types
@@ -50,7 +50,7 @@ func ETagMiddleware(etagFunc ETagValueFunc) func(next http.Handler) http.Handler
 			cc := etag.CacheControlHeader()
 			w.Header().Set("ETag", etag.Header())
 			w.Header().Set("Cache-Control", cc)
-			logger := ctxval.Logger(r.Context()).With().Str("etag", etag.Value).Str("etag_name", etag.Name).Logger()
+			logger := zerolog.Ctx(r.Context()).With().Str("etag", etag.Value).Str("etag_name", etag.Name).Logger()
 			logger.Trace().Msgf("Returned etag with Cache-Control '%s'", cc)
 
 			if match := r.Header.Get("If-None-Match"); match != "" {

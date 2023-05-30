@@ -17,10 +17,11 @@ import (
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
 )
 
 func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
-	logger := *ctxval.Logger(r.Context())
+	logger := *zerolog.Ctx(r.Context())
 
 	payload := &payloads.AzureReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/jackc/pgx/v5"
+	"github.com/rs/zerolog"
 )
 
 // A TxFn is a function that will be called with an initialized `Transaction` object
@@ -16,7 +16,7 @@ type TxFn func(tx pgx.Tx) error
 // WithTransaction creates a new transaction and handles rollback/commit based on the
 // error object returned by the `TxFn` or when it panics.
 func WithTransaction(ctx context.Context, fn TxFn) error {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	tx, beginErr := db.Pool.Begin(ctx)
 	if beginErr != nil {
 		logger.Warn().Err(beginErr).Msg("Cannot begin database transaction")

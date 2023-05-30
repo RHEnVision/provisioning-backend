@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/rs/zerolog"
 )
 
 func CorrelationID(next http.Handler) http.Handler {
@@ -15,9 +16,9 @@ func CorrelationID(next http.Handler) http.Handler {
 			ctx = ctxval.WithCorrelationId(ctx, corrId)
 			// Store in response headers for easier debugging
 			w.Header().Set("X-Correlation-Id", corrId)
-			logger := ctxval.Logger(ctx).With().Str("correlation_id", corrId).Logger()
+			logger := zerolog.Ctx(ctx).With().Str("correlation_id", corrId).Logger()
 			logger.Trace().Msgf("Added correlation id %s to logger", corrId)
-			ctx = ctxval.WithLogger(ctx, &logger)
+			ctx = logger.WithContext(ctx)
 		}
 
 		next.ServeHTTP(w, r.WithContext(ctx))

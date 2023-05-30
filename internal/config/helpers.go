@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	clowder "github.com/redhatinsights/app-common-go/pkg/api/v1"
 	"github.com/rs/zerolog"
 )
@@ -52,7 +51,7 @@ func TopicName(ctx context.Context, topic string) string {
 		return t.Name
 	}
 	if InClowder() {
-		ctxval.Logger(ctx).Warn().Msgf("Tried to get TopicName for %s, but clowder doesn't know such topic", topic)
+		zerolog.Ctx(ctx).Warn().Msgf("Tried to get TopicName for %s, but clowder doesn't know such topic", topic)
 	}
 
 	return topic

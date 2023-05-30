@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
+	"github.com/rs/zerolog"
 )
 
 type InstanceTypesForZoneFunc func(region, zone string, supported *bool) ([]*clients.InstanceType, error)
@@ -30,7 +30,7 @@ func ListBuiltinInstanceTypes(typeFunc InstanceTypesForZoneFunc) func(w http.Res
 
 		start := time.Now()
 		instances, err := typeFunc(region, zone, supported)
-		logger := ctxval.Logger(r.Context())
+		logger := zerolog.Ctx(r.Context())
 		logger.Trace().TimeDiff("duration", time.Now(), start).Msg("Listed instance types")
 		if err != nil {
 			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "instance types not found for selected region and zone", err))

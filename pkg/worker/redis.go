@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
@@ -71,7 +70,7 @@ func (w *RedisWorker) RegisterHandler(jtype JobType, handler JobHandler, args an
 }
 
 func loggerWithJob(ctx context.Context, job *Job) *zerolog.Logger {
-	logger := ctxval.Logger(ctx).With().
+	logger := zerolog.Ctx(ctx).With().
 		Str("job_id", job.ID.String()).
 		Str("job_type", string(job.Type)).
 		Interface("job_args", job.Args).Logger()
@@ -112,7 +111,7 @@ func (w *RedisWorker) Enqueue(ctx context.Context, job *Job) error {
 }
 
 func (w *RedisWorker) Stop(ctx context.Context) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	close(w.closeCh)
 	logger.Info().Msg("Waiting for all workers to finish")
 	w.loopWG.Wait()
@@ -120,7 +119,7 @@ func (w *RedisWorker) Stop(ctx context.Context) {
 }
 
 func (w *RedisWorker) DequeueLoop(ctx context.Context) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	logger.Info().Msgf("Starting Redis dequeuer with %d polling goroutines", w.concurrency)
 	for i := 1; i <= w.concurrency; i++ {
 		w.loopWG.Add(1)
@@ -130,7 +129,7 @@ func (w *RedisWorker) DequeueLoop(ctx context.Context) {
 
 func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 	defer w.loopWG.Done()
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 
 	// do not crash the program on fatal errors
 	debug.SetPanicOnFault(true)
@@ -156,7 +155,7 @@ func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 
 func recoverAndLog(ctx context.Context) {
 	if rec := recover(); rec != nil {
-		logger := ctxval.Logger(ctx).Error()
+		logger := zerolog.Ctx(ctx).Error()
 
 		if err, ok := rec.(error); ok {
 			logger.Err(err).Stack().Msg("Job queue panic")
@@ -175,7 +174,7 @@ func (w *RedisWorker) fetchJob(ctx context.Context) {
 		// timeout occurred
 		return
 	} else if err != nil {
-		logger := ctxval.Logger(ctx)
+		logger := zerolog.Ctx(ctx)
 		logger.Error().Err(err).Msg("Error consuming from Redis queue")
 		return
 	}
@@ -208,7 +207,7 @@ func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
 		})
 	} else {
 		// handler not found
-		ctxval.Logger(ctx).Warn().Msgf("Redis worker handler not found for job type: %s", job.Type)
+		zerolog.Ctx(ctx).Warn().Msgf("Redis worker handler not found for job type: %s", job.Type)
 	}
 }
 

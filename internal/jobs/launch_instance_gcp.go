@@ -6,12 +6,12 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
+	"github.com/rs/zerolog"
 )
 
 type LaunchInstanceGCPTaskArgs struct {
@@ -39,12 +39,12 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 	args, ok := job.Args.(LaunchInstanceGCPTaskArgs)
 	if !ok {
 		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
-		ctxval.Logger(ctx).Error().Err(err).Msg("Type assertion error for job")
+		zerolog.Ctx(ctx).Error().Err(err).Msg("Type assertion error for job")
 		return
 	}
 
-	logger := ctxval.Logger(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
-	ctx = ctxval.WithLogger(ctx, &logger)
+	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	ctx = logger.WithContext(ctx)
 
 	jobErr := DoLaunchInstanceGCP(ctx, &args)
 
@@ -53,7 +53,7 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 
 // Job logic, when error is returned the job status is updated accordingly
 func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started launch instance GCP job")
 	logger.Info().Interface("args", args).Msg("Processing launch instance GCP job")
 

@@ -7,6 +7,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	"github.com/google/uuid"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
+	"github.com/rs/zerolog"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
@@ -20,7 +21,7 @@ import (
 )
 
 func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
-	logger := *ctxval.Logger(r.Context())
+	logger := *zerolog.Ctx(r.Context())
 
 	var accountId int64 = ctxval.AccountId(r.Context())
 	var id identity.XRHID = ctxval.Identity(r.Context())
