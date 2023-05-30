@@ -5,7 +5,7 @@ import (
 )
 
 type AvailabilityStatusRequest struct {
-	SourceID string `json:"source_id"`
+	SourceID string `json:"source_id" yaml:"source_id"`
 }
 
 func (p *AvailabilityStatusRequest) Bind(_ *http.Request) error {

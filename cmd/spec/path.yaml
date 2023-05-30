@@ -349,11 +349,16 @@ paths:
   /reservations:
     get:
       operationId: getReservationsList
+      tags:
+        - Reservation
       description: >
         A reservation is a way to activate a job, keeps all data needed for a job to start.
         This operation returns list of all reservations for particular account. To get a
         reservation with common fields, use /reservations/ID. To get a detailed reservation
         with all fields which are different per provider, use /reservations/aws/ID.
+        Reservation can be in three states: pending, success, failed. This can be recognized
+        by the success field (null for pending, true for success, false for failure). See
+        the examples.
       responses:
         '200':
           description: 'Returned on success.'
@@ -362,13 +367,18 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/v1.ReservationResponse'
+                  $ref: '#/components/schemas/v1.GenericReservationResponsePayload'
+              examples:
+                example:
+                  $ref: '#/components/examples/v1.GenericReservationResponsePayloadListExample'
         "500":
           $ref: '#/components/responses/InternalError'
   /reservations/{ID}:
     get:
       description: 'Return a generic reservation by id'
       operationId: getReservationByID
+      tags:
+        - Reservation
       parameters:
       - in: path
         name: ID
@@ -383,7 +393,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1.ReservationResponse'
+                $ref: '#/components/schemas/v1.GenericReservationResponsePayload'
+              examples:
+                pending:
+                  $ref: '#/components/examples/v1.GenericReservationResponsePayloadPendingExample'
+                success:
+                  $ref: '#/components/examples/v1.GenericReservationResponsePayloadSuccessExample'
+                failure:
+                  $ref: '#/components/examples/v1.GenericReservationResponsePayloadFailureExample'
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -391,6 +408,8 @@ paths:
   /reservations/aws:
     post:
       operationId: createAwsReservation
+      tags:
+        - Reservation
       description: >
         A reservation is a way to activate a job, keeps all data needed for a job to start.
         An AWS reservation is a reservation created for an AWS job. Image Builder UUID image
@@ -404,6 +423,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/v1.AWSReservationRequest'
+            examples:
+              example:
+                $ref: '#/components/examples/v1.AwsReservationRequestPayloadExample'
         description: aws request body
         required: true
       responses:
@@ -418,6 +440,8 @@ paths:
   /reservations/azure:
     post:
       operationId: createAzureReservation
+      tags:
+        - Reservation
       description: >
         A reservation is a way to activate a job, keeps all data needed for a job to start.
         An Azure reservation is a reservation created for an Azure job. Image Builder UUID image
@@ -427,6 +451,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/v1.AzureReservationRequest'
+            examples:
+              example:
+                $ref: '#/components/examples/v1.AzureReservationRequestPayloadExample'
         description: aws request body
         required: true
       responses:
@@ -442,6 +469,8 @@ paths:
     get:
       description: 'Return an AWS reservation with details by id'
       operationId: getAWSReservationByID
+      tags:
+        - Reservation
       parameters:
         - in: path
           name: ID
@@ -457,6 +486,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/v1.AWSReservationResponse'
+              examples:
+                pending:
+                  $ref: '#/components/examples/v1.AwsReservationResponsePayloadPendingExample'
+                done:
+                  $ref: '#/components/examples/v1.AwsReservationResponsePayloadDoneExample'
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -465,6 +499,8 @@ paths:
     get:
       description: 'Return an Azure reservation with details by id'
       operationId: getAzureReservationByID
+      tags:
+        - Reservation
       parameters:
         - in: path
           name: ID
@@ -480,6 +516,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/v1.AzureReservationResponse'
+              examples:
+                pending:
+                  $ref: '#/components/examples/v1.AzureReservationResponsePayloadPendingExample'
+                done:
+                  $ref: '#/components/examples/v1.AzureReservationResponsePayloadDoneExample'
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -487,6 +528,8 @@ paths:
   /reservations/noop:
     post:
       operationId: createNoopReservation
+      tags:
+        - Reservation
       description: >
         A reservation is a way to activate a job, keeps all data needed for a job to start.
         A Noop reservation actually does nothing and immediately finish background job.
@@ -498,6 +541,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/v1.NoopReservationResponse'
+              examples:
+                example:
+                  $ref: '#/components/examples/v1.NoopReservationResponsePayloadExample'
         "500":
           $ref: '#/components/responses/InternalError'
   /availability_status/sources:

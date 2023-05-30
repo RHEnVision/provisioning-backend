@@ -4,6 +4,8 @@
 
 PROJECT_DIR:=$(shell dirname $(abspath $(firstword $(MAKEFILE_LIST))))
 
+GIT_TAG?=$(shell git describe --tags --abbrev=0 2>/dev/null)
+
 # Update GitHub Workflows when changing this
 GO_VERSION?=1.19.6
 GOBIN:=$(PROJECT_DIR)/bin

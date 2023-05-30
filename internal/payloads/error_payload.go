@@ -28,7 +28,7 @@ type ResponseError struct {
 	TraceId string `json:"trace_id,omitempty" yaml:"trace_id"`
 
 	// edge id from context (if provided)
-	EdgeId string `json:"edge_id,omitempty"`
+	EdgeId string `json:"edge_id,omitempty" yaml:"edge_id"`
 
 	// full root cause
 	Error string `json:"error" yaml:"error"`
