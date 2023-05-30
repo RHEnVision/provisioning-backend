@@ -1,3 +1,4 @@
+# nonk8s
 ---
 apiVersion: v1
 kind: Template
@@ -40,6 +41,8 @@ objects:
             env:
               - name: LOGGING_LEVEL
                 value: ${LOGGING_LEVEL}
+              - name: REST_ENDPOINTS_TRACE_DATA
+                value: ${REST_ENDPOINTS_TRACE_DATA}
               - name: DATABASE_LOGGING_LEVEL
                 value: ${DATABASE_LOGGING_LEVEL}
               - name: TELEMETRY_ENABLED
@@ -119,6 +122,8 @@ objects:
             env:
               - name: LOGGING_LEVEL
                 value: ${LOGGING_LEVEL}
+              - name: REST_ENDPOINTS_TRACE_DATA
+                value: ${REST_ENDPOINTS_TRACE_DATA}
               - name: DATABASE_LOGGING_LEVEL
                 value: ${DATABASE_LOGGING_LEVEL}
               - name: TELEMETRY_ENABLED
@@ -217,6 +222,8 @@ objects:
             env:
               - name: LOGGING_LEVEL
                 value: ${LOGGING_LEVEL}
+              - name: REST_ENDPOINTS_TRACE_DATA
+                value: ${REST_ENDPOINTS_TRACE_DATA}
               - name: DATABASE_LOGGING_LEVEL
                 value: ${DATABASE_LOGGING_LEVEL}
               - name: TELEMETRY_ENABLED
@@ -357,6 +364,9 @@ parameters:
   - description: Logging level (trace, debug, info, warn, error, fatal, panic)
     name: LOGGING_LEVEL
     value: "debug"
+  - description: Log HTTP client body request and responses (can be verbose)
+    name: REST_ENDPOINTS_TRACE_DATA
+    value: "false"
   - description: Postgres driver logging level (trace, debug, info, warn, error, fatal, panic)
     name: DATABASE_LOGGING_LEVEL
     value: "debug"
