@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"reflect"
 
@@ -17,7 +19,7 @@ func addPayloads(gen *APISchemaGen) {
 	gen.addSchema("v1.PubkeyResponse", &payloads.PubkeyResponse{})
 	gen.addSchema("v1.SourceResponse", &payloads.SourceResponse{})
 	gen.addSchema("v1.InstanceTypeResponse", &payloads.InstanceTypeResponse{})
-	gen.addSchema("v1.ReservationResponse", &payloads.GenericReservationResponsePayload{})
+	gen.addSchema("v1.GenericReservationResponsePayload", &payloads.GenericReservationResponsePayload{})
 	gen.addSchema("v1.NoopReservationResponse", &payloads.NoopReservationResponsePayload{})
 	gen.addSchema("v1.AWSReservationRequest", &payloads.AWSReservationRequestPayload{})
 	gen.addSchema("v1.AWSReservationResponse", &payloads.AWSReservationResponsePayload{})
@@ -38,6 +40,17 @@ func addExamples(gen *APISchemaGen) {
 	gen.addExample("v1.SourceUploadInfoAzureResponse", SourceUploadInfoAzureResponse)
 	gen.addExample("v1.LaunchTemplateListResponse", LaunchTemplateListResponse)
 	gen.addExample("v1.AvailabilityStatusRequest", AvailabilityStatusRequest)
+	gen.addExample("v1.GenericReservationResponsePayloadSuccessExample", GenericReservationResponsePayloadSuccessExample)
+	gen.addExample("v1.GenericReservationResponsePayloadPendingExample", GenericReservationResponsePayloadPendingExample)
+	gen.addExample("v1.GenericReservationResponsePayloadFailureExample", GenericReservationResponsePayloadFailureExample)
+	gen.addExample("v1.GenericReservationResponsePayloadListExample", GenericReservationResponsePayloadListExample)
+	gen.addExample("v1.AwsReservationRequestPayloadExample", AwsReservationRequestPayloadExample)
+	gen.addExample("v1.AwsReservationResponsePayloadPendingExample", AwsReservationResponsePayloadPendingExample)
+	gen.addExample("v1.AwsReservationResponsePayloadDoneExample", AwsReservationResponsePayloadDoneExample)
+	gen.addExample("v1.AzureReservationRequestPayloadExample", AzureReservationRequestPayloadExample)
+	gen.addExample("v1.AzureReservationResponsePayloadPendingExample", AzureReservationResponsePayloadPendingExample)
+	gen.addExample("v1.AzureReservationResponsePayloadDoneExample", AzureReservationResponsePayloadDoneExample)
+	gen.addExample("v1.NoopReservationResponsePayloadExample", NoopReservationResponsePayloadExample)
 
 	gen.addExample("v1.InstanceTypesAWSResponse", InstanceTypesAWSResponse)
 	gen.addExample("v1.InstanceTypesAzureResponse", InstanceTypesAzureResponse)
@@ -105,33 +118,79 @@ func (s *APISchemaGen) addResponse(name string, description string, ref string, 
 }
 
 func (s *APISchemaGen) addExample(name string, value interface{}) {
+	// verify all fields has both json and yaml struct flags
+	rval := reflect.TypeOf(value)
+	checkTags(rval)
+
 	example := openapi3.NewExample(value)
 	s.Components.Examples[name] = &openapi3.ExampleRef{Value: example}
 }
 
+//nolint:goerr113
+func checkTags(rval reflect.Type) {
+	if rval.Kind() == reflect.Array || rval.Kind() == reflect.Slice {
+		checkTags(rval.Elem())
+		return
+	}
+
+	if rval.Kind() != reflect.Struct {
+		fmt.Printf("unable to check type %s of kind %s for struct tags, skipped\n", rval.Name(), rval.Kind().String())
+		return
+	}
+
+	for i := 0; i < rval.NumField(); i++ {
+		for _, tagName := range []string{"json", "yaml"} {
+			if _, ok := rval.Field(i).Tag.Lookup(tagName); !ok {
+				panic(fmt.Errorf("type %s does not have struct flag '%s'", rval.Name(), tagName))
+			}
+		}
+	}
+}
+
 func main() {
+	// build schema part
 	gen := NewSchemaGenerator()
 	addErrorSchemas(gen)
 	addPayloads(gen)
 	addExamples(gen)
 
-	bufferYAML, err := os.ReadFile("./cmd/spec/path.yaml")
-	if err != nil {
-		panic(err)
-	}
+	// store schema part as buffer
 	schemasYaml, err := yaml.Marshal(&gen)
 	if err != nil {
 		panic(err)
 	}
+
+	// load endpoints and info part from file
+	bufferYAML, err := os.ReadFile("./cmd/spec/path.yaml")
+	if err != nil {
+		panic(err)
+	}
+
+	// append both into single schema
 	bufferYAML = append(bufferYAML, schemasYaml...)
 
-	// Load the full yaml schema to dump it to JSON with indent as a whole.
-	// This also helps validate the spec.
+	// load full schema
 	loadedSchema, err := openapi3.NewLoader().LoadFromData(bufferYAML)
 	if err != nil {
 		panic(err)
 	}
 
+	// update version in the full schema and store it again
+	if len(os.Args) >= 2 {
+		loadedSchema.Info.Version = os.Args[1]
+		bufferYAML, err = yaml.Marshal(&loadedSchema)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// validate it
+	err = loadedSchema.Validate(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	// and store the full schema as JSON and YAML
 	bufferJSON, err := json.MarshalIndent(loadedSchema, "", "  ")
 	if err != nil {
 		panic(err)

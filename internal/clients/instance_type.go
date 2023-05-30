@@ -37,7 +37,7 @@ type InstanceType struct {
 	Architecture ArchitectureType `json:"architecture,omitempty" yaml:"arch"`
 
 	// Extra information for Azure, nil for other types
-	AzureDetail *InstanceTypeDetailAzure `json:"azure,omitempty" yaml:"azure"`
+	AzureDetail *InstanceTypeDetailAzure `json:"azure,omitempty" yaml:"azure,omitempty"`
 }
 
 // InstanceTypeDetailAzure contains specific details for Azure.

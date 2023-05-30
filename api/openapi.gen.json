@@ -3,14 +3,220 @@
     "examples": {
       "v1.AvailabilityStatusRequest": {
         "value": {
-          "sourceid": "463243"
+          "source_id": "463243"
+        }
+      },
+      "v1.AwsReservationRequestPayloadExample": {
+        "value": {
+          "amount": 1,
+          "image_id": "ami-7846387643232",
+          "instance_type": "t3.small",
+          "launch_template_id": "",
+          "name": "my-instance",
+          "poweroff": false,
+          "pubkey_id": 42,
+          "region": "us-east-1",
+          "source_id": "654321"
+        }
+      },
+      "v1.AwsReservationResponsePayloadDoneExample": {
+        "value": {
+          "amount": 1,
+          "aws_reservation_id": "r-3743243324231",
+          "image_id": "ami-7846387643232",
+          "instance_type": "t3.small",
+          "instances": [
+            {
+              "detail": {
+                "publicdns": "",
+                "publicipv4": "10.0.0.88"
+              },
+              "instance_id": "i-2324343212"
+            }
+          ],
+          "launch_template_id": "",
+          "name": "my-instance",
+          "poweroff": false,
+          "pubkey_id": 42,
+          "region": "us-east-1",
+          "reservation_id": 1305,
+          "source_id": "654321"
+        }
+      },
+      "v1.AwsReservationResponsePayloadPendingExample": {
+        "value": {
+          "amount": 1,
+          "aws_reservation_id": "",
+          "image_id": "ami-7846387643232",
+          "instance_type": "t3.small",
+          "instances": [],
+          "launch_template_id": "",
+          "name": "my-instance",
+          "poweroff": false,
+          "pubkey_id": 42,
+          "region": "us-east-1",
+          "reservation_id": 0,
+          "source_id": "654321"
+        }
+      },
+      "v1.AzureReservationRequestPayloadExample": {
+        "value": {
+          "amount": 1,
+          "image_id": "composer-api-081fc867-838f-44a5-af03-8b8def808431",
+          "instance_size": "Basic_A0",
+          "location": "useast",
+          "name": "my-instance",
+          "poweroff": false,
+          "pubkey_id": 42,
+          "source_id": "654321"
+        }
+      },
+      "v1.AzureReservationResponsePayloadDoneExample": {
+        "value": {
+          "amount": 1,
+          "image_id": "composer-api-081fc867-838f-44a5-af03-8b8def808431",
+          "instance_size": "Basic_A0",
+          "instances": [
+            {
+              "detail": {
+                "publicdns": "",
+                "publicipv4": "10.0.0.88"
+              },
+              "instance_id": "/subscriptions/4b9d213f-712f-4d17-a483-8a10bbe9df3a/resourceGroups/redhat-deployed/providers/Microsoft.Compute/images/composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7"
+            }
+          ],
+          "location": "useast",
+          "name": "my-instance",
+          "poweroff": false,
+          "pubkey_id": 42,
+          "reservation_id": 1310,
+          "source_id": "654321"
+        }
+      },
+      "v1.AzureReservationResponsePayloadPendingExample": {
+        "value": {
+          "amount": 1,
+          "image_id": "composer-api-081fc867-838f-44a5-af03-8b8def808431",
+          "instance_size": "Basic_A0",
+          "instances": [],
+          "location": "useast",
+          "name": "my-instance",
+          "poweroff": false,
+          "pubkey_id": 42,
+          "reservation_id": 1310,
+          "source_id": "654321"
+        }
+      },
+      "v1.GenericReservationResponsePayloadFailureExample": {
+        "value": {
+          "created_at": "2013-05-13T19:20:15Z",
+          "error": "cannot launch ec2 instance: VPCIdNotSpecified: No default VPC for this user. GroupName is only supported for EC2-Classic and default VPC",
+          "finished_at": "2013-05-13T19:20:25Z",
+          "id": 1313,
+          "provider": 1,
+          "status": "Finished Launch instance(s)",
+          "step": 2,
+          "step_titles": [
+            "Ensure public key",
+            "Launch instance(s)",
+            "Fetch instance(s) description"
+          ],
+          "steps": 3,
+          "success": false
+        }
+      },
+      "v1.GenericReservationResponsePayloadListExample": {
+        "value": [
+          {
+            "created_at": "2013-05-13T19:20:15Z",
+            "error": "",
+            "finished_at": null,
+            "id": 1310,
+            "provider": 1,
+            "status": "Started Ensure public key",
+            "step": 1,
+            "step_titles": [
+              "Ensure public key",
+              "Launch instance(s)",
+              "Fetch instance(s) description"
+            ],
+            "steps": 3,
+            "success": null
+          },
+          {
+            "created_at": "2013-05-13T19:20:15Z",
+            "error": "",
+            "finished_at": "2013-05-13T19:20:25Z",
+            "id": 1305,
+            "provider": 1,
+            "status": "Finished Fetch instance(s) description",
+            "step": 3,
+            "step_titles": [
+              "Ensure public key",
+              "Launch instance(s)",
+              "Fetch instance(s) description"
+            ],
+            "steps": 3,
+            "success": true
+          },
+          {
+            "created_at": "2013-05-13T19:20:15Z",
+            "error": "cannot launch ec2 instance: VPCIdNotSpecified: No default VPC for this user. GroupName is only supported for EC2-Classic and default VPC",
+            "finished_at": "2013-05-13T19:20:25Z",
+            "id": 1313,
+            "provider": 1,
+            "status": "Finished Launch instance(s)",
+            "step": 2,
+            "step_titles": [
+              "Ensure public key",
+              "Launch instance(s)",
+              "Fetch instance(s) description"
+            ],
+            "steps": 3,
+            "success": false
+          }
+        ]
+      },
+      "v1.GenericReservationResponsePayloadPendingExample": {
+        "value": {
+          "created_at": "2013-05-13T19:20:15Z",
+          "error": "",
+          "finished_at": null,
+          "id": 1310,
+          "provider": 1,
+          "status": "Started Ensure public key",
+          "step": 1,
+          "step_titles": [
+            "Ensure public key",
+            "Launch instance(s)",
+            "Fetch instance(s) description"
+          ],
+          "steps": 3,
+          "success": null
+        }
+      },
+      "v1.GenericReservationResponsePayloadSuccessExample": {
+        "value": {
+          "created_at": "2013-05-13T19:20:15Z",
+          "error": "",
+          "finished_at": "2013-05-13T19:20:25Z",
+          "id": 1305,
+          "provider": 1,
+          "status": "Finished Fetch instance(s) description",
+          "step": 3,
+          "step_titles": [
+            "Ensure public key",
+            "Launch instance(s)",
+            "Fetch instance(s) description"
+          ],
+          "steps": 3,
+          "success": true
         }
       },
       "v1.InstanceTypesAWSResponse": {
         "value": [
           {
             "arch": "x86_64",
-            "azure": null,
             "cores": 16,
             "memory_mib": 65536,
             "name": "c5a.8xlarge",
@@ -44,6 +250,11 @@
             "name": "XXL large backend API"
           }
         ]
+      },
+      "v1.NoopReservationResponsePayloadExample": {
+        "value": {
+          "reservation_id": 1310
+        }
       },
       "v1.PubkeyListResponseExample": {
         "value": [
@@ -121,7 +332,7 @@
               "error": {
                 "value": {
                   "build_time": "2023-04-14_17:15:02",
-                  "edgeid": "",
+                  "edge_id": "",
                   "environment": "",
                   "error": "error: bad request: details can be long",
                   "trace_id": "b57f7b78c",
@@ -143,7 +354,7 @@
               "error": {
                 "value": {
                   "build_time": "2023-04-14_17:15:02",
-                  "edgeid": "",
+                  "edge_id": "",
                   "environment": "",
                   "error": "error: this can be pretty long string",
                   "trace_id": "b57f7b78c",
@@ -165,7 +376,7 @@
               "error": {
                 "value": {
                   "build_time": "2023-04-14_17:15:02",
-                  "edgeid": "",
+                  "edge_id": "",
                   "environment": "",
                   "error": "error: resource not found: details can be long",
                   "trace_id": "b57f7b78c",
@@ -388,6 +599,51 @@
         },
         "type": "object"
       },
+      "v1.GenericReservationResponsePayload": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "finished_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "provider": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "step": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "step_titles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "steps": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "success": {
+            "nullable": true,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
       "v1.InstanceTypeResponse": {
         "properties": {
           "architecture": {
@@ -484,51 +740,6 @@
         },
         "type": "object"
       },
-      "v1.ReservationResponse": {
-        "properties": {
-          "created_at": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "error": {
-            "type": "string"
-          },
-          "finished_at": {
-            "format": "date-time",
-            "nullable": true,
-            "type": "string"
-          },
-          "id": {
-            "format": "int64",
-            "type": "integer"
-          },
-          "provider": {
-            "type": "integer"
-          },
-          "status": {
-            "type": "string"
-          },
-          "step": {
-            "format": "int32",
-            "type": "integer"
-          },
-          "step_titles": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "steps": {
-            "format": "int32",
-            "type": "integer"
-          },
-          "success": {
-            "nullable": true,
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      },
       "v1.ResponseError": {
         "properties": {
           "build_time": {
@@ -615,7 +826,7 @@
       "name": "GPL-3.0"
     },
     "title": "provisioning-api",
-    "version": "1.0.0"
+    "version": "0.21.0"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -869,15 +1080,20 @@
     },
     "/reservations": {
       "get": {
-        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. This operation returns list of all reservations for particular account. To get a reservation with common fields, use /reservations/ID. To get a detailed reservation with all fields which are different per provider, use /reservations/aws/ID.\n",
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. This operation returns list of all reservations for particular account. To get a reservation with common fields, use /reservations/ID. To get a detailed reservation with all fields which are different per provider, use /reservations/aws/ID. Reservation can be in three states: pending, success, failed. This can be recognized by the success field (null for pending, true for success, false for failure). See the examples.\n",
         "operationId": "getReservationsList",
         "responses": {
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "example": {
+                    "$ref": "#/components/examples/v1.GenericReservationResponsePayloadListExample"
+                  }
+                },
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/v1.ReservationResponse"
+                    "$ref": "#/components/schemas/v1.GenericReservationResponsePayload"
                   },
                   "type": "array"
                 }
@@ -888,7 +1104,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Reservation"
+        ]
       }
     },
     "/reservations/aws": {
@@ -898,6 +1117,11 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "examples": {
+                "example": {
+                  "$ref": "#/components/examples/v1.AwsReservationRequestPayloadExample"
+                }
+              },
               "schema": {
                 "$ref": "#/components/schemas/v1.AWSReservationRequest"
               }
@@ -920,7 +1144,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Reservation"
+        ]
       }
     },
     "/reservations/aws/{ID}": {
@@ -943,6 +1170,14 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "done": {
+                    "$ref": "#/components/examples/v1.AwsReservationResponsePayloadDoneExample"
+                  },
+                  "pending": {
+                    "$ref": "#/components/examples/v1.AwsReservationResponsePayloadPendingExample"
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/v1.AWSReservationResponse"
                 }
@@ -956,7 +1191,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Reservation"
+        ]
       }
     },
     "/reservations/azure": {
@@ -966,6 +1204,11 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "examples": {
+                "example": {
+                  "$ref": "#/components/examples/v1.AzureReservationRequestPayloadExample"
+                }
+              },
               "schema": {
                 "$ref": "#/components/schemas/v1.AzureReservationRequest"
               }
@@ -988,7 +1231,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Reservation"
+        ]
       }
     },
     "/reservations/azure/{ID}": {
@@ -1011,6 +1257,14 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "done": {
+                    "$ref": "#/components/examples/v1.AzureReservationResponsePayloadDoneExample"
+                  },
+                  "pending": {
+                    "$ref": "#/components/examples/v1.AzureReservationResponsePayloadPendingExample"
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/v1.AzureReservationResponse"
                 }
@@ -1024,7 +1278,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Reservation"
+        ]
       }
     },
     "/reservations/noop": {
@@ -1035,6 +1292,11 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "example": {
+                    "$ref": "#/components/examples/v1.NoopReservationResponsePayloadExample"
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/v1.NoopReservationResponse"
                 }
@@ -1045,7 +1307,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Reservation"
+        ]
       }
     },
     "/reservations/{ID}": {
@@ -1068,8 +1333,19 @@
           "200": {
             "content": {
               "application/json": {
+                "examples": {
+                  "failure": {
+                    "$ref": "#/components/examples/v1.GenericReservationResponsePayloadFailureExample"
+                  },
+                  "pending": {
+                    "$ref": "#/components/examples/v1.GenericReservationResponsePayloadPendingExample"
+                  },
+                  "success": {
+                    "$ref": "#/components/examples/v1.GenericReservationResponsePayloadSuccessExample"
+                  }
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/v1.ReservationResponse"
+                  "$ref": "#/components/schemas/v1.GenericReservationResponsePayload"
                 }
               }
             },
@@ -1081,7 +1357,10 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "tags": [
+          "Reservation"
+        ]
       }
     },
     "/sources": {

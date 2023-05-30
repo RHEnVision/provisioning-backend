@@ -12,219 +12,219 @@ import (
 // provider type in HTTP URL. All other fields are auto-generated.
 
 type GenericReservationResponsePayload struct {
-	ID int64 `json:"id"`
+	ID int64 `json:"id" yaml:"id"`
 
 	// Provider type. Required.
-	Provider int `json:"provider"`
+	Provider int `json:"provider" yaml:"provider"`
 
 	// Time when reservation was made.
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt time.Time `json:"created_at" yaml:"created_at"`
 
 	// Total number of job steps for this reservation.
-	Steps int32 `json:"steps"`
+	Steps int32 `json:"steps" yaml:"steps"`
 
 	// User-facing step descriptions for each step. Length of StepTitles must be equal to Steps.
-	StepTitles []string `json:"step_titles"`
+	StepTitles []string `json:"step_titles" yaml:"step_titles"`
 
 	// Active job step for this reservation. See Status for more details.
-	Step int32 `json:"step"`
+	Step int32 `json:"step" yaml:"step"`
 
 	// Textual status of the reservation or error when there was a failure
-	Status string `json:"status"`
+	Status string `json:"status" yaml:"status"`
 
 	// Error message when reservation was not successful. Only set when Success if false.
-	Error string `json:"error"`
+	Error string `json:"error" yaml:"error"`
 
 	// Time when reservation was finished or nil when it's still processing.
-	FinishedAt *time.Time `json:"finished_at" nullable:"true"`
+	FinishedAt *time.Time `json:"finished_at" nullable:"true" yaml:"finished_at"`
 
 	// Flag indicating success, error or unknown state (NULL). See Status for the actual error.
-	Success *bool `json:"success" nullable:"true"`
+	Success *bool `json:"success" nullable:"true" yaml:"success"`
 }
 
 type InstanceResponse struct {
 	// Instance ID which has been created on a cloud provider.
-	InstanceID string `json:"instance_id"`
+	InstanceID string `json:"instance_id" yaml:"instance_id"`
 
 	// Instance's description, ip and dns
-	Detail models.ReservationInstanceDetail `json:"detail"`
+	Detail models.ReservationInstanceDetail `json:"detail" yaml:"detail"`
 }
 
 type AWSReservationResponsePayload struct {
-	ID int64 `json:"reservation_id"`
+	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 
 	// Pubkey ID.
-	PubkeyID int64 `json:"pubkey_id"`
+	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
 
 	// Source ID.
-	SourceID string `json:"source_id"`
+	SourceID string `json:"source_id" yaml:"source_id"`
 
 	// AWS region.
-	Region string `json:"region"`
+	Region string `json:"region" yaml:"region"`
 
 	// AWS Instance type.
-	InstanceType string `json:"instance_type"`
+	InstanceType string `json:"instance_type" yaml:"instance_type"`
 
 	// Amount of instances to provision of type: Instance type.
-	Amount int32 `json:"amount"`
+	Amount int32 `json:"amount" yaml:"amount"`
 
 	// The ID of the image from which the instance is created.
-	ImageID string `json:"image_id"`
+	ImageID string `json:"image_id" yaml:"image_id"`
 
 	// Optional launch template ID ("lt-9848392734432") or empty for no template.
-	LaunchTemplateID string `json:"launch_template_id"`
+	LaunchTemplateID string `json:"launch_template_id" yaml:"launch_template_id"`
 
 	// The ID of the aws reservation which was created, or missing if not created yet.
-	AWSReservationID string `json:"aws_reservation_id,omitempty"`
+	AWSReservationID string `json:"aws_reservation_id,omitempty" yaml:"aws_reservation_id"`
 
 	// Optional name of the instance(s).
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 
 	// Immediately power off the system after initialization
-	PowerOff bool `json:"poweroff"`
+	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 
 	// Instances array, only present for finished reservations
-	Instances []InstanceResponse `json:"instances,omitempty"`
+	Instances []InstanceResponse `json:"instances,omitempty" yaml:"instances"`
 }
 
 type AzureReservationResponsePayload struct {
-	ID int64 `json:"reservation_id"`
+	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 
-	PubkeyID int64 `json:"pubkey_id"`
+	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
 
-	SourceID string `json:"source_id"`
+	SourceID string `json:"source_id" yaml:"source_id"`
 
 	// Azure Location.
-	Location string `json:"location"`
+	Location string `json:"location" yaml:"location"`
 
 	// Azure Instance size.
-	InstanceSize string `json:"instance_size"`
+	InstanceSize string `json:"instance_size" yaml:"instance_size"`
 
 	// Amount of instances to provision of type: Instance type.
-	Amount int64 `json:"amount"`
+	Amount int64 `json:"amount" yaml:"amount"`
 
 	// The ID of the image from which the instance is created.
-	ImageID string `json:"image_id"`
+	ImageID string `json:"image_id" yaml:"image_id"`
 
 	// Optional name of the instance(s).
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 
 	// Immediately PowerOff the system after initialization.
-	PowerOff bool `json:"poweroff"`
+	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 
 	// Instances IDs, only present for finished reservations.
-	Instances []InstanceResponse `json:"instances,omitempty"`
+	Instances []InstanceResponse `json:"instances,omitempty" yaml:"instances"`
 }
 
 type GCPReservationResponsePayload struct {
-	ID int64 `json:"reservation_id"`
+	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 
 	// Pubkey ID.
-	PubkeyID int64 `json:"pubkey_id"`
+	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
 
 	// Source ID.
-	SourceID string `json:"source_id"`
+	SourceID string `json:"source_id" yaml:"source_id"`
 
 	// GCP zone.
-	Zone string `json:"zone"`
+	Zone string `json:"zone" yaml:"zone"`
 
 	// GCP Machine type.
-	MachineType string `json:"machine_type"`
+	MachineType string `json:"machine_type" yaml:"machine_type"`
 
 	// Amount of instances to provision of type: Instance type.
-	Amount int64 `json:"amount"`
+	Amount int64 `json:"amount" yaml:"amount"`
 
 	// The ID of the image from which the instance is created.
-	ImageID string `json:"image_id"`
+	ImageID string `json:"image_id" yaml:"image_id"`
 
 	// The name of the gcp operation which was created.
-	GCPOperationName string `json:"gcp_operation_name,omitempty"`
+	GCPOperationName string `json:"gcp_operation_name,omitempty" yaml:"gcp_operation_name"`
 
 	// Immediately power off the system after initialization
-	PowerOff bool `json:"poweroff"`
+	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 
 	// Instances IDs, only present for finished reservations.
-	Instances []InstanceResponse `json:"instances,omitempty"`
+	Instances []InstanceResponse `json:"instances,omitempty" yaml:"instances"`
 }
 
 type NoopReservationResponsePayload struct {
-	ID int64 `json:"reservation_id"`
+	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 }
 
 type AWSReservationRequestPayload struct {
 	// Pubkey ID. Always required even when launch template provides one.
-	PubkeyID int64 `json:"pubkey_id"`
+	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
 
 	// Source ID.
-	SourceID string `json:"source_id"`
+	SourceID string `json:"source_id" yaml:"source_id"`
 
 	// AWS region.
-	Region string `json:"region"`
+	Region string `json:"region" yaml:"region"`
 
 	// Optional name of the instance(s).
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 
 	// Optional launch template ID ("lt-9848392734432") or empty for no template.
-	LaunchTemplateID string `json:"launch_template_id,omitempty"`
+	LaunchTemplateID string `json:"launch_template_id,omitempty" yaml:"launch_template_id"`
 
 	// AWS Instance type.
-	InstanceType string `json:"instance_type"`
+	InstanceType string `json:"instance_type" yaml:"instance_type"`
 
 	// Amount of instances to provision of type: Instance type.
-	Amount int32 ` json:"amount"`
+	Amount int32 ` json:"amount" yaml:"amount"`
 
 	// Image Builder UUID of the image that should be launched. AMI's must be prefixed with 'ami-'.
-	ImageID string `json:"image_id"`
+	ImageID string `json:"image_id" yaml:"image_id"`
 
 	// Immediately power off the system after initialization
-	PowerOff bool `json:"poweroff"`
+	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 }
 
 type AzureReservationRequestPayload struct {
-	PubkeyID int64 `json:"pubkey_id"`
+	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
 
-	SourceID string `json:"source_id"`
+	SourceID string `json:"source_id" yaml:"source_id"`
 
 	// Image Builder UUID of the image that should be launched. This can be directly Azure image ID.
-	ImageID string `json:"image_id"`
+	ImageID string `json:"image_id" yaml:"image_id"`
 
 	// Azure Location to deploy into.
-	Location string `json:"location"`
+	Location string `json:"location" yaml:"location"`
 
 	// Azure Instance type.
-	InstanceSize string `json:"instance_size"`
+	InstanceSize string `json:"instance_size" yaml:"instance_size"`
 
 	// Amount of instances to provision of size: InstanceSize.
-	Amount int64 `json:"amount"`
+	Amount int64 `json:"amount" yaml:"amount"`
 
 	// Name of the instance(s).
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 
 	// Immediately power off the system after initialization.
-	PowerOff bool `json:"poweroff"`
+	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 }
 
 type GCPReservationRequestPayload struct {
 	// Pubkey ID.
-	PubkeyID int64 `json:"pubkey_id"`
+	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
 
 	// Source ID.
-	SourceID string `json:"source_id"`
+	SourceID string `json:"source_id" yaml:"source_id"`
 
 	// GCP zone.
-	Zone string `json:"zone"`
+	Zone string `json:"zone" yaml:"zone"`
 
 	// GCP Machine type.
-	MachineType string `json:"machine_type"`
+	MachineType string `json:"machine_type" yaml:"machine_type"`
 
 	// Amount of instances to provision of type: Instance type.
-	Amount int64 ` json:"amount"`
+	Amount int64 ` json:"amount" yaml:"amount"`
 
 	// Image Builder UUID of the image that should be launched.
-	ImageID string `json:"image_id"`
+	ImageID string `json:"image_id" yaml:"image_id"`
 
 	// Immediately power off the system after initialization.
-	PowerOff bool `json:"poweroff"`
+	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 }
 
 func (p *GenericReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
