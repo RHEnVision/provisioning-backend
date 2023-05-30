@@ -57,7 +57,7 @@ var BackgroundJobDuration = prometheus.NewHistogramVec(
 		Name:        "provisioning_background_job_duration",
 		Help:        "task queue job duration (in seconds) by type",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "worker"},
-		Buckets:     []float64{1, 4, 5, 10, 30, 60 * 2, 60 * 5, 60 * 10, 60 * 20, 60 * 30, 60 * 60},
+		Buckets:     []float64{0.5, 1, 2, 3, 4, 5, 7, 10, 30, 60 * 2, 60 * 10, 60 * 30},
 	},
 	[]string{"type"},
 )
