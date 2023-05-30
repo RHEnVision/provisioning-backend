@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
@@ -59,13 +58,13 @@ func Initialize(_ context.Context, logger *zerolog.Logger) error {
 }
 
 func StartDequeueLoop(ctx context.Context) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Starting dequeue loop")
 	workers.DequeueLoop(ctx)
 }
 
 func StopDequeueLoop(ctx context.Context) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Stopping dequeue loop")
 	workers.Stop(ctx)
 }
@@ -73,7 +72,7 @@ func StopDequeueLoop(ctx context.Context) {
 func Stats(ctx context.Context) worker.Stats {
 	stats, err := workers.Stats(ctx)
 	if err != nil {
-		ctxval.Logger(ctx).Error().Err(err).Msg("Unable to get queue stats")
+		zerolog.Ctx(ctx).Error().Err(err).Msg("Unable to get queue stats")
 		return worker.Stats{}
 	}
 

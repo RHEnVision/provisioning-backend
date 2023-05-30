@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/rs/zerolog"
 )
 
 func IsHTTPStatus2xx(status int) bool {
@@ -37,7 +37,7 @@ func HandleHTTPResponses(ctx context.Context, statusCode int) error {
 		return clients.ForbiddenErr
 	}
 	if !IsHTTPStatus2xx(statusCode) {
-		ctxval.Logger(ctx).Warn().Msgf("Non-200 HTTP response seen: %v", statusCode)
+		zerolog.Ctx(ctx).Warn().Msgf("Non-200 HTTP response seen: %v", statusCode)
 		return clients.Non2xxResponseErr
 	}
 	return nil

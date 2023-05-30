@@ -15,6 +15,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
+	"github.com/rs/zerolog"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/protocol"
 	"github.com/segmentio/kafka-go/sasl"
@@ -77,7 +78,7 @@ func NewKafkaBroker(ctx context.Context) (Broker, error) {
 	var tlsConfig *tls.Config
 	var saslMechanism sasl.Mechanism
 
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msgf("Setting up Kafka transport: %v CA:%v SASL:%v", config.Kafka.Brokers,
 		config.Kafka.CACert != "", config.Kafka.SASL.SaslMechanism != "" && config.Kafka.SASL.SaslMechanism != "none")
 
@@ -142,14 +143,14 @@ func newContextLogger(ctx context.Context) func(msg string, a ...interface{}) {
 		if ignoredMsg.MatchString(msg) {
 			return
 		}
-		logger := ctxval.Logger(ctx)
+		logger := zerolog.Ctx(ctx)
 		logger.Debug().Bool("kafka", true).Msgf(msg, a...)
 	}
 }
 
 func newContextErrLogger(ctx context.Context) func(msg string, a ...interface{}) {
 	return func(msg string, a ...interface{}) {
-		logger := ctxval.Logger(ctx)
+		logger := zerolog.Ctx(ctx)
 		logger.Warn().Bool("kafka", true).Msgf(msg, a...)
 	}
 }
@@ -180,7 +181,7 @@ func (b *kafkaBroker) NewWriter(ctx context.Context) *kafka.Writer {
 // Consume reads messages in batches up to 1 MB with up to 10 seconds delay. It blocks, therefore
 // it should be called from a separate goroutine. Use context cancellation to stop the loop.
 func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time, handler func(ctx context.Context, message *GenericMessage)) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	r := b.NewReader(ctx, topic)
 	defer r.Close()
 
@@ -220,7 +221,7 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time
 				Str("trace_id", traceId.String()).
 				Str("account_number", identity.Identity.AccountNumber).
 				Str("org_id", identity.Identity.OrgID).Logger()
-			ctx = ctxval.WithLogger(ctx, &newLogger)
+			ctx = newLogger.WithContext(ctx)
 
 			handler(ctx, NewMessageFromKafka(&msg))
 		}
@@ -239,7 +240,7 @@ func header(name string, headers []protocol.Header) string {
 // Send one or more generic messages with the same topic. If there is a message with
 // different topic than the first one, DifferentTopicErr is returned.
 func (b *kafkaBroker) Send(ctx context.Context, messages ...*GenericMessage) error {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 
 	if len(messages) == 0 {
 		return nil

@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/rs/zerolog"
 )
 
@@ -20,7 +19,7 @@ type LoggingDoer struct {
 func NewLoggingDoer(ctx context.Context, doer HttpRequestDoer) *LoggingDoer {
 	client := LoggingDoer{
 		ctx:  ctx,
-		log:  ctxval.Logger(ctx),
+		log:  zerolog.Ctx(ctx),
 		doer: doer,
 	}
 	return &client

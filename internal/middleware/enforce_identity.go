@@ -10,8 +10,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
+	"github.com/rs/zerolog"
 )
 
 var (
@@ -20,7 +20,7 @@ var (
 )
 
 func doError(ctx context.Context, w http.ResponseWriter, code int, reason string) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	logger.Warn().Msgf("Failed to enforce the Identity header: %s", reason)
 	http.Error(w, reason, code)
 }
@@ -29,7 +29,7 @@ func doError(ctx context.Context, w http.ResponseWriter, code int, reason string
 // request context.  If the Identity is invalid, the request will be aborted.
 func EnforceIdentity(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger := ctxval.Logger(r.Context())
+		logger := zerolog.Ctx(r.Context())
 		rawHeaders := r.Header["X-Rh-Identity"]
 
 		// must have an x-rh-id header

@@ -5,9 +5,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/queue/jq"
+	"github.com/rs/zerolog"
 )
 
 // jobQueueMetricLoop is a background function that runs for all workers.
@@ -17,7 +17,7 @@ import (
 //
 //nolint:gosec
 func jobQueueMetricLoop(ctx context.Context, sleep time.Duration, name string) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 
 	// spread polling intervals
 	randSleep := rand.Int63() % sleep.Milliseconds()

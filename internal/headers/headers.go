@@ -8,6 +8,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
+	"github.com/rs/zerolog"
 )
 
 func basicAuth(username, password string) string {
@@ -17,7 +18,7 @@ func basicAuth(username, password string) string {
 
 func addIdentityHeader(ctx context.Context, req *http.Request, username, password string) error {
 	if username != "" && password != "" {
-		ctxval.Logger(ctx).Warn().Msgf("Username/password authentication: %s", username)
+		zerolog.Ctx(ctx).Warn().Msgf("Username/password authentication: %s", username)
 		req.Header.Add("Authorization", "Basic "+basicAuth(username, password))
 	} else {
 		req.Header.Set("X-RH-Identity", identity.GetIdentityHeader(ctx))

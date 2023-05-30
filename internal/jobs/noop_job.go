@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
+	"github.com/rs/zerolog"
 )
 
 type NoopJobArgs struct {
@@ -23,12 +23,12 @@ func HandleNoop(ctx context.Context, job *worker.Job) {
 	args, ok := job.Args.(NoopJobArgs)
 	if !ok {
 		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
-		ctxval.Logger(ctx).Error().Err(err).Msg("Type assertion error for job")
+		zerolog.Ctx(ctx).Error().Err(err).Msg("Type assertion error for job")
 		return
 	}
 
-	logger := ctxval.Logger(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
-	ctx = ctxval.WithLogger(ctx, &logger)
+	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	ctx = logger.WithContext(ctx)
 
 	jobErr := DoNoop(ctx, &args)
 
@@ -37,7 +37,7 @@ func HandleNoop(ctx context.Context, job *worker.Job) {
 
 // Job logic, when error is returned the job status is updated accordingly
 func DoNoop(ctx context.Context, args *NoopJobArgs) error {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 
 	// status updates before and after the code logic
 	updateStatusBefore(ctx, args.ReservationID, "No operation started")

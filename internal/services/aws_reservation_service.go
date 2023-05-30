@@ -18,10 +18,11 @@ import (
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
+	"github.com/rs/zerolog"
 )
 
 func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
-	logger := *ctxval.Logger(r.Context())
+	logger := *zerolog.Ctx(r.Context())
 
 	var accountId int64 = ctxval.AccountId(r.Context())
 	var id identity.XRHID = ctxval.Identity(r.Context())

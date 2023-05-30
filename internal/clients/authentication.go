@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/rs/zerolog"
 )
 
 type Authentication struct {
@@ -32,7 +32,7 @@ func NewAuthenticationFromSourceAuthType(ctx context.Context, str, authType, app
 	case "provisioning_project_id":
 		a.ProviderType = models.ProviderTypeGCP
 	default:
-		ctxval.Logger(ctx).Warn().Msgf("Unknown auth type returned from sources: %s", authType)
+		zerolog.Ctx(ctx).Warn().Msgf("Unknown auth type returned from sources: %s", authType)
 		a.ProviderType = models.ProviderTypeUnknown
 	}
 	return &a

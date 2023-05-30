@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
+	"github.com/rs/zerolog"
 )
 
 // buffered channel for incoming requests
@@ -22,13 +22,13 @@ func EnqueueAvailabilityStatusRequest(msg *kafka.GenericMessage) {
 func send(ctx context.Context, messages ...*kafka.GenericMessage) {
 	err := kafka.Send(ctx, messages...)
 	if err != nil {
-		ctxval.Logger(ctx).Warn().Err(err).Msg("Unable to send availability check messages")
+		zerolog.Ctx(ctx).Warn().Err(err).Msg("Unable to send availability check messages")
 	}
 }
 
 // main sending loop: takes messages enqueued via EnqueueAvailabilityStatusRequest and sends them to the kafka
 func sendAvailabilityRequestMessages(ctx context.Context, batchSize int, tickDuration time.Duration) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	ticker := time.NewTicker(tickDuration)
 	messageBuffer := make([]*kafka.GenericMessage, 0, batchSize)
 

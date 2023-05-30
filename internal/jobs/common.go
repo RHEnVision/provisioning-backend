@@ -10,6 +10,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
+	"github.com/rs/zerolog"
 )
 
 const TraceName = telemetry.TracePrefix + "internal/jobs"
@@ -25,7 +26,7 @@ func finishJob(ctx context.Context, reservationId int64, jobErr error) {
 }
 
 func finishWithSuccess(ctx context.Context, reservationId int64) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		// the original context is expired and unusable at this point
 		ctx = ctxval.Copy(ctx)
@@ -55,7 +56,7 @@ func finishWithSuccess(ctx context.Context, reservationId int64) {
 // finishWithError closes a reservation and sets it into error state. Error message is also
 // stored into the reservation.
 func finishWithError(ctx context.Context, reservationId int64, jobError error) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		// the original context is expired and unusable at this point
 		ctx = ctxval.Copy(ctx)
@@ -87,7 +88,7 @@ func updateStatusBefore(ctx context.Context, id int64, status string) {
 // updateStatusAfter is called after every step function within a job. It updates reservation status
 // message and step counter. When context deadline was exceeded, it sets the status message to "Timeout".
 func updateStatusAfter(ctx context.Context, id int64, status string, addSteps int) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		status = "Timeout"
 		// the original context is expired and unusable at this point

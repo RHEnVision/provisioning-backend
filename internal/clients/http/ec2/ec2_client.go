@@ -8,7 +8,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
@@ -40,7 +39,7 @@ func init() {
 }
 
 func logger(ctx context.Context) *zerolog.Logger {
-	logger := ctxval.Logger(ctx).With().Str("client", "ec2").Logger()
+	logger := zerolog.Ctx(ctx).With().Str("client", "ec2").Logger()
 	return &logger
 }
 

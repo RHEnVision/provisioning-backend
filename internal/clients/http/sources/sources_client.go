@@ -10,7 +10,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
@@ -30,7 +29,7 @@ func init() {
 }
 
 func logger(ctx context.Context) zerolog.Logger {
-	return ctxval.Logger(ctx).With().Str("client", "sources").Logger()
+	return zerolog.Ctx(ctx).With().Str("client", "sources").Logger()
 }
 
 func newSourcesClient(ctx context.Context) (clients.Sources, error) {

@@ -5,15 +5,15 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/rs/zerolog"
 )
 
 func ValidatePermissions(w http.ResponseWriter, r *http.Request) {
-	logger := ctxval.Logger(r.Context())
+	logger := zerolog.Ctx(r.Context())
 	sourceId := chi.URLParam(r, "ID")
 	region := r.URL.Query().Get("region")
 

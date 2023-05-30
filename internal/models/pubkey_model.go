@@ -3,8 +3,8 @@ package models
 import (
 	"context"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/ssh"
+	"github.com/rs/zerolog"
 )
 
 // Pubkey represents SSH public key that can be deployed to clients.
@@ -45,7 +45,7 @@ func (pk *Pubkey) FindAwsFingerprint(ctx context.Context) string {
 	case "ssh-rsa":
 		fp, err := ssh.GenerateAWSFingerprint([]byte(pk.Body))
 		if err != nil {
-			ctxval.Logger(ctx).Warn().Err(err).Msg("Unable to generate AWS fingerprint for pubkey")
+			zerolog.Ctx(ctx).Warn().Err(err).Msg("Unable to generate AWS fingerprint for pubkey")
 			return ""
 		}
 		return string(fp)

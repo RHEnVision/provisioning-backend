@@ -11,12 +11,13 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
+	"github.com/rs/zerolog"
 )
 
 // CreateNoopReservation is used to create empty reservation that is processed without any operation
 // being made. This is useful when testing the job queue. The endpoint has no payload.
 func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
-	logger := ctxval.Logger(r.Context())
+	logger := zerolog.Ctx(r.Context())
 	accountId := ctxval.AccountId(r.Context())
 	identity := ctxval.Identity(r.Context())
 	rDao := dao.GetReservationDao(r.Context())

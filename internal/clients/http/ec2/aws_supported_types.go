@@ -6,12 +6,12 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/supported"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/rs/zerolog"
 )
 
 func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) ([]*clients.InstanceType, error) {
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 	list := make([]*clients.InstanceType, 0, len(types))
 	for i := range types {
 		architectures := types[i].ProcessorInfo.SupportedArchitectures

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/go-playground/validator/v10"
+	"github.com/rs/zerolog"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -24,7 +24,7 @@ func Validate(ctx context.Context, model interface{}) validator.ValidationErrors
 	err := validate.StructCtx(ctx, model)
 	var validationError validator.ValidationErrors
 	if err != nil && !errors.As(err, &validationError) {
-		ctxval.Logger(ctx).Fatal().Msgf("Invalid model passed for validation: %v", model)
+		zerolog.Ctx(ctx).Fatal().Msgf("Invalid model passed for validation: %v", model)
 		panic(err)
 	}
 	return validationError

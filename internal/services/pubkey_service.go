@@ -7,12 +7,12 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
+	"github.com/rs/zerolog"
 )
 
 var ErrMissingNameOrBody = errors.New("name or body missing")
@@ -83,7 +83,7 @@ func GetPubkey(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeletePubkey(w http.ResponseWriter, r *http.Request) {
-	logger := ctxval.Logger(r.Context())
+	logger := zerolog.Ctx(r.Context())
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewClientError(r.Context(), err))

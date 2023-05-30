@@ -5,11 +5,11 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
+	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
@@ -46,12 +46,12 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 	args, ok := job.Args.(LaunchInstanceAzureTaskArgs)
 	if !ok {
 		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
-		ctxval.Logger(ctx).Error().Err(err).Msg("Type assertion error for job")
+		zerolog.Ctx(ctx).Error().Err(err).Msg("Type assertion error for job")
 		return
 	}
 
-	logger := ctxval.Logger(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
-	ctx = ctxval.WithLogger(ctx, &logger)
+	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	ctx = logger.WithContext(ctx)
 
 	logger.Info().Msg("Started launch instance Azure job")
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "LaunchInstanceAzureJob")
@@ -74,7 +74,7 @@ func DoEnsureAzureResourceGroup(ctx context.Context, args *LaunchInstanceAzureTa
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "EnsureAzureResourceGroupStep")
 	defer span.End()
 
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 
 	// status updates before and after the code logic
 	updateStatusBefore(ctx, args.ReservationID, "Ensuring resource group presence")
@@ -99,7 +99,7 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "LaunchInstanceAzureStep")
 	defer span.End()
 
-	logger := ctxval.Logger(ctx)
+	logger := zerolog.Ctx(ctx)
 
 	// status updates before and after the code logic
 	updateStatusBefore(ctx, args.ReservationID, "Launching instance(s)")

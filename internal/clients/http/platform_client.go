@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/rs/zerolog"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
@@ -20,9 +20,9 @@ func NewPlatformClient(ctx context.Context, proxy string) HttpRequestDoer {
 
 	if proxy != "" {
 		if config.InClowder() {
-			ctxval.Logger(ctx).Warn().Msgf("Unable to use HTTP client proxy in clowder environment: %s", proxy)
+			zerolog.Ctx(ctx).Warn().Msgf("Unable to use HTTP client proxy in clowder environment: %s", proxy)
 		} else {
-			ctxval.Logger(ctx).Warn().Msgf("Creating HTTP client with proxy %s", proxy)
+			zerolog.Ctx(ctx).Warn().Msgf("Creating HTTP client with proxy %s", proxy)
 			rt = &http.Transport{Proxy: http.ProxyURL(config.StringToURL(proxy))}
 		}
 	}

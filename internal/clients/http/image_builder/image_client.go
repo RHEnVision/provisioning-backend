@@ -8,7 +8,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/google/uuid"
@@ -27,7 +26,7 @@ func init() {
 }
 
 func logger(ctx context.Context) zerolog.Logger {
-	return ctxval.Logger(ctx).With().Str("client", "ib").Logger()
+	return zerolog.Ctx(ctx).With().Str("client", "ib").Logger()
 }
 
 func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {

@@ -31,7 +31,7 @@ func LaunchEnabled(ctx context.Context) bool {
 }
 
 func unleashLogger(ctx context.Context) *zerolog.Logger {
-	logger := ctxval.Logger(ctx).With().Bool("unleash", true).Logger()
+	logger := zerolog.Ctx(ctx).With().Bool("unleash", true).Logger()
 	return &logger
 }
 
