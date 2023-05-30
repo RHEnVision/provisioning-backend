@@ -35,6 +35,7 @@ data:
        "editable" : true,
        "fiscalYearStartMonth" : 0,
        "graphTooltip" : 0,
+       "id" : 114514,
        "links" : [],
        "liveNow" : false,
        "panels" : [
@@ -1012,13 +1013,13 @@ data:
                       "uid" : "${datasource}"
                    },
                    "editorMode" : "code",
-                   "expr" : "sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"500\"}[$__range])) / sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"+Inf\"}[$__range]))",
+                   "expr" : "sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"750\"}[$__range])) / sum(rate(provisioning_http_request_duration_ms_bucket{code=~\"2.*\", le=\"+Inf\"}[$__range]))",
                    "hide" : false,
                    "range" : true,
                    "refId" : "A"
                 }
              ],
-             "title" : "HTTP Success Latency 500ms Target",
+             "title" : "HTTP Success Latency 750ms Target",
              "type" : "stat"
           },
           {
