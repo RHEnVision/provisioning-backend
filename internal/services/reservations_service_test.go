@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
+	identity2 "github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/RHEnVision/provisioning-backend/internal/services"
@@ -45,7 +45,7 @@ func TestGetReservationDetail(t *testing.T) {
 			ImageID:  "ami-random",
 			Detail:   detail,
 		}
-		reservation.AccountID = ctxval.AccountId(ctx)
+		reservation.AccountID = identity2.AccountId(ctx)
 		reservation.Status = "Created"
 		reservation.Provider = models.ProviderTypeAWS
 		reservation.Steps = 2

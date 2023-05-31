@@ -8,8 +8,8 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -17,15 +17,14 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/go-chi/render"
-	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog"
 )
 
 func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	logger := *zerolog.Ctx(r.Context())
 
-	var accountId int64 = ctxval.AccountId(r.Context())
-	var id identity.XRHID = ctxval.Identity(r.Context())
+	var accountId int64 = identity.AccountId(r.Context())
+	var id identity.Principal = identity.Identity(r.Context())
 
 	payload := &payloads.AWSReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {

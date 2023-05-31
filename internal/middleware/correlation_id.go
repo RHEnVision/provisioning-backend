@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/rs/zerolog"
 )
 
@@ -13,7 +13,7 @@ func CorrelationID(next http.Handler) http.Handler {
 
 		corrId := r.Header.Get("X-Correlation-Id")
 		if corrId != "" {
-			ctx = ctxval.WithCorrelationId(ctx, corrId)
+			ctx = logging.WithCorrelationId(ctx, corrId)
 			// Store in response headers for easier debugging
 			w.Header().Set("X-Correlation-Id", corrId)
 			logger := zerolog.Ctx(ctx).With().Str("correlation_id", corrId).Logger()

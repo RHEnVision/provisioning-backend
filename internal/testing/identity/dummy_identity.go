@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	rhidentity "github.com/redhatinsights/platform-go-middlewares/identity"
 )
@@ -42,7 +42,7 @@ func WithTenant(t *testing.T, ctx context.Context) context.Context {
 	if err != nil {
 		t.Errorf("failed to fetch account for default identity %v", err)
 	}
-	return ctxval.WithAccountId(ctx, acc.ID)
+	return identity.WithAccountId(ctx, acc.ID)
 }
 
 func newIdentity(orgId string, accountNumber *string) rhidentity.XRHID {

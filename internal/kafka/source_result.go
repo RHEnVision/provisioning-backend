@@ -3,7 +3,7 @@ package kafka
 import (
 	"context"
 
-	"github.com/redhatinsights/platform-go-middlewares/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 )
 
 type StatusType string
@@ -23,7 +23,7 @@ type SourceResult struct {
 
 	Err error `json:"error"`
 
-	Identity identity.XRHID `json:"-"`
+	Identity identity.Principal `json:"-"`
 }
 
 func (sr SourceResult) GenericMessage(ctx context.Context) (GenericMessage, error) {

@@ -8,10 +8,9 @@ import (
 
 	compute "cloud.google.com/go/compute/apiv1"
 	"cloud.google.com/go/compute/apiv1/computepb"
-
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 )
@@ -27,7 +26,7 @@ func init() {
 func newServiceGCPClient(ctx context.Context) (clients.ServiceGCP, error) {
 	options := []option.ClientOption{
 		option.WithCredentialsJSON([]byte(config.GCP.JSON)),
-		option.WithRequestReason(ctxval.TraceId(ctx)),
+		option.WithRequestReason(logging.TraceId(ctx)),
 	}
 	return &gcpServiceClient{
 		options: options,

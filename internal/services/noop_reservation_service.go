@@ -3,8 +3,8 @@ package services
 import (
 	"net/http"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -18,8 +18,8 @@ import (
 // being made. This is useful when testing the job queue. The endpoint has no payload.
 func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 	logger := zerolog.Ctx(r.Context())
-	accountId := ctxval.AccountId(r.Context())
-	identity := ctxval.Identity(r.Context())
+	accountId := identity.AccountId(r.Context())
+	identity := identity.Identity(r.Context())
 	rDao := dao.GetReservationDao(r.Context())
 	reservation := &models.NoopReservation{
 		Reservation: models.Reservation{

@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog"
 )
@@ -27,7 +27,7 @@ func addIdentityHeader(ctx context.Context, req *http.Request, username, passwor
 }
 
 func AddEdgeRequestIdHeader(ctx context.Context, req *http.Request) error {
-	reqId := ctxval.EdgeRequestId(ctx)
+	reqId := logging.EdgeRequestId(ctx)
 	if reqId != "" {
 		req.Header.Set("X-Rh-Edge-Request-Id", reqId)
 	}

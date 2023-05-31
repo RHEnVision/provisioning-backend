@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5"
@@ -125,7 +125,7 @@ func (x *reservationDao) CreateGCP(ctx context.Context, reservation *models.GCPR
 }
 
 func (x *reservationDao) createGenericReservation(ctx context.Context, reservation *models.Reservation) error {
-	reservation.AccountID = ctxval.AccountId(ctx)
+	reservation.AccountID = identity.AccountId(ctx)
 	reservation.Status = "Created"
 
 	reservationQuery := `INSERT INTO reservations (provider, account_id, steps, step_titles, status)
@@ -178,7 +178,7 @@ func (x *reservationDao) UpdateReservationInstance(ctx context.Context, reservat
 
 func (x *reservationDao) GetById(ctx context.Context, id int64) (*models.Reservation, error) {
 	query := `SELECT * FROM reservations WHERE account_id = $1 AND id = $2 LIMIT 1`
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 	result := &models.Reservation{}
 
 	err := pgxscan.Get(ctx, db.Pool, result, query, accountId, id)
@@ -193,7 +193,7 @@ func (x *reservationDao) GetAWSById(ctx context.Context, id int64) (*models.AWSR
     	pubkey_id, source_id, image_id, aws_reservation_id, detail
 		FROM reservations, aws_reservation_details
 		WHERE account_id = $1 AND id = $2 AND id = reservation_id AND provider = provider_type_aws() LIMIT 1`
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 	result := &models.AWSReservation{}
 
 	err := pgxscan.Get(ctx, db.Pool, result, query, accountId, id)
@@ -208,7 +208,7 @@ func (x *reservationDao) GetAzureById(ctx context.Context, id int64) (*models.Az
     	pubkey_id, source_id, image_id, detail
 		FROM reservations, azure_reservation_details
 		WHERE account_id = $1 AND id = $2 AND id = reservation_id AND reservations.provider = provider_type_azure() LIMIT 1`
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 	result := &models.AzureReservation{}
 
 	err := pgxscan.Get(ctx, db.Pool, result, query, accountId, id)
@@ -223,7 +223,7 @@ func (x *reservationDao) GetGCPById(ctx context.Context, id int64) (*models.GCPR
     	pubkey_id, source_id, image_id, detail
 		FROM reservations, gcp_reservation_details
 		WHERE account_id = $1 AND id = $2 AND id = reservation_id AND provider = provider_type_gcp() LIMIT 1`
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 	result := &models.GCPReservation{}
 
 	err := pgxscan.Get(ctx, db.Pool, result, query, accountId, id)
@@ -236,7 +236,7 @@ func (x *reservationDao) GetGCPById(ctx context.Context, id int64) (*models.GCPR
 func (x *reservationDao) List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error) {
 	query := `SELECT * FROM reservations WHERE account_id = $1 ORDER BY id LIMIT $2 OFFSET $3`
 
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 	var result []*models.Reservation
 
 	rows, err := db.Pool.Query(ctx, query, accountId, limit, offset)
@@ -255,7 +255,7 @@ func (x *reservationDao) ListInstances(ctx context.Context, reservationId int64)
 	query := `SELECT reservation_id, instance_id, detail FROM reservation_instances, reservations
          WHERE reservation_id = reservations.id AND account_id = $1 AND reservation_id = $2`
 
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 	var result []*models.ReservationInstance
 
 	rows, err := db.Pool.Query(ctx, query, accountId, reservationId)

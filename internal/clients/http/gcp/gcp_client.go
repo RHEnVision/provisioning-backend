@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	guuid "github.com/google/uuid"
 
@@ -13,7 +14,6 @@ import (
 	"cloud.google.com/go/compute/apiv1/computepb"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
@@ -39,7 +39,7 @@ func newGCPClient(ctx context.Context, auth *clients.Authentication) (clients.GC
 	options := []option.ClientOption{
 		option.WithCredentialsJSON([]byte(config.GCP.JSON)),
 		option.WithQuotaProject(auth.Payload),
-		option.WithRequestReason(ctxval.TraceId(ctx)),
+		option.WithRequestReason(logging.TraceId(ctx)),
 	}
 	return &gcpClient{
 		auth:    auth,

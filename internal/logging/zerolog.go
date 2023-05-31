@@ -124,7 +124,10 @@ func InitializeLogger() (zerolog.Logger, func()) {
 			fn()
 		}
 	}
-	return decorate(zerolog.New(io.MultiWriter(writers...))), closeFn
+	logger := decorate(zerolog.New(io.MultiWriter(writers...)))
+	log.Logger = logger
+	zerolog.DefaultContextLogger = &logger
+	return logger, closeFn
 }
 
 func DumpConfigForDevelopment() {

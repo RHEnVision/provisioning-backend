@@ -1,4 +1,4 @@
-package ctxval
+package identity
 
 import (
 	"context"
@@ -9,13 +9,20 @@ import (
 	"github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
+type Principal = identity.XRHID
+
 // Identity returns identity header struct or nil when not set.
-func Identity(ctx context.Context) identity.XRHID {
+func Identity(ctx context.Context) Principal {
 	return identity.Get(ctx)
 }
 
+// IdentityHeader returns identity header (base64-encoded JSON)
+func IdentityHeader(ctx context.Context) string {
+	return identity.GetIdentityHeader(ctx)
+}
+
 // WithIdentity returns context copy with identity.
-func WithIdentity(ctx context.Context, id identity.XRHID) context.Context {
+func WithIdentity(ctx context.Context, id Principal) context.Context {
 	return context.WithValue(ctx, identity.Key, id)
 }
 
@@ -26,7 +33,7 @@ func WithIdentityFrom64(ctx context.Context, id string) (context.Context, error)
 		return nil, fmt.Errorf("unable to b64 decode x-rh-identity %w", err)
 	}
 
-	var jsonData identity.XRHID
+	var jsonData Principal
 	err = json.Unmarshal(idRaw, &jsonData)
 	if err != nil {
 		return nil, fmt.Errorf("could not unmarshal json %w", err)

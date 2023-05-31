@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-	"github.com/redhatinsights/platform-go-middlewares/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 )
 
 type AvailabilityStatusMessage struct {
@@ -33,7 +32,7 @@ func genericMessage(ctx context.Context, m any, key string, topic string) (Gener
 		return GenericMessage{}, fmt.Errorf("unable to marshal message: %w", err)
 	}
 
-	id := ctxval.Identity(ctx)
+	id := identity.Identity(ctx)
 
 	return GenericMessage{
 		Topic: topic,
@@ -42,7 +41,7 @@ func genericMessage(ctx context.Context, m any, key string, topic string) (Gener
 		// Keep headers written in lowercase to match sources comparison.
 		Headers: GenericHeaders(
 			"content-type", "application/json",
-			"x-rh-identity", identity.GetIdentityHeader(ctx),
+			"x-rh-identity", identity.IdentityHeader(ctx),
 			"x-rh-sources-org-id", id.Identity.OrgID,
 			"x-rh-sources-account-number", id.Identity.AccountNumber,
 			"event_type", "availability_status",

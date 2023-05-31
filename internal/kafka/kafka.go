@@ -12,7 +12,8 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/rs/zerolog"
@@ -205,17 +206,17 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time
 				msg.Key, msg.Topic, msg.Offset, msg.Partition)
 
 			// build new context - identity and trace id
-			ctx, err = ctxval.WithIdentityFrom64(ctx, header("x-rh-identity", msg.Headers))
+			ctx, err = identity.WithIdentityFrom64(ctx, header("x-rh-identity", msg.Headers))
 			if err != nil {
 				logger.Trace().Msgf("Could not extract identity from context to Kafka message: %s", err)
 			}
-			identity := ctxval.Identity(ctx)
+			identity := identity.Identity(ctx)
 
 			traceId := trace.SpanFromContext(ctx).SpanContext().TraceID()
 			if !traceId.IsValid() {
 				traceId = random.TraceID()
 			}
-			ctx = ctxval.WithTraceId(ctx, traceId.String())
+			ctx = logging.WithTraceId(ctx, traceId.String())
 
 			newLogger := logger.With().
 				Str("trace_id", traceId.String()).
