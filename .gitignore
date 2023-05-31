@@ -16,6 +16,7 @@ TAGS
 /pbmigrate
 /pbworker
 /pbstatuser
+/cmd/pbackend/pbackend
 /generate_spec
 /vendor/
 
