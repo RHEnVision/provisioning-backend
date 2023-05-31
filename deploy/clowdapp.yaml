@@ -345,16 +345,42 @@ objects:
       queries:
         - prefix: ${FLOORIST_QUERY_PREFIX}/reservations
           query: >-
-            select r.created_at, r.finished_at, r.success,
-                   a.account_number, a.org_id, d.source_id,
-                   d.detail->'instance_type' as type,
-                   d.detail->'region' as region,
-                   d.detail->'amount' as amount
+            (select 'aws'                                        as provider,
+            r.created_at,
+            r.finished_at,
+            r.success,
+            a.account_number,
+            a.org_id,
+            d.source_id,
+            d.detail -> 'instance_type'                  as type,
+            d.detail -> 'region'                         as region,
+            d.detail -> 'amount'                         as amount,
+            d.detail -> 'launch_template_id' is not null as template
             from reservations r
             join aws_reservation_details d on r.id = d.reservation_id
             join accounts a on r.account_id = a.id
             where provider = provider_type_aws()
-            order by r.created_at;
+            order by r.created_at)
+
+            union all
+
+            (select 'azure'                     as provider,
+            r.created_at,
+            r.finished_at,
+            r.success,
+            a.account_number,
+            a.org_id,
+            d.source_id,
+            d.detail -> 'instance_size' as type,
+            d.detail -> 'location'      as region,
+            d.detail -> 'amount'        as amount,
+            false                       as template
+            from reservations r
+            join azure_reservation_details d on r.id = d.reservation_id
+            join accounts a on r.account_id = a.id
+            where provider = provider_type_azure()
+            order by r.created_at);
+
 
 # possible application ENV variables are in config/api.env.example
 parameters:
