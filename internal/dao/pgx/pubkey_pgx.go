@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/georgysavva/scany/v2/pgxscan"
 )
@@ -42,7 +42,7 @@ func (x *pubkeyDao) Create(ctx context.Context, pubkey *models.Pubkey) error {
 		INSERT INTO pubkeys (account_id, type, name, body, fingerprint, fingerprint_legacy)
 		VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
 
-	pubkey.AccountID = ctxval.AccountId(ctx)
+	pubkey.AccountID = identity.AccountId(ctx)
 
 	if vError := x.validate(ctx, pubkey); vError != nil {
 		return fmt.Errorf("pubkey validation: %w", vError)
@@ -58,7 +58,7 @@ func (x *pubkeyDao) Create(ctx context.Context, pubkey *models.Pubkey) error {
 
 func (x *pubkeyDao) GetById(ctx context.Context, id int64) (*models.Pubkey, error) {
 	query := `SELECT * FROM pubkeys WHERE account_id = $1 AND id = $2 LIMIT 1`
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 	result := &models.Pubkey{}
 
 	err := pgxscan.Get(ctx, db.Pool, result, query, accountId, id)
@@ -77,7 +77,7 @@ func (x *pubkeyDao) Update(ctx context.Context, pubkey *models.Pubkey) error {
 			fingerprint = $6,
 			fingerprint_legacy = $7
 		WHERE account_id = $1 AND id = $2`
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 
 	if vError := x.validate(ctx, pubkey); vError != nil {
 		return fmt.Errorf("pubkey validation: %w", vError)
@@ -95,7 +95,7 @@ func (x *pubkeyDao) Update(ctx context.Context, pubkey *models.Pubkey) error {
 
 func (x *pubkeyDao) List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error) {
 	query := `SELECT * FROM pubkeys WHERE account_id = $1 ORDER BY id LIMIT $2 OFFSET $3`
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 	var result []*models.Pubkey
 
 	rows, err := db.Pool.Query(ctx, query, accountId, limit, offset)
@@ -112,7 +112,7 @@ func (x *pubkeyDao) List(ctx context.Context, limit, offset int64) ([]*models.Pu
 
 func (x *pubkeyDao) Delete(ctx context.Context, id int64) error {
 	query := `DELETE FROM pubkeys WHERE account_id = $1 AND id = $2`
-	accountId := ctxval.AccountId(ctx)
+	accountId := identity.AccountId(ctx)
 
 	tag, err := db.Pool.Exec(ctx, query, accountId, id)
 	if err != nil {

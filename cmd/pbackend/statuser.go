@@ -12,11 +12,10 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
-	"github.com/redhatinsights/platform-go-middlewares/identity"
 
 	// Clients
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/azure"
@@ -44,7 +43,7 @@ type SourceInfo struct {
 
 	SourceApplicationID string
 
-	Identity identity.XRHID
+	Identity identity.Principal
 }
 
 var (
@@ -100,7 +99,7 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	s := SourceInfo{
 		Authentication:      *authentication,
 		SourceApplicationID: authentication.SourceApplictionID,
-		Identity:            ctxval.Identity(ctx),
+		Identity:            identity.Identity(ctx),
 	}
 
 	switch authentication.ProviderType {
@@ -215,7 +214,7 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 		select {
 
 		case sr := <-chSend:
-			ctx = ctxval.WithIdentity(ctx, sr.Identity)
+			ctx = identity.WithIdentity(ctx, sr.Identity)
 			msg, err := sr.GenericMessage(ctx)
 			if err != nil {
 				logger.Warn().Err(err).Msg("Could not generate generic message")
@@ -266,7 +265,6 @@ func statuser() {
 	// initialize cloudwatch using the AWS clients
 	logger, closeFunc := logging.InitializeLogger()
 	defer closeFunc()
-	log.Logger = logger
 	logging.DumpConfigForDevelopment()
 
 	// initialize telemetry

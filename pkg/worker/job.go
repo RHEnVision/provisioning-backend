@@ -4,11 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/rs/zerolog"
 
 	"github.com/google/uuid"
-	"github.com/redhatinsights/platform-go-middlewares/identity"
 )
 
 func init() {
@@ -31,7 +30,7 @@ type Job struct {
 	AccountID int64
 
 	// Associated identity
-	Identity identity.XRHID
+	Identity identity.Principal
 
 	// Job arguments.
 	Args any
@@ -82,8 +81,8 @@ func contextLogger(ctx context.Context, job *Job) context.Context {
 		Str("account_number", id.Identity.AccountNumber).
 		Str("org_id", id.Identity.OrgID).Logger()
 	newContext := logger.WithContext(ctx)
-	newContext = ctxval.WithIdentity(newContext, id)
-	newContext = ctxval.WithAccountId(newContext, accountId)
+	newContext = identity.WithIdentity(newContext, id)
+	newContext = identity.WithAccountId(newContext, accountId)
 
 	return newContext
 }

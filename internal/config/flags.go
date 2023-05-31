@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/Unleash/unleash-client-go/v3"
 	"github.com/rs/zerolog"
@@ -21,7 +20,7 @@ func FeatureEnabled(ctx context.Context, name string) bool {
 		return true
 	}
 
-	uctx := ctxval.UnleashContext(ctx)
+	uctx := UnleashContext(ctx)
 	return unleash.IsEnabled(name, unleash.WithContext(uctx), unleash.WithFallback(true))
 }
 

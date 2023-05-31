@@ -6,12 +6,11 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	"github.com/google/uuid"
-	"github.com/redhatinsights/platform-go-middlewares/identity"
 	"github.com/rs/zerolog"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -23,8 +22,8 @@ import (
 func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	logger := *zerolog.Ctx(r.Context())
 
-	var accountId int64 = ctxval.AccountId(r.Context())
-	var id identity.XRHID = ctxval.Identity(r.Context())
+	var accountId int64 = identity.AccountId(r.Context())
+	var id identity.Principal = identity.Identity(r.Context())
 
 	payload := &payloads.GCPReservationRequestPayload{}
 	if err := render.Bind(r, payload); err != nil {

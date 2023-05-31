@@ -7,7 +7,8 @@ import (
 
 	"github.com/IBM/pgxpoolprometheus"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/exaring/otelpgx"
 	pgxlog "github.com/jackc/pgx-zerolog"
@@ -74,11 +75,11 @@ func Initialize(ctx context.Context, schema string) error {
 		if logLevel > 0 {
 			zeroLogger := pgxlog.NewLogger(log.Logger,
 				pgxlog.WithContextFunc(func(ctx context.Context, logWith zerolog.Context) zerolog.Context {
-					traceId := ctxval.TraceId(ctx)
+					traceId := logging.TraceId(ctx)
 					if traceId != "" {
 						logWith = logWith.Str("trace_id", traceId)
 					}
-					accountId := ctxval.AccountIdOrNil(ctx)
+					accountId := identity.AccountIdOrNil(ctx)
 					if accountId != 0 {
 						logWith = logWith.Int64("account_id", accountId)
 					}

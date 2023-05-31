@@ -6,8 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
-
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog"
 )
@@ -19,9 +18,9 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
 			bytesIn, _ := strconv.Atoi(r.Header.Get("Content-Length"))
-			traceId := ctxval.TraceId(r.Context())
-			edgeId := ctxval.EdgeRequestId(r.Context())
-			corrId := ctxval.CorrelationId(r.Context())
+			traceId := logging.TraceId(r.Context())
+			edgeId := logging.EdgeRequestId(r.Context())
+			corrId := logging.CorrelationId(r.Context())
 			lctx := rootLogger.With().
 				Timestamp().
 				Str("trace_id", traceId).
@@ -41,9 +40,12 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 			lHeaders := logger.With().Fields(r.Header).Logger()
 			lHeaders.Debug().Msgf("Started %s request %s", r.Method, r.URL.Path)
 
+			// store logger under zerolog context key
+			ctx := logger.WithContext(r.Context())
+
 			defer func() {
 				duration := time.Since(t1)
-				log := logger.With().
+				log := zerolog.Ctx(ctx).With().
 					Dur("latency_ms", duration).
 					Int("bytes_out", ww.BytesWritten()).
 					Logger()
@@ -63,8 +65,6 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 						r.Method, r.URL.Path, duration.Round(time.Millisecond).String(), ww.Status())
 			}()
 
-			// store logger under zerolog context key
-			ctx := logger.WithContext(r.Context())
 			next.ServeHTTP(ww, r.WithContext(ctx))
 		}
 		return http.HandlerFunc(fn)

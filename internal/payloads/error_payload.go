@@ -9,7 +9,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/go-chi/render"
 	"github.com/rs/zerolog"
@@ -70,7 +70,7 @@ func NewResponseError(ctx context.Context, status int, userMsg string, err error
 	return &ResponseError{
 		HTTPStatusCode: status,
 		Message:        userMsg,
-		TraceId:        ctxval.TraceId(ctx),
+		TraceId:        logging.TraceId(ctx),
 		Error:          strError,
 		Version:        version.BuildCommit,
 		BuildTime:      version.BuildTime,

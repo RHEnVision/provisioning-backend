@@ -32,7 +32,6 @@ func worker() {
 	// initialize cloudwatch using the AWS clients
 	logger, closeFunc := logging.InitializeLogger()
 	defer closeFunc()
-	log.Logger = logger
 	logging.DumpConfigForDevelopment()
 
 	logger.Info().Msg("Worker starting")

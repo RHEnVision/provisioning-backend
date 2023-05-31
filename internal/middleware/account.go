@@ -6,8 +6,8 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	ucontext "github.com/Unleash/unleash-client-go/v3/context"
@@ -16,7 +16,7 @@ import (
 
 func AccountMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		rhId := ctxval.Identity(r.Context())
+		rhId := identity.Identity(r.Context())
 		orgID := rhId.Identity.OrgID
 		accountNumber := rhId.Identity.AccountNumber
 		logger := log.Ctx(r.Context()).With().Str("account_number", accountNumber).Str("org_id", orgID).Logger()
@@ -50,13 +50,11 @@ func AccountMiddleware(next http.Handler) http.Handler {
 		logger.Trace().Int64("account", cachedAccount.ID).Msg("Account cache hit")
 
 		// set contexts - account id
-		ctx := ctxval.WithAccountId(r.Context(), cachedAccount.ID)
+		ctx := identity.WithAccountId(r.Context(), cachedAccount.ID)
 
 		// logger
 		newLogger := logger.With().
 			Int64("account_id", cachedAccount.ID).
-			Str("org_id", cachedAccount.OrgID).
-			Str("account_number", cachedAccount.AccountNumber.String).
 			Logger()
 		ctx = newLogger.WithContext(ctx)
 
@@ -68,7 +66,7 @@ func AccountMiddleware(next http.Handler) http.Handler {
 			AppName:       version.UnleashAppName,
 			Properties:    nil,
 		}
-		ctx = ctxval.WithUnleashContext(ctx, uctx)
+		ctx = config.WithUnleashContext(ctx, uctx)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}

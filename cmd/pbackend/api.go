@@ -35,7 +35,6 @@ func api() {
 	// initialize cloudwatch using the AWS clients
 	logger, closeFunc := logging.InitializeLogger()
 	defer closeFunc()
-	log.Logger = logger
 	logging.DumpConfigForDevelopment()
 
 	// initialize feature flags

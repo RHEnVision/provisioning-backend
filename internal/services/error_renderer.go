@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/render"
 	"github.com/rs/zerolog"
@@ -25,7 +25,7 @@ func writeBasicError(w http.ResponseWriter, r *http.Request, err error) {
 	if errors.Unwrap(err) != nil {
 		wrappedMessage = errors.Unwrap(err).Error()
 	}
-	traceId := ctxval.TraceId(r.Context())
+	traceId := logging.TraceId(r.Context())
 	writeErrorBody(w, r, err.Error(), traceId, wrappedMessage)
 }
 

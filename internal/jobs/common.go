@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
@@ -29,7 +28,7 @@ func finishWithSuccess(ctx context.Context, reservationId int64) {
 	logger := zerolog.Ctx(ctx)
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		// the original context is expired and unusable at this point
-		ctx = ctxval.Copy(ctx)
+		ctx = copyContext(ctx)
 	}
 
 	rDao := dao.GetReservationDao(ctx)
@@ -59,7 +58,7 @@ func finishWithError(ctx context.Context, reservationId int64, jobError error) {
 	logger := zerolog.Ctx(ctx)
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		// the original context is expired and unusable at this point
-		ctx = ctxval.Copy(ctx)
+		ctx = copyContext(ctx)
 	}
 
 	rDao := dao.GetReservationDao(ctx)
@@ -92,7 +91,7 @@ func updateStatusAfter(ctx context.Context, id int64, status string, addSteps in
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		status = "Timeout"
 		// the original context is expired and unusable at this point
-		ctx = ctxval.Copy(ctx)
+		ctx = copyContext(ctx)
 	}
 
 	logger.Debug().Bool("step", true).Msgf("Reservation status change: '%s'", status)

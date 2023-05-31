@@ -1,9 +1,15 @@
-package ctxval
+package config
 
 import (
 	"context"
 
 	ucontext "github.com/Unleash/unleash-client-go/v3/context"
+)
+
+type contextKeyId int
+
+const (
+	unleashContextCtxKey contextKeyId = iota
 )
 
 // UnleashContext returns unleash context or an empty context when not set.

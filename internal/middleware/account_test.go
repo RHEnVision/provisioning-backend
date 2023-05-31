@@ -7,9 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	identity2 "github.com/RHEnVision/provisioning-backend/internal/identity"
 	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/middleware"
@@ -31,7 +31,7 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			acc := ctxval.AccountId(r.Context())
+			acc := identity2.AccountId(r.Context())
 			assert.NotNil(t, acc, "account id was not set")
 		})
 
@@ -50,7 +50,7 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			accId := ctxval.AccountId(r.Context())
+			accId := identity2.AccountId(r.Context())
 			assert.NotNil(t, accId, "account id was not set")
 			accDao := dao.GetAccountDao(r.Context())
 			acc, innerErr := accDao.GetById(r.Context(), accId)
@@ -78,7 +78,7 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			acc := ctxval.AccountId(r.Context())
+			acc := identity2.AccountId(r.Context())
 			assert.NotNil(t, acc, "account id was not set")
 		})
 
@@ -95,7 +95,7 @@ func TestAccountMiddleware(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		isAccInNext := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			accId := ctxval.AccountId(r.Context())
+			accId := identity2.AccountId(r.Context())
 			assert.NotNil(t, accId, "account id was not set")
 			accDao := dao.GetAccountDao(r.Context())
 			acc, innerErr := accDao.GetById(r.Context(), accId)

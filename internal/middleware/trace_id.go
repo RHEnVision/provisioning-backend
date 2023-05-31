@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -15,7 +15,7 @@ func TraceID(next http.Handler) http.Handler {
 		// Edge request id
 		edgeId := r.Header.Get("X-Rh-Edge-Request-Id")
 		if edgeId != "" {
-			ctx = ctxval.WithEdgeRequestId(ctx, edgeId)
+			ctx = logging.WithEdgeRequestId(ctx, edgeId)
 		}
 
 		// OpenTelemetry trace id
@@ -28,7 +28,7 @@ func TraceID(next http.Handler) http.Handler {
 		// Store in response headers for easier debugging
 		w.Header().Set("X-Trace-Id", traceId.String())
 
-		ctx = ctxval.WithTraceId(ctx, traceId.String())
+		ctx = logging.WithTraceId(ctx, traceId.String())
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)

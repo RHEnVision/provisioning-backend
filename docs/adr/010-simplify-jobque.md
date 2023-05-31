@@ -48,7 +48,7 @@ type Job struct {
     AccountID int64
 
     // Associated identity
-    Identity identity.XRHID
+    Identity identity.Principal
 	
 	// Job type or "queue".
 	Type JobType

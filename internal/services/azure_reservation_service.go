@@ -7,8 +7,8 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
@@ -136,8 +136,8 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 
 	launchJob := worker.Job{
 		Type:      jobs.TypeLaunchInstanceAzure,
-		Identity:  ctxval.Identity(r.Context()),
-		AccountID: ctxval.AccountId(r.Context()),
+		Identity:  identity.Identity(r.Context()),
+		AccountID: identity.AccountId(r.Context()),
 		Args: jobs.LaunchInstanceAzureTaskArgs{
 			ReservationID: reservation.ID,
 			Location:      reservation.Detail.Location,

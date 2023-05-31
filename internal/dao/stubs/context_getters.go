@@ -3,8 +3,8 @@ package stubs
 import (
 	"context"
 
-	"github.com/RHEnVision/provisioning-backend/internal/ctxval"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 )
 
@@ -17,7 +17,7 @@ const (
 )
 
 func ctxAccountId(ctx context.Context) int64 {
-	return ctxval.AccountId(ctx)
+	return identity.AccountId(ctx)
 }
 
 func WithPubkeyDao(parent context.Context) context.Context {

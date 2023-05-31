@@ -1,8 +1,14 @@
-package ctxval
+package identity
 
 import (
 	"context"
 	"errors"
+)
+
+type cxtKeyId int
+
+const (
+	accountIdCtxKey cxtKeyId = iota
 )
 
 var MissingAccountInContextError = errors.New("operation requires account_id in context")
