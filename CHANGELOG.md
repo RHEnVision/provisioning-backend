@@ -1,4 +1,29 @@
 <!-- insertion marker -->
+<a name="1.0.0"></a>
+
+## [1.0.0](https://github.com/RHEnVision/provisioning-backend/compare/0.21.0...1.0.0) (2023-06-01)
+
+### Features
+
+- **HMS-1773:** Add IPV4 to GCP instance desc ([684b9f3](https://github.com/RHEnVision/provisioning-backend/commit/684b9f3d92228a0eba23b7b1c1c8f1766960fd4b))
+- **HMS-1429:** Add get GCP reservation by id ([32d5183](https://github.com/RHEnVision/provisioning-backend/commit/32d518332a4be1bf6770d1983858162bc362b67c))
+
+### Bug Fixes
+
+- **HMS-1616:** cleanup reservation OpenAPI docs ([43bd347](https://github.com/RHEnVision/provisioning-backend/commit/43bd347caab68d3c84d908e7ab93ae5b6c86e264))
+- **HMSPROV-451:** Use sources filtering mechanism ([7bdc98d](https://github.com/RHEnVision/provisioning-backend/commit/7bdc98dcddf2c317e04669439168afd121e7b012))
+- **HMS-1830:** improve concurrency of account creation ([fec282d](https://github.com/RHEnVision/provisioning-backend/commit/fec282df85f5f44751b058e6039f0a661124b20d))
+- **HMS-1800:** fix a typo in upload info ([a867d02](https://github.com/RHEnVision/provisioning-backend/commit/a867d026b804465042052c7f7da8ffb219dba3b7))
+- **HMS-1785:** check if public ip is nil during dereference ([07db863](https://github.com/RHEnVision/provisioning-backend/commit/07db863de6cad448a18f8b28c1290b3deb865ed3))
+- **HMS-1616:** OpenAPI cleanup and examples ([1f198bd](https://github.com/RHEnVision/provisioning-backend/commit/1f198bdae3b4464c41b98c4f081feb3887127db3))
+- **HMS-1800:** refactor and add more caching ([decfb33](https://github.com/RHEnVision/provisioning-backend/commit/decfb331a2e5642e904bed0dcd3ac41b319eb732))
+
+### Code Refactoring
+
+- split ctxval package ([b7cdac0](https://github.com/RHEnVision/provisioning-backend/commit/b7cdac06a0fa6a199abc338883af25805791bc27))
+- replace ctxval.Logger ([bd92efe](https://github.com/RHEnVision/provisioning-backend/commit/bd92efee1d05b09b662dc64c22c77f14f3a1ad64))
+- deprecate ctxval.Logger ([a9b2381](https://github.com/RHEnVision/provisioning-backend/commit/a9b23812df4e15083647cfca837836ee698ec71f))
+
 <a name="0.21.0"></a>
 
 ## [0.21.0](https://github.com/RHEnVision/provisioning-backend/compare/summit23a...0.21.0) (2023-05-17)
