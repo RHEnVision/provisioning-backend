@@ -8,6 +8,7 @@ import (
 var (
 	// Common errors
 	HttpClientErr     = errors.New("HTTP client")
+	BadRequestErr     = fmt.Errorf("%w: backend service returned bad request (400)", HttpClientErr)
 	NotFoundErr       = fmt.Errorf("%w: backend service returned not found (404) or no data", HttpClientErr)
 	UnauthorizedErr   = fmt.Errorf("%w: backend service returned unauthorized (401)", HttpClientErr)
 	ForbiddenErr      = fmt.Errorf("%w: backend service returned forbidden (403)", HttpClientErr)
