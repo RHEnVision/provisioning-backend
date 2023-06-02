@@ -10,7 +10,7 @@ GIT_TAG?=$(shell git describe --tags --abbrev=0 2>/dev/null)
 GO_VERSION?=1.19.6
 GOBIN:=$(PROJECT_DIR)/bin
 GO?=$(shell go env GOPATH)/bin/go$(GO_VERSION)
-GOROOT?=$(shell $(GO) env GOROOT)
+GOROOT=$(shell $(GO) env GOROOT)
 GOCACHE?=$(shell $(GO) env GOCACHE)
 
 GOLINT?=$(GOBIN)/golangci-lint
