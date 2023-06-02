@@ -13,6 +13,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/go-chi/render"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 // ResponseError is used as a payload for all errors. Use NewResponseError function
@@ -94,61 +95,58 @@ func PubkeyDuplicateError(ctx context.Context, message string, err error) *Respo
 	return NewResponseError(ctx, http.StatusUnprocessableEntity, message, err)
 }
 
-func ClientErrorHelper(err error) (int, string) {
-	if errors.Is(err, clients.NotFoundErr) {
-		return 404, "service returned not found or no data"
-	} else if errors.Is(err, clients.UnauthorizedErr) {
-		return 401, "service returned unauthorized"
-	} else if errors.Is(err, clients.ForbiddenErr) {
-		return 403, "service returned forbidden"
-	} else if errors.Is(err, clients.Non2xxResponseErr) {
-		return 500, "service did not return 2xx"
-	}
-	return 0, ""
+type userPayload struct {
+	code    int
+	message string
 }
 
-func SourcesErrorHelper(err error) (int, string) {
-	if errors.Is(err, httpClients.ApplicationNotFoundErr) {
-		return 404, "sources application not found"
-	} else if errors.Is(err, httpClients.ApplicationTypeNotFoundErr) {
-		return 404, "unexpected source type"
-	} else if errors.Is(err, httpClients.SourceNotFoundErr) {
-		return 404, "source not found"
-	} else if errors.Is(err, httpClients.AuthenticationSourceAssociationErr) {
-		return 500, "authentication associated to source id not found"
-	} else if errors.Is(err, httpClients.AuthenticationForSourcesNotFoundErr) {
-		return 404, "authentication for source not found"
-	}
-	return 0, ""
+var errStatus = map[error]*userPayload{
+	// generic errors
+	clients.HttpClientErr:     {500, "unknown backend client error"},
+	clients.BadRequestErr:     {400, "bad request; returned from a backend service"},
+	clients.NotFoundErr:       {404, "not found; returned from a backend service"},
+	clients.UnauthorizedErr:   {401, "unauthorized; returned from a backend service"},
+	clients.ForbiddenErr:      {403, "forbidden; returned from a backend service"},
+	clients.Non2xxResponseErr: {500, "unsuccessful response;returned from a backend service"},
+
+	// image builder specific errors
+	httpClients.CloneNotFoundErr:        {404, "image builder could not find compose clone"},
+	httpClients.ComposeNotFoundErr:      {404, "image builder could not find compose"},
+	httpClients.ImageStatusErr:          {400, "image builder compose not successfully built"},
+	httpClients.UnknownImageTypeErr:     {400, "wrong type of image builder compose"},
+	httpClients.UploadStatusErr:         {400, "wrong compose status of image builder compose"},
+	httpClients.ImageRequestNotFoundErr: {404, "image builder compose request not found"},
+
+	// sources specific errors
+	clients.UnknownAuthenticationTypeErr: {500, "unknown authentication type"},
+	clients.UnknownProviderErr:           {500, "unknown provider type"},
+	clients.MissingProvisioningSources:   {500, "backend service missing provisioning source"},
+	httpClients.NotEvenErr:               {500, "client arguments error"},
 }
 
-func ImageBuilderHelper(err error) (int, string) {
-	if errors.Is(err, httpClients.ComposeNotFoundErr) {
-		return 404, "image builder did not find image compose"
-	} else if errors.Is(err, httpClients.ImageStatusErr) {
-		return 500, "image builder has not finished the build of requested image"
-	} else if errors.Is(err, httpClients.UnknownImageTypeErr) {
-		return 500, "unknown image type"
-	} else if errors.Is(err, httpClients.UploadStatusErr) {
-		return 404, "could not fetch upload status from image builder"
+func findUserPayload(err error) *userPayload {
+	if err == nil {
+		return nil
 	}
-	return 0, ""
+
+	if result, ok := errStatus[err]; ok {
+		return result
+	}
+
+	return findUserPayload(errors.Unwrap(err))
 }
 
 func NewClientError(ctx context.Context, err error) *ResponseError {
-	if errors.Is(err, clients.UnknownAuthenticationTypeErr) {
-		return NewResponseError(ctx, 500, "Unknown authentication type", err)
+	if payload := findUserPayload(err); payload != nil {
+		logger := log.Ctx(ctx).Warn()
+		if payload.code >= 500 {
+			logger = log.Ctx(ctx).Error()
+		}
+		logger.Msgf("Client error: %s", err)
+		return NewResponseError(ctx, payload.code, payload.message, err)
 	}
-	if status, message := ImageBuilderHelper(err); status != 0 {
-		return NewResponseError(ctx, status, message, err)
-	}
-	if status, message := SourcesErrorHelper(err); status != 0 {
-		return NewResponseError(ctx, status, message, err)
-	}
-	if status, message := ClientErrorHelper(err); status != 0 {
-		return NewResponseError(ctx, status, message, err)
-	}
-	return NewResponseError(ctx, 500, "HTTP service returned unknown client error", err)
+	log.Ctx(ctx).Error().Msgf("Unknown client error: %s", err)
+	return NewResponseError(ctx, 500, "backend client error", err)
 }
 
 func NewNotFoundError(ctx context.Context, message string, err error) *ResponseError {

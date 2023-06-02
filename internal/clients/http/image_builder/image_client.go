@@ -61,6 +61,9 @@ func (c *ibClient) Ready(ctx context.Context) error {
 
 func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
 	logger := logger(ctx)
+	if _, err := uuid.Parse(composeID); err != nil {
+		return "", fmt.Errorf("compose ID '%s' is not valid UUID: %w", composeID, clients.BadRequestErr)
+	}
 	logger.Trace().Str("compose_id", composeID).Msgf("Getting AMI of compose ID %v", composeID)
 
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)

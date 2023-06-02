@@ -128,6 +128,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		// Direct AMI or no image were provided (launch template), no need to call image builder
 		ami = reservation.ImageID
 	} else {
+		// Not prefixed with "ami-" therefore this must be a valid UUID
 		// Get Image builder client
 		IBClient, ibErr := clients.GetImageBuilderClient(r.Context())
 		logger.Trace().Msg("Creating IB client")
