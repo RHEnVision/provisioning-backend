@@ -71,7 +71,7 @@ func (mock *GCPClientStub) InsertInstances(ctx context.Context, params *clients.
 	return nil, nil, NotImplementedErr
 }
 
-func (mock *GCPClientStub) ListInstancesIDsByTag(ctx context.Context, uuid string) ([]*string, error) {
+func (mock *GCPClientStub) ListInstancesIDsByLabel(ctx context.Context, uuid string) ([]*string, error) {
 	return nil, nil
 }
 

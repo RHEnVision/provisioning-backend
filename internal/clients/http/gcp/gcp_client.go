@@ -225,15 +225,15 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 		return nil, ptr.To(op.Name()), fmt.Errorf("an error occured on operation %s: %w", op.Name(), ErrOperationFailed)
 	}
 
-	ids, err := c.ListInstancesIDsByTag(ctx, params.UUID)
+	ids, err := c.ListInstancesIDsByLabel(ctx, params.UUID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot list instances ids: %w", err)
 	}
 	return ids, ptr.To(op.Name()), nil
 }
 
-func (c *gcpClient) ListInstancesIDsByTag(ctx context.Context, uuid string) ([]*string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListInstancesIDsByTag")
+func (c *gcpClient) ListInstancesIDsByLabel(ctx context.Context, uuid string) ([]*string, error) {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListInstancesIDsByLabel")
 	defer span.End()
 
 	logger := logger(ctx)
