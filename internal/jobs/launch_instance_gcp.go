@@ -142,7 +142,7 @@ func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTa
 	if err != nil {
 		return fmt.Errorf("cannot get gcp client: %w", err)
 	}
-	ids, err := gcpClient.ListInstancesIDsByTag(ctx, args.Detail.UUID)
+	ids, err := gcpClient.ListInstancesIDsByLabel(ctx, args.Detail.UUID)
 	if err != nil {
 		return fmt.Errorf("cannot list instances ids by tag: %w", err)
 	}
