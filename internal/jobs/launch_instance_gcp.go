@@ -148,7 +148,7 @@ func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTa
 	}
 
 	for _, id := range ids {
-		instanceDesc, err := gcpClient.GetInstanceDescriptionByID(ctx, *id)
+		instanceDesc, err := gcpClient.GetInstanceDescriptionByID(ctx, *id, args.Zone)
 		if err != nil {
 			return fmt.Errorf("cannot get instance description : %w", err)
 		}

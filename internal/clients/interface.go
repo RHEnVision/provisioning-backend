@@ -153,7 +153,7 @@ type GCP interface {
 
 	ListInstancesIDsByTag(ctx context.Context, uuid string) ([]*string, error)
 
-	GetInstanceDescriptionByID(ctx context.Context, id string) (*InstanceDescription, error)
+	GetInstanceDescriptionByID(ctx context.Context, id, zone string) (*InstanceDescription, error)
 
 	ListLaunchTemplates(ctx context.Context) ([]*LaunchTemplate, error)
 }

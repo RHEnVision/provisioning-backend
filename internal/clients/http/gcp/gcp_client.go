@@ -272,7 +272,7 @@ func (c *gcpClient) ListInstancesIDsByTag(ctx context.Context, uuid string) ([]*
 	return ids, nil
 }
 
-func (c *gcpClient) GetInstanceDescriptionByID(ctx context.Context, id string) (*clients.InstanceDescription, error) {
+func (c *gcpClient) GetInstanceDescriptionByID(ctx context.Context, id, zone string) (*clients.InstanceDescription, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetInstanceDescriptionByID")
 	defer span.End()
 
@@ -287,7 +287,7 @@ func (c *gcpClient) GetInstanceDescriptionByID(ctx context.Context, id string) (
 
 	projectId := c.auth.String()
 
-	instance, err := client.Get(ctx, &computepb.GetInstanceRequest{Instance: id, Project: projectId})
+	instance, err := client.Get(ctx, &computepb.GetInstanceRequest{Instance: id, Project: projectId, Zone: zone})
 	if err != nil {
 		return nil, fmt.Errorf("unable to get instance: %w", err)
 	}

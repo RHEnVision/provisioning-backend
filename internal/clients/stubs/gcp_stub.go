@@ -59,7 +59,7 @@ func (mock *GCPClientStub) Status(ctx context.Context) error {
 	return nil
 }
 
-func (mock *GCPClientStub) GetInstanceDescriptionByID(ctx context.Context, id string) (*clients.InstanceDescription, error) {
+func (mock *GCPClientStub) GetInstanceDescriptionByID(ctx context.Context, id, zone string) (*clients.InstanceDescription, error) {
 	return nil, nil
 }
 
