@@ -194,6 +194,12 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 				MachineType: ptr.To(params.MachineType),
 				NetworkInterfaces: []*computepb.NetworkInterface{
 					{
+						AccessConfigs: []*computepb.AccessConfig{
+							{
+								Name: ptr.To("External NAT"),
+								Type: ptr.To("ONE_TO_ONE_NAT"),
+							},
+						},
 						Name: ptr.To("global/networks/default"),
 					},
 				},
