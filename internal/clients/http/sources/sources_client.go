@@ -172,10 +172,9 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 	defer span.End()
 
 	// Get all the authentications linked to a specific source
-	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader,
-		headers.AddEdgeRequestIdHeader, BuildQuery("filter[resource_type]", "Application", "filter[authtype][starts_with]", "provisioning"))
+	resp, err := c.client.ListSourceAuthenticationsWithResponse(ctx, sourceId, &ListSourceAuthenticationsParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
-		return nil, fmt.Errorf("cannot list provisioning source authentication of type application: %w", err)
+		return nil, fmt.Errorf("cannot list source authentication: %w", err)
 	}
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
@@ -186,14 +185,23 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 		return nil, fmt.Errorf("get source authentication call: %w", err)
 	}
 
-	if len(*resp.JSON200.Data) != 0 {
-		auth := (*resp.JSON200.Data)[0]
-		authentication := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, string(*auth.Authtype), *auth.ResourceId)
-		return authentication, nil
-	} else {
-		logger.Trace().Msgf("Source does not have provisioning authentications of type application")
-		return nil, clients.MissingProvisioningSources
+	// Filter authentications to include only auth where resource_type == "Application". We do this because
+	// Sources API currently does not provide a good server-side filtering.
+	auth, err := filterSourceAuthentications(*resp.JSON200.Data)
+	if err != nil {
+		at := make([]string, 0)
+		for _, auth := range *resp.JSON200.Data {
+			at = append(at, string(*auth.Authtype))
+		}
+		logger.Warn().Msgf("Sources did not return any Provisioning authentication for source(auth types): %s(%v)", sourceId, at)
+		return nil, err
 	}
+
+	authentication, err := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, string(*auth.Authtype), *auth.ResourceId)
+	if err != nil {
+		return nil, fmt.Errorf("cannot create source from source authentication type: %w", err)
+	}
+	return authentication, nil
 }
 
 func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
@@ -261,4 +269,22 @@ func BuildQuery(keysAndValues ...string) func(ctx context.Context, req *stdhttp.
 		req.URL.RawQuery = strings.Join(queryParams, "&")
 		return nil
 	}
+}
+
+//nolint:exhaustive
+func filterSourceAuthentications(authentications []AuthenticationRead) (AuthenticationRead, error) {
+	for _, auth := range authentications {
+		if *auth.ResourceType == "Application" {
+			switch *auth.Authtype {
+			// Type of the authentication as stored in Sources by listing the source types or the application types
+			case "provisioning-arn",
+				"provisioning_lighthouse_subscription_id",
+				"provisioning_project_id":
+				return auth, nil
+			default:
+				continue
+			}
+		}
+	}
+	return AuthenticationRead{}, http.ApplicationReadErr
 }

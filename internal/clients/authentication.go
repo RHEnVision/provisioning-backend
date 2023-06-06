@@ -22,7 +22,7 @@ func NewAuthentication(str string, provType models.ProviderType) *Authentication
 	return &a
 }
 
-func NewAuthenticationFromSourceAuthType(ctx context.Context, str, authType, appID string) *Authentication {
+func NewAuthenticationFromSourceAuthType(ctx context.Context, str, authType, appID string) (*Authentication, error) {
 	a := Authentication{Payload: str, SourceApplictionID: appID}
 	switch authType {
 	case "provisioning-arn":
@@ -34,8 +34,9 @@ func NewAuthenticationFromSourceAuthType(ctx context.Context, str, authType, app
 	default:
 		zerolog.Ctx(ctx).Warn().Msgf("Unknown auth type returned from sources: %s", authType)
 		a.ProviderType = models.ProviderTypeUnknown
+		return &a, UnknownAuthenticationTypeErr
 	}
-	return &a
+	return &a, nil
 }
 
 // Type returns authentication provider type
