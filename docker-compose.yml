@@ -166,3 +166,49 @@ services:
       - ./compose-data/postgres/sources:/var/lib/postgresql/data
     expose:
       - 5432
+  
+  notifications-db:
+    restart: on-failure
+    profiles:
+      - "notifications"
+    image: docker.io/postgres:13.1
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=notifications
+    volumes:
+      - ./compose-data/postgres/notification:/var/lib/postgresql/data
+    expose:
+      - 5432
+  
+  notifications-backend:
+    profiles:
+      - "notifications"
+    build:
+      context: ../notifications-backend
+      dockerfile: ../notifications-backend/docker/Dockerfile.notifications-backend.jvm
+    expose:
+      - 8085
+    depends_on:
+      notifications-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  notification-engine:
+    profiles:
+      - "notifications"
+    build:
+      context: ../notifications-backend
+      dockerfile: ../notifications-backend/docker/Dockerfile.notifications-engine.jvm
+    expose: 
+      - 8087
+    depends_on:
+      init-kafka:
+        condition: service_completed_successfully
+      notifications-db:
+        condition: service_healthy

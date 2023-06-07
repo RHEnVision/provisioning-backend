@@ -133,13 +133,15 @@ A `docker-compose.yml` file helps rolling up the provisioning application, inclu
 Please notice that the compose file use a dedicated dev Dockerfile.dev both for backend and frontend, it uses [CompileDaemon](github.com/githubnemo/CompileDaemon) for live reloading, it watches for changes and re-build using `go build` command when a change occurs, no need to build the container after code changes.
 
 ### Install
-A docker or podman (with [podman-compose](https://github.com/containers/podman-compose)) is needed, the folder structure should be:
+A docker or podman (with [podman-compose](https://github.com/containers/podman-compose)) is needed. In order to support all profiles, the folder structure should be:
 ```
 .
 ├── provisioning-backend
 ├── provisioning-frontend
 ├── sources-api-go
+├── notifications-backend
 └── image-builder-frontend
+
 ```
 
 Edit [app.env](/config/api.env.example) to fit containerized services (i.e db, redis, kafka), these are not exposed directly to your localhost ports.
@@ -155,7 +157,6 @@ Alternatively do:
 $ COMPOSE_PROFILES=migrate podman-compose up 
 ```
 
-
 ### Profiles
 A compose profile allows you to run a subset of containers. When no profile is given, 
 the provisioning backend, postgres and redis will run by default.
@@ -164,7 +165,8 @@ Currently there are a few profiles:
 - migrate: migrate provisioning backend, terminates after migration
 - kafka: run kafka with zookeeper, register topics
 - frontend: run local provisioning frontend
-- sources: run local sources with postgres db, on first use notice that you will need to run `/script/sources.seed.sh` for seeding your local sources data.
+- sources: run local sources with postgres db, on first use notice that you will need to update configuration  run `/script/sources.seed.sh` for seeding your local sources data.
+- notifications: run local notifications backend and engine. Please notice that on first use you will need to edit configurations in `application.properties` files also seeding provisioning relevant data, see further details under notification section.
 
 For example, in order to run sources, kafka and frontend profiles, run
 ```sh
