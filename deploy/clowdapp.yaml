@@ -325,6 +325,7 @@ objects:
       inMemoryDb: true
       dependencies:
         - sources-api
+        - sources-superkey-worker
       optionalDependencies:
         - image-builder
 
