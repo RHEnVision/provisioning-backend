@@ -186,6 +186,8 @@
 - Standard_E104is_v5
 - Standard_E112iads_v5
 - Standard_E112ias_v5
+- Standard_E112ibds_v5
+- Standard_E112ibs_v5
 - Standard_E16-4ads_v5
 - Standard_E16-4as_v4
 - Standard_E16-4as_v5
@@ -401,6 +403,8 @@
 - Standard_E96ads_v5
 - Standard_E96as_v4
 - Standard_E96as_v5
+- Standard_E96bds_v5
+- Standard_E96bs_v5
 - Standard_E96d_v5
 - Standard_E96ds_v5
 - Standard_E96ias_v4
@@ -458,6 +462,7 @@
 - Standard_M416-208ms_v2
 - Standard_M416-208s_v2
 - Standard_M416ms_v2
+- Standard_M416s_8_v2
 - Standard_M416s_v2
 - Standard_M64
 - Standard_M64-16ms
@@ -473,3 +478,9 @@
 - Standard_M8-2ms
 - Standard_M8-4ms
 - Standard_M8ms
+- Standard_NV12ads_A10_v5
+- Standard_NV18ads_A10_v5
+- Standard_NV36adms_A10_v5
+- Standard_NV36ads_A10_v5
+- Standard_NV6ads_A10_v5
+- Standard_NV72ads_A10_v5

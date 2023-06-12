@@ -6,7 +6,6 @@ a1.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 a1.4xlarge:
     name: a1.4xlarge
     vcpus: 16
@@ -15,7 +14,6 @@ a1.4xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 a1.large:
     name: a1.large
     vcpus: 2
@@ -24,7 +22,6 @@ a1.large:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 a1.medium:
     name: a1.medium
     vcpus: 1
@@ -33,7 +30,6 @@ a1.medium:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 a1.metal:
     name: a1.metal
     vcpus: 16
@@ -42,7 +38,6 @@ a1.metal:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 a1.xlarge:
     name: a1.xlarge
     vcpus: 4
@@ -51,7 +46,6 @@ a1.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c1.medium:
     name: c1.medium
     vcpus: 2
@@ -60,7 +54,6 @@ c1.medium:
     storage_gb: 350
     supported: true
     arch: x86_64
-    azure: null
 c1.xlarge:
     name: c1.xlarge
     vcpus: 8
@@ -69,7 +62,6 @@ c1.xlarge:
     storage_gb: 1680
     supported: true
     arch: x86_64
-    azure: null
 c3.2xlarge:
     name: c3.2xlarge
     vcpus: 8
@@ -78,7 +70,6 @@ c3.2xlarge:
     storage_gb: 160
     supported: true
     arch: x86_64
-    azure: null
 c3.4xlarge:
     name: c3.4xlarge
     vcpus: 16
@@ -87,7 +78,6 @@ c3.4xlarge:
     storage_gb: 320
     supported: true
     arch: x86_64
-    azure: null
 c3.8xlarge:
     name: c3.8xlarge
     vcpus: 32
@@ -96,7 +86,6 @@ c3.8xlarge:
     storage_gb: 640
     supported: true
     arch: x86_64
-    azure: null
 c3.large:
     name: c3.large
     vcpus: 2
@@ -105,7 +94,6 @@ c3.large:
     storage_gb: 32
     supported: true
     arch: x86_64
-    azure: null
 c3.xlarge:
     name: c3.xlarge
     vcpus: 4
@@ -114,7 +102,6 @@ c3.xlarge:
     storage_gb: 80
     supported: true
     arch: x86_64
-    azure: null
 c4.2xlarge:
     name: c4.2xlarge
     vcpus: 8
@@ -123,7 +110,6 @@ c4.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c4.4xlarge:
     name: c4.4xlarge
     vcpus: 16
@@ -132,7 +118,6 @@ c4.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c4.8xlarge:
     name: c4.8xlarge
     vcpus: 36
@@ -141,7 +126,6 @@ c4.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c4.large:
     name: c4.large
     vcpus: 2
@@ -150,7 +134,6 @@ c4.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c4.xlarge:
     name: c4.xlarge
     vcpus: 4
@@ -159,7 +142,6 @@ c4.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5a.2xlarge:
     name: c5a.2xlarge
     vcpus: 8
@@ -168,7 +150,6 @@ c5a.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5a.4xlarge:
     name: c5a.4xlarge
     vcpus: 16
@@ -177,7 +158,6 @@ c5a.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5a.8xlarge:
     name: c5a.8xlarge
     vcpus: 32
@@ -186,7 +166,6 @@ c5a.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5a.12xlarge:
     name: c5a.12xlarge
     vcpus: 48
@@ -195,7 +174,6 @@ c5a.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5a.16xlarge:
     name: c5a.16xlarge
     vcpus: 64
@@ -204,7 +182,6 @@ c5a.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5a.24xlarge:
     name: c5a.24xlarge
     vcpus: 96
@@ -213,7 +190,6 @@ c5a.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5a.large:
     name: c5a.large
     vcpus: 2
@@ -222,7 +198,6 @@ c5a.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5a.xlarge:
     name: c5a.xlarge
     vcpus: 4
@@ -231,7 +206,6 @@ c5a.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5ad.2xlarge:
     name: c5ad.2xlarge
     vcpus: 8
@@ -240,7 +214,6 @@ c5ad.2xlarge:
     storage_gb: 300
     supported: true
     arch: x86_64
-    azure: null
 c5ad.4xlarge:
     name: c5ad.4xlarge
     vcpus: 16
@@ -249,7 +222,6 @@ c5ad.4xlarge:
     storage_gb: 600
     supported: true
     arch: x86_64
-    azure: null
 c5ad.8xlarge:
     name: c5ad.8xlarge
     vcpus: 32
@@ -258,7 +230,6 @@ c5ad.8xlarge:
     storage_gb: 1200
     supported: true
     arch: x86_64
-    azure: null
 c5ad.12xlarge:
     name: c5ad.12xlarge
     vcpus: 48
@@ -267,7 +238,6 @@ c5ad.12xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 c5ad.16xlarge:
     name: c5ad.16xlarge
     vcpus: 64
@@ -276,7 +246,6 @@ c5ad.16xlarge:
     storage_gb: 2400
     supported: true
     arch: x86_64
-    azure: null
 c5ad.24xlarge:
     name: c5ad.24xlarge
     vcpus: 96
@@ -285,7 +254,6 @@ c5ad.24xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 c5ad.large:
     name: c5ad.large
     vcpus: 2
@@ -294,7 +262,6 @@ c5ad.large:
     storage_gb: 75
     supported: true
     arch: x86_64
-    azure: null
 c5ad.xlarge:
     name: c5ad.xlarge
     vcpus: 4
@@ -303,7 +270,6 @@ c5ad.xlarge:
     storage_gb: 150
     supported: true
     arch: x86_64
-    azure: null
 c5d.2xlarge:
     name: c5d.2xlarge
     vcpus: 8
@@ -312,7 +278,6 @@ c5d.2xlarge:
     storage_gb: 200
     supported: true
     arch: x86_64
-    azure: null
 c5d.4xlarge:
     name: c5d.4xlarge
     vcpus: 16
@@ -321,7 +286,6 @@ c5d.4xlarge:
     storage_gb: 400
     supported: true
     arch: x86_64
-    azure: null
 c5d.9xlarge:
     name: c5d.9xlarge
     vcpus: 36
@@ -330,7 +294,6 @@ c5d.9xlarge:
     storage_gb: 900
     supported: true
     arch: x86_64
-    azure: null
 c5d.12xlarge:
     name: c5d.12xlarge
     vcpus: 48
@@ -339,7 +302,6 @@ c5d.12xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 c5d.18xlarge:
     name: c5d.18xlarge
     vcpus: 72
@@ -348,7 +310,6 @@ c5d.18xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 c5d.24xlarge:
     name: c5d.24xlarge
     vcpus: 96
@@ -357,7 +318,6 @@ c5d.24xlarge:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 c5d.large:
     name: c5d.large
     vcpus: 2
@@ -366,7 +326,6 @@ c5d.large:
     storage_gb: 50
     supported: true
     arch: x86_64
-    azure: null
 c5d.metal:
     name: c5d.metal
     vcpus: 96
@@ -375,7 +334,6 @@ c5d.metal:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 c5d.xlarge:
     name: c5d.xlarge
     vcpus: 4
@@ -384,7 +342,6 @@ c5d.xlarge:
     storage_gb: 100
     supported: true
     arch: x86_64
-    azure: null
 c5n.2xlarge:
     name: c5n.2xlarge
     vcpus: 8
@@ -393,7 +350,6 @@ c5n.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5n.4xlarge:
     name: c5n.4xlarge
     vcpus: 16
@@ -402,7 +358,6 @@ c5n.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5n.9xlarge:
     name: c5n.9xlarge
     vcpus: 36
@@ -411,7 +366,6 @@ c5n.9xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5n.18xlarge:
     name: c5n.18xlarge
     vcpus: 72
@@ -420,7 +374,6 @@ c5n.18xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5n.large:
     name: c5n.large
     vcpus: 2
@@ -429,7 +382,6 @@ c5n.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5n.metal:
     name: c5n.metal
     vcpus: 72
@@ -438,7 +390,6 @@ c5n.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5n.xlarge:
     name: c5n.xlarge
     vcpus: 4
@@ -447,7 +398,6 @@ c5n.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5.2xlarge:
     name: c5.2xlarge
     vcpus: 8
@@ -456,7 +406,6 @@ c5.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5.4xlarge:
     name: c5.4xlarge
     vcpus: 16
@@ -465,7 +414,6 @@ c5.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5.9xlarge:
     name: c5.9xlarge
     vcpus: 36
@@ -474,7 +422,6 @@ c5.9xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5.12xlarge:
     name: c5.12xlarge
     vcpus: 48
@@ -483,7 +430,6 @@ c5.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5.18xlarge:
     name: c5.18xlarge
     vcpus: 72
@@ -492,7 +438,6 @@ c5.18xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5.24xlarge:
     name: c5.24xlarge
     vcpus: 96
@@ -501,7 +446,6 @@ c5.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5.large:
     name: c5.large
     vcpus: 2
@@ -510,7 +454,6 @@ c5.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5.metal:
     name: c5.metal
     vcpus: 96
@@ -519,7 +462,6 @@ c5.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c5.xlarge:
     name: c5.xlarge
     vcpus: 4
@@ -528,7 +470,6 @@ c5.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.2xlarge:
     name: c6a.2xlarge
     vcpus: 8
@@ -537,7 +478,6 @@ c6a.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.4xlarge:
     name: c6a.4xlarge
     vcpus: 16
@@ -546,7 +486,6 @@ c6a.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.8xlarge:
     name: c6a.8xlarge
     vcpus: 32
@@ -555,7 +494,6 @@ c6a.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.12xlarge:
     name: c6a.12xlarge
     vcpus: 48
@@ -564,7 +502,6 @@ c6a.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.16xlarge:
     name: c6a.16xlarge
     vcpus: 64
@@ -573,7 +510,6 @@ c6a.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.24xlarge:
     name: c6a.24xlarge
     vcpus: 96
@@ -582,7 +518,6 @@ c6a.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.32xlarge:
     name: c6a.32xlarge
     vcpus: 128
@@ -591,7 +526,6 @@ c6a.32xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.48xlarge:
     name: c6a.48xlarge
     vcpus: 192
@@ -600,7 +534,6 @@ c6a.48xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.large:
     name: c6a.large
     vcpus: 2
@@ -609,7 +542,6 @@ c6a.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.metal:
     name: c6a.metal
     vcpus: 192
@@ -618,7 +550,6 @@ c6a.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6a.xlarge:
     name: c6a.xlarge
     vcpus: 4
@@ -627,7 +558,6 @@ c6a.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6g.2xlarge:
     name: c6g.2xlarge
     vcpus: 8
@@ -636,7 +566,6 @@ c6g.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6g.4xlarge:
     name: c6g.4xlarge
     vcpus: 16
@@ -645,7 +574,6 @@ c6g.4xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6g.8xlarge:
     name: c6g.8xlarge
     vcpus: 32
@@ -654,7 +582,6 @@ c6g.8xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6g.12xlarge:
     name: c6g.12xlarge
     vcpus: 48
@@ -663,7 +590,6 @@ c6g.12xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6g.16xlarge:
     name: c6g.16xlarge
     vcpus: 64
@@ -672,7 +598,6 @@ c6g.16xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6g.large:
     name: c6g.large
     vcpus: 2
@@ -681,7 +606,6 @@ c6g.large:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6g.medium:
     name: c6g.medium
     vcpus: 1
@@ -690,7 +614,6 @@ c6g.medium:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6g.metal:
     name: c6g.metal
     vcpus: 64
@@ -699,7 +622,6 @@ c6g.metal:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6g.xlarge:
     name: c6g.xlarge
     vcpus: 4
@@ -708,7 +630,6 @@ c6g.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6gd.2xlarge:
     name: c6gd.2xlarge
     vcpus: 8
@@ -717,7 +638,6 @@ c6gd.2xlarge:
     storage_gb: 474
     supported: true
     arch: arm64
-    azure: null
 c6gd.4xlarge:
     name: c6gd.4xlarge
     vcpus: 16
@@ -726,7 +646,6 @@ c6gd.4xlarge:
     storage_gb: 950
     supported: true
     arch: arm64
-    azure: null
 c6gd.8xlarge:
     name: c6gd.8xlarge
     vcpus: 32
@@ -735,7 +654,6 @@ c6gd.8xlarge:
     storage_gb: 1900
     supported: true
     arch: arm64
-    azure: null
 c6gd.12xlarge:
     name: c6gd.12xlarge
     vcpus: 48
@@ -744,7 +662,6 @@ c6gd.12xlarge:
     storage_gb: 2850
     supported: true
     arch: arm64
-    azure: null
 c6gd.16xlarge:
     name: c6gd.16xlarge
     vcpus: 64
@@ -753,7 +670,6 @@ c6gd.16xlarge:
     storage_gb: 3800
     supported: true
     arch: arm64
-    azure: null
 c6gd.large:
     name: c6gd.large
     vcpus: 2
@@ -762,7 +678,6 @@ c6gd.large:
     storage_gb: 118
     supported: true
     arch: arm64
-    azure: null
 c6gd.medium:
     name: c6gd.medium
     vcpus: 1
@@ -771,7 +686,6 @@ c6gd.medium:
     storage_gb: 59
     supported: true
     arch: arm64
-    azure: null
 c6gd.metal:
     name: c6gd.metal
     vcpus: 64
@@ -780,7 +694,6 @@ c6gd.metal:
     storage_gb: 3800
     supported: true
     arch: arm64
-    azure: null
 c6gd.xlarge:
     name: c6gd.xlarge
     vcpus: 4
@@ -789,7 +702,6 @@ c6gd.xlarge:
     storage_gb: 237
     supported: true
     arch: arm64
-    azure: null
 c6gn.2xlarge:
     name: c6gn.2xlarge
     vcpus: 8
@@ -798,7 +710,6 @@ c6gn.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6gn.4xlarge:
     name: c6gn.4xlarge
     vcpus: 16
@@ -807,7 +718,6 @@ c6gn.4xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6gn.8xlarge:
     name: c6gn.8xlarge
     vcpus: 32
@@ -816,7 +726,6 @@ c6gn.8xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6gn.12xlarge:
     name: c6gn.12xlarge
     vcpus: 48
@@ -825,7 +734,6 @@ c6gn.12xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6gn.16xlarge:
     name: c6gn.16xlarge
     vcpus: 64
@@ -834,7 +742,6 @@ c6gn.16xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6gn.large:
     name: c6gn.large
     vcpus: 2
@@ -843,7 +750,6 @@ c6gn.large:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6gn.medium:
     name: c6gn.medium
     vcpus: 1
@@ -852,7 +758,6 @@ c6gn.medium:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6gn.xlarge:
     name: c6gn.xlarge
     vcpus: 4
@@ -861,7 +766,6 @@ c6gn.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c6i.2xlarge:
     name: c6i.2xlarge
     vcpus: 8
@@ -870,7 +774,6 @@ c6i.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6i.4xlarge:
     name: c6i.4xlarge
     vcpus: 16
@@ -879,7 +782,6 @@ c6i.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6i.8xlarge:
     name: c6i.8xlarge
     vcpus: 32
@@ -888,7 +790,6 @@ c6i.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6i.12xlarge:
     name: c6i.12xlarge
     vcpus: 48
@@ -897,7 +798,6 @@ c6i.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6i.16xlarge:
     name: c6i.16xlarge
     vcpus: 64
@@ -906,7 +806,6 @@ c6i.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6i.24xlarge:
     name: c6i.24xlarge
     vcpus: 96
@@ -915,7 +814,6 @@ c6i.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6i.32xlarge:
     name: c6i.32xlarge
     vcpus: 128
@@ -924,7 +822,6 @@ c6i.32xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6i.large:
     name: c6i.large
     vcpus: 2
@@ -933,7 +830,6 @@ c6i.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6i.metal:
     name: c6i.metal
     vcpus: 128
@@ -942,7 +838,6 @@ c6i.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6i.xlarge:
     name: c6i.xlarge
     vcpus: 4
@@ -951,7 +846,6 @@ c6i.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6id.2xlarge:
     name: c6id.2xlarge
     vcpus: 8
@@ -960,7 +854,6 @@ c6id.2xlarge:
     storage_gb: 474
     supported: true
     arch: x86_64
-    azure: null
 c6id.4xlarge:
     name: c6id.4xlarge
     vcpus: 16
@@ -969,7 +862,6 @@ c6id.4xlarge:
     storage_gb: 950
     supported: true
     arch: x86_64
-    azure: null
 c6id.8xlarge:
     name: c6id.8xlarge
     vcpus: 32
@@ -978,7 +870,6 @@ c6id.8xlarge:
     storage_gb: 1900
     supported: true
     arch: x86_64
-    azure: null
 c6id.12xlarge:
     name: c6id.12xlarge
     vcpus: 48
@@ -987,7 +878,6 @@ c6id.12xlarge:
     storage_gb: 2850
     supported: true
     arch: x86_64
-    azure: null
 c6id.16xlarge:
     name: c6id.16xlarge
     vcpus: 64
@@ -996,7 +886,6 @@ c6id.16xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 c6id.24xlarge:
     name: c6id.24xlarge
     vcpus: 96
@@ -1005,7 +894,6 @@ c6id.24xlarge:
     storage_gb: 5700
     supported: true
     arch: x86_64
-    azure: null
 c6id.32xlarge:
     name: c6id.32xlarge
     vcpus: 128
@@ -1014,7 +902,6 @@ c6id.32xlarge:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 c6id.large:
     name: c6id.large
     vcpus: 2
@@ -1023,7 +910,6 @@ c6id.large:
     storage_gb: 118
     supported: true
     arch: x86_64
-    azure: null
 c6id.metal:
     name: c6id.metal
     vcpus: 128
@@ -1032,7 +918,6 @@ c6id.metal:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 c6id.xlarge:
     name: c6id.xlarge
     vcpus: 4
@@ -1041,7 +926,6 @@ c6id.xlarge:
     storage_gb: 237
     supported: true
     arch: x86_64
-    azure: null
 c6in.2xlarge:
     name: c6in.2xlarge
     vcpus: 8
@@ -1050,7 +934,6 @@ c6in.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6in.4xlarge:
     name: c6in.4xlarge
     vcpus: 16
@@ -1059,7 +942,6 @@ c6in.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6in.8xlarge:
     name: c6in.8xlarge
     vcpus: 32
@@ -1068,7 +950,6 @@ c6in.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6in.12xlarge:
     name: c6in.12xlarge
     vcpus: 48
@@ -1077,7 +958,6 @@ c6in.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6in.16xlarge:
     name: c6in.16xlarge
     vcpus: 64
@@ -1086,7 +966,6 @@ c6in.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6in.24xlarge:
     name: c6in.24xlarge
     vcpus: 96
@@ -1095,7 +974,6 @@ c6in.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6in.32xlarge:
     name: c6in.32xlarge
     vcpus: 128
@@ -1104,7 +982,6 @@ c6in.32xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c6in.large:
     name: c6in.large
     vcpus: 2
@@ -1113,7 +990,14 @@ c6in.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
+c6in.metal:
+    name: c6in.metal
+    vcpus: 128
+    cores: 64
+    memory_mib: 262144
+    storage_gb: 0
+    supported: true
+    arch: x86_64
 c6in.xlarge:
     name: c6in.xlarge
     vcpus: 4
@@ -1122,7 +1006,6 @@ c6in.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 c7g.2xlarge:
     name: c7g.2xlarge
     vcpus: 8
@@ -1131,7 +1014,6 @@ c7g.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c7g.4xlarge:
     name: c7g.4xlarge
     vcpus: 16
@@ -1140,7 +1022,6 @@ c7g.4xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c7g.8xlarge:
     name: c7g.8xlarge
     vcpus: 32
@@ -1149,7 +1030,6 @@ c7g.8xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c7g.12xlarge:
     name: c7g.12xlarge
     vcpus: 48
@@ -1158,7 +1038,6 @@ c7g.12xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c7g.16xlarge:
     name: c7g.16xlarge
     vcpus: 64
@@ -1167,7 +1046,6 @@ c7g.16xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c7g.large:
     name: c7g.large
     vcpus: 2
@@ -1176,7 +1054,6 @@ c7g.large:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c7g.medium:
     name: c7g.medium
     vcpus: 1
@@ -1185,7 +1062,6 @@ c7g.medium:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c7g.metal:
     name: c7g.metal
     vcpus: 64
@@ -1194,7 +1070,6 @@ c7g.metal:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 c7g.xlarge:
     name: c7g.xlarge
     vcpus: 4
@@ -1203,16 +1078,6 @@ c7g.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
-cc2.8xlarge:
-    name: cc2.8xlarge
-    vcpus: 32
-    cores: 16
-    memory_mib: 61952
-    storage_gb: 3360
-    supported: true
-    arch: x86_64
-    azure: null
 d2.2xlarge:
     name: d2.2xlarge
     vcpus: 8
@@ -1221,7 +1086,6 @@ d2.2xlarge:
     storage_gb: 12288
     supported: true
     arch: x86_64
-    azure: null
 d2.4xlarge:
     name: d2.4xlarge
     vcpus: 16
@@ -1230,7 +1094,6 @@ d2.4xlarge:
     storage_gb: 24576
     supported: true
     arch: x86_64
-    azure: null
 d2.8xlarge:
     name: d2.8xlarge
     vcpus: 36
@@ -1239,7 +1102,6 @@ d2.8xlarge:
     storage_gb: 49152
     supported: true
     arch: x86_64
-    azure: null
 d2.xlarge:
     name: d2.xlarge
     vcpus: 4
@@ -1248,7 +1110,6 @@ d2.xlarge:
     storage_gb: 6144
     supported: true
     arch: x86_64
-    azure: null
 d3en.2xlarge:
     name: d3en.2xlarge
     vcpus: 8
@@ -1257,7 +1118,6 @@ d3en.2xlarge:
     storage_gb: 55920
     supported: true
     arch: x86_64
-    azure: null
 d3en.4xlarge:
     name: d3en.4xlarge
     vcpus: 16
@@ -1266,7 +1126,6 @@ d3en.4xlarge:
     storage_gb: 111840
     supported: true
     arch: x86_64
-    azure: null
 d3en.6xlarge:
     name: d3en.6xlarge
     vcpus: 24
@@ -1275,7 +1134,6 @@ d3en.6xlarge:
     storage_gb: 167760
     supported: true
     arch: x86_64
-    azure: null
 d3en.8xlarge:
     name: d3en.8xlarge
     vcpus: 32
@@ -1284,7 +1142,6 @@ d3en.8xlarge:
     storage_gb: 223680
     supported: true
     arch: x86_64
-    azure: null
 d3en.12xlarge:
     name: d3en.12xlarge
     vcpus: 48
@@ -1293,7 +1150,6 @@ d3en.12xlarge:
     storage_gb: 335520
     supported: true
     arch: x86_64
-    azure: null
 d3en.xlarge:
     name: d3en.xlarge
     vcpus: 4
@@ -1302,7 +1158,6 @@ d3en.xlarge:
     storage_gb: 27960
     supported: true
     arch: x86_64
-    azure: null
 d3.2xlarge:
     name: d3.2xlarge
     vcpus: 8
@@ -1311,7 +1166,6 @@ d3.2xlarge:
     storage_gb: 11880
     supported: true
     arch: x86_64
-    azure: null
 d3.4xlarge:
     name: d3.4xlarge
     vcpus: 16
@@ -1320,7 +1174,6 @@ d3.4xlarge:
     storage_gb: 23760
     supported: true
     arch: x86_64
-    azure: null
 d3.8xlarge:
     name: d3.8xlarge
     vcpus: 32
@@ -1329,7 +1182,6 @@ d3.8xlarge:
     storage_gb: 47520
     supported: true
     arch: x86_64
-    azure: null
 d3.xlarge:
     name: d3.xlarge
     vcpus: 4
@@ -1338,7 +1190,6 @@ d3.xlarge:
     storage_gb: 5940
     supported: true
     arch: x86_64
-    azure: null
 dl1.24xlarge:
     name: dl1.24xlarge
     vcpus: 96
@@ -1347,7 +1198,6 @@ dl1.24xlarge:
     storage_gb: 4000
     supported: true
     arch: x86_64
-    azure: null
 f1.2xlarge:
     name: f1.2xlarge
     vcpus: 8
@@ -1356,7 +1206,6 @@ f1.2xlarge:
     storage_gb: 470
     supported: true
     arch: x86_64
-    azure: null
 f1.4xlarge:
     name: f1.4xlarge
     vcpus: 16
@@ -1365,7 +1214,6 @@ f1.4xlarge:
     storage_gb: 940
     supported: true
     arch: x86_64
-    azure: null
 f1.16xlarge:
     name: f1.16xlarge
     vcpus: 64
@@ -1374,7 +1222,6 @@ f1.16xlarge:
     storage_gb: 3760
     supported: true
     arch: x86_64
-    azure: null
 g2.2xlarge:
     name: g2.2xlarge
     vcpus: 8
@@ -1383,7 +1230,6 @@ g2.2xlarge:
     storage_gb: 60
     supported: true
     arch: x86_64
-    azure: null
 g2.8xlarge:
     name: g2.8xlarge
     vcpus: 32
@@ -1392,7 +1238,6 @@ g2.8xlarge:
     storage_gb: 240
     supported: true
     arch: x86_64
-    azure: null
 g3s.xlarge:
     name: g3s.xlarge
     vcpus: 4
@@ -1401,7 +1246,6 @@ g3s.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 g3.4xlarge:
     name: g3.4xlarge
     vcpus: 16
@@ -1410,7 +1254,6 @@ g3.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 g3.8xlarge:
     name: g3.8xlarge
     vcpus: 32
@@ -1419,7 +1262,6 @@ g3.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 g3.16xlarge:
     name: g3.16xlarge
     vcpus: 64
@@ -1428,7 +1270,6 @@ g3.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 g4ad.2xlarge:
     name: g4ad.2xlarge
     vcpus: 8
@@ -1437,7 +1278,6 @@ g4ad.2xlarge:
     storage_gb: 300
     supported: true
     arch: x86_64
-    azure: null
 g4ad.4xlarge:
     name: g4ad.4xlarge
     vcpus: 16
@@ -1446,7 +1286,6 @@ g4ad.4xlarge:
     storage_gb: 600
     supported: true
     arch: x86_64
-    azure: null
 g4ad.8xlarge:
     name: g4ad.8xlarge
     vcpus: 32
@@ -1455,7 +1294,6 @@ g4ad.8xlarge:
     storage_gb: 1200
     supported: true
     arch: x86_64
-    azure: null
 g4ad.16xlarge:
     name: g4ad.16xlarge
     vcpus: 64
@@ -1464,7 +1302,6 @@ g4ad.16xlarge:
     storage_gb: 2400
     supported: true
     arch: x86_64
-    azure: null
 g4ad.xlarge:
     name: g4ad.xlarge
     vcpus: 4
@@ -1473,7 +1310,6 @@ g4ad.xlarge:
     storage_gb: 150
     supported: true
     arch: x86_64
-    azure: null
 g4dn.2xlarge:
     name: g4dn.2xlarge
     vcpus: 8
@@ -1482,7 +1318,6 @@ g4dn.2xlarge:
     storage_gb: 225
     supported: true
     arch: x86_64
-    azure: null
 g4dn.4xlarge:
     name: g4dn.4xlarge
     vcpus: 16
@@ -1491,7 +1326,6 @@ g4dn.4xlarge:
     storage_gb: 225
     supported: true
     arch: x86_64
-    azure: null
 g4dn.8xlarge:
     name: g4dn.8xlarge
     vcpus: 32
@@ -1500,7 +1334,6 @@ g4dn.8xlarge:
     storage_gb: 900
     supported: true
     arch: x86_64
-    azure: null
 g4dn.12xlarge:
     name: g4dn.12xlarge
     vcpus: 48
@@ -1509,7 +1342,6 @@ g4dn.12xlarge:
     storage_gb: 900
     supported: true
     arch: x86_64
-    azure: null
 g4dn.16xlarge:
     name: g4dn.16xlarge
     vcpus: 64
@@ -1518,7 +1350,6 @@ g4dn.16xlarge:
     storage_gb: 900
     supported: true
     arch: x86_64
-    azure: null
 g4dn.metal:
     name: g4dn.metal
     vcpus: 96
@@ -1527,7 +1358,6 @@ g4dn.metal:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 g4dn.xlarge:
     name: g4dn.xlarge
     vcpus: 4
@@ -1536,7 +1366,6 @@ g4dn.xlarge:
     storage_gb: 125
     supported: true
     arch: x86_64
-    azure: null
 g5g.2xlarge:
     name: g5g.2xlarge
     vcpus: 8
@@ -1545,7 +1374,6 @@ g5g.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 g5g.4xlarge:
     name: g5g.4xlarge
     vcpus: 16
@@ -1554,7 +1382,6 @@ g5g.4xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 g5g.8xlarge:
     name: g5g.8xlarge
     vcpus: 32
@@ -1563,7 +1390,6 @@ g5g.8xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 g5g.16xlarge:
     name: g5g.16xlarge
     vcpus: 64
@@ -1572,7 +1398,6 @@ g5g.16xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 g5g.metal:
     name: g5g.metal
     vcpus: 64
@@ -1581,7 +1406,6 @@ g5g.metal:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 g5g.xlarge:
     name: g5g.xlarge
     vcpus: 4
@@ -1590,7 +1414,6 @@ g5g.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 g5.2xlarge:
     name: g5.2xlarge
     vcpus: 8
@@ -1599,7 +1422,6 @@ g5.2xlarge:
     storage_gb: 450
     supported: true
     arch: x86_64
-    azure: null
 g5.4xlarge:
     name: g5.4xlarge
     vcpus: 16
@@ -1608,7 +1430,6 @@ g5.4xlarge:
     storage_gb: 600
     supported: true
     arch: x86_64
-    azure: null
 g5.8xlarge:
     name: g5.8xlarge
     vcpus: 32
@@ -1617,7 +1438,6 @@ g5.8xlarge:
     storage_gb: 900
     supported: true
     arch: x86_64
-    azure: null
 g5.12xlarge:
     name: g5.12xlarge
     vcpus: 48
@@ -1626,7 +1446,6 @@ g5.12xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 g5.16xlarge:
     name: g5.16xlarge
     vcpus: 64
@@ -1635,7 +1454,6 @@ g5.16xlarge:
     storage_gb: 1900
     supported: true
     arch: x86_64
-    azure: null
 g5.24xlarge:
     name: g5.24xlarge
     vcpus: 96
@@ -1644,7 +1462,6 @@ g5.24xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 g5.48xlarge:
     name: g5.48xlarge
     vcpus: 192
@@ -1653,7 +1470,6 @@ g5.48xlarge:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 g5.xlarge:
     name: g5.xlarge
     vcpus: 4
@@ -1662,7 +1478,6 @@ g5.xlarge:
     storage_gb: 250
     supported: true
     arch: x86_64
-    azure: null
 h1.2xlarge:
     name: h1.2xlarge
     vcpus: 8
@@ -1671,7 +1486,6 @@ h1.2xlarge:
     storage_gb: 2000
     supported: true
     arch: x86_64
-    azure: null
 h1.4xlarge:
     name: h1.4xlarge
     vcpus: 16
@@ -1680,7 +1494,6 @@ h1.4xlarge:
     storage_gb: 4000
     supported: true
     arch: x86_64
-    azure: null
 h1.8xlarge:
     name: h1.8xlarge
     vcpus: 32
@@ -1689,7 +1502,6 @@ h1.8xlarge:
     storage_gb: 8000
     supported: true
     arch: x86_64
-    azure: null
 h1.16xlarge:
     name: h1.16xlarge
     vcpus: 64
@@ -1698,7 +1510,6 @@ h1.16xlarge:
     storage_gb: 16000
     supported: true
     arch: x86_64
-    azure: null
 hpc6a.48xlarge:
     name: hpc6a.48xlarge
     vcpus: 96
@@ -1707,7 +1518,6 @@ hpc6a.48xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 hpc6id.32xlarge:
     name: hpc6id.32xlarge
     vcpus: 64
@@ -1716,7 +1526,6 @@ hpc6id.32xlarge:
     storage_gb: 15200
     supported: true
     arch: x86_64
-    azure: null
 i2.2xlarge:
     name: i2.2xlarge
     vcpus: 8
@@ -1725,7 +1534,6 @@ i2.2xlarge:
     storage_gb: 1600
     supported: true
     arch: x86_64
-    azure: null
 i2.4xlarge:
     name: i2.4xlarge
     vcpus: 16
@@ -1734,7 +1542,6 @@ i2.4xlarge:
     storage_gb: 3200
     supported: true
     arch: x86_64
-    azure: null
 i2.8xlarge:
     name: i2.8xlarge
     vcpus: 32
@@ -1743,7 +1550,6 @@ i2.8xlarge:
     storage_gb: 6400
     supported: true
     arch: x86_64
-    azure: null
 i2.xlarge:
     name: i2.xlarge
     vcpus: 4
@@ -1752,7 +1558,6 @@ i2.xlarge:
     storage_gb: 800
     supported: true
     arch: x86_64
-    azure: null
 i3en.2xlarge:
     name: i3en.2xlarge
     vcpus: 8
@@ -1761,7 +1566,6 @@ i3en.2xlarge:
     storage_gb: 5000
     supported: true
     arch: x86_64
-    azure: null
 i3en.3xlarge:
     name: i3en.3xlarge
     vcpus: 12
@@ -1770,7 +1574,6 @@ i3en.3xlarge:
     storage_gb: 7500
     supported: true
     arch: x86_64
-    azure: null
 i3en.6xlarge:
     name: i3en.6xlarge
     vcpus: 24
@@ -1779,7 +1582,6 @@ i3en.6xlarge:
     storage_gb: 15000
     supported: true
     arch: x86_64
-    azure: null
 i3en.12xlarge:
     name: i3en.12xlarge
     vcpus: 48
@@ -1788,7 +1590,6 @@ i3en.12xlarge:
     storage_gb: 30000
     supported: true
     arch: x86_64
-    azure: null
 i3en.24xlarge:
     name: i3en.24xlarge
     vcpus: 96
@@ -1797,7 +1598,6 @@ i3en.24xlarge:
     storage_gb: 60000
     supported: true
     arch: x86_64
-    azure: null
 i3en.large:
     name: i3en.large
     vcpus: 2
@@ -1806,7 +1606,6 @@ i3en.large:
     storage_gb: 1250
     supported: true
     arch: x86_64
-    azure: null
 i3en.metal:
     name: i3en.metal
     vcpus: 96
@@ -1815,7 +1614,6 @@ i3en.metal:
     storage_gb: 60000
     supported: true
     arch: x86_64
-    azure: null
 i3en.xlarge:
     name: i3en.xlarge
     vcpus: 4
@@ -1824,7 +1622,6 @@ i3en.xlarge:
     storage_gb: 2500
     supported: true
     arch: x86_64
-    azure: null
 i3.2xlarge:
     name: i3.2xlarge
     vcpus: 8
@@ -1833,7 +1630,6 @@ i3.2xlarge:
     storage_gb: 1900
     supported: true
     arch: x86_64
-    azure: null
 i3.4xlarge:
     name: i3.4xlarge
     vcpus: 16
@@ -1842,7 +1638,6 @@ i3.4xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 i3.8xlarge:
     name: i3.8xlarge
     vcpus: 32
@@ -1851,7 +1646,6 @@ i3.8xlarge:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 i3.16xlarge:
     name: i3.16xlarge
     vcpus: 64
@@ -1860,7 +1654,6 @@ i3.16xlarge:
     storage_gb: 15200
     supported: true
     arch: x86_64
-    azure: null
 i3.large:
     name: i3.large
     vcpus: 2
@@ -1869,7 +1662,6 @@ i3.large:
     storage_gb: 475
     supported: true
     arch: x86_64
-    azure: null
 i3.metal:
     name: i3.metal
     vcpus: 72
@@ -1878,7 +1670,6 @@ i3.metal:
     storage_gb: 15200
     supported: true
     arch: x86_64
-    azure: null
 i3.xlarge:
     name: i3.xlarge
     vcpus: 4
@@ -1887,7 +1678,54 @@ i3.xlarge:
     storage_gb: 950
     supported: true
     arch: x86_64
-    azure: null
+i4g.2xlarge:
+    name: i4g.2xlarge
+    vcpus: 8
+    cores: 8
+    memory_mib: 65536
+    storage_gb: 1875
+    supported: true
+    arch: arm64
+i4g.4xlarge:
+    name: i4g.4xlarge
+    vcpus: 16
+    cores: 16
+    memory_mib: 131072
+    storage_gb: 3750
+    supported: true
+    arch: arm64
+i4g.8xlarge:
+    name: i4g.8xlarge
+    vcpus: 32
+    cores: 32
+    memory_mib: 262144
+    storage_gb: 7500
+    supported: true
+    arch: arm64
+i4g.16xlarge:
+    name: i4g.16xlarge
+    vcpus: 64
+    cores: 64
+    memory_mib: 524288
+    storage_gb: 15000
+    supported: true
+    arch: arm64
+i4g.large:
+    name: i4g.large
+    vcpus: 2
+    cores: 2
+    memory_mib: 16384
+    storage_gb: 468
+    supported: true
+    arch: arm64
+i4g.xlarge:
+    name: i4g.xlarge
+    vcpus: 4
+    cores: 4
+    memory_mib: 32768
+    storage_gb: 937
+    supported: true
+    arch: arm64
 i4i.2xlarge:
     name: i4i.2xlarge
     vcpus: 8
@@ -1896,7 +1734,6 @@ i4i.2xlarge:
     storage_gb: 1875
     supported: true
     arch: x86_64
-    azure: null
 i4i.4xlarge:
     name: i4i.4xlarge
     vcpus: 16
@@ -1905,7 +1742,6 @@ i4i.4xlarge:
     storage_gb: 3750
     supported: true
     arch: x86_64
-    azure: null
 i4i.8xlarge:
     name: i4i.8xlarge
     vcpus: 32
@@ -1914,7 +1750,6 @@ i4i.8xlarge:
     storage_gb: 7500
     supported: true
     arch: x86_64
-    azure: null
 i4i.16xlarge:
     name: i4i.16xlarge
     vcpus: 64
@@ -1923,7 +1758,6 @@ i4i.16xlarge:
     storage_gb: 15000
     supported: true
     arch: x86_64
-    azure: null
 i4i.32xlarge:
     name: i4i.32xlarge
     vcpus: 128
@@ -1932,7 +1766,6 @@ i4i.32xlarge:
     storage_gb: 30000
     supported: true
     arch: x86_64
-    azure: null
 i4i.large:
     name: i4i.large
     vcpus: 2
@@ -1941,7 +1774,6 @@ i4i.large:
     storage_gb: 468
     supported: true
     arch: x86_64
-    azure: null
 i4i.metal:
     name: i4i.metal
     vcpus: 128
@@ -1950,7 +1782,6 @@ i4i.metal:
     storage_gb: 30000
     supported: true
     arch: x86_64
-    azure: null
 i4i.xlarge:
     name: i4i.xlarge
     vcpus: 4
@@ -1959,7 +1790,6 @@ i4i.xlarge:
     storage_gb: 937
     supported: true
     arch: x86_64
-    azure: null
 im4gn.2xlarge:
     name: im4gn.2xlarge
     vcpus: 8
@@ -1968,7 +1798,6 @@ im4gn.2xlarge:
     storage_gb: 3750
     supported: true
     arch: arm64
-    azure: null
 im4gn.4xlarge:
     name: im4gn.4xlarge
     vcpus: 16
@@ -1977,7 +1806,6 @@ im4gn.4xlarge:
     storage_gb: 7500
     supported: true
     arch: arm64
-    azure: null
 im4gn.8xlarge:
     name: im4gn.8xlarge
     vcpus: 32
@@ -1986,7 +1814,6 @@ im4gn.8xlarge:
     storage_gb: 15000
     supported: true
     arch: arm64
-    azure: null
 im4gn.16xlarge:
     name: im4gn.16xlarge
     vcpus: 64
@@ -1995,7 +1822,6 @@ im4gn.16xlarge:
     storage_gb: 30000
     supported: true
     arch: arm64
-    azure: null
 im4gn.large:
     name: im4gn.large
     vcpus: 2
@@ -2004,7 +1830,6 @@ im4gn.large:
     storage_gb: 937
     supported: true
     arch: arm64
-    azure: null
 im4gn.xlarge:
     name: im4gn.xlarge
     vcpus: 4
@@ -2013,7 +1838,6 @@ im4gn.xlarge:
     storage_gb: 1875
     supported: true
     arch: arm64
-    azure: null
 inf1.2xlarge:
     name: inf1.2xlarge
     vcpus: 8
@@ -2022,7 +1846,6 @@ inf1.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 inf1.6xlarge:
     name: inf1.6xlarge
     vcpus: 24
@@ -2031,7 +1854,6 @@ inf1.6xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 inf1.24xlarge:
     name: inf1.24xlarge
     vcpus: 96
@@ -2040,7 +1862,6 @@ inf1.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 inf1.xlarge:
     name: inf1.xlarge
     vcpus: 4
@@ -2049,7 +1870,38 @@ inf1.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
+inf2.8xlarge:
+    name: inf2.8xlarge
+    vcpus: 32
+    cores: 16
+    memory_mib: 131072
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+inf2.24xlarge:
+    name: inf2.24xlarge
+    vcpus: 96
+    cores: 48
+    memory_mib: 393216
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+inf2.48xlarge:
+    name: inf2.48xlarge
+    vcpus: 192
+    cores: 96
+    memory_mib: 786432
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+inf2.xlarge:
+    name: inf2.xlarge
+    vcpus: 4
+    cores: 2
+    memory_mib: 16384
+    storage_gb: 0
+    supported: true
+    arch: x86_64
 is4gen.2xlarge:
     name: is4gen.2xlarge
     vcpus: 8
@@ -2058,7 +1910,6 @@ is4gen.2xlarge:
     storage_gb: 7500
     supported: true
     arch: arm64
-    azure: null
 is4gen.4xlarge:
     name: is4gen.4xlarge
     vcpus: 16
@@ -2067,7 +1918,6 @@ is4gen.4xlarge:
     storage_gb: 15000
     supported: true
     arch: arm64
-    azure: null
 is4gen.8xlarge:
     name: is4gen.8xlarge
     vcpus: 32
@@ -2076,7 +1926,6 @@ is4gen.8xlarge:
     storage_gb: 30000
     supported: true
     arch: arm64
-    azure: null
 is4gen.large:
     name: is4gen.large
     vcpus: 2
@@ -2085,7 +1934,6 @@ is4gen.large:
     storage_gb: 1875
     supported: true
     arch: arm64
-    azure: null
 is4gen.medium:
     name: is4gen.medium
     vcpus: 1
@@ -2094,7 +1942,6 @@ is4gen.medium:
     storage_gb: 937
     supported: true
     arch: arm64
-    azure: null
 is4gen.xlarge:
     name: is4gen.xlarge
     vcpus: 4
@@ -2103,7 +1950,6 @@ is4gen.xlarge:
     storage_gb: 3750
     supported: true
     arch: arm64
-    azure: null
 m1.large:
     name: m1.large
     vcpus: 2
@@ -2112,7 +1958,6 @@ m1.large:
     storage_gb: 840
     supported: true
     arch: x86_64
-    azure: null
 m1.medium:
     name: m1.medium
     vcpus: 1
@@ -2121,7 +1966,6 @@ m1.medium:
     storage_gb: 410
     supported: true
     arch: x86_64
-    azure: null
 m1.small:
     name: m1.small
     vcpus: 1
@@ -2130,7 +1974,6 @@ m1.small:
     storage_gb: 160
     supported: true
     arch: x86_64
-    azure: null
 m1.xlarge:
     name: m1.xlarge
     vcpus: 4
@@ -2139,7 +1982,6 @@ m1.xlarge:
     storage_gb: 1680
     supported: true
     arch: x86_64
-    azure: null
 m2.2xlarge:
     name: m2.2xlarge
     vcpus: 4
@@ -2148,7 +1990,6 @@ m2.2xlarge:
     storage_gb: 850
     supported: true
     arch: x86_64
-    azure: null
 m2.4xlarge:
     name: m2.4xlarge
     vcpus: 8
@@ -2157,7 +1998,6 @@ m2.4xlarge:
     storage_gb: 1680
     supported: true
     arch: x86_64
-    azure: null
 m2.xlarge:
     name: m2.xlarge
     vcpus: 2
@@ -2166,7 +2006,6 @@ m2.xlarge:
     storage_gb: 420
     supported: true
     arch: x86_64
-    azure: null
 m3.2xlarge:
     name: m3.2xlarge
     vcpus: 8
@@ -2175,16 +2014,14 @@ m3.2xlarge:
     storage_gb: 160
     supported: true
     arch: x86_64
-    azure: null
 m3.large:
     name: m3.large
     vcpus: 2
-    cores: 2
+    cores: 1
     memory_mib: 7680
     storage_gb: 32
     supported: true
     arch: x86_64
-    azure: null
 m3.medium:
     name: m3.medium
     vcpus: 1
@@ -2193,16 +2030,14 @@ m3.medium:
     storage_gb: 4
     supported: true
     arch: x86_64
-    azure: null
 m3.xlarge:
     name: m3.xlarge
     vcpus: 4
-    cores: 4
+    cores: 2
     memory_mib: 15360
     storage_gb: 80
     supported: true
     arch: x86_64
-    azure: null
 m4.2xlarge:
     name: m4.2xlarge
     vcpus: 8
@@ -2211,7 +2046,6 @@ m4.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m4.4xlarge:
     name: m4.4xlarge
     vcpus: 16
@@ -2220,7 +2054,6 @@ m4.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m4.10xlarge:
     name: m4.10xlarge
     vcpus: 40
@@ -2229,7 +2062,6 @@ m4.10xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m4.16xlarge:
     name: m4.16xlarge
     vcpus: 64
@@ -2238,7 +2070,6 @@ m4.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m4.large:
     name: m4.large
     vcpus: 2
@@ -2247,7 +2078,6 @@ m4.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m4.xlarge:
     name: m4.xlarge
     vcpus: 4
@@ -2256,7 +2086,6 @@ m4.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5a.2xlarge:
     name: m5a.2xlarge
     vcpus: 8
@@ -2265,7 +2094,6 @@ m5a.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5a.4xlarge:
     name: m5a.4xlarge
     vcpus: 16
@@ -2274,7 +2102,6 @@ m5a.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5a.8xlarge:
     name: m5a.8xlarge
     vcpus: 32
@@ -2283,7 +2110,6 @@ m5a.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5a.12xlarge:
     name: m5a.12xlarge
     vcpus: 48
@@ -2292,7 +2118,6 @@ m5a.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5a.16xlarge:
     name: m5a.16xlarge
     vcpus: 64
@@ -2301,7 +2126,6 @@ m5a.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5a.24xlarge:
     name: m5a.24xlarge
     vcpus: 96
@@ -2310,7 +2134,6 @@ m5a.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5a.large:
     name: m5a.large
     vcpus: 2
@@ -2319,7 +2142,6 @@ m5a.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5a.xlarge:
     name: m5a.xlarge
     vcpus: 4
@@ -2328,7 +2150,6 @@ m5a.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5ad.2xlarge:
     name: m5ad.2xlarge
     vcpus: 8
@@ -2337,7 +2158,6 @@ m5ad.2xlarge:
     storage_gb: 300
     supported: true
     arch: x86_64
-    azure: null
 m5ad.4xlarge:
     name: m5ad.4xlarge
     vcpus: 16
@@ -2346,7 +2166,6 @@ m5ad.4xlarge:
     storage_gb: 600
     supported: true
     arch: x86_64
-    azure: null
 m5ad.8xlarge:
     name: m5ad.8xlarge
     vcpus: 32
@@ -2355,7 +2174,6 @@ m5ad.8xlarge:
     storage_gb: 1200
     supported: true
     arch: x86_64
-    azure: null
 m5ad.12xlarge:
     name: m5ad.12xlarge
     vcpus: 48
@@ -2364,7 +2182,6 @@ m5ad.12xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 m5ad.16xlarge:
     name: m5ad.16xlarge
     vcpus: 64
@@ -2373,7 +2190,6 @@ m5ad.16xlarge:
     storage_gb: 2400
     supported: true
     arch: x86_64
-    azure: null
 m5ad.24xlarge:
     name: m5ad.24xlarge
     vcpus: 96
@@ -2382,7 +2198,6 @@ m5ad.24xlarge:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 m5ad.large:
     name: m5ad.large
     vcpus: 2
@@ -2391,7 +2206,6 @@ m5ad.large:
     storage_gb: 75
     supported: true
     arch: x86_64
-    azure: null
 m5ad.xlarge:
     name: m5ad.xlarge
     vcpus: 4
@@ -2400,7 +2214,6 @@ m5ad.xlarge:
     storage_gb: 150
     supported: true
     arch: x86_64
-    azure: null
 m5d.2xlarge:
     name: m5d.2xlarge
     vcpus: 8
@@ -2409,7 +2222,6 @@ m5d.2xlarge:
     storage_gb: 300
     supported: true
     arch: x86_64
-    azure: null
 m5d.4xlarge:
     name: m5d.4xlarge
     vcpus: 16
@@ -2418,7 +2230,6 @@ m5d.4xlarge:
     storage_gb: 600
     supported: true
     arch: x86_64
-    azure: null
 m5d.8xlarge:
     name: m5d.8xlarge
     vcpus: 32
@@ -2427,7 +2238,6 @@ m5d.8xlarge:
     storage_gb: 1200
     supported: true
     arch: x86_64
-    azure: null
 m5d.12xlarge:
     name: m5d.12xlarge
     vcpus: 48
@@ -2436,7 +2246,6 @@ m5d.12xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 m5d.16xlarge:
     name: m5d.16xlarge
     vcpus: 64
@@ -2445,7 +2254,6 @@ m5d.16xlarge:
     storage_gb: 2400
     supported: true
     arch: x86_64
-    azure: null
 m5d.24xlarge:
     name: m5d.24xlarge
     vcpus: 96
@@ -2454,7 +2262,6 @@ m5d.24xlarge:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 m5d.large:
     name: m5d.large
     vcpus: 2
@@ -2463,7 +2270,6 @@ m5d.large:
     storage_gb: 75
     supported: true
     arch: x86_64
-    azure: null
 m5d.metal:
     name: m5d.metal
     vcpus: 96
@@ -2472,7 +2278,6 @@ m5d.metal:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 m5d.xlarge:
     name: m5d.xlarge
     vcpus: 4
@@ -2481,7 +2286,6 @@ m5d.xlarge:
     storage_gb: 150
     supported: true
     arch: x86_64
-    azure: null
 m5dn.2xlarge:
     name: m5dn.2xlarge
     vcpus: 8
@@ -2490,7 +2294,6 @@ m5dn.2xlarge:
     storage_gb: 300
     supported: true
     arch: x86_64
-    azure: null
 m5dn.4xlarge:
     name: m5dn.4xlarge
     vcpus: 16
@@ -2499,7 +2302,6 @@ m5dn.4xlarge:
     storage_gb: 600
     supported: true
     arch: x86_64
-    azure: null
 m5dn.8xlarge:
     name: m5dn.8xlarge
     vcpus: 32
@@ -2508,7 +2310,6 @@ m5dn.8xlarge:
     storage_gb: 1200
     supported: true
     arch: x86_64
-    azure: null
 m5dn.12xlarge:
     name: m5dn.12xlarge
     vcpus: 48
@@ -2517,7 +2318,6 @@ m5dn.12xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 m5dn.16xlarge:
     name: m5dn.16xlarge
     vcpus: 64
@@ -2526,7 +2326,6 @@ m5dn.16xlarge:
     storage_gb: 2400
     supported: true
     arch: x86_64
-    azure: null
 m5dn.24xlarge:
     name: m5dn.24xlarge
     vcpus: 96
@@ -2535,7 +2334,6 @@ m5dn.24xlarge:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 m5dn.large:
     name: m5dn.large
     vcpus: 2
@@ -2544,7 +2342,6 @@ m5dn.large:
     storage_gb: 75
     supported: true
     arch: x86_64
-    azure: null
 m5dn.metal:
     name: m5dn.metal
     vcpus: 96
@@ -2553,7 +2350,6 @@ m5dn.metal:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 m5dn.xlarge:
     name: m5dn.xlarge
     vcpus: 4
@@ -2562,7 +2358,6 @@ m5dn.xlarge:
     storage_gb: 150
     supported: true
     arch: x86_64
-    azure: null
 m5n.2xlarge:
     name: m5n.2xlarge
     vcpus: 8
@@ -2571,7 +2366,6 @@ m5n.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5n.4xlarge:
     name: m5n.4xlarge
     vcpus: 16
@@ -2580,7 +2374,6 @@ m5n.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5n.8xlarge:
     name: m5n.8xlarge
     vcpus: 32
@@ -2589,7 +2382,6 @@ m5n.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5n.12xlarge:
     name: m5n.12xlarge
     vcpus: 48
@@ -2598,7 +2390,6 @@ m5n.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5n.16xlarge:
     name: m5n.16xlarge
     vcpus: 64
@@ -2607,7 +2398,6 @@ m5n.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5n.24xlarge:
     name: m5n.24xlarge
     vcpus: 96
@@ -2616,7 +2406,6 @@ m5n.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5n.large:
     name: m5n.large
     vcpus: 2
@@ -2625,7 +2414,6 @@ m5n.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5n.metal:
     name: m5n.metal
     vcpus: 96
@@ -2634,7 +2422,6 @@ m5n.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5n.xlarge:
     name: m5n.xlarge
     vcpus: 4
@@ -2643,7 +2430,6 @@ m5n.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5zn.2xlarge:
     name: m5zn.2xlarge
     vcpus: 8
@@ -2652,7 +2438,6 @@ m5zn.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5zn.3xlarge:
     name: m5zn.3xlarge
     vcpus: 12
@@ -2661,7 +2446,6 @@ m5zn.3xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5zn.6xlarge:
     name: m5zn.6xlarge
     vcpus: 24
@@ -2670,7 +2454,6 @@ m5zn.6xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5zn.12xlarge:
     name: m5zn.12xlarge
     vcpus: 48
@@ -2679,7 +2462,6 @@ m5zn.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5zn.large:
     name: m5zn.large
     vcpus: 2
@@ -2688,7 +2470,6 @@ m5zn.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5zn.metal:
     name: m5zn.metal
     vcpus: 48
@@ -2697,7 +2478,6 @@ m5zn.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5zn.xlarge:
     name: m5zn.xlarge
     vcpus: 4
@@ -2706,7 +2486,6 @@ m5zn.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5.2xlarge:
     name: m5.2xlarge
     vcpus: 8
@@ -2715,7 +2494,6 @@ m5.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5.4xlarge:
     name: m5.4xlarge
     vcpus: 16
@@ -2724,7 +2502,6 @@ m5.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5.8xlarge:
     name: m5.8xlarge
     vcpus: 32
@@ -2733,7 +2510,6 @@ m5.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5.12xlarge:
     name: m5.12xlarge
     vcpus: 48
@@ -2742,7 +2518,6 @@ m5.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5.16xlarge:
     name: m5.16xlarge
     vcpus: 64
@@ -2751,7 +2526,6 @@ m5.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5.24xlarge:
     name: m5.24xlarge
     vcpus: 96
@@ -2760,7 +2534,6 @@ m5.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5.large:
     name: m5.large
     vcpus: 2
@@ -2769,7 +2542,6 @@ m5.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5.metal:
     name: m5.metal
     vcpus: 96
@@ -2778,7 +2550,6 @@ m5.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m5.xlarge:
     name: m5.xlarge
     vcpus: 4
@@ -2787,7 +2558,6 @@ m5.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.2xlarge:
     name: m6a.2xlarge
     vcpus: 8
@@ -2796,7 +2566,6 @@ m6a.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.4xlarge:
     name: m6a.4xlarge
     vcpus: 16
@@ -2805,7 +2574,6 @@ m6a.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.8xlarge:
     name: m6a.8xlarge
     vcpus: 32
@@ -2814,7 +2582,6 @@ m6a.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.12xlarge:
     name: m6a.12xlarge
     vcpus: 48
@@ -2823,7 +2590,6 @@ m6a.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.16xlarge:
     name: m6a.16xlarge
     vcpus: 64
@@ -2832,7 +2598,6 @@ m6a.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.24xlarge:
     name: m6a.24xlarge
     vcpus: 96
@@ -2841,7 +2606,6 @@ m6a.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.32xlarge:
     name: m6a.32xlarge
     vcpus: 128
@@ -2850,7 +2614,6 @@ m6a.32xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.48xlarge:
     name: m6a.48xlarge
     vcpus: 192
@@ -2859,7 +2622,6 @@ m6a.48xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.large:
     name: m6a.large
     vcpus: 2
@@ -2868,7 +2630,6 @@ m6a.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.metal:
     name: m6a.metal
     vcpus: 192
@@ -2877,7 +2638,6 @@ m6a.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6a.xlarge:
     name: m6a.xlarge
     vcpus: 4
@@ -2886,7 +2646,6 @@ m6a.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6g.2xlarge:
     name: m6g.2xlarge
     vcpus: 8
@@ -2895,7 +2654,6 @@ m6g.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m6g.4xlarge:
     name: m6g.4xlarge
     vcpus: 16
@@ -2904,7 +2662,6 @@ m6g.4xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m6g.8xlarge:
     name: m6g.8xlarge
     vcpus: 32
@@ -2913,7 +2670,6 @@ m6g.8xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m6g.12xlarge:
     name: m6g.12xlarge
     vcpus: 48
@@ -2922,7 +2678,6 @@ m6g.12xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m6g.16xlarge:
     name: m6g.16xlarge
     vcpus: 64
@@ -2931,7 +2686,6 @@ m6g.16xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m6g.large:
     name: m6g.large
     vcpus: 2
@@ -2940,7 +2694,6 @@ m6g.large:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m6g.medium:
     name: m6g.medium
     vcpus: 1
@@ -2949,7 +2702,6 @@ m6g.medium:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m6g.metal:
     name: m6g.metal
     vcpus: 64
@@ -2958,7 +2710,6 @@ m6g.metal:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m6g.xlarge:
     name: m6g.xlarge
     vcpus: 4
@@ -2967,7 +2718,6 @@ m6g.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m6gd.2xlarge:
     name: m6gd.2xlarge
     vcpus: 8
@@ -2976,7 +2726,6 @@ m6gd.2xlarge:
     storage_gb: 474
     supported: true
     arch: arm64
-    azure: null
 m6gd.4xlarge:
     name: m6gd.4xlarge
     vcpus: 16
@@ -2985,7 +2734,6 @@ m6gd.4xlarge:
     storage_gb: 950
     supported: true
     arch: arm64
-    azure: null
 m6gd.8xlarge:
     name: m6gd.8xlarge
     vcpus: 32
@@ -2994,7 +2742,6 @@ m6gd.8xlarge:
     storage_gb: 1900
     supported: true
     arch: arm64
-    azure: null
 m6gd.12xlarge:
     name: m6gd.12xlarge
     vcpus: 48
@@ -3003,7 +2750,6 @@ m6gd.12xlarge:
     storage_gb: 2850
     supported: true
     arch: arm64
-    azure: null
 m6gd.16xlarge:
     name: m6gd.16xlarge
     vcpus: 64
@@ -3012,7 +2758,6 @@ m6gd.16xlarge:
     storage_gb: 3800
     supported: true
     arch: arm64
-    azure: null
 m6gd.large:
     name: m6gd.large
     vcpus: 2
@@ -3021,7 +2766,6 @@ m6gd.large:
     storage_gb: 118
     supported: true
     arch: arm64
-    azure: null
 m6gd.medium:
     name: m6gd.medium
     vcpus: 1
@@ -3030,7 +2774,6 @@ m6gd.medium:
     storage_gb: 59
     supported: true
     arch: arm64
-    azure: null
 m6gd.metal:
     name: m6gd.metal
     vcpus: 64
@@ -3039,7 +2782,6 @@ m6gd.metal:
     storage_gb: 3800
     supported: true
     arch: arm64
-    azure: null
 m6gd.xlarge:
     name: m6gd.xlarge
     vcpus: 4
@@ -3048,7 +2790,6 @@ m6gd.xlarge:
     storage_gb: 237
     supported: true
     arch: arm64
-    azure: null
 m6i.2xlarge:
     name: m6i.2xlarge
     vcpus: 8
@@ -3057,7 +2798,6 @@ m6i.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6i.4xlarge:
     name: m6i.4xlarge
     vcpus: 16
@@ -3066,7 +2806,6 @@ m6i.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6i.8xlarge:
     name: m6i.8xlarge
     vcpus: 32
@@ -3075,7 +2814,6 @@ m6i.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6i.12xlarge:
     name: m6i.12xlarge
     vcpus: 48
@@ -3084,7 +2822,6 @@ m6i.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6i.16xlarge:
     name: m6i.16xlarge
     vcpus: 64
@@ -3093,7 +2830,6 @@ m6i.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6i.24xlarge:
     name: m6i.24xlarge
     vcpus: 96
@@ -3102,7 +2838,6 @@ m6i.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6i.32xlarge:
     name: m6i.32xlarge
     vcpus: 128
@@ -3111,7 +2846,6 @@ m6i.32xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6i.large:
     name: m6i.large
     vcpus: 2
@@ -3120,7 +2854,6 @@ m6i.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6i.metal:
     name: m6i.metal
     vcpus: 128
@@ -3129,7 +2862,6 @@ m6i.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6i.xlarge:
     name: m6i.xlarge
     vcpus: 4
@@ -3138,7 +2870,6 @@ m6i.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6id.2xlarge:
     name: m6id.2xlarge
     vcpus: 8
@@ -3147,7 +2878,6 @@ m6id.2xlarge:
     storage_gb: 474
     supported: true
     arch: x86_64
-    azure: null
 m6id.4xlarge:
     name: m6id.4xlarge
     vcpus: 16
@@ -3156,7 +2886,6 @@ m6id.4xlarge:
     storage_gb: 950
     supported: true
     arch: x86_64
-    azure: null
 m6id.8xlarge:
     name: m6id.8xlarge
     vcpus: 32
@@ -3165,7 +2894,6 @@ m6id.8xlarge:
     storage_gb: 1900
     supported: true
     arch: x86_64
-    azure: null
 m6id.12xlarge:
     name: m6id.12xlarge
     vcpus: 48
@@ -3174,7 +2902,6 @@ m6id.12xlarge:
     storage_gb: 2850
     supported: true
     arch: x86_64
-    azure: null
 m6id.16xlarge:
     name: m6id.16xlarge
     vcpus: 64
@@ -3183,7 +2910,6 @@ m6id.16xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 m6id.24xlarge:
     name: m6id.24xlarge
     vcpus: 96
@@ -3192,7 +2918,6 @@ m6id.24xlarge:
     storage_gb: 5700
     supported: true
     arch: x86_64
-    azure: null
 m6id.32xlarge:
     name: m6id.32xlarge
     vcpus: 128
@@ -3201,7 +2926,6 @@ m6id.32xlarge:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 m6id.large:
     name: m6id.large
     vcpus: 2
@@ -3210,7 +2934,6 @@ m6id.large:
     storage_gb: 118
     supported: true
     arch: x86_64
-    azure: null
 m6id.metal:
     name: m6id.metal
     vcpus: 128
@@ -3219,7 +2942,6 @@ m6id.metal:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 m6id.xlarge:
     name: m6id.xlarge
     vcpus: 4
@@ -3228,7 +2950,6 @@ m6id.xlarge:
     storage_gb: 237
     supported: true
     arch: x86_64
-    azure: null
 m6idn.2xlarge:
     name: m6idn.2xlarge
     vcpus: 8
@@ -3237,7 +2958,6 @@ m6idn.2xlarge:
     storage_gb: 474
     supported: true
     arch: x86_64
-    azure: null
 m6idn.4xlarge:
     name: m6idn.4xlarge
     vcpus: 16
@@ -3246,7 +2966,6 @@ m6idn.4xlarge:
     storage_gb: 950
     supported: true
     arch: x86_64
-    azure: null
 m6idn.8xlarge:
     name: m6idn.8xlarge
     vcpus: 32
@@ -3255,7 +2974,6 @@ m6idn.8xlarge:
     storage_gb: 1900
     supported: true
     arch: x86_64
-    azure: null
 m6idn.12xlarge:
     name: m6idn.12xlarge
     vcpus: 48
@@ -3264,7 +2982,6 @@ m6idn.12xlarge:
     storage_gb: 2850
     supported: true
     arch: x86_64
-    azure: null
 m6idn.16xlarge:
     name: m6idn.16xlarge
     vcpus: 64
@@ -3273,7 +2990,6 @@ m6idn.16xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 m6idn.24xlarge:
     name: m6idn.24xlarge
     vcpus: 96
@@ -3282,7 +2998,6 @@ m6idn.24xlarge:
     storage_gb: 5700
     supported: true
     arch: x86_64
-    azure: null
 m6idn.32xlarge:
     name: m6idn.32xlarge
     vcpus: 128
@@ -3291,7 +3006,6 @@ m6idn.32xlarge:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 m6idn.large:
     name: m6idn.large
     vcpus: 2
@@ -3300,7 +3014,14 @@ m6idn.large:
     storage_gb: 118
     supported: true
     arch: x86_64
-    azure: null
+m6idn.metal:
+    name: m6idn.metal
+    vcpus: 128
+    cores: 64
+    memory_mib: 524288
+    storage_gb: 7600
+    supported: true
+    arch: x86_64
 m6idn.xlarge:
     name: m6idn.xlarge
     vcpus: 4
@@ -3309,7 +3030,6 @@ m6idn.xlarge:
     storage_gb: 237
     supported: true
     arch: x86_64
-    azure: null
 m6in.2xlarge:
     name: m6in.2xlarge
     vcpus: 8
@@ -3318,7 +3038,6 @@ m6in.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6in.4xlarge:
     name: m6in.4xlarge
     vcpus: 16
@@ -3327,7 +3046,6 @@ m6in.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6in.8xlarge:
     name: m6in.8xlarge
     vcpus: 32
@@ -3336,7 +3054,6 @@ m6in.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6in.12xlarge:
     name: m6in.12xlarge
     vcpus: 48
@@ -3345,7 +3062,6 @@ m6in.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6in.16xlarge:
     name: m6in.16xlarge
     vcpus: 64
@@ -3354,7 +3070,6 @@ m6in.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6in.24xlarge:
     name: m6in.24xlarge
     vcpus: 96
@@ -3363,7 +3078,6 @@ m6in.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6in.32xlarge:
     name: m6in.32xlarge
     vcpus: 128
@@ -3372,7 +3086,6 @@ m6in.32xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m6in.large:
     name: m6in.large
     vcpus: 2
@@ -3381,7 +3094,14 @@ m6in.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
+m6in.metal:
+    name: m6in.metal
+    vcpus: 128
+    cores: 64
+    memory_mib: 524288
+    storage_gb: 0
+    supported: true
+    arch: x86_64
 m6in.xlarge:
     name: m6in.xlarge
     vcpus: 4
@@ -3390,7 +3110,6 @@ m6in.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 m7g.2xlarge:
     name: m7g.2xlarge
     vcpus: 8
@@ -3399,7 +3118,6 @@ m7g.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m7g.4xlarge:
     name: m7g.4xlarge
     vcpus: 16
@@ -3408,7 +3126,6 @@ m7g.4xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m7g.8xlarge:
     name: m7g.8xlarge
     vcpus: 32
@@ -3417,7 +3134,6 @@ m7g.8xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m7g.12xlarge:
     name: m7g.12xlarge
     vcpus: 48
@@ -3426,7 +3142,6 @@ m7g.12xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m7g.16xlarge:
     name: m7g.16xlarge
     vcpus: 64
@@ -3435,7 +3150,6 @@ m7g.16xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m7g.large:
     name: m7g.large
     vcpus: 2
@@ -3444,7 +3158,6 @@ m7g.large:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m7g.medium:
     name: m7g.medium
     vcpus: 1
@@ -3453,7 +3166,6 @@ m7g.medium:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m7g.metal:
     name: m7g.metal
     vcpus: 64
@@ -3462,7 +3174,6 @@ m7g.metal:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 m7g.xlarge:
     name: m7g.xlarge
     vcpus: 4
@@ -3471,7 +3182,6 @@ m7g.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 p2.8xlarge:
     name: p2.8xlarge
     vcpus: 32
@@ -3480,7 +3190,6 @@ p2.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 p2.16xlarge:
     name: p2.16xlarge
     vcpus: 64
@@ -3489,7 +3198,6 @@ p2.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 p2.xlarge:
     name: p2.xlarge
     vcpus: 4
@@ -3498,7 +3206,6 @@ p2.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 p3dn.24xlarge:
     name: p3dn.24xlarge
     vcpus: 96
@@ -3507,7 +3214,6 @@ p3dn.24xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 p3.2xlarge:
     name: p3.2xlarge
     vcpus: 8
@@ -3516,7 +3222,6 @@ p3.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 p3.8xlarge:
     name: p3.8xlarge
     vcpus: 32
@@ -3525,7 +3230,6 @@ p3.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 p3.16xlarge:
     name: p3.16xlarge
     vcpus: 64
@@ -3534,7 +3238,6 @@ p3.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 p4d.24xlarge:
     name: p4d.24xlarge
     vcpus: 96
@@ -3543,7 +3246,6 @@ p4d.24xlarge:
     storage_gb: 8000
     supported: true
     arch: x86_64
-    azure: null
 r3.2xlarge:
     name: r3.2xlarge
     vcpus: 8
@@ -3552,7 +3254,6 @@ r3.2xlarge:
     storage_gb: 160
     supported: true
     arch: x86_64
-    azure: null
 r3.4xlarge:
     name: r3.4xlarge
     vcpus: 16
@@ -3561,7 +3262,6 @@ r3.4xlarge:
     storage_gb: 320
     supported: true
     arch: x86_64
-    azure: null
 r3.8xlarge:
     name: r3.8xlarge
     vcpus: 32
@@ -3570,7 +3270,6 @@ r3.8xlarge:
     storage_gb: 640
     supported: true
     arch: x86_64
-    azure: null
 r3.large:
     name: r3.large
     vcpus: 2
@@ -3579,7 +3278,6 @@ r3.large:
     storage_gb: 32
     supported: true
     arch: x86_64
-    azure: null
 r3.xlarge:
     name: r3.xlarge
     vcpus: 4
@@ -3588,7 +3286,6 @@ r3.xlarge:
     storage_gb: 80
     supported: true
     arch: x86_64
-    azure: null
 r4.2xlarge:
     name: r4.2xlarge
     vcpus: 8
@@ -3597,7 +3294,6 @@ r4.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r4.4xlarge:
     name: r4.4xlarge
     vcpus: 16
@@ -3606,7 +3302,6 @@ r4.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r4.8xlarge:
     name: r4.8xlarge
     vcpus: 32
@@ -3615,7 +3310,6 @@ r4.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r4.16xlarge:
     name: r4.16xlarge
     vcpus: 64
@@ -3624,7 +3318,6 @@ r4.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r4.large:
     name: r4.large
     vcpus: 2
@@ -3633,7 +3326,6 @@ r4.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r4.xlarge:
     name: r4.xlarge
     vcpus: 4
@@ -3642,7 +3334,6 @@ r4.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5a.2xlarge:
     name: r5a.2xlarge
     vcpus: 8
@@ -3651,7 +3342,6 @@ r5a.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5a.4xlarge:
     name: r5a.4xlarge
     vcpus: 16
@@ -3660,7 +3350,6 @@ r5a.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5a.8xlarge:
     name: r5a.8xlarge
     vcpus: 32
@@ -3669,7 +3358,6 @@ r5a.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5a.12xlarge:
     name: r5a.12xlarge
     vcpus: 48
@@ -3678,7 +3366,6 @@ r5a.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5a.16xlarge:
     name: r5a.16xlarge
     vcpus: 64
@@ -3687,7 +3374,6 @@ r5a.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5a.24xlarge:
     name: r5a.24xlarge
     vcpus: 96
@@ -3696,7 +3382,6 @@ r5a.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5a.large:
     name: r5a.large
     vcpus: 2
@@ -3705,7 +3390,6 @@ r5a.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5a.xlarge:
     name: r5a.xlarge
     vcpus: 4
@@ -3714,7 +3398,6 @@ r5a.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5ad.2xlarge:
     name: r5ad.2xlarge
     vcpus: 8
@@ -3723,7 +3406,6 @@ r5ad.2xlarge:
     storage_gb: 300
     supported: true
     arch: x86_64
-    azure: null
 r5ad.4xlarge:
     name: r5ad.4xlarge
     vcpus: 16
@@ -3732,7 +3414,6 @@ r5ad.4xlarge:
     storage_gb: 600
     supported: true
     arch: x86_64
-    azure: null
 r5ad.8xlarge:
     name: r5ad.8xlarge
     vcpus: 32
@@ -3741,7 +3422,6 @@ r5ad.8xlarge:
     storage_gb: 1200
     supported: true
     arch: x86_64
-    azure: null
 r5ad.12xlarge:
     name: r5ad.12xlarge
     vcpus: 48
@@ -3750,7 +3430,6 @@ r5ad.12xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 r5ad.16xlarge:
     name: r5ad.16xlarge
     vcpus: 64
@@ -3759,7 +3438,6 @@ r5ad.16xlarge:
     storage_gb: 2400
     supported: true
     arch: x86_64
-    azure: null
 r5ad.24xlarge:
     name: r5ad.24xlarge
     vcpus: 96
@@ -3768,7 +3446,6 @@ r5ad.24xlarge:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 r5ad.large:
     name: r5ad.large
     vcpus: 2
@@ -3777,7 +3454,6 @@ r5ad.large:
     storage_gb: 75
     supported: true
     arch: x86_64
-    azure: null
 r5ad.xlarge:
     name: r5ad.xlarge
     vcpus: 4
@@ -3786,7 +3462,6 @@ r5ad.xlarge:
     storage_gb: 150
     supported: true
     arch: x86_64
-    azure: null
 r5b.2xlarge:
     name: r5b.2xlarge
     vcpus: 8
@@ -3795,7 +3470,6 @@ r5b.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5b.4xlarge:
     name: r5b.4xlarge
     vcpus: 16
@@ -3804,7 +3478,6 @@ r5b.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5b.8xlarge:
     name: r5b.8xlarge
     vcpus: 32
@@ -3813,7 +3486,6 @@ r5b.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5b.12xlarge:
     name: r5b.12xlarge
     vcpus: 48
@@ -3822,7 +3494,6 @@ r5b.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5b.16xlarge:
     name: r5b.16xlarge
     vcpus: 64
@@ -3831,7 +3502,6 @@ r5b.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5b.24xlarge:
     name: r5b.24xlarge
     vcpus: 96
@@ -3840,7 +3510,6 @@ r5b.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5b.large:
     name: r5b.large
     vcpus: 2
@@ -3849,7 +3518,6 @@ r5b.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5b.metal:
     name: r5b.metal
     vcpus: 96
@@ -3858,7 +3526,6 @@ r5b.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5b.xlarge:
     name: r5b.xlarge
     vcpus: 4
@@ -3867,7 +3534,6 @@ r5b.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5d.2xlarge:
     name: r5d.2xlarge
     vcpus: 8
@@ -3876,7 +3542,6 @@ r5d.2xlarge:
     storage_gb: 300
     supported: true
     arch: x86_64
-    azure: null
 r5d.4xlarge:
     name: r5d.4xlarge
     vcpus: 16
@@ -3885,7 +3550,6 @@ r5d.4xlarge:
     storage_gb: 600
     supported: true
     arch: x86_64
-    azure: null
 r5d.8xlarge:
     name: r5d.8xlarge
     vcpus: 32
@@ -3894,7 +3558,6 @@ r5d.8xlarge:
     storage_gb: 1200
     supported: true
     arch: x86_64
-    azure: null
 r5d.12xlarge:
     name: r5d.12xlarge
     vcpus: 48
@@ -3903,7 +3566,6 @@ r5d.12xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 r5d.16xlarge:
     name: r5d.16xlarge
     vcpus: 64
@@ -3912,7 +3574,6 @@ r5d.16xlarge:
     storage_gb: 2400
     supported: true
     arch: x86_64
-    azure: null
 r5d.24xlarge:
     name: r5d.24xlarge
     vcpus: 96
@@ -3921,7 +3582,6 @@ r5d.24xlarge:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 r5d.large:
     name: r5d.large
     vcpus: 2
@@ -3930,7 +3590,6 @@ r5d.large:
     storage_gb: 75
     supported: true
     arch: x86_64
-    azure: null
 r5d.metal:
     name: r5d.metal
     vcpus: 96
@@ -3939,7 +3598,6 @@ r5d.metal:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 r5d.xlarge:
     name: r5d.xlarge
     vcpus: 4
@@ -3948,7 +3606,6 @@ r5d.xlarge:
     storage_gb: 150
     supported: true
     arch: x86_64
-    azure: null
 r5dn.2xlarge:
     name: r5dn.2xlarge
     vcpus: 8
@@ -3957,7 +3614,6 @@ r5dn.2xlarge:
     storage_gb: 300
     supported: true
     arch: x86_64
-    azure: null
 r5dn.4xlarge:
     name: r5dn.4xlarge
     vcpus: 16
@@ -3966,7 +3622,6 @@ r5dn.4xlarge:
     storage_gb: 600
     supported: true
     arch: x86_64
-    azure: null
 r5dn.8xlarge:
     name: r5dn.8xlarge
     vcpus: 32
@@ -3975,7 +3630,6 @@ r5dn.8xlarge:
     storage_gb: 1200
     supported: true
     arch: x86_64
-    azure: null
 r5dn.12xlarge:
     name: r5dn.12xlarge
     vcpus: 48
@@ -3984,7 +3638,6 @@ r5dn.12xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 r5dn.16xlarge:
     name: r5dn.16xlarge
     vcpus: 64
@@ -3993,7 +3646,6 @@ r5dn.16xlarge:
     storage_gb: 2400
     supported: true
     arch: x86_64
-    azure: null
 r5dn.24xlarge:
     name: r5dn.24xlarge
     vcpus: 96
@@ -4002,7 +3654,6 @@ r5dn.24xlarge:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 r5dn.large:
     name: r5dn.large
     vcpus: 2
@@ -4011,7 +3662,6 @@ r5dn.large:
     storage_gb: 75
     supported: true
     arch: x86_64
-    azure: null
 r5dn.metal:
     name: r5dn.metal
     vcpus: 96
@@ -4020,7 +3670,6 @@ r5dn.metal:
     storage_gb: 3600
     supported: true
     arch: x86_64
-    azure: null
 r5dn.xlarge:
     name: r5dn.xlarge
     vcpus: 4
@@ -4029,7 +3678,6 @@ r5dn.xlarge:
     storage_gb: 150
     supported: true
     arch: x86_64
-    azure: null
 r5n.2xlarge:
     name: r5n.2xlarge
     vcpus: 8
@@ -4038,7 +3686,6 @@ r5n.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5n.4xlarge:
     name: r5n.4xlarge
     vcpus: 16
@@ -4047,7 +3694,6 @@ r5n.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5n.8xlarge:
     name: r5n.8xlarge
     vcpus: 32
@@ -4056,7 +3702,6 @@ r5n.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5n.12xlarge:
     name: r5n.12xlarge
     vcpus: 48
@@ -4065,7 +3710,6 @@ r5n.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5n.16xlarge:
     name: r5n.16xlarge
     vcpus: 64
@@ -4074,7 +3718,6 @@ r5n.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5n.24xlarge:
     name: r5n.24xlarge
     vcpus: 96
@@ -4083,7 +3726,6 @@ r5n.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5n.large:
     name: r5n.large
     vcpus: 2
@@ -4092,7 +3734,6 @@ r5n.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5n.metal:
     name: r5n.metal
     vcpus: 96
@@ -4101,7 +3742,6 @@ r5n.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5n.xlarge:
     name: r5n.xlarge
     vcpus: 4
@@ -4110,7 +3750,6 @@ r5n.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5.2xlarge:
     name: r5.2xlarge
     vcpus: 8
@@ -4119,7 +3758,6 @@ r5.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5.4xlarge:
     name: r5.4xlarge
     vcpus: 16
@@ -4128,7 +3766,6 @@ r5.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5.8xlarge:
     name: r5.8xlarge
     vcpus: 32
@@ -4137,7 +3774,6 @@ r5.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5.12xlarge:
     name: r5.12xlarge
     vcpus: 48
@@ -4146,7 +3782,6 @@ r5.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5.16xlarge:
     name: r5.16xlarge
     vcpus: 64
@@ -4155,7 +3790,6 @@ r5.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5.24xlarge:
     name: r5.24xlarge
     vcpus: 96
@@ -4164,7 +3798,6 @@ r5.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5.large:
     name: r5.large
     vcpus: 2
@@ -4173,7 +3806,6 @@ r5.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5.metal:
     name: r5.metal
     vcpus: 96
@@ -4182,7 +3814,6 @@ r5.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r5.xlarge:
     name: r5.xlarge
     vcpus: 4
@@ -4191,7 +3822,6 @@ r5.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.2xlarge:
     name: r6a.2xlarge
     vcpus: 8
@@ -4200,7 +3830,6 @@ r6a.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.4xlarge:
     name: r6a.4xlarge
     vcpus: 16
@@ -4209,7 +3838,6 @@ r6a.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.8xlarge:
     name: r6a.8xlarge
     vcpus: 32
@@ -4218,7 +3846,6 @@ r6a.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.12xlarge:
     name: r6a.12xlarge
     vcpus: 48
@@ -4227,7 +3854,6 @@ r6a.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.16xlarge:
     name: r6a.16xlarge
     vcpus: 64
@@ -4236,7 +3862,6 @@ r6a.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.24xlarge:
     name: r6a.24xlarge
     vcpus: 96
@@ -4245,7 +3870,6 @@ r6a.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.32xlarge:
     name: r6a.32xlarge
     vcpus: 128
@@ -4254,7 +3878,6 @@ r6a.32xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.48xlarge:
     name: r6a.48xlarge
     vcpus: 192
@@ -4263,7 +3886,6 @@ r6a.48xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.large:
     name: r6a.large
     vcpus: 2
@@ -4272,7 +3894,6 @@ r6a.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.metal:
     name: r6a.metal
     vcpus: 192
@@ -4281,7 +3902,6 @@ r6a.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6a.xlarge:
     name: r6a.xlarge
     vcpus: 4
@@ -4290,7 +3910,6 @@ r6a.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6g.2xlarge:
     name: r6g.2xlarge
     vcpus: 8
@@ -4299,7 +3918,6 @@ r6g.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r6g.4xlarge:
     name: r6g.4xlarge
     vcpus: 16
@@ -4308,7 +3926,6 @@ r6g.4xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r6g.8xlarge:
     name: r6g.8xlarge
     vcpus: 32
@@ -4317,7 +3934,6 @@ r6g.8xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r6g.12xlarge:
     name: r6g.12xlarge
     vcpus: 48
@@ -4326,7 +3942,6 @@ r6g.12xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r6g.16xlarge:
     name: r6g.16xlarge
     vcpus: 64
@@ -4335,7 +3950,6 @@ r6g.16xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r6g.large:
     name: r6g.large
     vcpus: 2
@@ -4344,7 +3958,6 @@ r6g.large:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r6g.medium:
     name: r6g.medium
     vcpus: 1
@@ -4353,7 +3966,6 @@ r6g.medium:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r6g.metal:
     name: r6g.metal
     vcpus: 64
@@ -4362,7 +3974,6 @@ r6g.metal:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r6g.xlarge:
     name: r6g.xlarge
     vcpus: 4
@@ -4371,7 +3982,6 @@ r6g.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r6gd.2xlarge:
     name: r6gd.2xlarge
     vcpus: 8
@@ -4380,7 +3990,6 @@ r6gd.2xlarge:
     storage_gb: 474
     supported: true
     arch: arm64
-    azure: null
 r6gd.4xlarge:
     name: r6gd.4xlarge
     vcpus: 16
@@ -4389,7 +3998,6 @@ r6gd.4xlarge:
     storage_gb: 950
     supported: true
     arch: arm64
-    azure: null
 r6gd.8xlarge:
     name: r6gd.8xlarge
     vcpus: 32
@@ -4398,7 +4006,6 @@ r6gd.8xlarge:
     storage_gb: 1900
     supported: true
     arch: arm64
-    azure: null
 r6gd.12xlarge:
     name: r6gd.12xlarge
     vcpus: 48
@@ -4407,7 +4014,6 @@ r6gd.12xlarge:
     storage_gb: 2850
     supported: true
     arch: arm64
-    azure: null
 r6gd.16xlarge:
     name: r6gd.16xlarge
     vcpus: 64
@@ -4416,7 +4022,6 @@ r6gd.16xlarge:
     storage_gb: 3800
     supported: true
     arch: arm64
-    azure: null
 r6gd.large:
     name: r6gd.large
     vcpus: 2
@@ -4425,7 +4030,6 @@ r6gd.large:
     storage_gb: 118
     supported: true
     arch: arm64
-    azure: null
 r6gd.medium:
     name: r6gd.medium
     vcpus: 1
@@ -4434,7 +4038,6 @@ r6gd.medium:
     storage_gb: 59
     supported: true
     arch: arm64
-    azure: null
 r6gd.metal:
     name: r6gd.metal
     vcpus: 64
@@ -4443,7 +4046,6 @@ r6gd.metal:
     storage_gb: 3800
     supported: true
     arch: arm64
-    azure: null
 r6gd.xlarge:
     name: r6gd.xlarge
     vcpus: 4
@@ -4452,7 +4054,6 @@ r6gd.xlarge:
     storage_gb: 237
     supported: true
     arch: arm64
-    azure: null
 r6i.2xlarge:
     name: r6i.2xlarge
     vcpus: 8
@@ -4461,7 +4062,6 @@ r6i.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6i.4xlarge:
     name: r6i.4xlarge
     vcpus: 16
@@ -4470,7 +4070,6 @@ r6i.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6i.8xlarge:
     name: r6i.8xlarge
     vcpus: 32
@@ -4479,7 +4078,6 @@ r6i.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6i.12xlarge:
     name: r6i.12xlarge
     vcpus: 48
@@ -4488,7 +4086,6 @@ r6i.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6i.16xlarge:
     name: r6i.16xlarge
     vcpus: 64
@@ -4497,7 +4094,6 @@ r6i.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6i.24xlarge:
     name: r6i.24xlarge
     vcpus: 96
@@ -4506,7 +4102,6 @@ r6i.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6i.32xlarge:
     name: r6i.32xlarge
     vcpus: 128
@@ -4515,7 +4110,6 @@ r6i.32xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6i.large:
     name: r6i.large
     vcpus: 2
@@ -4524,7 +4118,6 @@ r6i.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6i.metal:
     name: r6i.metal
     vcpus: 128
@@ -4533,7 +4126,6 @@ r6i.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6i.xlarge:
     name: r6i.xlarge
     vcpus: 4
@@ -4542,7 +4134,6 @@ r6i.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6id.2xlarge:
     name: r6id.2xlarge
     vcpus: 8
@@ -4551,7 +4142,6 @@ r6id.2xlarge:
     storage_gb: 474
     supported: true
     arch: x86_64
-    azure: null
 r6id.4xlarge:
     name: r6id.4xlarge
     vcpus: 16
@@ -4560,7 +4150,6 @@ r6id.4xlarge:
     storage_gb: 950
     supported: true
     arch: x86_64
-    azure: null
 r6id.8xlarge:
     name: r6id.8xlarge
     vcpus: 32
@@ -4569,7 +4158,6 @@ r6id.8xlarge:
     storage_gb: 1900
     supported: true
     arch: x86_64
-    azure: null
 r6id.12xlarge:
     name: r6id.12xlarge
     vcpus: 48
@@ -4578,7 +4166,6 @@ r6id.12xlarge:
     storage_gb: 2850
     supported: true
     arch: x86_64
-    azure: null
 r6id.16xlarge:
     name: r6id.16xlarge
     vcpus: 64
@@ -4587,7 +4174,6 @@ r6id.16xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 r6id.24xlarge:
     name: r6id.24xlarge
     vcpus: 96
@@ -4596,7 +4182,6 @@ r6id.24xlarge:
     storage_gb: 5700
     supported: true
     arch: x86_64
-    azure: null
 r6id.32xlarge:
     name: r6id.32xlarge
     vcpus: 128
@@ -4605,7 +4190,6 @@ r6id.32xlarge:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 r6id.large:
     name: r6id.large
     vcpus: 2
@@ -4614,7 +4198,6 @@ r6id.large:
     storage_gb: 118
     supported: true
     arch: x86_64
-    azure: null
 r6id.metal:
     name: r6id.metal
     vcpus: 128
@@ -4623,7 +4206,6 @@ r6id.metal:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 r6id.xlarge:
     name: r6id.xlarge
     vcpus: 4
@@ -4632,7 +4214,6 @@ r6id.xlarge:
     storage_gb: 237
     supported: true
     arch: x86_64
-    azure: null
 r6idn.2xlarge:
     name: r6idn.2xlarge
     vcpus: 8
@@ -4641,7 +4222,6 @@ r6idn.2xlarge:
     storage_gb: 474
     supported: true
     arch: x86_64
-    azure: null
 r6idn.4xlarge:
     name: r6idn.4xlarge
     vcpus: 16
@@ -4650,7 +4230,6 @@ r6idn.4xlarge:
     storage_gb: 950
     supported: true
     arch: x86_64
-    azure: null
 r6idn.8xlarge:
     name: r6idn.8xlarge
     vcpus: 32
@@ -4659,7 +4238,6 @@ r6idn.8xlarge:
     storage_gb: 1900
     supported: true
     arch: x86_64
-    azure: null
 r6idn.12xlarge:
     name: r6idn.12xlarge
     vcpus: 48
@@ -4668,7 +4246,6 @@ r6idn.12xlarge:
     storage_gb: 2850
     supported: true
     arch: x86_64
-    azure: null
 r6idn.16xlarge:
     name: r6idn.16xlarge
     vcpus: 64
@@ -4677,7 +4254,6 @@ r6idn.16xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 r6idn.24xlarge:
     name: r6idn.24xlarge
     vcpus: 96
@@ -4686,7 +4262,6 @@ r6idn.24xlarge:
     storage_gb: 5700
     supported: true
     arch: x86_64
-    azure: null
 r6idn.32xlarge:
     name: r6idn.32xlarge
     vcpus: 128
@@ -4695,7 +4270,6 @@ r6idn.32xlarge:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 r6idn.large:
     name: r6idn.large
     vcpus: 2
@@ -4704,7 +4278,14 @@ r6idn.large:
     storage_gb: 118
     supported: true
     arch: x86_64
-    azure: null
+r6idn.metal:
+    name: r6idn.metal
+    vcpus: 128
+    cores: 64
+    memory_mib: 1048576
+    storage_gb: 7600
+    supported: true
+    arch: x86_64
 r6idn.xlarge:
     name: r6idn.xlarge
     vcpus: 4
@@ -4713,7 +4294,6 @@ r6idn.xlarge:
     storage_gb: 237
     supported: true
     arch: x86_64
-    azure: null
 r6in.2xlarge:
     name: r6in.2xlarge
     vcpus: 8
@@ -4722,7 +4302,6 @@ r6in.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6in.4xlarge:
     name: r6in.4xlarge
     vcpus: 16
@@ -4731,7 +4310,6 @@ r6in.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6in.8xlarge:
     name: r6in.8xlarge
     vcpus: 32
@@ -4740,7 +4318,6 @@ r6in.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6in.12xlarge:
     name: r6in.12xlarge
     vcpus: 48
@@ -4749,7 +4326,6 @@ r6in.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6in.16xlarge:
     name: r6in.16xlarge
     vcpus: 64
@@ -4758,7 +4334,6 @@ r6in.16xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6in.24xlarge:
     name: r6in.24xlarge
     vcpus: 96
@@ -4767,7 +4342,6 @@ r6in.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6in.32xlarge:
     name: r6in.32xlarge
     vcpus: 128
@@ -4776,7 +4350,6 @@ r6in.32xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r6in.large:
     name: r6in.large
     vcpus: 2
@@ -4785,7 +4358,14 @@ r6in.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
+r6in.metal:
+    name: r6in.metal
+    vcpus: 128
+    cores: 64
+    memory_mib: 1048576
+    storage_gb: 0
+    supported: true
+    arch: x86_64
 r6in.xlarge:
     name: r6in.xlarge
     vcpus: 4
@@ -4794,7 +4374,6 @@ r6in.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 r7g.2xlarge:
     name: r7g.2xlarge
     vcpus: 8
@@ -4803,7 +4382,6 @@ r7g.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r7g.4xlarge:
     name: r7g.4xlarge
     vcpus: 16
@@ -4812,7 +4390,6 @@ r7g.4xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r7g.8xlarge:
     name: r7g.8xlarge
     vcpus: 32
@@ -4821,7 +4398,6 @@ r7g.8xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r7g.12xlarge:
     name: r7g.12xlarge
     vcpus: 48
@@ -4830,7 +4406,6 @@ r7g.12xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r7g.16xlarge:
     name: r7g.16xlarge
     vcpus: 64
@@ -4839,7 +4414,6 @@ r7g.16xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r7g.large:
     name: r7g.large
     vcpus: 2
@@ -4848,7 +4422,6 @@ r7g.large:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r7g.medium:
     name: r7g.medium
     vcpus: 1
@@ -4857,7 +4430,6 @@ r7g.medium:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r7g.metal:
     name: r7g.metal
     vcpus: 64
@@ -4866,7 +4438,6 @@ r7g.metal:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 r7g.xlarge:
     name: r7g.xlarge
     vcpus: 4
@@ -4875,7 +4446,6 @@ r7g.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 t1.micro:
     name: t1.micro
     vcpus: 1
@@ -4884,7 +4454,6 @@ t1.micro:
     storage_gb: 0
     supported: false
     arch: x86_64
-    azure: null
 t2.2xlarge:
     name: t2.2xlarge
     vcpus: 8
@@ -4893,7 +4462,6 @@ t2.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t2.large:
     name: t2.large
     vcpus: 2
@@ -4902,7 +4470,6 @@ t2.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t2.medium:
     name: t2.medium
     vcpus: 2
@@ -4911,7 +4478,6 @@ t2.medium:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t2.micro:
     name: t2.micro
     vcpus: 1
@@ -4920,7 +4486,6 @@ t2.micro:
     storage_gb: 0
     supported: false
     arch: x86_64
-    azure: null
 t2.nano:
     name: t2.nano
     vcpus: 1
@@ -4929,7 +4494,6 @@ t2.nano:
     storage_gb: 0
     supported: false
     arch: x86_64
-    azure: null
 t2.small:
     name: t2.small
     vcpus: 1
@@ -4938,7 +4502,6 @@ t2.small:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t2.xlarge:
     name: t2.xlarge
     vcpus: 4
@@ -4947,7 +4510,6 @@ t2.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3a.2xlarge:
     name: t3a.2xlarge
     vcpus: 8
@@ -4956,7 +4518,6 @@ t3a.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3a.large:
     name: t3a.large
     vcpus: 2
@@ -4965,7 +4526,6 @@ t3a.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3a.medium:
     name: t3a.medium
     vcpus: 2
@@ -4974,7 +4534,6 @@ t3a.medium:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3a.micro:
     name: t3a.micro
     vcpus: 2
@@ -4983,7 +4542,6 @@ t3a.micro:
     storage_gb: 0
     supported: false
     arch: x86_64
-    azure: null
 t3a.nano:
     name: t3a.nano
     vcpus: 2
@@ -4992,7 +4550,6 @@ t3a.nano:
     storage_gb: 0
     supported: false
     arch: x86_64
-    azure: null
 t3a.small:
     name: t3a.small
     vcpus: 2
@@ -5001,7 +4558,6 @@ t3a.small:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3a.xlarge:
     name: t3a.xlarge
     vcpus: 4
@@ -5010,7 +4566,6 @@ t3a.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3.2xlarge:
     name: t3.2xlarge
     vcpus: 8
@@ -5019,7 +4574,6 @@ t3.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3.large:
     name: t3.large
     vcpus: 2
@@ -5028,7 +4582,6 @@ t3.large:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3.medium:
     name: t3.medium
     vcpus: 2
@@ -5037,7 +4590,6 @@ t3.medium:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3.micro:
     name: t3.micro
     vcpus: 2
@@ -5046,7 +4598,6 @@ t3.micro:
     storage_gb: 0
     supported: false
     arch: x86_64
-    azure: null
 t3.nano:
     name: t3.nano
     vcpus: 2
@@ -5055,7 +4606,6 @@ t3.nano:
     storage_gb: 0
     supported: false
     arch: x86_64
-    azure: null
 t3.small:
     name: t3.small
     vcpus: 2
@@ -5064,7 +4614,6 @@ t3.small:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t3.xlarge:
     name: t3.xlarge
     vcpus: 4
@@ -5073,7 +4622,6 @@ t3.xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 t4g.2xlarge:
     name: t4g.2xlarge
     vcpus: 8
@@ -5082,7 +4630,6 @@ t4g.2xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 t4g.large:
     name: t4g.large
     vcpus: 2
@@ -5091,7 +4638,6 @@ t4g.large:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 t4g.medium:
     name: t4g.medium
     vcpus: 2
@@ -5100,7 +4646,6 @@ t4g.medium:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 t4g.micro:
     name: t4g.micro
     vcpus: 2
@@ -5109,7 +4654,6 @@ t4g.micro:
     storage_gb: 0
     supported: false
     arch: arm64
-    azure: null
 t4g.nano:
     name: t4g.nano
     vcpus: 2
@@ -5118,7 +4662,6 @@ t4g.nano:
     storage_gb: 0
     supported: false
     arch: arm64
-    azure: null
 t4g.small:
     name: t4g.small
     vcpus: 2
@@ -5127,7 +4670,6 @@ t4g.small:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
 t4g.xlarge:
     name: t4g.xlarge
     vcpus: 4
@@ -5136,7 +4678,14 @@ t4g.xlarge:
     storage_gb: 0
     supported: true
     arch: arm64
-    azure: null
+trn1n.32xlarge:
+    name: trn1n.32xlarge
+    vcpus: 128
+    cores: 64
+    memory_mib: 524288
+    storage_gb: 7600
+    supported: true
+    arch: x86_64
 trn1.2xlarge:
     name: trn1.2xlarge
     vcpus: 8
@@ -5145,7 +4694,6 @@ trn1.2xlarge:
     storage_gb: 474
     supported: true
     arch: x86_64
-    azure: null
 trn1.32xlarge:
     name: trn1.32xlarge
     vcpus: 128
@@ -5154,7 +4702,6 @@ trn1.32xlarge:
     storage_gb: 7600
     supported: true
     arch: x86_64
-    azure: null
 u-3tb1.56xlarge:
     name: u-3tb1.56xlarge
     vcpus: 224
@@ -5163,7 +4710,6 @@ u-3tb1.56xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 u-6tb1.56xlarge:
     name: u-6tb1.56xlarge
     vcpus: 224
@@ -5172,7 +4718,6 @@ u-6tb1.56xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 u-6tb1.112xlarge:
     name: u-6tb1.112xlarge
     vcpus: 448
@@ -5181,7 +4726,6 @@ u-6tb1.112xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 u-9tb1.112xlarge:
     name: u-9tb1.112xlarge
     vcpus: 448
@@ -5190,7 +4734,6 @@ u-9tb1.112xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 u-12tb1.112xlarge:
     name: u-12tb1.112xlarge
     vcpus: 448
@@ -5199,7 +4742,6 @@ u-12tb1.112xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 u-18tb1.112xlarge:
     name: u-18tb1.112xlarge
     vcpus: 448
@@ -5208,7 +4750,6 @@ u-18tb1.112xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 u-24tb1.112xlarge:
     name: u-24tb1.112xlarge
     vcpus: 448
@@ -5217,7 +4758,6 @@ u-24tb1.112xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 vt1.3xlarge:
     name: vt1.3xlarge
     vcpus: 12
@@ -5226,7 +4766,6 @@ vt1.3xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 vt1.6xlarge:
     name: vt1.6xlarge
     vcpus: 24
@@ -5235,7 +4774,6 @@ vt1.6xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 vt1.24xlarge:
     name: vt1.24xlarge
     vcpus: 96
@@ -5244,7 +4782,6 @@ vt1.24xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 x1e.2xlarge:
     name: x1e.2xlarge
     vcpus: 8
@@ -5253,7 +4790,6 @@ x1e.2xlarge:
     storage_gb: 240
     supported: true
     arch: x86_64
-    azure: null
 x1e.4xlarge:
     name: x1e.4xlarge
     vcpus: 16
@@ -5262,7 +4798,6 @@ x1e.4xlarge:
     storage_gb: 480
     supported: true
     arch: x86_64
-    azure: null
 x1e.8xlarge:
     name: x1e.8xlarge
     vcpus: 32
@@ -5271,7 +4806,6 @@ x1e.8xlarge:
     storage_gb: 960
     supported: true
     arch: x86_64
-    azure: null
 x1e.16xlarge:
     name: x1e.16xlarge
     vcpus: 64
@@ -5280,7 +4814,6 @@ x1e.16xlarge:
     storage_gb: 1920
     supported: true
     arch: x86_64
-    azure: null
 x1e.32xlarge:
     name: x1e.32xlarge
     vcpus: 128
@@ -5289,7 +4822,6 @@ x1e.32xlarge:
     storage_gb: 3840
     supported: true
     arch: x86_64
-    azure: null
 x1e.xlarge:
     name: x1e.xlarge
     vcpus: 4
@@ -5298,7 +4830,6 @@ x1e.xlarge:
     storage_gb: 120
     supported: true
     arch: x86_64
-    azure: null
 x1.16xlarge:
     name: x1.16xlarge
     vcpus: 64
@@ -5307,7 +4838,6 @@ x1.16xlarge:
     storage_gb: 1920
     supported: true
     arch: x86_64
-    azure: null
 x1.32xlarge:
     name: x1.32xlarge
     vcpus: 128
@@ -5316,7 +4846,6 @@ x1.32xlarge:
     storage_gb: 3840
     supported: true
     arch: x86_64
-    azure: null
 x2gd.2xlarge:
     name: x2gd.2xlarge
     vcpus: 8
@@ -5325,7 +4854,6 @@ x2gd.2xlarge:
     storage_gb: 475
     supported: true
     arch: arm64
-    azure: null
 x2gd.4xlarge:
     name: x2gd.4xlarge
     vcpus: 16
@@ -5334,7 +4862,6 @@ x2gd.4xlarge:
     storage_gb: 950
     supported: true
     arch: arm64
-    azure: null
 x2gd.8xlarge:
     name: x2gd.8xlarge
     vcpus: 32
@@ -5343,7 +4870,6 @@ x2gd.8xlarge:
     storage_gb: 1900
     supported: true
     arch: arm64
-    azure: null
 x2gd.12xlarge:
     name: x2gd.12xlarge
     vcpus: 48
@@ -5352,7 +4878,6 @@ x2gd.12xlarge:
     storage_gb: 2850
     supported: true
     arch: arm64
-    azure: null
 x2gd.16xlarge:
     name: x2gd.16xlarge
     vcpus: 64
@@ -5361,7 +4886,6 @@ x2gd.16xlarge:
     storage_gb: 3800
     supported: true
     arch: arm64
-    azure: null
 x2gd.large:
     name: x2gd.large
     vcpus: 2
@@ -5370,7 +4894,6 @@ x2gd.large:
     storage_gb: 118
     supported: true
     arch: arm64
-    azure: null
 x2gd.medium:
     name: x2gd.medium
     vcpus: 1
@@ -5379,7 +4902,6 @@ x2gd.medium:
     storage_gb: 59
     supported: true
     arch: arm64
-    azure: null
 x2gd.metal:
     name: x2gd.metal
     vcpus: 64
@@ -5388,7 +4910,6 @@ x2gd.metal:
     storage_gb: 3800
     supported: true
     arch: arm64
-    azure: null
 x2gd.xlarge:
     name: x2gd.xlarge
     vcpus: 4
@@ -5397,7 +4918,6 @@ x2gd.xlarge:
     storage_gb: 237
     supported: true
     arch: arm64
-    azure: null
 x2idn.16xlarge:
     name: x2idn.16xlarge
     vcpus: 64
@@ -5406,7 +4926,6 @@ x2idn.16xlarge:
     storage_gb: 1900
     supported: true
     arch: x86_64
-    azure: null
 x2idn.24xlarge:
     name: x2idn.24xlarge
     vcpus: 96
@@ -5415,7 +4934,6 @@ x2idn.24xlarge:
     storage_gb: 2850
     supported: true
     arch: x86_64
-    azure: null
 x2idn.32xlarge:
     name: x2idn.32xlarge
     vcpus: 128
@@ -5424,7 +4942,6 @@ x2idn.32xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 x2idn.metal:
     name: x2idn.metal
     vcpus: 128
@@ -5433,7 +4950,6 @@ x2idn.metal:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 x2iedn.2xlarge:
     name: x2iedn.2xlarge
     vcpus: 8
@@ -5442,7 +4958,6 @@ x2iedn.2xlarge:
     storage_gb: 237
     supported: true
     arch: x86_64
-    azure: null
 x2iedn.4xlarge:
     name: x2iedn.4xlarge
     vcpus: 16
@@ -5451,7 +4966,6 @@ x2iedn.4xlarge:
     storage_gb: 475
     supported: true
     arch: x86_64
-    azure: null
 x2iedn.8xlarge:
     name: x2iedn.8xlarge
     vcpus: 32
@@ -5460,7 +4974,6 @@ x2iedn.8xlarge:
     storage_gb: 950
     supported: true
     arch: x86_64
-    azure: null
 x2iedn.16xlarge:
     name: x2iedn.16xlarge
     vcpus: 64
@@ -5469,7 +4982,6 @@ x2iedn.16xlarge:
     storage_gb: 1900
     supported: true
     arch: x86_64
-    azure: null
 x2iedn.24xlarge:
     name: x2iedn.24xlarge
     vcpus: 96
@@ -5478,7 +4990,6 @@ x2iedn.24xlarge:
     storage_gb: 2850
     supported: true
     arch: x86_64
-    azure: null
 x2iedn.32xlarge:
     name: x2iedn.32xlarge
     vcpus: 128
@@ -5487,7 +4998,6 @@ x2iedn.32xlarge:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 x2iedn.metal:
     name: x2iedn.metal
     vcpus: 128
@@ -5496,7 +5006,6 @@ x2iedn.metal:
     storage_gb: 3800
     supported: true
     arch: x86_64
-    azure: null
 x2iedn.xlarge:
     name: x2iedn.xlarge
     vcpus: 4
@@ -5505,7 +5014,6 @@ x2iedn.xlarge:
     storage_gb: 118
     supported: true
     arch: x86_64
-    azure: null
 x2iezn.2xlarge:
     name: x2iezn.2xlarge
     vcpus: 8
@@ -5514,7 +5022,6 @@ x2iezn.2xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 x2iezn.4xlarge:
     name: x2iezn.4xlarge
     vcpus: 16
@@ -5523,7 +5030,6 @@ x2iezn.4xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 x2iezn.6xlarge:
     name: x2iezn.6xlarge
     vcpus: 24
@@ -5532,7 +5038,6 @@ x2iezn.6xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 x2iezn.8xlarge:
     name: x2iezn.8xlarge
     vcpus: 32
@@ -5541,7 +5046,6 @@ x2iezn.8xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 x2iezn.12xlarge:
     name: x2iezn.12xlarge
     vcpus: 48
@@ -5550,7 +5054,6 @@ x2iezn.12xlarge:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 x2iezn.metal:
     name: x2iezn.metal
     vcpus: 48
@@ -5559,7 +5062,6 @@ x2iezn.metal:
     storage_gb: 0
     supported: true
     arch: x86_64
-    azure: null
 z1d.2xlarge:
     name: z1d.2xlarge
     vcpus: 8
@@ -5568,7 +5070,6 @@ z1d.2xlarge:
     storage_gb: 300
     supported: true
     arch: x86_64
-    azure: null
 z1d.3xlarge:
     name: z1d.3xlarge
     vcpus: 12
@@ -5577,7 +5078,6 @@ z1d.3xlarge:
     storage_gb: 450
     supported: true
     arch: x86_64
-    azure: null
 z1d.6xlarge:
     name: z1d.6xlarge
     vcpus: 24
@@ -5586,7 +5086,6 @@ z1d.6xlarge:
     storage_gb: 900
     supported: true
     arch: x86_64
-    azure: null
 z1d.12xlarge:
     name: z1d.12xlarge
     vcpus: 48
@@ -5595,7 +5094,6 @@ z1d.12xlarge:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 z1d.large:
     name: z1d.large
     vcpus: 2
@@ -5604,7 +5102,6 @@ z1d.large:
     storage_gb: 75
     supported: true
     arch: x86_64
-    azure: null
 z1d.metal:
     name: z1d.metal
     vcpus: 48
@@ -5613,7 +5110,6 @@ z1d.metal:
     storage_gb: 1800
     supported: true
     arch: x86_64
-    azure: null
 z1d.xlarge:
     name: z1d.xlarge
     vcpus: 4
@@ -5622,4 +5118,3 @@ z1d.xlarge:
     storage_gb: 150
     supported: true
     arch: x86_64
-    azure: null

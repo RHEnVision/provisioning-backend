@@ -31,6 +31,8 @@
 - Standard_DC4s_v3
 - Standard_DC8ds_v3
 - Standard_DC8s_v3
+- Standard_E112ibds_v5
+- Standard_E112ibs_v5
 - Standard_E16bds_v5
 - Standard_E16bs_v5
 - Standard_E2bds_v5
@@ -45,7 +47,16 @@
 - Standard_E64bs_v5
 - Standard_E8bds_v5
 - Standard_E8bs_v5
+- Standard_E96bds_v5
+- Standard_E96bs_v5
+- Standard_EC16ads_v5
+- Standard_EC32ads_v5
+- Standard_EC48ads_v5
 - Standard_EC8ads_v5
+- Standard_NC16as_T4_v3
+- Standard_NC4as_T4_v3
+- Standard_NC64as_T4_v3
+- Standard_NC8as_T4_v3
 - Standard_NV16as_v4
 - Standard_NV32as_v4
 - Standard_NV4as_v4

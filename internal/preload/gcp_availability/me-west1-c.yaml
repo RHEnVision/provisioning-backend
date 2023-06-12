@@ -1,3 +1,7 @@
+- a2-highgpu-1g
+- a2-highgpu-2g
+- a2-highgpu-4g
+- a2-highgpu-8g
 - e2-highcpu-16
 - e2-highcpu-2
 - e2-highcpu-32
@@ -51,6 +55,8 @@
 - n2-highcpu-64
 - n2-highcpu-8
 - n2-highcpu-80
+- n2-highcpu-96
+- n2-highmem-128
 - n2-highmem-16
 - n2-highmem-2
 - n2-highmem-32
@@ -59,6 +65,8 @@
 - n2-highmem-64
 - n2-highmem-8
 - n2-highmem-80
+- n2-highmem-96
+- n2-standard-128
 - n2-standard-16
 - n2-standard-2
 - n2-standard-32
@@ -67,6 +75,7 @@
 - n2-standard-64
 - n2-standard-8
 - n2-standard-80
+- n2-standard-96
 - n2d-highcpu-128
 - n2d-highcpu-16
 - n2d-highcpu-2

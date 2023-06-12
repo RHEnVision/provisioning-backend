@@ -921,7 +921,7 @@ Standard_D8a_v4:
     arch: x86_64
     azure:
         gen_v1: true
-        gen_v2: false
+        gen_v2: true
 Standard_D8ads_v5:
     name: Standard_D8ads_v5
     vcpus: 8
@@ -5443,6 +5443,28 @@ Standard_E96as_v5:
     azure:
         gen_v1: true
         gen_v2: true
+Standard_E96bds_v5:
+    name: Standard_E96bds_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 3686
+    supported: true
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E96bs_v5:
+    name: Standard_E96bs_v5
+    vcpus: 96
+    cores: 48
+    memory_mib: 672000
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
 Standard_E96d_v5:
     name: Standard_E96d_v5
     vcpus: 96
@@ -5665,6 +5687,28 @@ Standard_E112iads_v5:
         gen_v2: true
 Standard_E112ias_v5:
     name: Standard_E112ias_v5
+    vcpus: 112
+    cores: 56
+    memory_mib: 672000
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E112ibds_v5:
+    name: Standard_E112ibds_v5
+    vcpus: 112
+    cores: 56
+    memory_mib: 672000
+    storage_gb: 3891
+    supported: true
+    arch: x86_64
+    azure:
+        gen_v1: true
+        gen_v2: true
+Standard_E112ibs_v5:
+    name: Standard_E112ibs_v5
     vcpus: 112
     cores: 56
     memory_mib: 672000
@@ -7176,6 +7220,17 @@ Standard_M416ms_v2:
     cores: 416
     memory_mib: 11400000
     storage_gb: 8388
+    supported: true
+    arch: x86_64
+    azure:
+        gen_v1: false
+        gen_v2: true
+Standard_M416s_8_v2:
+    name: Standard_M416s_8_v2
+    vcpus: 416
+    cores: 208
+    memory_mib: 7600000
+    storage_gb: 4194
     supported: true
     arch: x86_64
     azure:
