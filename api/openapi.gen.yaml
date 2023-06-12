@@ -348,6 +348,8 @@ components:
                             type: string
                         tenant_id:
                             type: string
+                gcp:
+                    nullable: true
                 provider:
                     type: string
     responses:
@@ -682,6 +684,7 @@ components:
                 aws:
                     account_id: "78462784632"
                 azure: null
+                gcp: null
                 provider: aws
         v1.SourceUploadInfoAzureResponse:
             value:
@@ -692,6 +695,7 @@ components:
                         - MyGroup 42
                     subscriptionid: 617807e1-e4e0-4855-983c-1e3ce1e49674
                     tenantid: 617807e1-e4e0-481c-983c-be3ce1e49253
+                gcp: null
                 provider: azure
 info:
     title: provisioning-api
