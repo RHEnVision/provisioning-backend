@@ -30,9 +30,11 @@ const (
 	Rhel85   Distributions = "rhel-85"
 	Rhel86   Distributions = "rhel-86"
 	Rhel87   Distributions = "rhel-87"
+	Rhel88   Distributions = "rhel-88"
 	Rhel9    Distributions = "rhel-9"
 	Rhel90   Distributions = "rhel-90"
 	Rhel91   Distributions = "rhel-91"
+	Rhel92   Distributions = "rhel-92"
 )
 
 // Defines values for ImageRequestArchitecture.
@@ -873,6 +875,9 @@ type ClientInterface interface {
 	// GetComposes request
 	GetComposes(ctx context.Context, params *GetComposesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteCompose request
+	DeleteCompose(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetComposeStatus request
 	GetComposeStatus(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -953,6 +958,18 @@ func (c *Client) ComposeImage(ctx context.Context, body ComposeImageJSONRequestB
 
 func (c *Client) GetComposes(ctx context.Context, params *GetComposesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetComposesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteCompose(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteComposeRequest(c.Server, composeId)
 	if err != nil {
 		return nil, err
 	}
@@ -1247,6 +1264,40 @@ func NewGetComposesRequest(server string, params *GetComposesParams) (*http.Requ
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewDeleteComposeRequest generates requests for DeleteCompose
+func NewDeleteComposeRequest(server string, composeId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "composeId", runtime.ParamLocationPath, composeId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/composes/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -1703,6 +1754,9 @@ type ClientWithResponsesInterface interface {
 	// GetComposes request
 	GetComposesWithResponse(ctx context.Context, params *GetComposesParams, reqEditors ...RequestEditorFn) (*GetComposesResponse, error)
 
+	// DeleteCompose request
+	DeleteComposeWithResponse(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*DeleteComposeResponse, error)
+
 	// GetComposeStatus request
 	GetComposeStatusWithResponse(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetComposeStatusResponse, error)
 
@@ -1816,6 +1870,27 @@ func (r GetComposesResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetComposesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteComposeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteComposeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteComposeResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2064,6 +2139,15 @@ func (c *ClientWithResponses) GetComposesWithResponse(ctx context.Context, param
 	return ParseGetComposesResponse(rsp)
 }
 
+// DeleteComposeWithResponse request returning *DeleteComposeResponse
+func (c *ClientWithResponses) DeleteComposeWithResponse(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*DeleteComposeResponse, error) {
+	rsp, err := c.DeleteCompose(ctx, composeId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteComposeResponse(rsp)
+}
+
 // GetComposeStatusWithResponse request returning *GetComposeStatusResponse
 func (c *ClientWithResponses) GetComposeStatusWithResponse(ctx context.Context, composeId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetComposeStatusResponse, error) {
 	rsp, err := c.GetComposeStatus(ctx, composeId, reqEditors...)
@@ -2259,6 +2343,22 @@ func ParseGetComposesResponse(rsp *http.Response) (*GetComposesResponse, error) 
 		}
 		response.JSON200 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseDeleteComposeResponse parses an HTTP response from a DeleteComposeWithResponse call
+func ParseDeleteComposeResponse(rsp *http.Response) (*DeleteComposeResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteComposeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil
