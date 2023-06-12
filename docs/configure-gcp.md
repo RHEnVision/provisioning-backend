@@ -35,15 +35,18 @@ Create a new Service account:
 4. Click Create Service Account.
 5. Fill in the Service Account details.
 6. Click CREATE AND CONTINUE.
-7. Choose the permissions the provisioning app needs (TBC):
+7. Choose the permissions the provisioning app needs:
 
-Roles:
-   - Service Account User
-   - Compute Admin (We are allowing here more permissions than needed)
+Roles: (We are allowing here more permissions than needed)
+  - Service Account User
+  - Compute Admin
+  - Compute Image User
+  - Compute Instance Admin (v1)
+  - Compute OS Login
 
-8. Click CONTINUE
-9.  Click DONE 
-10. Copy the service account's e-mail
+1. Click CONTINUE
+2.  Click DONE
+3.  Copy the service account's e-mail
 
 
 ### Tenant account
@@ -56,12 +59,32 @@ This is a setup in the account in which the service shall deploy the actual inst
 2. Navigate to IAM & Admin on GCP.
 3. Click IAM.
 4. Click +ADD.
-5. Fill in the Service Account e-mail under New principals.
-6. Choose the permissions the provisioning app needs (TBC): 
-Roles:
-   - Service Account User
-   - Compute Admin (We are allowing here more permissions than needed)
-7. Click SAVE.
+5. Fill in the Provisioning Service Account principal under New principals.
+6. Create a custom role with the permissions the provisioning app needs:
+  a. Navigate to Roles
+  b. Click + CREATE ROLE
+  c. Choose these permissions:
+    - compute.disks.create
+    - compute.images.useReadOnly
+    - compute.instanceTemplates.create
+    - compute.instanceTemplates.list
+    - compute.instanceTemplates.useReadOnly
+    - compute.instances.create
+    - compute.instances.get
+    - compute.instances.list
+    - compute.instances.setLabels
+    - compute.instances.setMetadata
+    - compute.instances.setServiceAccount
+    - compute.networks.useExternalIp
+    - compute.subnetworks.use
+    - compute.subnetworks.useExternalIp
+    - iam.roles.get
+    - iam.serviceAccounts.actAs
+    - iam.serviceAccounts.getIamPolicy
+    - resourcemanager.projects.getIamPolicy
+    - serviceusage.services.use
+
+  d. Choose the role you have created and click SAVE
 
 #### Authenticating as the service account
 
@@ -101,6 +124,12 @@ The downloaded key has the following format, where PRIVATE_KEY is the private po
 
 11. Create an image in Image Builder for GCP https://console.stage.redhat.com/api/image-builder/v1. 
 Share that image with the **service account** you have created (Copy the service account's email from the IAM console and paste it in Image builder wizard). 
+
+## About the Shared Image
+The steps above are for creating a service account for local development environment.
+There is a service account and projects available for the provisioning team, which can be found in satellite pages.
+When using the provisioning service account, the image does not need to be shared with a customer email or the provisioning service account. For simplicity and correctness with IB, we have decided to directly share all the GCP images created using IB with the provisioning service account.
+
 
 ## Configuring Sources microservice
 
