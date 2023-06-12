@@ -66,6 +66,10 @@
 - Standard_L64s_v3
 - Standard_L80s_v3
 - Standard_L8s_v3
+- Standard_NC16as_T4_v3
+- Standard_NC4as_T4_v3
+- Standard_NC64as_T4_v3
+- Standard_NC8as_T4_v3
 - Standard_NV16as_v4
 - Standard_NV32as_v4
 - Standard_NV4as_v4

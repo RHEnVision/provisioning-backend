@@ -464,6 +464,7 @@
 - Standard_M416-208ms_v2
 - Standard_M416-208s_v2
 - Standard_M416ms_v2
+- Standard_M416s_8_v2
 - Standard_M416s_v2
 - Standard_M64
 - Standard_M64-16ms
@@ -479,6 +480,10 @@
 - Standard_M8-2ms
 - Standard_M8-4ms
 - Standard_M8ms
+- Standard_NC16as_T4_v3
+- Standard_NC4as_T4_v3
+- Standard_NC64as_T4_v3
+- Standard_NC8as_T4_v3
 - Standard_NV12s_v2
 - Standard_NV16as_v4
 - Standard_NV24s_v2

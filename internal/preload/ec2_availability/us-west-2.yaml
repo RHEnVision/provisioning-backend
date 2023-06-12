@@ -122,6 +122,7 @@
 - c6in.4xlarge
 - c6in.8xlarge
 - c6in.large
+- c6in.metal
 - c6in.xlarge
 - c7g.12xlarge
 - c7g.16xlarge
@@ -132,7 +133,6 @@
 - c7g.medium
 - c7g.metal
 - c7g.xlarge
-- cc2.8xlarge
 - d2.2xlarge
 - d2.4xlarge
 - d2.8xlarge
@@ -206,6 +206,12 @@
 - i3en.large
 - i3en.metal
 - i3en.xlarge
+- i4g.16xlarge
+- i4g.2xlarge
+- i4g.4xlarge
+- i4g.8xlarge
+- i4g.large
+- i4g.xlarge
 - i4i.16xlarge
 - i4i.2xlarge
 - i4i.32xlarge
@@ -363,6 +369,7 @@
 - m6idn.4xlarge
 - m6idn.8xlarge
 - m6idn.large
+- m6idn.metal
 - m6idn.xlarge
 - m6in.12xlarge
 - m6in.16xlarge
@@ -372,6 +379,7 @@
 - m6in.4xlarge
 - m6in.8xlarge
 - m6in.large
+- m6in.metal
 - m6in.xlarge
 - m7g.12xlarge
 - m7g.16xlarge
@@ -519,6 +527,7 @@
 - r6idn.4xlarge
 - r6idn.8xlarge
 - r6idn.large
+- r6idn.metal
 - r6idn.xlarge
 - r6in.12xlarge
 - r6in.16xlarge
@@ -528,6 +537,7 @@
 - r6in.4xlarge
 - r6in.8xlarge
 - r6in.large
+- r6in.metal
 - r6in.xlarge
 - r7g.12xlarge
 - r7g.16xlarge
@@ -569,8 +579,10 @@
 - t4g.xlarge
 - trn1.2xlarge
 - trn1.32xlarge
+- trn1n.32xlarge
 - u-12tb1.112xlarge
 - u-18tb1.112xlarge
+- u-24tb1.112xlarge
 - u-3tb1.56xlarge
 - u-6tb1.112xlarge
 - u-6tb1.56xlarge

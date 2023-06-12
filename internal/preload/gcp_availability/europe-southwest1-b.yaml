@@ -23,6 +23,7 @@
 - n2-highcpu-64
 - n2-highcpu-8
 - n2-highcpu-80
+- n2-highcpu-96
 - n2-highmem-16
 - n2-highmem-2
 - n2-highmem-32
@@ -39,6 +40,7 @@
 - n2-standard-64
 - n2-standard-8
 - n2-standard-80
+- n2-standard-96
 - n2d-highcpu-128
 - n2d-highcpu-16
 - n2d-highcpu-2
@@ -70,3 +72,11 @@
 - n2d-standard-8
 - n2d-standard-80
 - n2d-standard-96
+- t2d-standard-1
+- t2d-standard-16
+- t2d-standard-2
+- t2d-standard-32
+- t2d-standard-4
+- t2d-standard-48
+- t2d-standard-60
+- t2d-standard-8

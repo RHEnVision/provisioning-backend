@@ -47,6 +47,14 @@
 - e2-standard-8
 - f1-micro
 - g1-small
+- g2-standard-12
+- g2-standard-16
+- g2-standard-24
+- g2-standard-32
+- g2-standard-4
+- g2-standard-48
+- g2-standard-8
+- g2-standard-96
 - m1-megamem-96
 - m1-ultramem-160
 - m1-ultramem-40
