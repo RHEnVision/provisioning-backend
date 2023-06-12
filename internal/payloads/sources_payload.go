@@ -40,6 +40,7 @@ type SourceUploadInfoResponse struct {
 	Provider  string                       `json:"provider" yaml:"provider"`
 	AwsInfo   *clients.AccountDetailsAWS   `json:"aws" nullable:"true" yaml:"aws"`
 	AzureInfo *clients.AccountDetailsAzure `json:"azure" nullable:"true" yaml:"azure"`
+	GcpInfo   *clients.AccountDetailsGCP   `json:"gcp" nullable:"true" yaml:"gcp"`
 }
 
 func (s SourceUploadInfoResponse) Render(_ http.ResponseWriter, _ *http.Request) error {

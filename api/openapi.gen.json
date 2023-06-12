@@ -372,6 +372,7 @@
             "account_id": "78462784632"
           },
           "azure": null,
+          "gcp": null,
           "provider": "aws"
         }
       },
@@ -386,6 +387,7 @@
             "subscriptionid": "617807e1-e4e0-4855-983c-1e3ce1e49674",
             "tenantid": "617807e1-e4e0-481c-983c-be3ce1e49253"
           },
+          "gcp": null,
           "provider": "azure"
         }
       }
@@ -974,6 +976,9 @@
               }
             },
             "type": "object"
+          },
+          "gcp": {
+            "nullable": true
           },
           "provider": {
             "type": "string"

@@ -106,7 +106,12 @@ func GetSourceUploadInfo(w http.ResponseWriter, r *http.Request) {
 			renderError(w, r, payloads.NewAzureError(r.Context(), "unable to fetch Azure upload info", err))
 			return
 		}
-	case models.ProviderTypeGCP, models.ProviderTypeNoop, models.ProviderTypeUnknown:
+	case models.ProviderTypeGCP:
+		if payload.GcpInfo, err = getGCPAccountDetails(r.Context(), sourceId, authentication); err != nil {
+			renderError(w, r, payloads.NewGCPError(r.Context(), "unable to get GCP upload info", err))
+			return
+		}
+	case models.ProviderTypeNoop, models.ProviderTypeUnknown:
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ProviderTypeNotImplementedError))
 		return
 	}
@@ -176,4 +181,8 @@ func getAzureAccountDetails(ctx context.Context, sourceId string, authentication
 		SubscriptionID: authentication.Payload,
 		ResourceGroups: groupList,
 	}, nil
+}
+
+func getGCPAccountDetails(ctx context.Context, sourceId string, authentication *clients.Authentication) (*clients.AccountDetailsGCP, error) {
+	return &clients.AccountDetailsGCP{}, nil
 }

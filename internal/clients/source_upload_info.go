@@ -23,3 +23,5 @@ type AccountDetailsAzure struct {
 	SubscriptionID string        `json:"subscription_id"`
 	ResourceGroups []string      `json:"resource_groups"`
 }
+
+type AccountDetailsGCP struct{}
