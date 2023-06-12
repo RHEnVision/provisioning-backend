@@ -1,8 +1,6 @@
 # API Documentation
 
-This service uses openapi v.3 for documenting the service's API
-
-## Docs
+This service uses OpenAPI for API documentation.
 
 We use [redoc](https://github.com/Redocly/redoc) for auto generating swagger UI based on the spec file
 The docs locate under `<root>/docs` and the json spec under `<root>/openapi.json`
@@ -10,19 +8,17 @@ In addition, `openapi.json` serves under `/api/provisioning/v1/openapi.json`
 
 ## Adding new endpoint
 
-We chose an hybrid approach for adding a new endpoint
+We use a hybrid approach when schemas are generated from Go code and paths are manually maintained.
 
-### How to add new type/schema
+### Schemas
+
 1. Create the endpoint's payload under `internal/payload`
-2. Register it in `cmd/spec/main.go` script:
-```go
-gen.addSchema("v1.<YOUR_PAYLOAD>", &payloads.<YOUR_PAYLOAD>{})
-```
-3. use the `addSchema` for registering new errors payloads if needed
+2. Create an example(s) in `cmd/spec` package
+3. Register the type and the example(s) in `cmd/spec/main.go` application
 
-### How to add a new path
-Edit `/cmd/spec/path.yaml` for adding the new route manually
-It is recommended to use a dedicated openapi editor plugin for your IDE for fast editing
+### Paths
+
+Edit `/cmd/spec/path.yaml` utilizing the generated schemas and examples.
 
 ```yml
 paths:
@@ -38,7 +34,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/v1.<YOUR_PAYLOAD>' # a reference to the registered type 
+                  $ref: '#/components/schemas/v1.MySchema' 
+              examples:
+                  example1:
+                      $ref: '#/components/examples/v1.MySchemaExample1'
+                  example2:
+                      $ref: '#/components/examples/v1.MySchemaExample2'
 ```
 
 Operation naming convention:
@@ -48,33 +49,23 @@ Operation naming convention:
 * GET /resource/ID - getResourceById
 * DELETE /resource/ID - removeResourceById
 
-### How to add error responses to endpoints
+Make sure to assign OpenAPI "tags" to each endpoint.
+
+### Errors
+
 You can reuse and reference predefined error responses:
 
- ```yaml
- # path.yaml
+```yaml
  responses:
-  #"200": "See above example"
    "404":
       $ref: "#/components/responses/NotFound"
    "500":
       $ref: '#/components/responses/InternalError'
- ```
-For creating a new response's ref, use `addResponse` function in `cmd/spec/main.go`:
-```go
-// addResponse(name, description, schema ref)
-gen.addResponse("NotAuthorized", "The user is not authorized", "#/components/schemas/v1.ResponseError")
-```
-Then, consume it in your paths:
-```yaml
- # path.yaml
- responses:
-  #"200": "See above example"
-   "403":
-      $ref: "#/components/responses/NotAuthorized"
 ```
 
-### Running all together
+For creating a new response's ref, use `addResponse` function in `cmd/spec/main.go`.
+
+## Generating specification
 
 1. For updating the spec files run
    ```sh
