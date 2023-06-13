@@ -138,7 +138,7 @@ type GCPReservationResponsePayload struct {
 	ImageID string `json:"image_id" yaml:"image_id"`
 
 	// Optional name pattern of the instance(s).
-	Name string `json:"name_pattern" yaml:"name_pattern"`
+	NamePattern string `json:"name_pattern" yaml:"name_pattern"`
 
 	// The name of the gcp operation which was created.
 	GCPOperationName string `json:"gcp_operation_name,omitempty" yaml:"gcp_operation_name"`
@@ -221,7 +221,7 @@ type GCPReservationRequestPayload struct {
 	LaunchTemplateName string `json:"launch_template_name,omitempty" yaml:"launch_template_name"`
 
 	// Optional name pattern of the instance(s).
-	Name string `json:"name_pattern" yaml:"name_pattern"`
+	NamePattern string `json:"name_pattern" yaml:"name_pattern"`
 
 	// GCP zone.
 	Zone string `json:"zone" yaml:"zone"`
@@ -331,7 +331,7 @@ func NewGCPReservationResponse(reservation *models.GCPReservation, instances []*
 	}
 
 	response := GCPReservationResponsePayload{
-		Name:             *reservation.Detail.Name,
+		NamePattern:      *reservation.Detail.NamePattern,
 		PubkeyID:         reservation.PubkeyID,
 		ImageID:          reservation.ImageID,
 		SourceID:         reservation.SourceID,

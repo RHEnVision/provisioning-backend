@@ -96,7 +96,7 @@ type GCPDetail struct {
 	Zone string `json:"zone"`
 
 	// Optional instance name
-	Name *string `json:"name"`
+	NamePattern *string `json:"name_pattern"`
 
 	// GCP Machine type.
 	MachineType string `json:"machine_type"`
