@@ -154,7 +154,7 @@ var GCPReservationRequestPayloadExample = payloads.GCPReservationRequestPayload{
 	PubkeyID:           42,
 	SourceID:           "654321",
 	Zone:               "us-east-4",
-	Name:               "my-instance",
+	NamePattern:        "my-instance",
 	MachineType:        "e2-micro",
 	Amount:             1,
 	ImageID:            "08a48fed-de87-40ab-a571-f64e30bd0aa8",
@@ -168,10 +168,10 @@ var GCPReservationResponsePayloadPendingExample = payloads.GCPReservationRespons
 	Zone:               "us-east-4",
 	MachineType:        "e2-micro",
 	Amount:             1,
-	Name:               "my-instance",
+	NamePattern:        "my-instance",
 	ImageID:            "08a48fed-de87-40ab-a571-f64e30bd0aa8",
-	LaunchTemplateName: "",
-	GCPOperationName:   "",
+	LaunchTemplateName: "template-1",
+	GCPOperationName:   "operation-1686646674436-5fdff07e43209-66146b7e-f3f65ec5",
 	PowerOff:           false,
 }
 
@@ -183,12 +183,12 @@ var GCPReservationResponsePayloadDoneExample = payloads.GCPReservationResponsePa
 	MachineType:        "e2-micro",
 	Amount:             1,
 	ImageID:            "08a48fed-de87-40ab-a571-f64e30bd0aa8",
-	LaunchTemplateName: "",
-	Name:               "my-instance",
-	GCPOperationName:   "",
+	LaunchTemplateName: "template-1",
+	NamePattern:        "my-instance",
+	GCPOperationName:   "operation-1686646674436-5fdff07e43209-66146b7e-f3f65ec5",
 	PowerOff:           false,
 	Instances: []payloads.InstanceResponse{
-		{InstanceID: "2324343212", Detail: models.ReservationInstanceDetail{
+		{InstanceID: "3003942005876582747", Detail: models.ReservationInstanceDetail{
 			PublicDNS:  "",
 			PublicIPv4: "10.0.0.88",
 		}},

@@ -93,8 +93,8 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 		return fmt.Errorf("cannot generate user data: %w", err)
 	}
 	logger.Trace().Bool("userdata", true).Msg(string(userData))
-	if args.Detail.Name != nil {
-		name = fmt.Sprintf("%s-#####", *args.Detail.Name)
+	if args.Detail.NamePattern != nil {
+		name = fmt.Sprintf("%s-#####", *args.Detail.NamePattern)
 	}
 	params := &clients.GCPInstanceParams{
 		NamePattern:        ptr.To(name),

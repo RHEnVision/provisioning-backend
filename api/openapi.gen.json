@@ -123,7 +123,7 @@
       "v1.GCPReservationResponsePayloadDoneExample": {
         "value": {
           "amount": 1,
-          "gcp_operation_name": "",
+          "gcp_operation_name": "operation-1686646674436-5fdff07e43209-66146b7e-f3f65ec5",
           "image_id": "08a48fed-de87-40ab-a571-f64e30bd0aa8",
           "instances": [
             {
@@ -131,10 +131,10 @@
                 "publicdns": "",
                 "publicipv4": "10.0.0.88"
               },
-              "instance_id": "2324343212"
+              "instance_id": "3003942005876582747"
             }
           ],
-          "launch_template_name": "",
+          "launch_template_name": "template-1",
           "machine_type": "e2-micro",
           "name_pattern": "my-instance",
           "poweroff": false,
@@ -147,10 +147,10 @@
       "v1.GCPReservationResponsePayloadPendingExample": {
         "value": {
           "amount": 1,
-          "gcp_operation_name": "",
+          "gcp_operation_name": "operation-1686646674436-5fdff07e43209-66146b7e-f3f65ec5",
           "image_id": "08a48fed-de87-40ab-a571-f64e30bd0aa8",
           "instances": [],
-          "launch_template_name": "",
+          "launch_template_name": "template-1",
           "machine_type": "e2-micro",
           "name_pattern": "my-instance",
           "poweroff": false,
@@ -1449,7 +1449,7 @@
     },
     "/reservations/gcp": {
       "post": {
-        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. A GCP reservation is a reservation created for a GCP job. Image Builder UUID image is required and needs to be shared with the service account.\n",
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. A GCP reservation is a reservation created for a GCP job. Image Builder UUID image is required and needs to be shared with the service account. Furthermore, by specifying the name pattern for example as \"instance\", instances names will be created in the format: \"instance-#####\".\n",
         "operationId": "createGCPReservation",
         "requestBody": {
           "content": {
