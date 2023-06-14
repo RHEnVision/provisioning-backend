@@ -61,6 +61,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.Status = "Created"
 	reservation.Provider = models.ProviderTypeGCP
 	reservation.Steps = 1
+	reservation.StepTitles = jobs.LaunchInstanceGCPSteps
 
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
 	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
