@@ -14,6 +14,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
+var LaunchInstanceGCPSteps = []string{"Launch instance(s)"}
+
 type LaunchInstanceGCPTaskArgs struct {
 	// Associated reservation
 	ReservationID int64
