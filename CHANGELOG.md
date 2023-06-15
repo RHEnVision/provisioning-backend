@@ -1,4 +1,24 @@
 <!-- insertion marker -->
+<a name="1.1.0"></a>
+
+## [1.1.0](https://github.com/RHEnVision/provisioning-backend/compare/1.0.0...1.1.0) (2023-06-13)
+
+### Features
+
+- **HMS-1773:** Add  IPv4 to instance ([9fc5788](https://github.com/RHEnVision/provisioning-backend/commit/9fc57889177871645f4bd3f02aa635735f210e3c))
+- **HMS-1828:** Add listing templates launch from template ([b09349e](https://github.com/RHEnVision/provisioning-backend/commit/b09349e82b6a34f4aeec2bfcdda3fa82a868d557))
+
+### Bug Fixes
+
+- **HMS-1616:** cleanup reservation OpenAPI markdown ([bb54e11](https://github.com/RHEnVision/provisioning-backend/commit/bb54e115e16178de12e6da2895461b1d9b59f9e0))
+- **HMS-1877:** filter authentications ([912e649](https://github.com/RHEnVision/provisioning-backend/commit/912e64921d49dbf48451cd8f33e19036a13a3470))
+- **HMS-1884:** return 400 on invalid compose ID ([3bc1315](https://github.com/RHEnVision/provisioning-backend/commit/3bc1315a6016ba7cfcae3783d385cc9d9a149e12))
+
+### Code Refactoring
+
+- correct the function name to use label ([d98fe75](https://github.com/RHEnVision/provisioning-backend/commit/d98fe753305d43adaadedadbd3c6fb688b96de4d))
+- add zone info when listing instance desc ([ee55eea](https://github.com/RHEnVision/provisioning-backend/commit/ee55eea25065f31143c6c4b75b5c1b83a033c53e))
+
 <a name="1.0.0"></a>
 
 ## [1.0.0](https://github.com/RHEnVision/provisioning-backend/compare/0.21.0...1.0.0) (2023-06-01)
@@ -26,38 +46,25 @@
 
 <a name="0.21.0"></a>
 
-## [0.21.0](https://github.com/RHEnVision/provisioning-backend/compare/summit23a...0.21.0) (2023-05-17)
+## [0.21.0](https://github.com/RHEnVision/provisioning-backend/compare/0.20.0...0.21.0) (2023-05-17)
 
 ### Features
 
 - **HMSPROV-449:** Add correlation id to logger and context ([a7d6c6e](https://github.com/RHEnVision/provisioning-backend/commit/a7d6c6e2208ad9e4a393d0464de62424810d6b30))
+- Fetch Azure image resource group from IB ([19d1704](https://github.com/RHEnVision/provisioning-backend/commit/19d1704828c8bc514f7f8c49e9fff09c0cc3de68))
 
 ### Bug Fixes
 
 - **HMS-1784:** set GOMAXPROC for API workers ([dcceb5e](https://github.com/RHEnVision/provisioning-backend/commit/dcceb5ec6813d26e8fef19bfa96934921d0a0438))
 - **HMS-1782:** cap job concurrency at 100 ([19655a6](https://github.com/RHEnVision/provisioning-backend/commit/19655a6b8faa763cf1fe16cc3f722633d8362233))
+- Allow OPTIONS method for Azure template ([db88d24](https://github.com/RHEnVision/provisioning-backend/commit/db88d24fc36b68e7a5fbe6ab3e3c680ba809f424))
+- Disable gzip on Azure Lighthouse template ([74ccf45](https://github.com/RHEnVision/provisioning-backend/commit/74ccf45e75e5e3183ff9244b726516084a38f4de))
+- Allow access from Azure portal ([55b38dd](https://github.com/RHEnVision/provisioning-backend/commit/55b38dd495f7fb82ebf748004c57a8c695cca47f))
 - **HMS-1616:** split payload and model for better OpenAPI ([539f62c](https://github.com/RHEnVision/provisioning-backend/commit/539f62c2257da91d1434fafc069e0788d6cbb5e6))
 
 ### Code Refactoring
 
 - use Gob encoding for cache ([b31d961](https://github.com/RHEnVision/provisioning-backend/commit/b31d96170b977178f5dc14a6f416a63915feb06d))
-
-<a name="summit23a"></a>
-
-## [summit23a](https://github.com/RHEnVision/provisioning-backend/compare/0.20.0...summit23a) (2023-05-06)
-
-### Features
-
-- Fetch Azure image resource group from IB ([19d1704](https://github.com/RHEnVision/provisioning-backend/commit/19d1704828c8bc514f7f8c49e9fff09c0cc3de68))
-
-### Bug Fixes
-
-- Allow OPTIONS method for Azure template ([db88d24](https://github.com/RHEnVision/provisioning-backend/commit/db88d24fc36b68e7a5fbe6ab3e3c680ba809f424))
-- Disable gzip on Azure Lighthouse template ([74ccf45](https://github.com/RHEnVision/provisioning-backend/commit/74ccf45e75e5e3183ff9244b726516084a38f4de))
-- Allow access from Azure portal ([55b38dd](https://github.com/RHEnVision/provisioning-backend/commit/55b38dd495f7fb82ebf748004c57a8c695cca47f))
-
-### Code Refactoring
-
 - remove compression ([d479702](https://github.com/RHEnVision/provisioning-backend/commit/d479702dfc8f28810b2f14e065bfd12381b10ca1))
 
 <a name="0.20.0"></a>
