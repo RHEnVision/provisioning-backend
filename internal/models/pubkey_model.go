@@ -2,10 +2,15 @@ package models
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ssh"
 	"github.com/rs/zerolog"
 )
+
+var ErrInvalidPubkeyFormat = errors.New("invalid public key format")
 
 // Pubkey represents SSH public key that can be deployed to clients.
 type Pubkey struct {
@@ -55,4 +60,12 @@ func (pk *Pubkey) FindAwsFingerprint(ctx context.Context) string {
 		return ""
 
 	}
+}
+
+func (pk *Pubkey) BodyWithUsername(ctx context.Context) (string, error) {
+	parts := strings.Split(pk.Body, " ")
+	if len(parts) < 2 {
+		return "", ErrInvalidPubkeyFormat
+	}
+	return fmt.Sprintf("gcp-user:%s %s", parts[0], parts[1]), nil
 }

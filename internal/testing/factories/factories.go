@@ -60,6 +60,26 @@ func NewPubkeyRSA() *models.Pubkey {
 	}
 }
 
+func NewEmptyPubkeyRSA() *models.Pubkey {
+	return &models.Pubkey{
+		AccountID: 1,
+		Name:      SeqNameWithPrefix("lzap-rsa-2013"),
+		Body:      "",
+	}
+}
+
+func NewPubkeyRSAWithoutUsername() *models.Pubkey {
+	return &models.Pubkey{
+		AccountID: 1,
+		Name:      SeqNameWithPrefix("lzap-rsa-2013"),
+		Body: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8w6DONv1qn3IdgxSpkYOClq7oe7davWFqKVHPbLoS6+dF" +
+			"Inru7gdEO5byhTih6+PwRhHv/b1I+Mtt5MDZ8Sv7XFYpX/3P/u5zQiy1PkMSFSz0brRRUfEQxhXLW97FJa7l+bej2HJ" +
+			"Dt7f9Gvcj+d/fNWC9Z58/GX11kWk4SIXaKotkN+kWn54xGGS7Zvtm86fP59Srt6wlklSsG8mZBF7jVUjyhAgm/V5gDF" +
+			"b2/6jfiwSb2HyJ9/NbhLkWNdwrvpdGZqQlYhnwTfEZdpwizW/Mj3MxP5O31HN45aE0wog0UeWY4gvTl4Ogb6kescizA" +
+			"M6pCff3RBslbFxLdOO7cR17",
+	}
+}
+
 func NewPubkeyDSS() *models.Pubkey {
 	return &models.Pubkey{
 		AccountID: 1,
