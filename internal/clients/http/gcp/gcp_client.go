@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 
 	compute "cloud.google.com/go/compute/apiv1"
@@ -157,10 +158,16 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 		params.Zone = config.GCP.DefaultZone
 	}
 
+	pk := models.Pubkey{Body: params.KeyBody}
+	pkBody, err := pk.BodyWithUsername(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("unable to get pubkey body with username: %w", err)
+	}
+
 	metadata := []*computepb.Items{
 		{
 			Key:   ptr.To("ssh-keys"),
-			Value: ptr.To(params.KeyBody),
+			Value: ptr.To(pkBody),
 		},
 	}
 	if params.StartupScript != "" {
