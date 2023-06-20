@@ -202,7 +202,9 @@ func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
 	if h, ok := w.handlers[job.Type]; ok {
 		cCtx, cFunc := context.WithTimeout(ctx, config.Worker.Timeout)
 		defer func() {
-			zerolog.Ctx(ctx).Error().Bool("timeout", true).Msg("Job cancelled")
+			if c := cCtx.Err(); c != nil {
+				zerolog.Ctx(ctx).Error().Err(c).Msg("Job was either cancelled or timeout occured")
+			}
 			cFunc()
 		}()
 		metrics.ObserveBackgroundJobDuration(job.Type.String(), func() {
