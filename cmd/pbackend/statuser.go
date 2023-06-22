@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/notifications"
@@ -298,19 +299,19 @@ func statuser() {
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint, syscall.SIGINT, syscall.SIGTERM)
 		<-sigint
-		if err := metricsServer.Shutdown(context.Background()); err != nil {
-			logger.Warn().Err(err).Msg("Metrics service shutdown error")
+		if shutdownErr := metricsServer.Shutdown(context.Background()); shutdownErr != nil {
+			logger.Warn().Err(shutdownErr).Msg("Metrics service shutdown error")
 		}
 		close(signalNotify)
 	}()
 
 	go func() {
-		if err := metricsServer.ListenAndServe(); err != nil {
+		if listenErr := metricsServer.ListenAndServe(); listenErr != nil {
 			var errInUse syscall.Errno
-			if errors.As(err, &errInUse) && errInUse == syscall.EADDRINUSE {
-				logger.Warn().Err(err).Msg("Not starting metrics service, port already in use")
-			} else if !errors.Is(err, http.ErrServerClosed) {
-				logger.Warn().Err(err).Msg("Metrics service listen error")
+			if errors.As(listenErr, &errInUse) && errInUse == syscall.EADDRINUSE {
+				logger.Warn().Err(listenErr).Msg("Not starting metrics service, port already in use")
+			} else if !errors.Is(listenErr, http.ErrServerClosed) {
+				logger.Warn().Err(listenErr).Msg("Metrics service listen error")
 			}
 		}
 	}()
@@ -327,6 +328,14 @@ func statuser() {
 
 	metrics.RegisterStatuserMetrics()
 
+	// initialize the database
+	logger.Debug().Msg("Initializing database connection")
+	err := db.Initialize(ctx, "public")
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error initializing database")
+	}
+	defer db.Close()
+
 	// start processing goroutines
 	processingWG.Add(3)
 
@@ -337,7 +346,7 @@ func statuser() {
 	senderWG.Add(1)
 	go sendResults(cancelCtx, 1024, 5*time.Second)
 
-	logger.Info().Msg("Worker started")
+	logger.Info().Msg("Statuser process started")
 	select {
 	case <-signalNotify:
 		logger.Info().Msg("Exiting due to signal")

@@ -192,8 +192,57 @@ objects:
                 value: ${APP_CACHE_TYPE}
             resources:
               limits:
-                cpu: ${{CPU_LIMIT}}
-                memory: ${MEMORY_LIMIT}
+                cpu: ${{CPU_LIMIT_SMALL}}
+                memory: ${MEMORY_LIMIT_SMALL}
+              requests:
+                cpu: ${CPU_REQUESTS}
+                memory: ${MEMORY_REQUESTS}
+        - name: stats
+          replicas: 1
+          metadata:
+            annotations:
+              ignore-check.kube-linter.io/minimum-three-replicas: "stats pod runs in a single instance"
+          podSpec:
+            image: ${IMAGE}:${IMAGE_TAG}
+            command:
+              - /pbackend
+              - stats
+            initContainers:
+              - name: run-migrations
+                image: "${IMAGE}:${IMAGE_TAG}"
+                command:
+                  - /pbackend
+                  - migrate
+                inheritEnv: true
+            env:
+              - name: LOGGING_LEVEL
+                value: ${LOGGING_LEVEL}
+              - name: REST_ENDPOINTS_TRACE_DATA
+                value: ${REST_ENDPOINTS_TRACE_DATA}
+              - name: DATABASE_LOGGING_LEVEL
+                value: ${DATABASE_LOGGING_LEVEL}
+              - name: TELEMETRY_ENABLED
+                value: ${TELEMETRY_ENABLED}
+              - name: TELEMETRY_LOGGER_ENABLED
+                value: ${TELEMETRY_LOGGER_ENABLED}
+              - name: CLOWDER_ENABLED
+                value: ${CLOWDER_ENABLED}
+              - name: APP_NOTIFICATIONS_ENABLED
+                value: ${APP_NOTIFICATIONS_ENABLED}
+              - name: SENTRY_DSN
+                valueFrom:
+                  secretKeyRef:
+                    name: provisioning-sentry
+                    key: dsn
+                    optional: true
+              - name: APP_INSTANCE_PREFIX
+                value: ${APP_INSTANCE_PREFIX}
+              - name: APP_CACHE_TYPE
+                value: ${APP_CACHE_TYPE}
+            resources:
+              limits:
+                cpu: ${{CPU_LIMIT_SMALL}}
+                memory: ${MEMORY_LIMIT_SMALL}
               requests:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
@@ -251,7 +300,7 @@ objects:
               - name: REST_ENDPOINTS_IMAGE_BUILDER_URL
                 value: "${IMAGEBUILDER_URL}/api/image-builder/v1"
               - name: APP_NOTIFICATIONS_ENABLED
-                value: ${APP_NOTIFICATIONS_ENABLED}  
+                value: ${APP_NOTIFICATIONS_ENABLED}
               - name: AWS_KEY
                 valueFrom:
                   secretKeyRef:
@@ -369,7 +418,7 @@ objects:
             }
           ]
         }
-  
+
   - apiVersion: metrics.console.redhat.com/v1alpha1
     kind: FloorPlan
     metadata:
@@ -429,16 +478,22 @@ parameters:
   - description: ClowdEnv Name
     name: ENV_NAME
     required: true
-  - description: Cpu limit of service
+  - description: CPU limit of api and worker services
     name: CPU_LIMIT
     value: 500m
-  - description: Cpu request increment
+  - description: CPU limit of statuser and stats services
+    name: CPU_LIMIT_SMALL
+    value: 300m
+  - description: CPU request increment
     name: CPU_REQUESTS
     value: 100m
-  - description: memory limit of service
+  - description: Memory limit of api and worker services
     name: MEMORY_LIMIT
-    value: 1Gi
-  - description: memory request increment
+    value: 400m
+  - description: Memory limit of statuser and stats services
+    name: MEMORY_LIMIT_SMALL
+    value: 300m
+  - description: Memory request increment
     name: MEMORY_REQUESTS
     value: 100Mi
   - description: Image tag

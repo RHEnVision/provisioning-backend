@@ -37,6 +37,8 @@ func main() {
 		migrate()
 	case "statuser":
 		statuser()
+	case "stats":
+		stats()
 	case "version":
 		ver()
 	default:
@@ -45,7 +47,7 @@ func main() {
 }
 
 func usage() {
-	fmt.Println("Usage: pbackend [migrate|api|worker|statuser|version]")
+	fmt.Println("Usage: pbackend [migrate|api|worker|statuser|stats|version]")
 	os.Exit(1)
 }
 

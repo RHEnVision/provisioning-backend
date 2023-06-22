@@ -110,3 +110,10 @@ type ReservationDao interface {
 	// Delete deletes a reservation. Only used in tests and background cleanup job. UNSCOPED.
 	Delete(ctx context.Context, id int64) error
 }
+
+var GetStatDao func(ctx context.Context) StatDao
+
+// StatDao represents an account (tenant)
+type StatDao interface {
+	Get(ctx context.Context) (*models.Statistics, error)
+}
