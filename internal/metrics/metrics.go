@@ -3,6 +3,7 @@ package metrics
 import (
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -71,6 +72,33 @@ var ReservationCount = prometheus.NewCounterVec(
 	[]string{"type", "result"},
 )
 
+var DbStatsDuration = prometheus.NewHistogram(
+	prometheus.HistogramOpts{
+		Name:        "provisioning_db_stats_duration",
+		Help:        "task queue job duration (in ms)",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
+		Buckets:     []float64{10, 50, 100, 250, 500, 1000, 10000},
+	},
+)
+
+var Reservations24hCount = prometheus.NewGaugeVec(
+	prometheus.GaugeOpts{
+		Name:        "provisioning_reservations_24h_count",
+		Help:        "calculated sum of reservations in last 24 hours per result and provider",
+		ConstLabels: prometheus.Labels{"service": "provisioning"},
+	},
+	[]string{"result", "provider"},
+)
+
+var Reservations28dCount = prometheus.NewGaugeVec(
+	prometheus.GaugeOpts{
+		Name:        "provisioning_reservations_28d_count",
+		Help:        "calculated sum of reservations in last 28 days per result and provider",
+		ConstLabels: prometheus.Labels{"service": "provisioning"},
+	},
+	[]string{"result", "provider"},
+)
+
 func ObserveAvailabilityCheckReqsDuration(provider string, observedFunc func() error) {
 	errString := "false"
 	start := time.Now()
@@ -119,4 +147,21 @@ func SetJobQueueInFlight(workerName string, inflight int64) {
 
 func IncReservationCount(rtype, result string) {
 	ReservationCount.WithLabelValues(rtype, result).Inc()
+}
+
+func ObserveDbStatsDuration(observedFunc func()) {
+	start := time.Now()
+	defer func() {
+		DbStatsDuration.Observe(time.Since(start).Seconds())
+	}()
+
+	observedFunc()
+}
+
+func SetReservations24hCount(result string, pt models.ProviderType, count int64) {
+	Reservations24hCount.WithLabelValues(result, pt.String()).Set(float64(count))
+}
+
+func SetReservations28dCount(result string, pt models.ProviderType, count int64) {
+	Reservations28dCount.WithLabelValues(result, pt.String()).Set(float64(count))
 }

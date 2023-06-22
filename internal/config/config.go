@@ -38,6 +38,10 @@ var config struct {
 			} `env-prefix:"MEM_"`
 		} `env-prefix:"CACHE_"`
 	} `env-prefix:"APP_"`
+	Stats struct {
+		JobQueue             time.Duration `env:"JOBQUEUE_INTERVAL" env-default:"1m" env-description:"how often to pull job queue statistics"`
+		ReservationsInterval time.Duration `env:"RESERVATIONS_INTERVAL" env-default:"30m" env-description:"how often to pull reservation statistics"`
+	} `env-prefix:"STATS_"`
 	Database struct {
 		Host        string        `env:"HOST" env-default:"localhost" env-description:"main database hostname"`
 		Port        uint16        `env:"PORT" env-default:"5432" env-description:"main database port"`
@@ -149,6 +153,7 @@ var config struct {
 // Config shortcuts
 var (
 	Application   = &config.App
+	Stats         = &config.Stats
 	Database      = &config.Database
 	Prometheus    = &config.Prometheus
 	Logging       = &config.Logging

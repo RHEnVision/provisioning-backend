@@ -27,9 +27,18 @@ func InitializeApi(ctx context.Context) {
 // InitializeWorker starts background goroutines for worker processes.
 // Use context cancellation to stop them.
 func InitializeWorker(ctx context.Context) {
+	// no background goroutines at the moment
+}
+
+// InitializeStats starts background goroutines for the statuser process.
+// Use context cancellation to stop it.
+func InitializeStats(ctx context.Context) {
 	logger := zerolog.Ctx(ctx).With().Bool("background", true).Logger()
 	ctx = logger.WithContext(ctx)
 
 	// start job queue telemetry
-	go jobQueueMetricLoop(ctx, 30*time.Second, config.Hostname())
+	go jobQueueMetricLoop(ctx, config.Stats.JobQueue, config.Hostname())
+
+	// start database statistics
+	go dbStatsLoop(ctx, config.Stats.ReservationsInterval)
 }
