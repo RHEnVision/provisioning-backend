@@ -418,6 +418,7 @@ paths:
         endpoint override template values.
         Public key must exist prior calling this endpoint and ID must be provided, even when
         AWS EC2 launch template provides ssh-keys. Public key will be always be overwritten.
+        A single account can create maximum of 2 reservations per second.
       requestBody:
         content:
           application/json:
@@ -446,6 +447,7 @@ paths:
         A reservation is a way to activate a job, keeps all data needed for a job to start.
         An Azure reservation is a reservation created for an Azure job. Image Builder UUID image
         is required and needs to be stored under same account as provided by SourceID.
+        A single account can create maximum of 2 reservations per second.
       requestBody:
         content:
           application/json:
@@ -476,6 +478,7 @@ paths:
         is required and needs to be shared with the service account.
         Furthermore, by specifying the name pattern for example as "instance",
         instances names will be created in the format: "instance-#####".
+        A single account can create maximum of 2 reservations per second.
       requestBody:
         content:
           application/json:
