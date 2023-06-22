@@ -17,7 +17,9 @@ $do$;
 
 -- Seed the data
 INSERT INTO accounts(id, account_number, org_id)
-VALUES (1, '1', '1')
+VALUES
+  (1, '1', '1'),
+  (2, '2', '2')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO pubkeys(id, account_id, type, name, body, fingerprint, fingerprint_legacy)

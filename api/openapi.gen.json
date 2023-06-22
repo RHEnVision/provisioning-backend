@@ -1280,7 +1280,7 @@
     },
     "/reservations/aws": {
       "post": {
-        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. An AWS reservation is a reservation created for an AWS job. Image Builder UUID image is required, the service will also launch any AMI image prefixed with \"ami-\". Optionally, AWS EC2 launch template ID can be provided. All flags set through this endpoint override template values. Public key must exist prior calling this endpoint and ID must be provided, even when AWS EC2 launch template provides ssh-keys. Public key will be always be overwritten.\n",
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. An AWS reservation is a reservation created for an AWS job. Image Builder UUID image is required, the service will also launch any AMI image prefixed with \"ami-\". Optionally, AWS EC2 launch template ID can be provided. All flags set through this endpoint override template values. Public key must exist prior calling this endpoint and ID must be provided, even when AWS EC2 launch template provides ssh-keys. Public key will be always be overwritten. A single account can create maximum of 2 reservations per second.\n",
         "operationId": "createAwsReservation",
         "requestBody": {
           "content": {
@@ -1367,7 +1367,7 @@
     },
     "/reservations/azure": {
       "post": {
-        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. An Azure reservation is a reservation created for an Azure job. Image Builder UUID image is required and needs to be stored under same account as provided by SourceID.\n",
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. An Azure reservation is a reservation created for an Azure job. Image Builder UUID image is required and needs to be stored under same account as provided by SourceID. A single account can create maximum of 2 reservations per second.\n",
         "operationId": "createAzureReservation",
         "requestBody": {
           "content": {
@@ -1454,7 +1454,7 @@
     },
     "/reservations/gcp": {
       "post": {
-        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. A GCP reservation is a reservation created for a GCP job. Image Builder UUID image is required and needs to be shared with the service account. Furthermore, by specifying the name pattern for example as \"instance\", instances names will be created in the format: \"instance-#####\".\n",
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. A GCP reservation is a reservation created for a GCP job. Image Builder UUID image is required and needs to be shared with the service account. Furthermore, by specifying the name pattern for example as \"instance\", instances names will be created in the format: \"instance-#####\". A single account can create maximum of 2 reservations per second.\n",
         "operationId": "createGCPReservation",
         "requestBody": {
           "content": {

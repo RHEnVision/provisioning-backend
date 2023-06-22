@@ -68,6 +68,12 @@ func setupReservation(t *testing.T) (dao.ReservationDao, context.Context) {
 	return reservationDao, ctx
 }
 
+func setupReservationOrg2(t *testing.T) (dao.ReservationDao, context.Context) {
+	ctx := identity.WithTenantOrgId(t, context.Background(), "2")
+	reservationDao := dao.GetReservationDao(ctx)
+	return reservationDao, ctx
+}
+
 func TestReservationCreateNoop(t *testing.T) {
 	reservationDao, ctx := setupReservation(t)
 	defer reset()
@@ -346,5 +352,36 @@ func TestReservationFinish(t *testing.T) {
 	t.Run("mismatch error", func(t *testing.T) {
 		err := reservationDao.FinishWithError(ctx, math.MaxInt64, "")
 		require.ErrorIs(t, err, dao.ErrAffectedMismatch)
+	})
+}
+
+func TestReservationRate(t *testing.T) {
+	rdao, ctx := setupReservation(t)
+	t.Run("allows slow reservations", func(t *testing.T) {
+		defer reset()
+		for i := 1; i <= 5; i++ {
+			println(i)
+			res := newNoopReservation()
+			err := rdao.CreateNoop(ctx, res)
+			require.NoError(t, err)
+		}
+
+		res := newNoopReservation()
+		err := rdao.CreateNoop(ctx, res)
+		require.ErrorContains(t, err, "failed to create reservation record")
+	})
+
+	rdao2, ctx2 := setupReservationOrg2(t)
+	t.Run("throttles too fast reservations", func(t *testing.T) {
+		defer reset()
+		for i := 1; i <= 5; i++ {
+			res := newNoopReservation()
+			err := rdao.CreateNoop(ctx, res)
+			require.NoError(t, err)
+		}
+
+		res := newNoopReservation()
+		err := rdao2.CreateNoop(ctx2, res)
+		require.NoError(t, err)
 	})
 }

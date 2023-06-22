@@ -36,11 +36,16 @@ func WithCustomIdentity(t *testing.T, ctx context.Context, orgId string, account
 }
 
 func WithTenant(t *testing.T, ctx context.Context) context.Context {
+	return WithTenantOrgId(t, ctx, DefaultOrgId)
+}
+
+func WithTenantOrgId(t *testing.T, ctx context.Context, OrgId string) context.Context {
 	ctx = WithIdentity(t, ctx)
 	accDao := dao.GetAccountDao(ctx)
-	acc, err := accDao.GetByOrgId(ctx, DefaultOrgId)
+	acc, err := accDao.GetByOrgId(ctx, OrgId)
 	if err != nil {
 		t.Errorf("failed to fetch account for default identity %v", err)
+		return nil
 	}
 	return identity.WithAccountId(ctx, acc.ID)
 }
