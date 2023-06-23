@@ -272,15 +272,17 @@ func statuser() {
 	tel := telemetry.Initialize(&log.Logger)
 	defer tel.Close(ctx)
 
-	// initialize platform kafka
-	logger.Info().Msg("Initializing platform kafka")
-	err := kafka.InitializeKafkaBroker(ctx)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
-	}
+	// initialize platform kafka and notifications
+	if config.Kafka.Enabled {
+		err := kafka.InitializeKafkaBroker(ctx)
+		if err != nil {
+			logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
+		}
 
-	// initialize notifications
-	notifications.Initialize(ctx)
+		if config.Application.Notifications.Enabled {
+			notifications.Initialize(ctx)
+		}
+	}
 
 	// metrics
 	logger.Info().Msgf("Starting new instance on port %d with prometheus on %d", config.Application.Port, config.Prometheus.Port)

@@ -71,7 +71,10 @@ func api() {
 		if err != nil {
 			logger.Fatal().Err(err).Msg("Unable to initialize the platform kafka")
 		}
-		notifications.Initialize(ctx)
+
+		if config.Application.Notifications.Enabled {
+			notifications.Initialize(ctx)
+		}
 	}
 
 	// initialize background goroutines
