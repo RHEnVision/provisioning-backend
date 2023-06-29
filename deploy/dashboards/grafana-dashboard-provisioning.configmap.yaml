@@ -35,7 +35,7 @@ data:
        "editable" : true,
        "fiscalYearStartMonth" : 0,
        "graphTooltip" : 0,
-       "id" : 114514,
+       "id" : 293321,
        "links" : [],
        "liveNow" : false,
        "panels" : [
@@ -117,13 +117,87 @@ data:
                       "uid" : "${datasource}"
                    },
                    "editorMode" : "code",
-                   "expr" : "(sum(increase(provisioning_reservation_count{result=\"success\",type=~\"$type\"}[$__range]))\n/\nsum(increase(provisioning_reservation_count{type=~\"$type\"}[$__range]))) or on() vector(0)",
+                   "expr" : "sum(provisioning_reservations_24h_count{result=\"success\",provider=~\"$type\"}) / sum(provisioning_reservations_24h_count{provider=~\"$type\"})",
                    "legendFormat" : "__auto",
                    "range" : true,
                    "refId" : "A"
                 }
              ],
-             "title" : "Reservation success rate per hyperscaler",
+             "title" : "Reservation success rate per hyperscaler (24h)",
+             "type" : "stat"
+          },
+          {
+             "datasource" : {
+                "type" : "prometheus",
+                "uid" : "${datasource}"
+             },
+             "fieldConfig" : {
+                "defaults" : {
+                   "color" : {
+                      "mode" : "thresholds"
+                   },
+                   "mappings" : [],
+                   "thresholds" : {
+                      "mode" : "absolute",
+                      "steps" : [
+                         {
+                            "color" : "dark-red",
+                            "value" : null
+                         },
+                         {
+                            "color" : "red",
+                            "value" : 0.8
+                         },
+                         {
+                            "color" : "#EAB839",
+                            "value" : 0.9
+                         },
+                         {
+                            "color" : "green",
+                            "value" : 0.95
+                         }
+                      ]
+                   },
+                   "unit" : "percentunit"
+                },
+                "overrides" : []
+             },
+             "gridPos" : {
+                "h" : 8,
+                "w" : 12,
+                "x" : 12,
+                "y" : 1
+             },
+             "id" : 64,
+             "options" : {
+                "colorMode" : "value",
+                "graphMode" : "area",
+                "justifyMode" : "auto",
+                "orientation" : "auto",
+                "reduceOptions" : {
+                   "calcs" : [
+                      "lastNotNull"
+                   ],
+                   "fields" : "",
+                   "values" : false
+                },
+                "textMode" : "auto"
+             },
+             "pluginVersion" : "9.3.8",
+             "targets" : [
+                {
+                   "datasource" : {
+                      "type" : "prometheus",
+                      "uid" : "${datasource}"
+                   },
+                   "editorMode" : "code",
+                   "expr" : "sum(provisioning_reservations_28d_count{result=\"success\",provider=~\"$type\"}) / sum(provisioning_reservations_28d_count{provider=~\"$type\"})",
+                   "legendFormat" : "__auto",
+                   "range" : true,
+                   "refId" : "A"
+                }
+             ],
+             "title" : "Reservation success rate per hyperscaler (28d)",
              "type" : "stat"
           },
           {
@@ -155,8 +229,8 @@ data:
              "gridPos" : {
                 "h" : 8,
                 "w" : 6,
-                "x" : 12,
-                "y" : 1
+                "x" : 0,
+                "y" : 9
              },
              "id" : 60,
              "options" : {
@@ -181,13 +255,143 @@ data:
                       "uid" : "${datasource}"
                    },
                    "editorMode" : "code",
-                   "expr" : "sum(increase(provisioning_reservation_count{type=~\"$type\"}[$__range]))",
+                   "expr" : "sum(provisioning_reservations_24h_count{provider=~\"$type\"})",
                    "legendFormat" : "__auto",
                    "range" : true,
                    "refId" : "A"
                 }
              ],
-             "title" : "Total reservations per hyperscaler",
+             "title" : "Total reservations per hyperscaler (24h)",
+             "type" : "stat"
+          },
+          {
+             "datasource" : {
+                "type" : "prometheus",
+                "uid" : "${datasource}"
+             },
+             "fieldConfig" : {
+                "defaults" : {
+                   "color" : {
+                      "mode" : "thresholds"
+                   },
+                   "decimals" : 0,
+                   "mappings" : [],
+                   "min" : 0,
+                   "thresholds" : {
+                      "mode" : "absolute",
+                      "steps" : [
+                         {
+                            "color" : "blue",
+                            "value" : null
+                         }
+                      ]
+                   },
+                   "unit" : "none"
+                },
+                "overrides" : []
+             },
+             "gridPos" : {
+                "h" : 8,
+                "w" : 6,
+                "x" : 6,
+                "y" : 9
+             },
+             "id" : 65,
+             "options" : {
+                "colorMode" : "value",
+                "graphMode" : "none",
+                "justifyMode" : "auto",
+                "orientation" : "auto",
+                "reduceOptions" : {
+                   "calcs" : [
+                      "lastNotNull"
+                   ],
+                   "fields" : "",
+                   "values" : false
+                },
+                "textMode" : "auto"
+             },
+             "pluginVersion" : "9.3.8",
+             "targets" : [
+                {
+                   "datasource" : {
+                      "type" : "prometheus",
+                      "uid" : "${datasource}"
+                   },
+                   "editorMode" : "code",
+                   "expr" : "sum(provisioning_reservations_28d_count{provider=~\"$type\"})",
+                   "legendFormat" : "__auto",
+                   "range" : true,
+                   "refId" : "A"
+                }
+             ],
+             "title" : "Total reservations per hyperscaler (28d)",
+             "type" : "stat"
+          },
+          {
+             "datasource" : {
+                "type" : "prometheus",
+                "uid" : "${datasource}"
+             },
+             "description" : "Average time spent calculating reservation stats. This is done every 30 minutes.",
+             "fieldConfig" : {
+                "defaults" : {
+                   "color" : {
+                      "fixedColor" : "blue",
+                      "mode" : "fixed"
+                   },
+                   "decimals" : 0,
+                   "mappings" : [],
+                   "min" : 0,
+                   "thresholds" : {
+                      "mode" : "absolute",
+                      "steps" : [
+                         {
+                            "color" : "blue",
+                            "value" : null
+                         }
+                      ]
+                   },
+                   "unit" : "s"
+                },
+                "overrides" : []
+             },
+             "gridPos" : {
+                "h" : 8,
+                "w" : 6,
+                "x" : 12,
+                "y" : 9
+             },
+             "id" : 61,
+             "options" : {
+                "colorMode" : "value",
+                "graphMode" : "none",
+                "justifyMode" : "auto",
+                "orientation" : "auto",
+                "reduceOptions" : {
+                   "calcs" : [
+                      "lastNotNull"
+                   ],
+                   "fields" : "",
+                   "values" : false
+                },
+                "textMode" : "auto"
+             },
+             "pluginVersion" : "9.3.8",
+             "targets" : [
+                {
+                   "datasource" : {
+                      "type" : "prometheus",
+                      "uid" : "${datasource}"
+                   },
+                   "editorMode" : "code",
+                   "expr" : "rate(provisioning_db_stats_duration_sum[35m])\n/\nrate(provisioning_db_stats_duration_count[35m])",
+                   "legendFormat" : "__auto",
+                   "range" : true,
+                   "refId" : "A"
+                }
+             ],
+             "title" : "DB stats duration",
              "type" : "stat"
           },
           {
@@ -221,9 +425,9 @@ data:
                 "h" : 8,
                 "w" : 6,
                 "x" : 18,
-                "y" : 1
+                "y" : 9
              },
-             "id" : 61,
+             "id" : 66,
              "options" : {
                 "colorMode" : "value",
                 "graphMode" : "none",
@@ -315,7 +519,7 @@ data:
                 "h" : 8,
                 "w" : 12,
                 "x" : 0,
-                "y" : 9
+                "y" : 17
              },
              "id" : 54,
              "options" : {
@@ -410,7 +614,7 @@ data:
                 "h" : 8,
                 "w" : 12,
                 "x" : 12,
-                "y" : 9
+                "y" : 17
              },
              "id" : 52,
              "options" : {
@@ -519,7 +723,7 @@ data:
                 "h" : 8,
                 "w" : 12,
                 "x" : 0,
-                "y" : 17
+                "y" : 25
              },
              "id" : 50,
              "options" : {
@@ -612,7 +816,7 @@ data:
                 "h" : 8,
                 "w" : 12,
                 "x" : 12,
-                "y" : 17
+                "y" : 25
              },
              "id" : 48,
              "options" : {
@@ -649,7 +853,7 @@ data:
                 "h" : 1,
                 "w" : 24,
                 "x" : 0,
-                "y" : 25
+                "y" : 33
              },
              "id" : 40,
              "panels" : [],
@@ -770,7 +974,7 @@ data:
                 "h" : 13,
                 "w" : 24,
                 "x" : 0,
-                "y" : 26
+                "y" : 34
              },
              "id" : 36,
              "links" : [],
@@ -838,7 +1042,7 @@ data:
                 "h" : 1,
                 "w" : 24,
                 "x" : 0,
-                "y" : 39
+                "y" : 47
              },
              "id" : 24,
              "panels" : [],
@@ -900,7 +1104,7 @@ data:
                 "h" : 7,
                 "w" : 7,
                 "x" : 0,
-                "y" : 40
+                "y" : 48
              },
              "id" : 32,
              "links" : [],
@@ -986,7 +1190,7 @@ data:
                 "h" : 7,
                 "w" : 7,
                 "x" : 7,
-                "y" : 40
+                "y" : 48
              },
              "id" : 62,
              "links" : [],
@@ -1060,7 +1264,7 @@ data:
                 "h" : 7,
                 "w" : 10,
                 "x" : 14,
-                "y" : 40
+                "y" : 48
              },
              "id" : 41,
              "links" : [],
@@ -1171,7 +1375,7 @@ data:
                 "h" : 8,
                 "w" : 24,
                 "x" : 0,
-                "y" : 47
+                "y" : 55
              },
              "id" : 34,
              "links" : [],
@@ -1228,7 +1432,7 @@ data:
                 "h" : 1,
                 "w" : 24,
                 "x" : 0,
-                "y" : 55
+                "y" : 63
              },
              "id" : 26,
              "panels" : [],
@@ -1289,7 +1493,7 @@ data:
                 "h" : 7,
                 "w" : 5,
                 "x" : 0,
-                "y" : 56
+                "y" : 64
              },
              "id" : 33,
              "links" : [],
@@ -1427,7 +1631,7 @@ data:
                 "h" : 7,
                 "w" : 19,
                 "x" : 5,
-                "y" : 56
+                "y" : 64
              },
              "id" : 42,
              "interval" : "1h",
@@ -1598,7 +1802,7 @@ data:
                 "h" : 9,
                 "w" : 24,
                 "x" : 0,
-                "y" : 63
+                "y" : 71
              },
              "id" : 63,
              "links" : [],
@@ -1818,6 +2022,6 @@ data:
        "timezone" : "",
        "title" : "Provisioning",
        "uid" : "211",
-       "version" : 1,
+       "version" : 2,
        "weekStart" : ""
     }
