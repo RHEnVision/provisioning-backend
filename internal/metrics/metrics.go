@@ -75,9 +75,9 @@ var ReservationCount = prometheus.NewCounterVec(
 var DbStatsDuration = prometheus.NewHistogram(
 	prometheus.HistogramOpts{
 		Name:        "provisioning_db_stats_duration",
-		Help:        "task queue job duration (in ms)",
+		Help:        "database statistics duration (in seconds)",
 		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "stats"},
-		Buckets:     []float64{10, 50, 100, 250, 500, 1000, 10000},
+		Buckets:     []float64{0.2, 0.5, 1, 2, 3, 4, 5, 30},
 	},
 )
 
