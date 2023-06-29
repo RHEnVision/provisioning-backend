@@ -1,4 +1,26 @@
 <!-- insertion marker -->
+<a name="1.2.0"></a>
+
+## [1.2.0](https://github.com/RHEnVision/provisioning-backend/compare/1.1.0...1.2.0) (2023-06-28)
+
+### Features
+
+- **HMS-1550:** improve initialization code for kafka ([9f67a21](https://github.com/RHEnVision/provisioning-backend/commit/9f67a21b79312922b1219533b7a640964b5a41a8))
+- **HMS-1932:** Add gcp source upload info ([9e41a3d](https://github.com/RHEnVision/provisioning-backend/commit/9e41a3dc3e4c4654b48b626a61b87667ea1b5c8f))
+- **HMS-1550:** send notification after launch ([6e73aad](https://github.com/RHEnVision/provisioning-backend/commit/6e73aad859edbc11ee053781fc00d4c8f6020e14))
+- **HMS-1429:** Add GCP to spec ([df68369](https://github.com/RHEnVision/provisioning-backend/commit/df683692215c477b003449f130ead51b96e84711))
+
+### Bug Fixes
+
+- **HMS-2002:** proper launch statistics ([7c2eb8d](https://github.com/RHEnVision/provisioning-backend/commit/7c2eb8d75277e8e60334e44fd85cc1cdba294302))
+
+### Code Refactoring
+
+- Add username to pubkey body ([ecc4591](https://github.com/RHEnVision/provisioning-backend/commit/ecc4591ae0b8b4cee4bd338e81677faff1d8d2b6))
+- Add step titles info to gcp reservation ([084331f](https://github.com/RHEnVision/provisioning-backend/commit/084331fbde3675f826d71892290ffe54dd88a91b))
+- Change Name to NamePattern in GCP ([313e7e5](https://github.com/RHEnVision/provisioning-backend/commit/313e7e53d8372d68472df7fb83516937dd682de9))
+- Update permissions for provisioning role in GCP ([cc6a554](https://github.com/RHEnVision/provisioning-backend/commit/cc6a5546a6eeed241dcfb8ad6878e1322bebea8c))
+
 <a name="1.1.0"></a>
 
 ## [1.1.0](https://github.com/RHEnVision/provisioning-backend/compare/1.0.0...1.1.0) (2023-06-13)
