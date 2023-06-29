@@ -2,7 +2,6 @@ package background
 
 import (
 	"context"
-	"math/rand"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
@@ -12,23 +11,21 @@ import (
 
 // jobQueueMetricLoop is a background function that runs for all workers.
 // It polls job queue statistics from Redis as well as in-flight counters.
-// It waits a random delay between 0 and sleep for better polling spread
-// since job queue size is a global metric (redis queue length).
 //
 //nolint:gosec
 func jobQueueMetricLoop(ctx context.Context, sleep time.Duration, name string) {
 	logger := zerolog.Ctx(ctx)
-
-	// spread polling intervals
-	randSleep := rand.Int63() % sleep.Milliseconds()
-	logger.Debug().Msgf("Job queue metric delay %dms", randSleep)
-	time.Sleep(time.Duration(randSleep) * time.Millisecond)
+	logger.Debug().Msgf("Started Redis statistics routine with tick interval %.2f seconds", sleep.Seconds())
+	defer func() {
+		logger.Debug().Msgf("Redis statistics routine exited")
+	}()
 	ticker := time.NewTicker(sleep)
 
 	for {
 		select {
 		case <-ticker.C:
 			stats := jq.Stats(ctx)
+			logger.Debug().Msgf("Job queue statistics: enqueued=%d, in-flight=%d", stats.EnqueuedJobs, stats.InFlight)
 			metrics.SetJobQueueSize(stats.EnqueuedJobs)
 			metrics.SetJobQueueInFlight(name, stats.InFlight)
 
