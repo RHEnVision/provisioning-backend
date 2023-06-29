@@ -12,7 +12,7 @@ import (
 
 func dbStatsLoop(ctx context.Context, sleep time.Duration) {
 	logger := zerolog.Ctx(ctx)
-	logger.Debug().Msgf("Started database statistics routine")
+	logger.Debug().Msgf("Started database statistics routine with tick interval %.2f seconds", sleep.Seconds())
 	defer func() {
 		logger.Debug().Msgf("Database statistics routine exited")
 	}()
@@ -36,15 +36,25 @@ func dbStatsLoop(ctx context.Context, sleep time.Duration) {
 }
 
 func dbStatsTick(ctx context.Context) error {
+	logger := zerolog.Ctx(ctx)
 	sdao := dao.GetStatDao(ctx)
 	stats, err := sdao.Get(ctx)
 	if err != nil {
 		return fmt.Errorf("stats error: %w", err)
 	}
 
+	success, failure := 0, 0
 	for _, s := range stats.Usage24h {
+		if s.Result == "success" {
+			success += 1
+		}
+		if s.Result == "failure" {
+			failure += 1
+		}
 		metrics.SetReservations24hCount(s.Result, s.Provider, s.Count)
 	}
+	logger.Debug().Msgf("Reservation statistics for last 24 hours: success=%d, failure=%d", success, failure)
+
 	for _, s := range stats.Usage28d {
 		metrics.SetReservations28dCount(s.Result, s.Provider, s.Count)
 	}
