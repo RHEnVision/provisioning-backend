@@ -192,8 +192,8 @@ objects:
                 value: ${APP_CACHE_TYPE}
             resources:
               limits:
-                cpu: ${{CPU_LIMIT_SMALL}}
-                memory: ${MEMORY_LIMIT_SMALL}
+                cpu: ${{CPU_LIMIT}}
+                memory: ${MEMORY_LIMIT}
               requests:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
@@ -241,8 +241,8 @@ objects:
                 value: ${APP_CACHE_TYPE}
             resources:
               limits:
-                cpu: ${{CPU_LIMIT_SMALL}}
-                memory: ${MEMORY_LIMIT_SMALL}
+                cpu: ${{CPU_LIMIT}}
+                memory: ${MEMORY_LIMIT}
               requests:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
@@ -478,24 +478,18 @@ parameters:
   - description: ClowdEnv Name
     name: ENV_NAME
     required: true
-  - description: CPU limit of api and worker services
-    name: CPU_LIMIT
-    value: 500m
-  - description: CPU limit of statuser and stats services
-    name: CPU_LIMIT_SMALL
-    value: 300m
-  - description: CPU request increment
+  - description: CPU request for each pod (placement)
     name: CPU_REQUESTS
     value: 100m
-  - description: Memory limit of api and worker services
-    name: MEMORY_LIMIT
-    value: 400m
-  - description: Memory limit of statuser and stats services
-    name: MEMORY_LIMIT_SMALL
-    value: 300m
-  - description: Memory request increment
+  - description: Memory request for each pod (placement)
     name: MEMORY_REQUESTS
     value: 100Mi
+  - description: CPU limit for each pod (throttling)
+    name: CPU_LIMIT
+    value: 500m
+  - description: Memory limit for each pod (pod restart)
+    name: MEMORY_LIMIT
+    value: 600Mi
   - description: Image tag
     name: IMAGE_TAG
     required: true
