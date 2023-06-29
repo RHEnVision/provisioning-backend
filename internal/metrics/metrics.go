@@ -34,13 +34,13 @@ var CacheHits = prometheus.NewCounterVec(prometheus.CounterOpts{
 var JobQueueSize = prometheus.NewGauge(prometheus.GaugeOpts{
 	Name:        "provisioning_job_queue_size",
 	Help:        "background job queue size (total pending jobs)",
-	ConstLabels: prometheus.Labels{"service": "provisioning"},
+	ConstLabels: prometheus.Labels{"service": "provisioning", "component": "stats"},
 })
 
 var JobQueueInFlight = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 	Name:        "provisioning_job_queue_inflight",
 	Help:        "number of in-flight jobs (total jobs which are currently processing)",
-	ConstLabels: prometheus.Labels{"service": "provisioning"},
+	ConstLabels: prometheus.Labels{"service": "provisioning", "component": "stats"},
 }, []string{"worker"})
 
 var AvailabilityCheckReqsDuration = prometheus.NewHistogramVec(
@@ -76,7 +76,7 @@ var DbStatsDuration = prometheus.NewHistogram(
 	prometheus.HistogramOpts{
 		Name:        "provisioning_db_stats_duration",
 		Help:        "task queue job duration (in ms)",
-		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "statuser"},
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "stats"},
 		Buckets:     []float64{10, 50, 100, 250, 500, 1000, 10000},
 	},
 )
@@ -85,7 +85,7 @@ var Reservations24hCount = prometheus.NewGaugeVec(
 	prometheus.GaugeOpts{
 		Name:        "provisioning_reservations_24h_count",
 		Help:        "calculated sum of reservations in last 24 hours per result and provider",
-		ConstLabels: prometheus.Labels{"service": "provisioning"},
+		ConstLabels: prometheus.Labels{"service": "provisioning", "component": "stats"},
 	},
 	[]string{"result", "provider"},
 )
@@ -94,7 +94,7 @@ var Reservations28dCount = prometheus.NewGaugeVec(
 	prometheus.GaugeOpts{
 		Name:        "provisioning_reservations_28d_count",
 		Help:        "calculated sum of reservations in last 28 days per result and provider",
-		ConstLabels: prometheus.Labels{"service": "provisioning"},
+		ConstLabels: prometheus.Labels{"service": "provisioning", "component": "stats"},
 	},
 	[]string{"result", "provider"},
 )
