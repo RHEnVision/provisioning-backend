@@ -22,6 +22,11 @@ type NotificationEvent struct {
 	Payload json.RawMessage `json:"payload"`
 }
 
+type NotificationContext struct {
+	LaunchID int64  `json:"launch_id"`
+	Provider string `json:"provider"`
+}
+
 type NotificationError struct {
 	Error string `json:"error"`
 }

@@ -50,7 +50,7 @@ func (x *client) SuccessfulLaunch(ctx context.Context, reservationId int64) {
 	}
 
 	notificationMsg, err := kafka.NotificationMessage{
-		Context:   reservation,
+		Context:   kafka.NotificationContext{Provider: reservation.Provider.String(), LaunchID: reservationId},
 		EventType: kafka.NotificationSuccessEventType, Events: NotificationInstancesEvents,
 	}.GenericMessage(ctx)
 	if err != nil {
