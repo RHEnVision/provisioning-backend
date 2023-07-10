@@ -15,7 +15,6 @@ func RegisterStatsMetrics() {
 	prometheus.MustRegister(
 		JobQueueSize,
 		JobQueueInFlight,
-		BackgroundJobDuration,
 		DbStatsDuration,
 		Reservations24hCount,
 		Reservations28dCount,
@@ -30,6 +29,7 @@ func RegisterApiMetrics() {
 
 func RegisterWorkerMetrics() {
 	prometheus.MustRegister(
+		BackgroundJobDuration,
 		ReservationCount,
 		CacheHits,
 	)
