@@ -37,7 +37,7 @@ require (
 	github.com/jackc/pgx-zerolog v0.0.0-20230315001418-f978528409eb
 	github.com/jackc/pgx/v5 v5.4.1
 	github.com/jackc/tern/v2 v2.1.1
-	github.com/lzap/cloudwatchwriter2 v1.1.0
+	github.com/lzap/cloudwatchwriter2 v1.2.0
 	github.com/prometheus/client_golang v1.16.0
 	github.com/redhatinsights/app-common-go v1.6.7
 	github.com/redhatinsights/platform-go-middlewares v0.20.0
