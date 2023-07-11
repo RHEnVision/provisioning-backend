@@ -74,6 +74,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_SVR }}
+          # disabled because golangci linter caches Go packages and modules
           cache: false
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
@@ -89,7 +90,8 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_SVR }}
-          # disabled until 'lookup-only' is implemented for setup-go or cache prefix is added
+          # disabled until lookup-only or cache prefix is added
+          # (https://github.com/actions/setup-go/issues/316)
           cache: false
       - run: |
           make check-system-go test GO=go
@@ -127,7 +129,8 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_SVR }}
-          # disabled until 'lookup-only' is implemented for setup-go or cache prefix is added
+          # disabled until lookup-only or cache prefix is added
+          # (https://github.com/actions/setup-go/issues/316)
           cache: false
       - name: "Run tests"
         env:
