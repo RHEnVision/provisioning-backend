@@ -383,6 +383,7 @@ objects:
         - sources-api
         - sources-superkey-worker
         - notifications-backend
+        - export-service # WORKAROUND
       optionalDependencies:
         - image-builder
 
