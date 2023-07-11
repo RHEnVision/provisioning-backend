@@ -45,7 +45,7 @@ func prepareAzureReservation(t *testing.T, ctx context.Context, pk *models.Pubke
 	}
 	reservation.AccountID = 1
 	reservation.Status = "Created"
-	reservation.Provider = models.ProviderTypeAWS
+	reservation.Provider = models.ProviderTypeAzure
 	reservation.Steps = 2
 	return reservation
 }

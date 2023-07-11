@@ -2,11 +2,16 @@ package stubs
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 )
 
 type gcpCtxKeyType string
+
+var ipCounter = 10
 
 var (
 	gcpCtxKey        gcpCtxKeyType = "gcp-interface"
@@ -14,13 +19,19 @@ var (
 )
 
 type (
-	GCPClientStub        struct{}
+	GCPClientStub struct {
+		Instances []*string
+	}
 	GCPServiceClientStub struct{}
 )
 
 func init() {
-	clients.GetGCPClient = getCustomerGCPClientStub
+	clients.GetGCPClient = newGCPCustomerClientStub
 	clients.GetServiceGCPClient = getServiceGCPClientStub
+}
+
+func newGCPCustomerClientStub(ctx context.Context, auth *clients.Authentication) (clients.GCP, error) {
+	return getCustomerGCPClientStub(ctx, auth)
 }
 
 // GCPServiceClient
@@ -35,7 +46,9 @@ func WithGCPCCustomerClient(parent context.Context) context.Context {
 	return ctx
 }
 
-func getCustomerGCPClientStub(ctx context.Context, auth *clients.Authentication) (si clients.GCP, err error) {
+func getCustomerGCPClientStub(ctx context.Context, auth *clients.Authentication) (*GCPClientStub, error) {
+	var si *GCPClientStub
+	var err error
 	var ok bool
 	if si, ok = ctx.Value(gcpCtxKey).(*GCPClientStub); !ok {
 		err = ContextReadError
@@ -51,6 +64,14 @@ func getServiceGCPClientStub(ctx context.Context) (si clients.ServiceGCP, err er
 	return si, err
 }
 
+func CountStubInstancesGCP(ctx context.Context) int {
+	client, err := getCustomerGCPClientStub(ctx, &clients.Authentication{})
+	if err != nil {
+		return 0
+	}
+	return len(client.Instances)
+}
+
 func (mock *GCPClientStub) ListAllRegions(ctx context.Context) ([]clients.Region, error) {
 	return nil, nil
 }
@@ -60,7 +81,14 @@ func (mock *GCPClientStub) Status(ctx context.Context) error {
 }
 
 func (mock *GCPClientStub) GetInstanceDescriptionByID(ctx context.Context, id, zone string) (*clients.InstanceDescription, error) {
-	return nil, nil
+	for _, instanceID := range mock.Instances {
+		if ptr.From(instanceID) == id {
+			instanceDesc := &clients.InstanceDescription{ID: id, PublicIPv4: fmt.Sprintf("10.0.0.%v", ipCounter)}
+			ipCounter = ipCounter + 1
+			return instanceDesc, nil
+		}
+	}
+	return nil, MissingInstanceIDErr
 }
 
 func (mock *GCPClientStub) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, error) {
@@ -68,11 +96,16 @@ func (mock *GCPClientStub) ListLaunchTemplates(ctx context.Context) ([]*clients.
 }
 
 func (mock *GCPClientStub) InsertInstances(ctx context.Context, params *clients.GCPInstanceParams, amount int64) ([]*string, *string, error) {
-	return nil, nil, NotImplementedErr
+	for i := 0; i < int(amount); i++ {
+		ID := fmt.Sprintf("300394200587658274%s", strconv.Itoa(len(mock.Instances)+1))
+		mock.Instances = append(mock.Instances, &ID)
+	}
+	ids, err := mock.ListInstancesIDsByLabel(ctx, params.UUID)
+	return ids, ptr.To("operation-1686646674436-5fdff07e43209-66146b7e-f3f65ec5"), err
 }
 
-func (mock *GCPClientStub) ListInstancesIDsByLabel(ctx context.Context, uuid string) ([]*string, error) {
-	return nil, nil
+func (mock *GCPClientStub) ListInstancesIDsByLabel(ctx context.Context, _ string) ([]*string, error) {
+	return mock.Instances, nil
 }
 
 func (mock *GCPServiceClientStub) ListMachineTypes(ctx context.Context, zone string) ([]*clients.InstanceType, error) {
