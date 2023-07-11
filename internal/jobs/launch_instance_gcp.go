@@ -15,7 +15,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-var LaunchInstanceGCPSteps = []string{"Launch instance(s)"}
+var LaunchInstanceGCPSteps = []string{"Launch instance(s)", "Fetch instance(s) description"}
 
 type LaunchInstanceGCPTaskArgs struct {
 	// Associated reservation
@@ -146,6 +146,10 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
 	logger := *zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started Fetch Instances Description GCP")
+
+	// status updates before and after the code logic
+	updateStatusBefore(ctx, args.ReservationID, "Fetching instances description")
+	defer updateStatusAfter(ctx, args.ReservationID, "Fetched instances description", 1)
 
 	rDao := dao.GetReservationDao(ctx)
 
