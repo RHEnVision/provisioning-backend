@@ -35,7 +35,7 @@ data:
        "editable" : true,
        "fiscalYearStartMonth" : 0,
        "graphTooltip" : 0,
-       "id" : 293321,
+       "id" : 306642,
        "links" : [],
        "liveNow" : false,
        "panels" : [
@@ -51,6 +51,73 @@ data:
              "panels" : [],
              "title" : "Job scheduler",
              "type" : "row"
+          },
+          {
+             "datasource" : {
+                "type" : "prometheus",
+                "uid" : "${datasource}"
+             },
+             "description" : "SLO via native prom counters (resets each deployment)",
+             "fieldConfig" : {
+                "defaults" : {
+                   "color" : {
+                      "mode" : "thresholds"
+                   },
+                   "mappings" : [],
+                   "thresholds" : {
+                      "mode" : "absolute",
+                      "steps" : [
+                         {
+                            "color" : "dark-red",
+                            "value" : null
+                         },
+                         {
+                            "color" : "green",
+                            "value" : 0.7
+                         }
+                      ]
+                   },
+                   "unit" : "percentunit"
+                },
+                "overrides" : []
+             },
+             "gridPos" : {
+                "h" : 8,
+                "w" : 8,
+                "x" : 0,
+                "y" : 1
+             },
+             "id" : 59,
+             "options" : {
+                "colorMode" : "value",
+                "graphMode" : "area",
+                "justifyMode" : "auto",
+                "orientation" : "auto",
+                "reduceOptions" : {
+                   "calcs" : [
+                      "lastNotNull"
+                   ],
+                   "fields" : "",
+                   "values" : false
+                },
+                "textMode" : "auto"
+             },
+             "pluginVersion" : "9.3.8",
+             "targets" : [
+                {
+                   "datasource" : {
+                      "type" : "prometheus",
+                      "uid" : "${datasource}"
+                   },
+                   "editorMode" : "code",
+                   "expr" : "          sum(rate(provisioning_reservation_count{result=\"success\",provider=~\"$type\"}[3h]))\n          /\n          sum(rate(provisioning_reservation_count{provider=~\"$type\"}[3h]))",
+                   "legendFormat" : "__auto",
+                   "range" : true,
+                   "refId" : "A"
+                }
+             ],
+             "title" : "Reservation success rate per hyperscaler (3h)",
+             "type" : "stat"
           },
           {
              "datasource" : {
@@ -90,11 +157,11 @@ data:
              },
              "gridPos" : {
                 "h" : 8,
-                "w" : 12,
-                "x" : 0,
+                "w" : 8,
+                "x" : 8,
                 "y" : 1
              },
-             "id" : 59,
+             "id" : 67,
              "options" : {
                 "colorMode" : "value",
                 "graphMode" : "area",
@@ -164,8 +231,8 @@ data:
              },
              "gridPos" : {
                 "h" : 8,
-                "w" : 12,
-                "x" : 12,
+                "w" : 8,
+                "x" : 16,
                 "y" : 1
              },
              "id" : 64,
@@ -385,7 +452,7 @@ data:
                       "uid" : "${datasource}"
                    },
                    "editorMode" : "code",
-                   "expr" : "rate(provisioning_db_stats_duration_sum[35m])\n/\nrate(provisioning_db_stats_duration_count[35m])",
+                   "expr" : "sum(rate(provisioning_db_stats_duration_sum[35m]))\n/\nsum(rate(provisioning_db_stats_duration_count[35m]))",
                    "legendFormat" : "__auto",
                    "range" : true,
                    "refId" : "A"
@@ -1087,8 +1154,7 @@ data:
                       "mode" : "absolute",
                       "steps" : [
                          {
-                            "color" : "green",
-                            "value" : null
+                            "color" : "green"
                          },
                          {
                             "color" : "red",
@@ -1169,8 +1235,7 @@ data:
                       "mode" : "percentage",
                       "steps" : [
                          {
-                            "color" : "red",
-                            "value" : null
+                            "color" : "red"
                          },
                          {
                             "color" : "#EAB839",
@@ -1251,8 +1316,7 @@ data:
                       "mode" : "absolute",
                       "steps" : [
                          {
-                            "color" : "blue",
-                            "value" : null
+                            "color" : "blue"
                          }
                       ]
                    },
@@ -1346,8 +1410,7 @@ data:
                       "mode" : "absolute",
                       "steps" : [
                          {
-                            "color" : "red",
-                            "value" : null
+                            "color" : "red"
                          }
                       ]
                    },
@@ -1476,8 +1539,7 @@ data:
                       "mode" : "absolute",
                       "steps" : [
                          {
-                            "color" : "green",
-                            "value" : null
+                            "color" : "green"
                          },
                          {
                             "color" : "red",
@@ -1572,8 +1634,7 @@ data:
                       "mode" : "absolute",
                       "steps" : [
                          {
-                            "color" : "red",
-                            "value" : null
+                            "color" : "red"
                          }
                       ]
                    },
@@ -1743,8 +1804,7 @@ data:
                       "mode" : "absolute",
                       "steps" : [
                          {
-                            "color" : "green",
-                            "value" : null
+                            "color" : "green"
                          }
                       ]
                    },
@@ -1947,7 +2007,7 @@ data:
              {
                 "allValue" : ".*",
                 "current" : {
-                   "selected" : true,
+                   "selected" : false,
                    "text" : [
                       "All"
                    ],
@@ -2022,6 +2082,6 @@ data:
        "timezone" : "",
        "title" : "Provisioning",
        "uid" : "211",
-       "version" : 2,
+       "version" : 1,
        "weekStart" : ""
     }
