@@ -13,8 +13,7 @@ IQE_MARKER_EXPRESSION="api and smoke"  # This is the value passed to pytest -m
 IQE_FILTER_EXPRESSION=""  # This is the value passed to pytest -k
 IQE_CJI_TIMEOUT="30m"  # This is the time to wait for smoke test to complete or fail
 
-# This is a workaround for notifications clowder dependency does not work properly now.
-EXTRA_DEPLOY_ARGS="notifications"
+#EXTRA_DEPLOY_ARGS=
 
 # Install bonfire repo/initialize
 # https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd/bootstrap.sh
