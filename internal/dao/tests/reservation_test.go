@@ -11,6 +11,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
+	real_identity "github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
@@ -346,5 +347,50 @@ func TestReservationFinish(t *testing.T) {
 	t.Run("mismatch error", func(t *testing.T) {
 		err := reservationDao.FinishWithError(ctx, math.MaxInt64, "")
 		require.ErrorIs(t, err, dao.ErrAffectedMismatch)
+	})
+}
+
+func TestReservationRate(t *testing.T) {
+	reservationDao, ctx := setupReservation(t)
+
+	t.Run("errors out on two fast consecutive reservation on account", func(t *testing.T) {
+		defer reset()
+
+		res := newNoopReservation()
+		err := reservationDao.CreateNoop(ctx, res)
+		require.NoError(t, err)
+
+		for i := 0; i < 4; i++ {
+			res = newNoopReservation()
+			err = reservationDao.CreateNoop(ctx, res)
+			require.NoError(t, err)
+		}
+
+		res = newNoopReservation()
+		err = reservationDao.CreateNoop(ctx, res)
+		require.ErrorContains(t, err, "failed to create reservation record")
+	})
+
+	t.Run("does not error out for quick reservations from different account", func(t *testing.T) {
+		defer reset()
+
+		res := newNoopReservation()
+		err := reservationDao.CreateNoop(ctx, res)
+		require.NoError(t, err)
+
+		for i := 0; i < 4; i++ {
+			res = newNoopReservation()
+			err = reservationDao.CreateNoop(ctx, res)
+			require.NoError(t, err)
+		}
+
+		accountDao := dao.GetAccountDao(ctx)
+		acc2, err := accountDao.GetOrCreateByIdentity(ctx, "2", "2")
+		require.NoError(t, err)
+
+		res = newNoopReservation()
+		ctxId2 := real_identity.WithAccountId(ctx, acc2.ID)
+		err = reservationDao.CreateNoop(ctxId2, res)
+		require.NoError(t, err)
 	})
 }
