@@ -76,3 +76,17 @@ func TestIPv4(t *testing.T) {
 	_, _ = repl.Write([]byte("read tcp 10.128.24.14:42094->10.0.217.126:6379: i/o timeout\n"))
 	require.Equal(t, "read tcp ?->?: i/o timeout\n", buf.String())
 }
+
+func TestFingerprint(t *testing.T) {
+	buf := bytes.NewBufferString("")
+	repl := NewSentryReplacer(buf)
+	_, _ = repl.Write([]byte("pubkey with fingerprint (57:d4:13:ff:c0:74:51:50:41:ec:e1:cd:f1:88:b0:61)\n"))
+	require.Equal(t, "pubkey with fingerprint (?)\n", buf.String())
+}
+
+func TestAWSResourceID(t *testing.T) {
+	buf := bytes.NewBufferString("")
+	repl := NewSentryReplacer(buf)
+	_, _ = repl.Write([]byte("instance ID 'i-0fe8a8adc1403f5b1' does not exist\n\n\n"))
+	require.Equal(t, "instance ID '?' does not exist\n\n\n", buf.String())
+}

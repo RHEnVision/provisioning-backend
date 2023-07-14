@@ -14,6 +14,11 @@ var filters = []string{
 	`[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}`,
 	// Example (AWS SDK): arn:aws:iam::4328974392798432:role/my-role-123
 	`arn:aws:[[:word:]]+::\d+:[[:word:]\*-]+/[[:word:]\*-]+`,
+	// Example (AWS SDK): i-1234567890abcdef0
+	`[a-z]-[0-9a-f]{17}`,
+	// Example: 57:d4:13:ff:c0:74:51:50:41:ec:e1:cd:f1:88:b0:61
+	`([0-9a-fA-F]{2}[:-]){15}[0-9a-fA-F]{2}`,
+	// Example: 192.168.1.100:32453,
 	`\d+\.\d+\.\d+\.\d+:\d+`,
 }
 
