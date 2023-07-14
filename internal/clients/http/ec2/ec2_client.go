@@ -206,7 +206,7 @@ func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (stri
 	}
 
 	if len(output.KeyPairs) == 0 {
-		span.SetStatus(codes.Error, fmt.Sprintf("no KeyPair with fingerpring (%s) found", fingerprint))
+		span.SetStatus(codes.Error, fmt.Sprintf("no KeyPair with fingerprint (%s) found", fingerprint))
 		return "", fmt.Errorf("SSH key not found by its fingerprint (%s): %w", fingerprint, http.PubkeyNotFoundErr)
 	}
 	return *output.KeyPairs[0].KeyName, nil
