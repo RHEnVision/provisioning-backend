@@ -32,7 +32,15 @@ func (x *statDao) getUsage(ctx context.Context, interval string) ([]*models.Usag
 	select provider, 'failure' as result, count(provider) as count
 	from reservations
 	where created_at >= now() - cast($1 as interval)
-	  and (success is null or success = false)
+	  and success = false
+	group by provider
+
+	union all
+
+	select provider, 'pending' as result, count(provider) as count
+	from reservations
+	where created_at >= now() - cast($1 as interval)
+	  and success is null
 	group by provider`
 
 	var result []*models.UsageStat
