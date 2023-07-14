@@ -140,7 +140,8 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 			}
 			ec2Name = pubkey.Name
 		} else {
-			return fmt.Errorf("cannot fetch name of pubkey with fingerprint (%s): %w", fingerprint, err)
+			logger.Error().Err(err).Str("pubkey_fingerprint", fingerprint).Msg("Cannot fetch name of pubkey by its fingerprint")
+			return fmt.Errorf("cannot fetch name of pubkey by its fingerprint: %w", err)
 		}
 	} else {
 		logger.Debug().Msgf("Found pubkey by fingerprint (%s) with name '%s'", fingerprint, ec2Name)
