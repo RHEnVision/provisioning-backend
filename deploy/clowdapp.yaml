@@ -198,7 +198,7 @@ objects:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
         - name: stats
-          replicas: 1
+          replicas: ${{STATS_REPLICAS}}
           metadata:
             annotations:
               ignore-check.kube-linter.io/minimum-three-replicas: "stats pod runs in a single instance"
@@ -490,6 +490,9 @@ parameters:
   - description: Memory limit for each pod (pod restart)
     name: MEMORY_LIMIT
     value: 600Mi
+  - description: Amount of replicas for pod serving stats to optionaly scale to 0
+    name: STATS_REPLICAS
+    value: "1"
   - description: Image tag
     name: IMAGE_TAG
     required: true
