@@ -207,7 +207,7 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	}
 
 	logger.Trace().Msg("Executing RunInstances")
-	instances, awsReservationId, err := ec2Client.RunInstances(ctx, req, args.Detail.Amount, args.Detail.Name)
+	instances, awsReservationId, err := ec2Client.RunInstances(ctx, req, args.Detail.Amount, args.Detail.Name, reservation)
 	if err != nil {
 		return fmt.Errorf("cannot run instances: %w", err)
 	}
