@@ -29,36 +29,36 @@ objects:
             valueFrom:
               secretKeyRef:
                 key: azure_client_id
-                name: iqe-vault
+                name: provisioning-azure-auth-secret
                 optional: true
           - name: CLEANUP_PROVIDERS_AZURE_AUTH_SECRET_ID
             valueFrom:
               secretKeyRef:
                 key: azure_client_secret
-                name: iqe-vault
+                name: provisioning-azure-auth-secret
                 optional: true
           - name: CLEANUP_PROVIDERS_AZURE_AUTH_TENANT_ID
             valueFrom:
               secretKeyRef:
                 key: azure_tenant_id
-                name: iqe-vault
+                name: provisioning-azure-auth-secret
                 optional: true
           - name: CLEANUP_PROVIDERS_AZURE_AUTH_SUBSCRIPTION_ID
             valueFrom:
               secretKeyRef:
                 key: subscription_id
-                name: iqe-vault
+                name: provisioning-azure-auth-secret
                 optional: true
           - name: CLEANUP_PROVIDERS_AZURE_AUTH_RESOURCE_GROUPS
             valueFrom:
               secretKeyRef:
                 key: resource_group
-                name: iqe-vault
+                name: provisioning-azure-auth-secret
           - name: CLEANUP_PROVIDERS_AZURE_AUTH_REGIONS
             valueFrom:
               secretKeyRef:
                 key: location
-                name: iqe-vault
+                name: provisioning-azure-auth-secret
                 optional: true
 parameters:
 - name: IMAGE_TAG
