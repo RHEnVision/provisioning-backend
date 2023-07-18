@@ -26,6 +26,24 @@ func Environment() string {
 	return "dev"
 }
 
+// EnvironmentPrefix wraps an identifier (e.g. id, unique id) in the following way.
+// For production environment, it returns "prefix-identifier". For any other environment,
+// it returns "prefix-identifier-env". Examples:
+//
+// * reservation-14572
+// * reservation-9531-stage
+// * reservation-13-ephemeral
+// * reservation-1-dev
+func EnvironmentPrefix(prefix, identifier string) string {
+	env := Environment()
+
+	if strings.HasPrefix(env, "prod") || env == "" {
+		return prefix + "-" + identifier
+	}
+
+	return prefix + "-" + identifier + "-" + env
+}
+
 // InEphemeralClowder returns true, when the app is running in ephemeral clowder environment.
 func InEphemeralClowder() bool {
 	return InClowder() && strings.Contains(*clowder.LoadedConfig.Metadata.EnvName, "ephemeral")
