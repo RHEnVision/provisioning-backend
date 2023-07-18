@@ -725,7 +725,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "rate(provisioning_db_stats_duration_sum[35m])\n/\nrate(provisioning_db_stats_duration_count[35m])",
+          "expr": "sum(rate(provisioning_db_stats_duration_sum[35m]))\n/\nsum(rate(provisioning_db_stats_duration_count[35m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -2149,9 +2149,9 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "crcs02ue1-prometheus",
-          "value": "crcs02ue1-prometheus"
+          "selected": true,
+          "text": "crcp01ue1-prometheus",
+          "value": "crcp01ue1-prometheus"
         },
         "hide": 0,
         "includeAll": false,
@@ -2302,6 +2302,6 @@
   "timezone": "",
   "title": "Provisioning",
   "uid": "211",
-  "version": 2,
+  "version": 7,
   "weekStart": ""
 }
