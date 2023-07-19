@@ -18,21 +18,29 @@ func dbStatsLoop(ctx context.Context, sleep time.Duration) {
 	}()
 	ticker := time.NewTicker(sleep)
 
+	// run one tick immediately to prevent prometheus gaps
+	dbStatsObserveTick(ctx)
+
 	for {
 		select {
 		case <-ticker.C:
-			metrics.ObserveDbStatsDuration(func() {
-				err := dbStatsTick(ctx)
-				if err != nil {
-					logger.Error().Err(err).Msg("Error while performing database statistics query")
-				}
-			})
+			dbStatsObserveTick(ctx)
 
 		case <-ctx.Done():
 			ticker.Stop()
 			return
 		}
 	}
+}
+
+func dbStatsObserveTick(ctx context.Context) {
+	logger := zerolog.Ctx(ctx)
+	metrics.ObserveDbStatsDuration(func() {
+		err := dbStatsTick(ctx)
+		if err != nil {
+			logger.Error().Err(err).Msg("Error while performing database statistics query")
+		}
+	})
 }
 
 func dbStatsTick(ctx context.Context) error {
