@@ -107,7 +107,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "1 - (sum(provisioning_reservations_24h_count{result=\"pending\",provider=~\"$type\"}) / sum(provisioning_reservations_24h_count{provider=~\"$type\"}))",
+          "expr": "1 - (sum(provisioning_reservations_24h_count{result=\"pending\",provider=~\"$type\"} or on() vector(0)) / sum(provisioning_reservations_24h_count{provider=~\"$type\"}))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -178,7 +178,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(provisioning_reservations_24h_count{result=\"success\",provider=~\"$type\"}) / sum(provisioning_reservations_24h_count{provider=~\"$type\"})",
+          "expr": "sum(provisioning_reservations_24h_count{result=\"success\",provider=~\"$type\"} or on() vector(0)) / sum(provisioning_reservations_24h_count{provider=~\"$type\"})",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -253,7 +253,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "1 - (sum(provisioning_reservations_28d_count{result=\"pending\",provider=~\"$type\"}) / sum(provisioning_reservations_28d_count{provider=~\"$type\"}))",
+          "expr": "1 - (sum(provisioning_reservations_28d_count{result=\"pending\",provider=~\"$type\"} or on() vector(0)) / sum(provisioning_reservations_28d_count{provider=~\"$type\"}))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -324,7 +324,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(provisioning_reservations_28d_count{result=\"success\",provider=~\"$type\"}) / sum(provisioning_reservations_28d_count{provider=~\"$type\"})",
+          "expr": "sum(provisioning_reservations_28d_count{result=\"success\",provider=~\"$type\"} or on() vector(0)) / sum(provisioning_reservations_28d_count{provider=~\"$type\"})",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -419,7 +419,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(provisioning_reservations_24h_count{type=~\"$type\"}) OR on() vector(0)",
+          "expr": "sum(provisioning_reservations_24h_count{provider=~\"$type\"}) OR on() vector(0)",
           "legendFormat": "Pending",
           "range": true,
           "refId": "A"
@@ -514,7 +514,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(provisioning_reservations_24h_count{result=\"pending\", type=~\"$type\"}) OR on() vector(0)",
+          "expr": "sum(provisioning_reservations_24h_count{result=\"pending\", provider=~\"$type\"}) OR on() vector(0)",
           "legendFormat": "Pending",
           "range": true,
           "refId": "A"
@@ -525,7 +525,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(provisioning_reservations_24h_count{result=\"success\", type=~\"$type\"}) OR on() vector(0)",
+          "expr": "sum(provisioning_reservations_24h_count{result=\"success\", provider=~\"$type\"}) OR on() vector(0)",
           "hide": false,
           "legendFormat": "Success",
           "range": true,
@@ -538,7 +538,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(provisioning_reservations_24h_count{result=\"failure\", type=~\"$type\"}) OR on() vector(0)",
+          "expr": "sum(provisioning_reservations_24h_count{result=\"failure\", provider=~\"$type\"}) OR on() vector(0)",
           "hide": false,
           "legendFormat": "Failure",
           "range": true,
@@ -634,7 +634,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(provisioning_reservations_28d_count{result=\"pending\", type=~\"$type\"}) OR on() vector(0)",
+          "expr": "sum(provisioning_reservations_28d_count{result=\"pending\", provider=~\"$type\"}) OR on() vector(0)",
           "legendFormat": "Pending",
           "range": true,
           "refId": "A"
@@ -645,7 +645,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "sum(provisioning_reservations_28d_count{result=\"success\", type=~\"$type\"}) OR on() vector(0)",
+          "expr": "sum(provisioning_reservations_28d_count{result=\"success\", provider=~\"$type\"}) OR on() vector(0)",
           "hide": false,
           "legendFormat": "Success",
           "range": true,
@@ -658,7 +658,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(provisioning_reservations_28d_count{result=\"failure\", type=~\"$type\"}) OR on() vector(0)",
+          "expr": "sum(provisioning_reservations_28d_count{result=\"failure\", provider=~\"$type\"}) OR on() vector(0)",
           "hide": false,
           "legendFormat": "Failure",
           "range": true,
@@ -2149,9 +2149,9 @@
     "list": [
       {
         "current": {
-          "selected": true,
-          "text": "crcp01ue1-prometheus",
-          "value": "crcp01ue1-prometheus"
+          "selected": false,
+          "text": "crcs02ue1-prometheus",
+          "value": "crcs02ue1-prometheus"
         },
         "hide": 0,
         "includeAll": false,
@@ -2227,7 +2227,7 @@
       {
         "allValue": ".*",
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
