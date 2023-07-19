@@ -1374,7 +1374,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1455,7 +1456,8 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": null
               },
               {
                 "color": "#EAB839",
@@ -1536,7 +1538,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue"
+                "color": "blue",
+                "value": null
               }
             ]
           },
@@ -1630,7 +1633,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "red",
+                "value": null
               }
             ]
           },
@@ -1759,7 +1763,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1816,7 +1821,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1825,7 +1830,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 11,
+            "fillOpacity": 0,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -1854,59 +1859,14 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red"
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "opm"
+          "unit": "none"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "error"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "success"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "total"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 7,
@@ -1938,39 +1898,13 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "(sum(rate(provisioning_source_availability_check_request_total{error=\"false\"}[$__interval])) OR on() vector(0))",
-          "legendFormat": "success",
+          "expr": "sum(increase(provisioning_source_availability_check_request_total[1h])) by (type)",
+          "legendFormat": "{{label}}",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "(sum(rate(provisioning_source_availability_check_request_total{error=\"true\"}[$__interval])) OR on() vector(0))",
-          "hide": false,
-          "legendFormat": "error",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "(sum(rate(provisioning_source_availability_check_request_total[$__interval])) OR on() vector(0))",
-          "hide": false,
-          "legendFormat": "total",
-          "range": true,
-          "refId": "C"
         }
       ],
-      "title": "Source Availability Throughput Rate",
+      "title": "Source Availability 1h Throughput",
       "type": "timeseries"
     },
     {
@@ -2024,7 +1958,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               }
             ]
           },
@@ -2149,7 +2084,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "crcs02ue1-prometheus",
           "value": "crcs02ue1-prometheus"
         },
