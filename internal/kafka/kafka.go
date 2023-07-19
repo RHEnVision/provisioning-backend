@@ -206,25 +206,29 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time
 				msg.Key, msg.Topic, msg.Offset, msg.Partition)
 
 			// build new context - identity and trace id
-			ctx, err = identity.WithIdentityFrom64(ctx, header("x-rh-identity", msg.Headers))
+			newLogger := logger.With().Str("msg_id", random.TraceID().String())
+			newCtx, err := identity.WithIdentityFrom64(ctx, header("X-RH-Identity", msg.Headers))
 			if err != nil {
-				logger.Trace().Msgf("Could not extract identity from context to Kafka message: %s", err)
+				errLogger := newLogger.Logger()
+				errLogger.Warn().Err(err).Msgf("Could not extract identity from context to Kafka message")
+				newCtx = errLogger.WithContext(newCtx)
+			} else {
+				id := identity.Identity(newCtx)
+
+				traceId := trace.SpanFromContext(ctx).SpanContext().TraceID()
+				if !traceId.IsValid() {
+					traceId = random.TraceID()
+				}
+				newCtx = logging.WithTraceId(newCtx, traceId.String())
+
+				newLogger = newLogger.
+					Str("trace_id", traceId.String()).
+					Str("account_number", id.Identity.AccountNumber).
+					Str("org_id", id.Identity.OrgID)
+				newCtx = newLogger.Logger().WithContext(newCtx)
 			}
-			identity := identity.Identity(ctx)
 
-			traceId := trace.SpanFromContext(ctx).SpanContext().TraceID()
-			if !traceId.IsValid() {
-				traceId = random.TraceID()
-			}
-			ctx = logging.WithTraceId(ctx, traceId.String())
-
-			newLogger := logger.With().
-				Str("trace_id", traceId.String()).
-				Str("account_number", identity.Identity.AccountNumber).
-				Str("org_id", identity.Identity.OrgID).Logger()
-			ctx = newLogger.WithContext(ctx)
-
-			handler(ctx, NewMessageFromKafka(&msg))
+			handler(newCtx, NewMessageFromKafka(&msg))
 		}
 	}
 }
