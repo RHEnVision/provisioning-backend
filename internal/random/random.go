@@ -35,3 +35,8 @@ func TraceID() trace.TraceID {
 	_, _ = mrand.Read(tid[:])
 	return tid
 }
+
+// Float32 returns mathematical random float number in the (0.0, 1.0> interval.
+func Float32() float32 {
+	return mrand.Float32()
+}

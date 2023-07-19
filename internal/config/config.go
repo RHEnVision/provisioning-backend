@@ -80,11 +80,13 @@ var config struct {
 		Stream  string `env:"STREAM" env-default:"" env-description:"cloudwatch logging stream"`
 	} `env-prefix:"CLOUDWATCH_"`
 	AWS struct {
-		Key           string `env:"KEY" env-default:"" env-description:"AWS service account key"`
-		Secret        string `env:"SECRET" env-default:"" env-description:"AWS service account secret"`
-		Session       string `env:"SESSION" env-default:"" env-description:"AWS service account session"`
-		DefaultRegion string `env:"DEFAULT_REGION" env-default:"us-east-1" env-description:"AWS region when not provided"`
-		Logging       bool   `env:"LOGGING" env-default:"false" env-description:"AWS service account logging (verbose)"`
+		Key               string        `env:"KEY" env-default:"" env-description:"AWS service account key"`
+		Secret            string        `env:"SECRET" env-default:"" env-description:"AWS service account secret"`
+		Session           string        `env:"SESSION" env-default:"" env-description:"AWS service account session"`
+		DefaultRegion     string        `env:"DEFAULT_REGION" env-default:"us-east-1" env-description:"AWS region when not provided"`
+		Logging           bool          `env:"LOGGING" env-default:"false" env-description:"AWS service account logging (verbose)"`
+		AvailabilityDelay time.Duration `env:"AVAILABILITY_DELAY" env-default:"1s" env-description:"arbitrary delay between sources availability checks (time interval syntax)"`
+		AvailabilityRate  float32       `env:"AVAILABILITY_RATE" env-default:"1.0" env-description:"probability rate for availability checks (0.0 = all skipped, 1.0 = nothing skipped)"`
 	} `env-prefix:"AWS_"`
 	Azure struct {
 		TenantID            string `env:"TENANT_ID" env-default:"" env-description:"Azure service account tenant id"`
@@ -94,12 +96,16 @@ var config struct {
 		ClientPrincipalName string `env:"CLIENT_PRINCIPAL_NAME" env-default:"RH HCC" env-description:"Azure display name for the offering principal"`
 		DefaultRegion       string `env:"DEFAULT_REGION" env-default:"eastus" env-description:"Azure region when not provided"`
 		// SubscriptionID is not used in prod environments - used to fetch instance types
-		SubscriptionID string `env:"SUBSCRIPTION_ID" env-default:"" env-description:"Azure service account subscription id"`
+		SubscriptionID    string        `env:"SUBSCRIPTION_ID" env-default:"" env-description:"Azure service account subscription id"`
+		AvailabilityDelay time.Duration `env:"AVAILABILITY_DELAY" env-default:"1s" env-description:"arbitrary delay between sources availability checks (time interval syntax)"`
+		AvailabilityRate  float32       `env:"AVAILABILITY_RATE" env-default:"1.0" env-description:"probability rate for availability checks (0.0 = all skipped, 1.0 = nothing skipped)"`
 	} `env-prefix:"AZURE_"`
 	GCP struct {
-		ProjectID   string `env:"PROJECT_ID" env-default:"" env-description:"GCP service account project id"`
-		JSON        string `env:"JSON" env-default:"e30K" env-description:"GCP service account credentials (base64 encoded)"`
-		DefaultZone string `env:"DEFAULT_ZONE" env-default:"us-east4" env-description:"GCP region when not provided"`
+		ProjectID         string        `env:"PROJECT_ID" env-default:"" env-description:"GCP service account project id"`
+		JSON              string        `env:"JSON" env-default:"e30K" env-description:"GCP service account credentials (base64 encoded)"`
+		DefaultZone       string        `env:"DEFAULT_ZONE" env-default:"us-east4" env-description:"GCP region when not provided"`
+		AvailabilityDelay time.Duration `env:"AVAILABILITY_DELAY" env-default:"1s" env-description:"arbitrary delay between sources availability checks (time interval syntax)"`
+		AvailabilityRate  float32       `env:"AVAILABILITY_RATE" env-default:"1.0" env-description:"probability rate for availability checks (0.0 = all skipped, 1.0 = nothing skipped)"`
 	} `env-prefix:"GCP_"`
 	Prometheus struct {
 		Port int    `env:"PORT" env-default:"9000" env-description:"prometheus HTTP port"`

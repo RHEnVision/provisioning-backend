@@ -122,6 +122,12 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chAzure {
+		if random.Float32() > config.Azure.AvailabilityRate {
+			logger.Trace().Msgf("Skipping Azure source availability status %s", s.SourceApplicationID)
+			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure.String(), "skipped", nil)
+			continue
+		}
+
 		logger.Trace().Msgf("Checking Azure source availability status %s", s.SourceApplicationID)
 		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAzure.String(), func() error {
 			var err error
@@ -136,6 +142,8 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 
 			return fmt.Errorf("error during check: %w", err)
 		})
+
+		time.Sleep(config.Azure.AvailabilityDelay)
 	}
 }
 
@@ -144,6 +152,12 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chAws {
+		if random.Float32() > config.AWS.AvailabilityRate {
+			logger.Trace().Msgf("Skipping AWS source availability status %s", s.SourceApplicationID)
+			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS.String(), "skipped", nil)
+			continue
+		}
+
 		logger.Trace().Msgf("Checking AWS source availability status %s", s.SourceApplicationID)
 		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAWS.String(), func() error {
 			var err error
@@ -172,6 +186,8 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS.String(), sr.Status.String(), err)
 			return fmt.Errorf("error during check: %w", err)
 		})
+
+		time.Sleep(config.AWS.AvailabilityDelay)
 	}
 }
 
@@ -180,6 +196,12 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chGcp {
+		if random.Float32() > config.GCP.AvailabilityRate {
+			logger.Trace().Msgf("Skipping GCP source availability status %s", s.SourceApplicationID)
+			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeGCP.String(), "skipped", nil)
+			continue
+		}
+
 		logger.Trace().Msgf("Checking GCP source availability status %s", s.SourceApplicationID)
 		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeGCP.String(), func() error {
 			var err error
@@ -209,6 +231,8 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 
 			return fmt.Errorf("error during check: %w", err)
 		})
+
+		time.Sleep(config.GCP.AvailabilityDelay)
 	}
 }
 
