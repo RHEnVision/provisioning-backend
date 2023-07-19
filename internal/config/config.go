@@ -214,6 +214,9 @@ func Initialize(configFiles ...string) {
 		cfg := clowder.LoadedConfig
 
 		// database
+		if cfg.Database == nil {
+			panic("ERROR: Postgres is required in clowder environment")
+		}
 		config.Database.Host = cfg.Database.Hostname
 		config.Database.Port = uint16(cfg.Database.Port)
 		config.Database.User = cfg.Database.Username
@@ -238,6 +241,9 @@ func Initialize(configFiles ...string) {
 		}
 
 		// feature flags
+		if cfg.FeatureFlags == nil {
+			panic("ERROR: FeatureFlags is required in clowder environment")
+		}
 		config.Unleash.Enabled = true
 		url := fmt.Sprintf("%s://%s:%d/api", cfg.FeatureFlags.Scheme, cfg.FeatureFlags.Hostname, cfg.FeatureFlags.Port)
 		config.Unleash.URL = url
