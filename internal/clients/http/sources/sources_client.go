@@ -189,11 +189,12 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 	// Sources API currently does not provide a good server-side filtering.
 	auth, err := filterSourceAuthentications(*resp.JSON200.Data)
 	if err != nil {
-		at := make([]string, 0)
+		at := zerolog.Arr()
 		for _, auth := range *resp.JSON200.Data {
-			at = append(at, string(*auth.Authtype))
+			at.Str(*auth.Authtype)
 		}
-		logger.Warn().Msgf("Sources did not return any Provisioning authentication for source(auth types): %s(%v)", sourceId, at)
+		// Likely a super-key that hasn't been processed by super-key-worker yet
+		logger.Warn().Str("source_id", sourceId).RawJSON("response", resp.Body).Array("filtered", at).Msg("Source does not have Provisioning authentication")
 		return nil, err
 	}
 
