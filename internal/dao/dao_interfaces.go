@@ -115,5 +115,5 @@ var GetStatDao func(ctx context.Context) StatDao
 
 // StatDao represents an account (tenant)
 type StatDao interface {
-	Get(ctx context.Context) (*models.Statistics, error)
+	Get(ctx context.Context, delayMin int) (*models.Statistics, error)
 }

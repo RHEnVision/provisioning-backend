@@ -46,7 +46,7 @@ func dbStatsObserveTick(ctx context.Context) {
 func dbStatsTick(ctx context.Context) error {
 	logger := zerolog.Ctx(ctx)
 	sdao := dao.GetStatDao(ctx)
-	stats, err := sdao.Get(ctx)
+	stats, err := sdao.Get(ctx, 10)
 	if err != nil {
 		return fmt.Errorf("stats error: %w", err)
 	}

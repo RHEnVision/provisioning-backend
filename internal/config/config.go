@@ -40,7 +40,7 @@ var config struct {
 	} `env-prefix:"APP_"`
 	Stats struct {
 		JobQueue             time.Duration `env:"JOBQUEUE_INTERVAL" env-default:"1m" env-description:"how often to pull job queue statistics"`
-		ReservationsInterval time.Duration `env:"RESERVATIONS_INTERVAL" env-default:"30m" env-description:"how often to pull reservation statistics"`
+		ReservationsInterval time.Duration `env:"RESERVATIONS_INTERVAL" env-default:"10m" env-description:"how often to pull reservation statistics"`
 	} `env-prefix:"STATS_"`
 	Database struct {
 		Host        string        `env:"HOST" env-default:"localhost" env-description:"main database hostname"`
