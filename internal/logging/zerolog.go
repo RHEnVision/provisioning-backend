@@ -58,7 +58,7 @@ func stdoutWriter(truncate bool) io.Writer {
 	writer := zerolog.ConsoleWriter{
 		Out:        os.Stdout,
 		NoColor:    config.InEphemeralClowder(),
-		TimeFormat: time.Kitchen,
+		TimeFormat: "15:04:05",
 	}
 	if truncate {
 		writer.FormatFieldValue = func(i interface{}) string {

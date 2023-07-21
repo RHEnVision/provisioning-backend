@@ -2,8 +2,6 @@ package kafka
 
 import (
 	"context"
-
-	"github.com/RHEnVision/provisioning-backend/internal/identity"
 )
 
 type StatusType string
@@ -14,18 +12,12 @@ const (
 )
 
 type SourceResult struct {
-	ResourceID string `json:"resource_id"`
-
-	// Resource type of the source
-	ResourceType string `json:"resource_type"`
-
-	Status StatusType `json:"status"`
-
-	Err error `json:"error"`
-
-	Identity identity.Principal `json:"-"`
-
-	MissingPermissions []string `json:"-"`
+	MessageContext     context.Context `json:"-"` // Carries logger and identity
+	ResourceID         string          `json:"resource_id"`
+	ResourceType       string          `json:"resource_type"`
+	Status             StatusType      `json:"status"`
+	Err                error           `json:"-"` // Sources do not support error field
+	MissingPermissions []string        `json:"-"` // Sources do not support reason field
 }
 
 func (sr SourceResult) GenericMessage(ctx context.Context) (GenericMessage, error) {
