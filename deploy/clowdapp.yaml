@@ -405,12 +405,12 @@ objects:
                     {
                       "name": "launch-success",
                       "display_name": "Launch Success",
-                      "description": "Triggers an notification when a launch is successful"
+                      "description": "Triggers a notification when a launch is successful"
                     },
                     {
                       "name": "launch-failed",
                       "display_name": "Launch Failed",
-                      "description": "Triggers an notification when a launch fails"
+                      "description": "Triggers a notification when a launch fails"
                     }
                   ]
                 }
@@ -490,7 +490,7 @@ parameters:
   - description: Memory limit for each pod (pod restart)
     name: MEMORY_LIMIT
     value: 600Mi
-  - description: Amount of replicas for pod serving stats to optionaly scale to 0
+  - description: Amount of replicas for pod serving stats to optionally scale to 0
     name: STATS_REPLICAS
     value: "1"
   - description: Image tag
