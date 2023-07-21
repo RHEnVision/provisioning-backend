@@ -263,6 +263,16 @@ func (b *kafkaBroker) Send(ctx context.Context, messages ...*GenericMessage) err
 			return DifferentTopicErr
 		}
 		kMessages[i] = m.KafkaMessage()
+		if logger.Trace().Enabled() {
+			dict := zerolog.Dict()
+			for _, h := range kMessages[i].Headers {
+				dict.Str(h.Key, string(h.Value))
+			}
+			logger.Trace().Str("topic", commonTopic).
+				Bytes("body", kMessages[i].Value).
+				Dict("headers", dict).
+				Msg("Kafka message")
+		}
 	}
 
 	err := w.WriteMessages(ctx, kMessages...)

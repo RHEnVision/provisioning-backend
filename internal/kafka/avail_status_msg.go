@@ -32,6 +32,7 @@ func genericMessage(ctx context.Context, m any, key string, topic string) (Gener
 		return GenericMessage{}, fmt.Errorf("unable to marshal message: %w", err)
 	}
 
+	// This will panic when identity was not present in the context (no error handling possible)
 	id := identity.Identity(ctx)
 
 	return GenericMessage{

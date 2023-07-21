@@ -13,7 +13,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
-	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
@@ -41,11 +40,9 @@ import (
 const ChannelBuffer = 32
 
 type SourceInfo struct {
-	Authentication clients.Authentication
-
+	MessageContext      context.Context // Carries logger and identity
+	Authentication      clients.Authentication
 	SourceApplicationID string
-
-	Identity identity.Principal
 }
 
 var (
@@ -62,8 +59,8 @@ func init() {
 	random.SeedGlobal()
 }
 
-func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
-	logger := zerolog.Ctx(origCtx)
+func processMessage(msgCtx context.Context, message *kafka.GenericMessage) {
+	logger := zerolog.Ctx(msgCtx)
 
 	// Get source id
 	asm, err := kafka.NewAvailabilityStatusMessage(message)
@@ -71,13 +68,12 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 		logger.Warn().Err(err).Msg("Could not get availability status message")
 		return
 	}
-	logger.Trace().Msgf("Received a message from sources to be processed with source id %s", asm.SourceID)
-
-	sourceId := asm.SourceID
 
 	// Set source id as logging field
+	sourceId := asm.SourceID
 	logger = ptr.To(logger.With().Str("source_id", sourceId).Logger())
-	ctx := logger.WithContext(origCtx)
+	ctx := logger.WithContext(msgCtx)
+	logger.Trace().Msgf("Sources availability check for %s", sourceId)
 
 	// Get sources client
 	sourcesClient, err := clients.GetSourcesClient(ctx)
@@ -99,9 +95,9 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	}
 
 	s := SourceInfo{
+		MessageContext:      ctx,
 		Authentication:      *authentication,
 		SourceApplicationID: authentication.SourceApplictionID,
-		Identity:            identity.Identity(ctx),
 	}
 
 	switch authentication.ProviderType {
@@ -117,11 +113,13 @@ func processMessage(origCtx context.Context, message *kafka.GenericMessage) {
 	}
 }
 
-func checkSourceAvailabilityAzure(ctx context.Context) {
-	logger := zerolog.Ctx(ctx)
+func checkSourceAvailabilityAzure(cancelCtx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chAzure {
+		ctx := s.MessageContext
+		logger := zerolog.Ctx(ctx)
+
 		if random.Float32() > config.Azure.AvailabilityRate {
 			logger.Trace().Msgf("Skipping Azure source availability status %s", s.SourceApplicationID)
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure.String(), "skipped", nil)
@@ -132,9 +130,9 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeAzure.String(), func() error {
 			var err error
 			sr := kafka.SourceResult{
-				ResourceID:   s.SourceApplicationID,
-				Identity:     s.Identity,
-				ResourceType: "Application",
+				MessageContext: ctx,
+				ResourceID:     s.SourceApplicationID,
+				ResourceType:   "Application",
 			}
 			sr.Status = kafka.StatusAvailable
 			chSend <- sr
@@ -143,15 +141,21 @@ func checkSourceAvailabilityAzure(ctx context.Context) {
 			return fmt.Errorf("error during check: %w", err)
 		})
 
+		if cancelCtx.Err() != nil {
+			break
+		}
+
 		time.Sleep(config.Azure.AvailabilityDelay)
 	}
 }
 
-func checkSourceAvailabilityAWS(ctx context.Context) {
-	logger := zerolog.Ctx(ctx)
+func checkSourceAvailabilityAWS(cancelCtx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chAws {
+		ctx := s.MessageContext
+		logger := zerolog.Ctx(ctx)
+
 		if random.Float32() > config.AWS.AvailabilityRate {
 			logger.Trace().Msgf("Skipping AWS source availability status %s", s.SourceApplicationID)
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAWS.String(), "skipped", nil)
@@ -163,9 +167,9 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 			var err error
 			var permissions []string
 			sr := kafka.SourceResult{
-				ResourceID:   s.SourceApplicationID,
-				Identity:     s.Identity,
-				ResourceType: "Application",
+				MessageContext: ctx,
+				ResourceID:     s.SourceApplicationID,
+				ResourceType:   "Application",
 			}
 			ec2Client, err := clients.GetEC2Client(ctx, &s.Authentication, "")
 			if err != nil {
@@ -176,10 +180,18 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 				sr.Status = kafka.StatusAvailable
 				permissions, err = ec2Client.CheckPermission(ctx, &s.Authentication)
 				if err != nil {
-					sr.Err = err
 					sr.Status = kafka.StatusUnavailable
+					sr.Err = err
 					sr.MissingPermissions = permissions
-					logger.Warn().Err(err).Bool("missing_permissions", true).Str("source_id", sr.ResourceID).Msg("AWS permission check failed")
+					if logger.Info().Enabled() {
+						arr := zerolog.Arr()
+						for _, p := range permissions {
+							arr.Str(p)
+						}
+						logger.Info().Err(err).
+							Array("missing_aws_permissions", arr).
+							Str("source_id", sr.ResourceID).Msg("Missing AWS permissions")
+					}
 				}
 			}
 			chSend <- sr
@@ -187,15 +199,21 @@ func checkSourceAvailabilityAWS(ctx context.Context) {
 			return fmt.Errorf("error during check: %w", err)
 		})
 
+		if cancelCtx.Err() != nil {
+			break
+		}
+
 		time.Sleep(config.AWS.AvailabilityDelay)
 	}
 }
 
-func checkSourceAvailabilityGCP(ctx context.Context) {
-	logger := zerolog.Ctx(ctx)
+func checkSourceAvailabilityGCP(cancelCtx context.Context) {
 	defer processingWG.Done()
 
 	for s := range chGcp {
+		ctx := s.MessageContext
+		logger := zerolog.Ctx(ctx)
+
 		if random.Float32() > config.GCP.AvailabilityRate {
 			logger.Trace().Msgf("Skipping GCP source availability status %s", s.SourceApplicationID)
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeGCP.String(), "skipped", nil)
@@ -206,9 +224,9 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 		metrics.ObserveAvailabilityCheckReqsDuration(models.ProviderTypeGCP.String(), func() error {
 			var err error
 			sr := kafka.SourceResult{
-				ResourceID:   s.SourceApplicationID,
-				Identity:     s.Identity,
-				ResourceType: "Application",
+				MessageContext: s.MessageContext,
+				ResourceID:     s.SourceApplicationID,
+				ResourceType:   "Application",
 			}
 			gcpClient, err := clients.GetGCPClient(ctx, &s.Authentication)
 			if err != nil {
@@ -232,12 +250,15 @@ func checkSourceAvailabilityGCP(ctx context.Context) {
 			return fmt.Errorf("error during check: %w", err)
 		})
 
+		if cancelCtx.Err() != nil {
+			break
+		}
+
 		time.Sleep(config.GCP.AvailabilityDelay)
 	}
 }
 
-func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration) {
-	logger := zerolog.Ctx(ctx)
+func sendResults(cancelCtx context.Context, batchSize int, tickDuration time.Duration) {
 	messages := make([]*kafka.GenericMessage, 0, batchSize)
 	ticker := time.NewTicker(tickDuration)
 	defer senderWG.Done()
@@ -246,7 +267,8 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 		select {
 
 		case sr := <-chSend:
-			ctx = identity.WithIdentity(ctx, sr.Identity)
+			ctx := sr.MessageContext
+			logger := zerolog.Ctx(ctx)
 			msg, err := sr.GenericMessage(ctx)
 			if err != nil {
 				logger.Warn().Err(err).Msg("Could not generate generic message")
@@ -264,22 +286,24 @@ func sendResults(ctx context.Context, batchSize int, tickDuration time.Duration)
 				messages = messages[:0]
 			}
 		case <-ticker.C:
+			logger := zerolog.Ctx(cancelCtx)
 			length := len(messages)
 			if length > 0 {
 				logger.Trace().Int("messages", length).Msgf("Sending %d source availability status messages (tick)", length)
-				err := kafka.Send(ctx, messages...)
+				err := kafka.Send(cancelCtx, messages...)
 				if err != nil {
 					logger.Warn().Err(err).Msg("Could not send source availability status messages (tick)")
 				}
 				messages = messages[:0]
 			}
-		case <-ctx.Done():
+		case <-cancelCtx.Done():
+			logger := zerolog.Ctx(cancelCtx)
 			ticker.Stop()
 			length := len(messages)
 
 			if length > 0 {
 				logger.Trace().Int("messages", length).Msgf("Sending %d source availability status messages (cancel)", length)
-				err := kafka.Send(ctx, messages...)
+				err := kafka.Send(cancelCtx, messages...)
 				if err != nil {
 					logger.Warn().Err(err).Msg("Could not send source availability status messages (cancel)")
 				}
@@ -374,7 +398,9 @@ func statuser() {
 	go checkSourceAvailabilityAzure(cancelCtx)
 
 	senderWG.Add(1)
-	go sendResults(cancelCtx, 1024, 5*time.Second)
+	// processing can be slowed down by configuration: send messages in maximum
+	// batch size of 8 messages or 4 seconds (what comes first)
+	go sendResults(cancelCtx, 8, 4*time.Second)
 
 	logger.Info().Msg("Statuser process started")
 	select {

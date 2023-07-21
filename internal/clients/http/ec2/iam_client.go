@@ -185,9 +185,6 @@ func listMissingPermissions(statements []string, expected Statement) []string {
 }
 
 func (c *ec2Client) listAttachedRolePolicies(ctx context.Context, roleName string) ([]*iamTypes.AttachedPolicy, error) {
-	logger := logger(ctx)
-
-	logger.Debug().Msgf("Listing attached role policies")
 	input := &iam.ListAttachedRolePoliciesInput{
 		RoleName: aws.String(roleName),
 	}
@@ -204,9 +201,6 @@ func (c *ec2Client) listAttachedRolePolicies(ctx context.Context, roleName strin
 }
 
 func (c *ec2Client) listInlineRolePolicies(ctx context.Context, roleName string) ([]string, error) {
-	logger := logger(ctx)
-
-	logger.Debug().Msgf("Listing attached role policies.")
 	rolePoliciesInput := &iam.ListRolePoliciesInput{
 		RoleName: aws.String(roleName),
 	}
@@ -232,8 +226,6 @@ func (c *ec2Client) listInlineRolePolicies(ctx context.Context, roleName string)
 }
 
 func (c *ec2Client) listPoliciesFromAttached(ctx context.Context, policies []*iamTypes.AttachedPolicy) ([]*iamTypes.Policy, error) {
-	logger := logger(ctx)
-	logger.Debug().Msgf("Fetching policies for attached policies")
 	result := make([]*iamTypes.Policy, len(policies))
 	for i := range policies {
 		input := &iam.GetPolicyInput{
@@ -282,10 +274,6 @@ func (c *ec2Client) checkInlinePolicies(ctx context.Context, missingPermissions 
 }
 
 func (c *ec2Client) CheckPermission(ctx context.Context, auth *clients.Authentication) ([]string, error) {
-	logger := logger(ctx)
-	logger.Debug().Msgf("Listing policies attached to the role")
-
-	logger.Debug().Msgf("Parsing ARN to get a friendly role name")
 	roleName, err := getRoleName(auth.Payload)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse ARN: %w", err)
