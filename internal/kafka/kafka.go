@@ -211,7 +211,7 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time
 			if err != nil {
 				errLogger := newLogger.Logger()
 				errLogger.Warn().Err(err).Msgf("Could not extract identity from context to Kafka message")
-				newCtx = errLogger.WithContext(newCtx)
+				newCtx = errLogger.WithContext(ctx)
 			} else {
 				id := identity.Identity(newCtx)
 
