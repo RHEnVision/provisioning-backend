@@ -31,9 +31,11 @@ func TestQueueNormalSend(t *testing.T) {
 		wg.Done()
 	})
 
-	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage(ctx)
-	EnqueueAvailabilityStatusRequest(&msg)
-	EnqueueAvailabilityStatusRequest(&msg)
+	msg := kafka.AvailabilityStatusMessage{SourceID: "1"}
+	err := EnqueueAvailabilityStatusRequest(ctx, &msg)
+	require.NoError(t, err)
+	err = EnqueueAvailabilityStatusRequest(ctx, &msg)
+	require.NoError(t, err)
 	wg.Wait()
 }
 
@@ -54,9 +56,11 @@ func TestFullQueueSend(t *testing.T) {
 		wg.Done()
 	})
 
-	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage(ctx)
-	EnqueueAvailabilityStatusRequest(&msg)
-	EnqueueAvailabilityStatusRequest(&msg)
+	msg := kafka.AvailabilityStatusMessage{SourceID: "1"}
+	err := EnqueueAvailabilityStatusRequest(ctx, &msg)
+	require.NoError(t, err)
+	err = EnqueueAvailabilityStatusRequest(ctx, &msg)
+	require.NoError(t, err)
 	time.Sleep(100 * time.Millisecond)
 	senderCancel()
 	wg.Wait()
@@ -68,8 +72,10 @@ func TestQueueCancelSend(t *testing.T) {
 	_ = kafka.InitializeStubBroker(16)
 
 	// enqueue message to be sent first
-	msg, _ := kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage(ctx)
-	EnqueueAvailabilityStatusRequest(&msg)
+	msg := kafka.AvailabilityStatusMessage{SourceID: "1"}
+	err := EnqueueAvailabilityStatusRequest(ctx, &msg)
+	require.NoError(t, err)
+
 	// set the receiving message function up
 	wg := sync.WaitGroup{}
 	wg.Add(2)
@@ -92,8 +98,9 @@ func TestQueueCancelSend(t *testing.T) {
 	time.Sleep(20 * time.Millisecond)
 
 	// cancel the sender before the 5 seconds timeout (so cancel branch is triggered)
-	msg, _ = kafka.AvailabilityStatusMessage{SourceID: "1"}.GenericMessage(ctx)
-	EnqueueAvailabilityStatusRequest(&msg)
+	msg = kafka.AvailabilityStatusMessage{SourceID: "1"}
+	err = EnqueueAvailabilityStatusRequest(ctx, &msg)
+	require.NoError(t, err)
 	senderCancel()
 
 	// wait until the message is consumed

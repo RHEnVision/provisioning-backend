@@ -2,6 +2,7 @@ package background
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
@@ -14,8 +15,16 @@ var kafkaAvailabilityRequest = make(chan *kafka.GenericMessage, availabilityStat
 // EnqueueAvailabilityStatusRequest prepares a status request check to be sent in the next
 // batch to the platform kafka. Messages can be delayed up to several seconds until sent.
 // The function can block if the enqueueing channel is full.
-func EnqueueAvailabilityStatusRequest(msg *kafka.GenericMessage) {
-	kafkaAvailabilityRequest <- msg
+func EnqueueAvailabilityStatusRequest(ctx context.Context, asm *kafka.AvailabilityStatusMessage) error {
+	zerolog.Ctx(ctx).Trace().Str("source_id", asm.SourceID).Msgf("Enqueued source id %s availability check", asm.SourceID)
+
+	msg, err := asm.GenericMessage(ctx)
+	if err != nil {
+		return fmt.Errorf("cannot create message: %w", err)
+	}
+
+	kafkaAvailabilityRequest <- &msg
+	return nil
 }
 
 // send a message to the background worker for availability check

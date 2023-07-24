@@ -12,7 +12,7 @@ import (
 
 // Maximum batch size for each batch send, also an incoming buffered channel size to prevent
 // incoming requests to overload the sender.
-const availabilityStatusBatchSize = 1024
+const availabilityStatusBatchSize = 16
 
 // InitializeApi starts background goroutines for REST API processes.
 // Use context cancellation to stop them.
