@@ -19,3 +19,36 @@ func TestSleepCtxDeadline(t *testing.T) {
 	err := sleepCtx(ctx, 500*time.Microsecond)
 	require.ErrorIs(t, err, context.DeadlineExceeded)
 }
+
+func TestWaitAndRetryCall(t *testing.T) {
+	calls := 0
+	err := waitAndRetry(context.Background(), func() error {
+		calls += 1
+		return nil
+	}, 1, 1)
+	require.NoError(t, err)
+	require.Equal(t, 1, calls)
+}
+
+func TestWaitAndRetryErrFirst(t *testing.T) {
+	calls := 0
+	err := waitAndRetry(context.Background(), func() error {
+		calls += 1
+		return ErrTryAgain
+	}, 1, 1)
+	require.ErrorIs(t, err, ErrTryAgain)
+	require.Equal(t, 2, calls)
+}
+
+func TestWaitAndRetryErrSecond(t *testing.T) {
+	calls := 0
+	err := waitAndRetry(context.Background(), func() error {
+		calls += 1
+		if calls <= 1 {
+			return ErrTryAgain
+		}
+		return nil
+	}, 1, 1)
+	require.NoError(t, err)
+	require.Equal(t, 2, calls)
+}

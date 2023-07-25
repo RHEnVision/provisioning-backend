@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
@@ -254,22 +253,28 @@ func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTa
 	if err != nil {
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
-	backoffInterval := [...]int64{1000, 500, 500, 1000, 2000}
-	for _, interval := range backoffInterval {
-		time.Sleep(time.Duration(interval) * time.Millisecond)
+
+	err = waitAndRetry(ctx, func() error {
 		instancesDescriptionList, err := ec2Client.DescribeInstanceDetails(ctx, instancesIDList)
 		if err != nil {
 			return fmt.Errorf("cannot get list instances description: %w", err)
 		}
-		if len(instancesDescriptionList) > 0 {
-			for _, instance := range instancesDescriptionList {
-				err := rDao.UpdateReservationInstance(ctx, args.ReservationID, instance)
-				if err != nil {
-					return fmt.Errorf("cannot update instance description: %w", err)
-				}
-			}
-			break
+
+		if len(instancesDescriptionList) == 0 {
+			return ErrTryAgain
 		}
+
+		for _, instance := range instancesDescriptionList {
+			err := rDao.UpdateReservationInstance(ctx, args.ReservationID, instance)
+			if err != nil {
+				return fmt.Errorf("cannot update instance description: %w", err)
+			}
+		}
+		return nil
+	}, 1000, 500, 500, 1000, 2000)
+
+	if err != nil {
+		return fmt.Errorf("giving up: %w", err)
 	}
 
 	return nil

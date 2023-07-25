@@ -163,9 +163,26 @@ func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTa
 	}
 
 	for _, id := range ids {
-		instanceDesc, err := gcpClient.GetInstanceDescriptionByID(ctx, *id, args.Zone)
+		var instanceDesc *clients.InstanceDescription
+		err = waitAndRetry(ctx, func() error {
+			instanceDesc, err = gcpClient.GetInstanceDescriptionByID(ctx, *id, args.Zone)
+
+			if err != nil {
+				return fmt.Errorf("cannot get instance description : %w", err)
+			}
+
+			if instanceDesc.PublicIPv4 == "" {
+				return ErrTryAgain
+			}
+
+			return nil
+		}, 1, 500, 500, 1000, 2000, 2000)
+
 		if err != nil {
-			return fmt.Errorf("cannot get instance description : %w", err)
+			logger.Error().Err(err).Str("instance_id", *id).Msg("Cannot get instance description, skipping")
+
+			// try to get the others
+			continue
 		}
 
 		err = rDao.UpdateReservationInstance(ctx, args.ReservationID, instanceDesc)
@@ -173,5 +190,6 @@ func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTa
 			return fmt.Errorf("cannot update instance description: %w", err)
 		}
 	}
+
 	return nil
 }

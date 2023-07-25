@@ -127,3 +127,33 @@ func sleepCtx(ctx context.Context, d time.Duration) error {
 		return ctx.Err()
 	}
 }
+
+var ErrTryAgain = errors.New("try again")
+
+// wait and keep retrying until function returns nil in given millisecond intervals
+//
+//nolint:wrapcheck
+func waitAndRetry(ctx context.Context, f func() error, intervalsMs ...int) error {
+	if len(intervalsMs) < 2 {
+		panic("number of retries must be 2 or more")
+	}
+
+	var err error
+	retries := 0
+	for _, interval := range intervalsMs {
+		time.Sleep(time.Duration(interval) * time.Millisecond)
+		retries += 1
+		err = f()
+		if err == nil || ctx.Err() != nil {
+			break
+		}
+	}
+
+	logger := zerolog.Ctx(ctx)
+	if err != nil {
+		logger.Warn().Err(err).Msg("Error when retrying")
+	}
+	logger.Trace().Int("retries", retries-1).Msgf("Number of tries %d out of %d", retries, len(intervalsMs))
+
+	return err
+}
