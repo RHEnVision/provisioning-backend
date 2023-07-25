@@ -20,6 +20,10 @@ var filters = []string{
 	`([0-9a-fA-F]{2}[:-]){15}[0-9a-fA-F]{2}`,
 	// Example: 192.168.1.100:32453,
 	`\d+\.\d+\.\d+\.\d+:\d+`,
+	// Example: The resource 'projects/xxx' was not found
+	`'projects/[^']*'`,
+	// Example: 2023-06-24T19:34:34.2581206+00:00
+	`\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d+\+\d\d:\d\d`,
 }
 
 var replacement = []byte{'?'}

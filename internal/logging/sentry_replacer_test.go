@@ -90,3 +90,17 @@ func TestAWSResourceID(t *testing.T) {
 	_, _ = repl.Write([]byte("instance ID 'i-0fe8a8adc1403f5b1' does not exist\n\n\n"))
 	require.Equal(t, "instance ID '?' does not exist\n\n\n", buf.String())
 }
+
+func TestGoogleProject(t *testing.T) {
+	buf := bytes.NewBufferString("")
+	repl := NewSentryReplacer(buf)
+	_, _ = repl.Write([]byte("The resource 'projects/xxx' was not found\n"))
+	require.Equal(t, "The resource ? was not found\n", buf.String())
+}
+
+func TestAzureTime(t *testing.T) {
+	buf := bytes.NewBufferString("")
+	repl := NewSentryReplacer(buf)
+	_, _ = repl.Write([]byte("'start time': '2023-06-24T19:34:34.2581206+00:00'\n"))
+	require.Equal(t, "'start time': '?'\n", buf.String())
+}
