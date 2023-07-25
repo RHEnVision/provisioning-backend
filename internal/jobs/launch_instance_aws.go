@@ -255,9 +255,9 @@ func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTa
 	}
 
 	err = waitAndRetry(ctx, func() error {
-		instancesDescriptionList, err := ec2Client.DescribeInstanceDetails(ctx, instancesIDList)
-		if err != nil {
-			return fmt.Errorf("cannot get list instances description: %w", err)
+		instancesDescriptionList, errRetry := ec2Client.DescribeInstanceDetails(ctx, instancesIDList)
+		if errRetry != nil {
+			return fmt.Errorf("cannot get list instances description: %w", errRetry)
 		}
 
 		if len(instancesDescriptionList) == 0 {
@@ -265,8 +265,8 @@ func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTa
 		}
 
 		for _, instance := range instancesDescriptionList {
-			err := rDao.UpdateReservationInstance(ctx, args.ReservationID, instance)
-			if err != nil {
+			errRetry := rDao.UpdateReservationInstance(ctx, args.ReservationID, instance)
+			if errRetry != nil {
 				return fmt.Errorf("cannot update instance description: %w", err)
 			}
 		}
