@@ -69,8 +69,13 @@ func stdoutWriter(truncate bool) io.Writer {
 }
 
 func cloudwatchWriter() (io.Writer, func(), error) {
-	log.Debug().Msgf("Initializing cloudwatch logger key %s group %s stream %s region %s",
-		config.Cloudwatch.Key, config.Cloudwatch.Group, config.Cloudwatch.Stream, config.Cloudwatch.Region)
+	log.Debug().Msgf("Version %s initializing cloudwatch key %s group %s stream %s region %s",
+		version.BuildCommit,
+		config.Cloudwatch.Key,
+		config.Cloudwatch.Group,
+		config.Cloudwatch.Stream,
+		config.Cloudwatch.Region,
+	)
 
 	cwClient := newCloudwatchClient()
 	cloudWatchWriter, err := cww.NewWithClient(cwClient, 500*time.Millisecond, config.Cloudwatch.Group, config.Cloudwatch.Stream)
