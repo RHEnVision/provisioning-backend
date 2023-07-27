@@ -1,4 +1,44 @@
 <!-- insertion marker -->
+<a name="1.4.0"></a>
+
+## [1.4.0](https://github.com/RHEnVision/provisioning-backend/compare/1.3.0...1.4.0) (2023-07-26)
+
+### Features
+
+- **HMS-1246:** Use permission checks in statuser ([9a23611](https://github.com/RHEnVision/provisioning-backend/commit/9a2361155c6e23e35f0897b7b2a928c59e8bf765))
+
+### Bug Fixes
+
+- **HMS-2178:** followup context bug fix ([f9bcae5](https://github.com/RHEnVision/provisioning-backend/commit/f9bcae5c10a9a12db0c08a45dd85e8ca52a2ccc4))
+- **HMS-2178:** followup context fix for statuser ([586a756](https://github.com/RHEnVision/provisioning-backend/commit/586a7567d2d6dbdc9a1fcb57ad521892b4ddc48b))
+- **HMS-2002:** postpone db stats 10 minutes ([cfcaecb](https://github.com/RHEnVision/provisioning-backend/commit/cfcaecbfe1f4aecc974bdd4e9a75a3ca2712ce31))
+- **HMS-2181:** statuser throttling configuration options ([dce8174](https://github.com/RHEnVision/provisioning-backend/commit/dce81749131c827410c69131c61e58395c72ea58))
+- **HMS-2178:** fix context handling in Kafka consumer ([6c75031](https://github.com/RHEnVision/provisioning-backend/commit/6c75031130d22e5e3111ba2f6138f4b97d958bc0))
+- **HMS-2002:** calculate db stats immediately ([662a2f4](https://github.com/RHEnVision/provisioning-backend/commit/662a2f4b254bbd326e29ccf964d136e818098ee6))
+- **HMS-2175:** add AWS resource tag ([29bd8b6](https://github.com/RHEnVision/provisioning-backend/commit/29bd8b6a1d437ce7b8ef47ad3e699ffeaba491bf))
+- **HMS-1783:** limit reservations per second ([0b0fab7](https://github.com/RHEnVision/provisioning-backend/commit/0b0fab755d3626148c3e6a09150ae954c1007864))
+
+### Code Refactoring
+
+- Add GCP job test ([a9e30b2](https://github.com/RHEnVision/provisioning-backend/commit/a9e30b22780185b62f97ba6a1cff1b2a83504815))
+
+<a name="1.3.0"></a>
+
+## [1.3.0](https://github.com/RHEnVision/provisioning-backend/compare/1.2.0...1.3.0) (2023-07-14)
+
+### Features
+
+- **HMS-1955:** Add fetch instance(s) description step for GCP ([3b3a3f4](https://github.com/RHEnVision/provisioning-backend/commit/3b3a3f45c29cd9b5c173d953939598a17aab69cc))
+- **HMSPROV-2088:** refacor notification's context message ([65a0960](https://github.com/RHEnVision/provisioning-backend/commit/65a096061168012f68ca4ef8efbe3e47cfc0f554))
+
+### Bug Fixes
+
+- **HMS-2143:** pending state stat ([6615db0](https://github.com/RHEnVision/provisioning-backend/commit/6615db0a2e5cf96cafff28859ac859b285923dff))
+- **HMS-2002:** fix job queue duration registration ([175ed5e](https://github.com/RHEnVision/provisioning-backend/commit/175ed5e399aebd805fbe39a8edffb0b31767be70))
+- **HMS-2002:** database stats are in secs not ms ([ee885ee](https://github.com/RHEnVision/provisioning-backend/commit/ee885ee81df38dc940aa190b93dbc0bf1ced0744))
+- **HMS-2002:** cleanup stats logging ([f494205](https://github.com/RHEnVision/provisioning-backend/commit/f49420574340fe20578daa01f14d141ffa076f46))
+- **HMS-2002:** fix memory request limits ([69024fb](https://github.com/RHEnVision/provisioning-backend/commit/69024fbfdd20ce132f9f7acc5113d6229e72d738))
+
 <a name="1.2.0"></a>
 
 ## [1.2.0](https://github.com/RHEnVision/provisioning-backend/compare/1.1.0...1.2.0) (2023-06-28)
@@ -73,15 +113,15 @@
 ### Features
 
 - **HMSPROV-449:** Add correlation id to logger and context ([a7d6c6e](https://github.com/RHEnVision/provisioning-backend/commit/a7d6c6e2208ad9e4a393d0464de62424810d6b30))
-- Fetch Azure image resource group from IB ([19d1704](https://github.com/RHEnVision/provisioning-backend/commit/19d1704828c8bc514f7f8c49e9fff09c0cc3de68))
+- Fetch Azure image resource group from IB ([19d1704](https://github.com/RHEnVision/provisioning-backend/commit/19d1704828c8bc514f7f8c49e9fff09c0cc3de68)), related to [HMS-1691](https://issues.redhat.com/browse/HMS-1691)
 
 ### Bug Fixes
 
 - **HMS-1784:** set GOMAXPROC for API workers ([dcceb5e](https://github.com/RHEnVision/provisioning-backend/commit/dcceb5ec6813d26e8fef19bfa96934921d0a0438))
 - **HMS-1782:** cap job concurrency at 100 ([19655a6](https://github.com/RHEnVision/provisioning-backend/commit/19655a6b8faa763cf1fe16cc3f722633d8362233))
-- Allow OPTIONS method for Azure template ([db88d24](https://github.com/RHEnVision/provisioning-backend/commit/db88d24fc36b68e7a5fbe6ab3e3c680ba809f424))
-- Disable gzip on Azure Lighthouse template ([74ccf45](https://github.com/RHEnVision/provisioning-backend/commit/74ccf45e75e5e3183ff9244b726516084a38f4de))
-- Allow access from Azure portal ([55b38dd](https://github.com/RHEnVision/provisioning-backend/commit/55b38dd495f7fb82ebf748004c57a8c695cca47f))
+- Allow OPTIONS method for Azure template ([db88d24](https://github.com/RHEnVision/provisioning-backend/commit/db88d24fc36b68e7a5fbe6ab3e3c680ba809f424)), related to [HMS-1148](https://issues.redhat.com/browse/HMS-1148)
+- Disable gzip on Azure Lighthouse template ([74ccf45](https://github.com/RHEnVision/provisioning-backend/commit/74ccf45e75e5e3183ff9244b726516084a38f4de)), related to [HMS-1148](https://issues.redhat.com/browse/HMS-1148)
+- Allow access from Azure portal ([55b38dd](https://github.com/RHEnVision/provisioning-backend/commit/55b38dd495f7fb82ebf748004c57a8c695cca47f)), related to [HMS-1148](https://issues.redhat.com/browse/HMS-1148)
 - **HMS-1616:** split payload and model for better OpenAPI ([539f62c](https://github.com/RHEnVision/provisioning-backend/commit/539f62c2257da91d1434fafc069e0788d6cbb5e6))
 
 ### Code Refactoring
@@ -110,10 +150,10 @@
 
 ### Features
 
-- store Azure instance's IP address ([df8a489](https://github.com/RHEnVision/provisioning-backend/commit/df8a489f4023d78c0a5fb510da5ae4c27418456c))
-- allow Azure group principal in Lighthouse ([18db8e8](https://github.com/RHEnVision/provisioning-backend/commit/18db8e87c7ea137decf1f121574815d006016dff))
-- details of Azure source ([7c681c4](https://github.com/RHEnVision/provisioning-backend/commit/7c681c49d6d4d8b23f207d6d07708bbe128cd3f2))
-- Create Azure VMs in paralel ([e4d146c](https://github.com/RHEnVision/provisioning-backend/commit/e4d146c4e7b1f3d39c13a4cd960c4f4cd5afb281))
+- store Azure instance's IP address ([df8a489](https://github.com/RHEnVision/provisioning-backend/commit/df8a489f4023d78c0a5fb510da5ae4c27418456c)), related to [HMS-1595](https://issues.redhat.com/browse/HMS-1595)
+- allow Azure group principal in Lighthouse ([18db8e8](https://github.com/RHEnVision/provisioning-backend/commit/18db8e87c7ea137decf1f121574815d006016dff)), related to [HMS-1148](https://issues.redhat.com/browse/HMS-1148)
+- details of Azure source ([7c681c4](https://github.com/RHEnVision/provisioning-backend/commit/7c681c49d6d4d8b23f207d6d07708bbe128cd3f2)), related to [HMS-1509](https://issues.redhat.com/browse/HMS-1509)
+- Create Azure VMs in paralel ([e4d146c](https://github.com/RHEnVision/provisioning-backend/commit/e4d146c4e7b1f3d39c13a4cd960c4f4cd5afb281)), related to [HMS-1407](https://issues.redhat.com/browse/HMS-1407)
 
 ### Bug Fixes
 
@@ -137,19 +177,19 @@
 ### Features
 
 - **HMS-1001:** Add created instances ids to GCP reservation ([9e8d936](https://github.com/RHEnVision/provisioning-backend/commit/9e8d9367da43c341e13dacdf188f9150d6ec46a3))
-- Azure support for cloud init ([781753b](https://github.com/RHEnVision/provisioning-backend/commit/781753b02030dfc889a61faa8e890ec075a35260))
-- shorten Azure polling intervals ([d097a9f](https://github.com/RHEnVision/provisioning-backend/commit/d097a9f336bb6b236b71ca2dafbacad2b69933fa))
+- Azure support for cloud init ([781753b](https://github.com/RHEnVision/provisioning-backend/commit/781753b02030dfc889a61faa8e890ec075a35260)), related to [HMS-1435](https://issues.redhat.com/browse/HMS-1435)
+- shorten Azure polling intervals ([d097a9f](https://github.com/RHEnVision/provisioning-backend/commit/d097a9f336bb6b236b71ca2dafbacad2b69933fa)), related to [HMS-1404](https://issues.redhat.com/browse/HMS-1404)
 - **HMS-761:** add instance description to aws job ([d0291d2](https://github.com/RHEnVision/provisioning-backend/commit/d0291d288f8a75ab3cc2c81db8922252514a6fbd))
-- Add sentry writer to zerolog ([3105091](https://github.com/RHEnVision/provisioning-backend/commit/31050918df0bad45d9834ccfb4f69296eebca5fa))
+- Add sentry writer to zerolog ([3105091](https://github.com/RHEnVision/provisioning-backend/commit/31050918df0bad45d9834ccfb4f69296eebca5fa)), related to [HMS-851](https://issues.redhat.com/browse/HMS-851)
 - **HMS-1110:** Add source permission validation check endpoint ([e84ec81](https://github.com/RHEnVision/provisioning-backend/commit/e84ec81c966b7d47bfd156bbf4981d92d82c220a))
-- Azure lighthouse offering template ([2029433](https://github.com/RHEnVision/provisioning-backend/commit/20294330f9b82e703c799d7e87643e263210c816))
+- Azure lighthouse offering template ([2029433](https://github.com/RHEnVision/provisioning-backend/commit/20294330f9b82e703c799d7e87643e263210c816)), related to [HMS-1148](https://issues.redhat.com/browse/HMS-1148)
 
 ### Bug Fixes
 
 - **HMS-1105:** add reservation counters ([2ac7e5b](https://github.com/RHEnVision/provisioning-backend/commit/2ac7e5bfdf8bea1714ce2bcb6c3bf015298b98e3))
 - **HMS-1396:** integration job queue test ([11f1ec6](https://github.com/RHEnVision/provisioning-backend/commit/11f1ec6bd19d725bfcf9e685405796b48289e8fc))
 - **HMS-1403:** timeout for job queue ([81582d2](https://github.com/RHEnVision/provisioning-backend/commit/81582d21702d79c294aa798fcbbf6f7fb9791942))
-- cascade delete of pubkey to Azure details ([a8c5208](https://github.com/RHEnVision/provisioning-backend/commit/a8c52088adb86f6f0cad7ac846464885dba7d6b6))
+- cascade delete of pubkey to Azure details ([a8c5208](https://github.com/RHEnVision/provisioning-backend/commit/a8c52088adb86f6f0cad7ac846464885dba7d6b6)), related to [HMS-1402](https://issues.redhat.com/browse/HMS-1402)
 
 ### Code Refactoring
 
@@ -163,17 +203,17 @@
 
 ### Features
 
-- Azure reservation details endpoint ([db103ff](https://github.com/RHEnVision/provisioning-backend/commit/db103ff11bafd3152c2b45d0ef1d178954ee8286))
-- consume Azure secret ([e27a875](https://github.com/RHEnVision/provisioning-backend/commit/e27a875e9a1837f1411ae922623a905b40702dfa))
-- allow nullable fields iOpenAPI ([c2ae5a8](https://github.com/RHEnVision/provisioning-backend/commit/c2ae5a86ae7d0698d1c927c4e712d782da705794))
+- Azure reservation details endpoint ([db103ff](https://github.com/RHEnVision/provisioning-backend/commit/db103ff11bafd3152c2b45d0ef1d178954ee8286)), related to [HMS-1393](https://issues.redhat.com/browse/HMS-1393)
+- consume Azure secret ([e27a875](https://github.com/RHEnVision/provisioning-backend/commit/e27a875e9a1837f1411ae922623a905b40702dfa)), related to [HMS-1374](https://issues.redhat.com/browse/HMS-1374)
+- allow nullable fields iOpenAPI ([c2ae5a8](https://github.com/RHEnVision/provisioning-backend/commit/c2ae5a86ae7d0698d1c927c4e712d782da705794)), related to [HMS-1357](https://issues.redhat.com/browse/HMS-1357)
 - **HMS-894:** Add GCP reservation test ([64388f6](https://github.com/RHEnVision/provisioning-backend/commit/64388f635c800dca4716808700fbf87f9b20ca07))
-- Add Azure reservation to OpenAPI ([288e3fb](https://github.com/RHEnVision/provisioning-backend/commit/288e3fb09850482f1c29aae63ca2bc00d18bd5ff))
+- Add Azure reservation to OpenAPI ([288e3fb](https://github.com/RHEnVision/provisioning-backend/commit/288e3fb09850482f1c29aae63ca2bc00d18bd5ff)), related to [HMS-1182](https://issues.redhat.com/browse/HMS-1182)
 
 ### Bug Fixes
 
 - **HMS-879:** missing metric registration ([2055cf5](https://github.com/RHEnVision/provisioning-backend/commit/2055cf5d6dd0228e5fb6efa303de19e699e7f017))
-- name public IP and nic to be VM specific ([cc74d2e](https://github.com/RHEnVision/provisioning-backend/commit/cc74d2eca2b4f5173d866a8b279d9a95e7e4a20b))
-- allow dynamic naming for Azure disk ([f64c209](https://github.com/RHEnVision/provisioning-backend/commit/f64c209ef320249247ff9b9c1cabd1f0cc7dbe79))
+- name public IP and nic to be VM specific ([cc74d2e](https://github.com/RHEnVision/provisioning-backend/commit/cc74d2eca2b4f5173d866a8b279d9a95e7e4a20b)), related to [HMS-1146](https://issues.redhat.com/browse/HMS-1146)
+- allow dynamic naming for Azure disk ([f64c209](https://github.com/RHEnVision/provisioning-backend/commit/f64c209ef320249247ff9b9c1cabd1f0cc7dbe79)), related to [HMS-1146](https://issues.redhat.com/browse/HMS-1146)
 - **HMS-879:** workers metrics ([7aef3fc](https://github.com/RHEnVision/provisioning-backend/commit/7aef3fc752c86cc456820eafe00ef4b7f99db2cf))
 
 ### Code Refactoring
@@ -188,11 +228,11 @@
 
 ### Features
 
-- respect Amount in Azure deployments ([77942a2](https://github.com/RHEnVision/provisioning-backend/commit/77942a25a11d727d24bda3f86268ead6b2aa630c))
-- Fetch image name from image builder ([077dd25](https://github.com/RHEnVision/provisioning-backend/commit/077dd25ae59e298bc1366943d2107319c8a71953))
+- respect Amount in Azure deployments ([77942a2](https://github.com/RHEnVision/provisioning-backend/commit/77942a25a11d727d24bda3f86268ead6b2aa630c)), related to [HMS-1146](https://issues.redhat.com/browse/HMS-1146)
+- Fetch image name from image builder ([077dd25](https://github.com/RHEnVision/provisioning-backend/commit/077dd25ae59e298bc1366943d2107319c8a71953)), related to [HMS-1219](https://issues.redhat.com/browse/HMS-1219)
 - **HMS-969:** List and filter sources by their hyperscaler ([74f26f5](https://github.com/RHEnVision/provisioning-backend/commit/74f26f5769829e4abd3a6e820dea6771077b2c6e))
 - **HMS-1110:** ListAttachedPolicies feature ([befed63](https://github.com/RHEnVision/provisioning-backend/commit/befed63f39e036d8f7159fc2fff4b1ef40fa8711))
-- add provider for Sources in OpenAPI spec ([877dae8](https://github.com/RHEnVision/provisioning-backend/commit/877dae89b414235f9c7ab6e81d06208ac384f20c))
+- add provider for Sources in OpenAPI spec ([877dae8](https://github.com/RHEnVision/provisioning-backend/commit/877dae89b414235f9c7ab6e81d06208ac384f20c)), related to [HMS-969](https://issues.redhat.com/browse/HMS-969)
 
 ### Bug Fixes
 
@@ -208,7 +248,7 @@
 - **HMS-860:** fix typo in function name ([361da5a](https://github.com/RHEnVision/provisioning-backend/commit/361da5a485ba204c1212a7f3884b6f0ced66e11b))
 - **HMS-1242:** atomically read statistics ([0b7a42b](https://github.com/RHEnVision/provisioning-backend/commit/0b7a42bc86394c7dd03aa1f53a498c8689b3c5fa))
 - **HMS-1240:** add step titles back ([687e73a](https://github.com/RHEnVision/provisioning-backend/commit/687e73a28b6316605de1cde055b2f82481961582))
-- allow setting proxy per client ([6e191e4](https://github.com/RHEnVision/provisioning-backend/commit/6e191e414ee46b7167be9739decd53122e1b3ff2))
+- allow setting proxy per client ([6e191e4](https://github.com/RHEnVision/provisioning-backend/commit/6e191e414ee46b7167be9739decd53122e1b3ff2)), related to [HMS-1227](https://issues.redhat.com/browse/HMS-1227)
 - **HMS-1209:** launch templates for AWS ([01b4933](https://github.com/RHEnVision/provisioning-backend/commit/01b493303e12a27c3ea7865dbc0b346448101b6a))
 - **HMS-1106:** rename ListInstanceTypes ([f224cb4](https://github.com/RHEnVision/provisioning-backend/commit/f224cb41ff56595d247042286ba9808dc629b1aa))
 - **HMSPROV-429:** floorist exporter ([bf11efd](https://github.com/RHEnVision/provisioning-backend/commit/bf11efd62e9fe9cd6d4fbbd908abc95deba69b76))
@@ -226,9 +266,9 @@
 - **HMS-953:** Put account id into the context for worker. ([ae8fc5a](https://github.com/RHEnVision/provisioning-backend/commit/ae8fc5a421139ef9cf860f1ed6f60791964a33a6))
 - **HMS-926:** User identity passed to jobs. ([5c4999b](https://github.com/RHEnVision/provisioning-backend/commit/5c4999bdb766bc0e7829ec81259ecf520f6ddd92))
 - **HMS-1122:** Add total received availability check metric ([9ef3886](https://github.com/RHEnVision/provisioning-backend/commit/9ef3886fc9f23e3493b2ebd5b9fd1fb955d0ccd2))
-- Azure deployment task ([02b55c3](https://github.com/RHEnVision/provisioning-backend/commit/02b55c39af439a06db029ec0fb7a02a1286406c4))
-- Azure reservation service ([22520fb](https://github.com/RHEnVision/provisioning-backend/commit/22520fbb72044401e2461fed07c002b76f1122fb))
-- minimal PoC Azure deployment ([00dc2d3](https://github.com/RHEnVision/provisioning-backend/commit/00dc2d33baf25336a75003cd85195e2d1cb08bc6))
+- Azure deployment task ([02b55c3](https://github.com/RHEnVision/provisioning-backend/commit/02b55c39af439a06db029ec0fb7a02a1286406c4)), related to [HMS-1058](https://issues.redhat.com/browse/HMS-1058)
+- Azure reservation service ([22520fb](https://github.com/RHEnVision/provisioning-backend/commit/22520fbb72044401e2461fed07c002b76f1122fb)), related to [HMS-1058](https://issues.redhat.com/browse/HMS-1058)
+- minimal PoC Azure deployment ([00dc2d3](https://github.com/RHEnVision/provisioning-backend/commit/00dc2d33baf25336a75003cd85195e2d1cb08bc6)), related to [HMS-1058](https://issues.redhat.com/browse/HMS-1058)
 
 ### Bug Fixes
 
@@ -237,7 +277,7 @@
 
 ### Code Refactoring
 
-- Add step in Azure job ([8ae2020](https://github.com/RHEnVision/provisioning-backend/commit/8ae2020406d117eb10b6e898dfd76dadb4f76a28))
+- Add step in Azure job ([8ae2020](https://github.com/RHEnVision/provisioning-backend/commit/8ae2020406d117eb10b6e898dfd76dadb4f76a28)), related to [HMS-1165](https://issues.redhat.com/browse/HMS-1165)
 - Regenerate HTTP clients ([5933f8e](https://github.com/RHEnVision/provisioning-backend/commit/5933f8ef9169a3227e79e62b0c36b014a2525237))
 
 <a name="0.14.0"></a>
@@ -255,11 +295,11 @@
 - **HMSPROV-390:** RSA fingerprint and migration ([e115286](https://github.com/RHEnVision/provisioning-backend/commit/e115286767281b9401c384c311feeda8820ca588))
 - **HMSPROV-425:** recover panics in workers ([2a560d5](https://github.com/RHEnVision/provisioning-backend/commit/2a560d524040312ba3984197b8902dce3f1b1007))
 - **HMSPROV-425:** incorporate dejq into the app ([f8a0b6f](https://github.com/RHEnVision/provisioning-backend/commit/f8a0b6f5fb5e767d2d0d57f1f11f892c7f014946))
-- image builder clowder config ([29aa59d](https://github.com/RHEnVision/provisioning-backend/commit/29aa59d95cdb1b2fdc99731dcc44d78085932303))
-- filtering Provisioning auth for Source ([cebbdb3](https://github.com/RHEnVision/provisioning-backend/commit/cebbdb3df4d21826fc7fdcc66c7fb33939b53e11))
+- image builder clowder config ([29aa59d](https://github.com/RHEnVision/provisioning-backend/commit/29aa59d95cdb1b2fdc99731dcc44d78085932303)), related to [HMSPROV-421](https://issues.redhat.com/browse/HMSPROV-421)
+- filtering Provisioning auth for Source ([cebbdb3](https://github.com/RHEnVision/provisioning-backend/commit/cebbdb3df4d21826fc7fdcc66c7fb33939b53e11)), related to [HMSPROV-426](https://issues.redhat.com/browse/HMSPROV-426)
 - **HMSPROV-387:** filter out noisy kafka logs ([e0a7b21](https://github.com/RHEnVision/provisioning-backend/commit/e0a7b216744ae4232a6474a795c9ae2967eb99a6))
 - **HMSPROV-387:** use time-based offset for statuser ([bbc59a9](https://github.com/RHEnVision/provisioning-backend/commit/bbc59a9cfc9960afe52db731507e761d6e4e2746))
-- unique index on pubkey_resource ([2b68b0a](https://github.com/RHEnVision/provisioning-backend/commit/2b68b0a4240b5ec2e3d77ce64a5ce92292f65097))
+- unique index on pubkey_resource ([2b68b0a](https://github.com/RHEnVision/provisioning-backend/commit/2b68b0a4240b5ec2e3d77ce64a5ce92292f65097)), related to [HMSPROV-415](https://issues.redhat.com/browse/HMSPROV-415)
 
 ### Code Refactoring
 
@@ -273,8 +313,8 @@
 
 - **HMSPROV-177:** Add availability check request duration metric ([5944953](https://github.com/RHEnVision/provisioning-backend/commit/594495321ddaa55f6802bdaeeefc7cb1b776c888))
 - **HMSPROV-177:** Add total availability check request metric ([13d508d](https://github.com/RHEnVision/provisioning-backend/commit/13d508db6870a3ed93c1d8123f622cead6f22013))
-- add account identity endpoint ([3df28fb](https://github.com/RHEnVision/provisioning-backend/commit/3df28fbbfc9ffc7ecfa4fa39deb00245d826b303))
-- introduce availability status endpoint ([272f577](https://github.com/RHEnVision/provisioning-backend/commit/272f577b69852dbb4bd8a13a3e37fa81bf2c2e87))
+- add account identity endpoint ([3df28fb](https://github.com/RHEnVision/provisioning-backend/commit/3df28fbbfc9ffc7ecfa4fa39deb00245d826b303)), related to [HMSPROV-357](https://issues.redhat.com/browse/HMSPROV-357)
+- introduce availability status endpoint ([272f577](https://github.com/RHEnVision/provisioning-backend/commit/272f577b69852dbb4bd8a13a3e37fa81bf2c2e87)), related to [/HMSPROV-337](https://issues.redhat.com/browse/HMSPROV-337)
 - **HMSPROV-345:** Add source check availability per each provider ([c20ef14](https://github.com/RHEnVision/provisioning-backend/commit/c20ef14924e8c5599eebed364092574f0e875f0c))
 
 ### Bug Fixes
@@ -295,14 +335,14 @@
 - **HMSPROV-352:** error out jobs early ([a85152a](https://github.com/RHEnVision/provisioning-backend/commit/a85152a747535acdd94d4b784fdd3f7600918d73))
 - **HMSPROV-390:** calculate fingerprint for AWS ([df98843](https://github.com/RHEnVision/provisioning-backend/commit/df988435e24621496e170e5fe349b6af8b4096f6))
 - **HMSPROV-345:** change to Source ([559bcfe](https://github.com/RHEnVision/provisioning-backend/commit/559bcfe2ad607e37875906db225229af64359821))
-- Kafka headers are slice now ([5fdc3eb](https://github.com/RHEnVision/provisioning-backend/commit/5fdc3eb88ff827e8f28347829018fb6fe238bc7d))
+- Kafka headers are slice now ([5fdc3eb](https://github.com/RHEnVision/provisioning-backend/commit/5fdc3eb88ff827e8f28347829018fb6fe238bc7d)), related to [/HMSPROV-337](https://issues.redhat.com/browse/HMSPROV-337)
 - **HMSPROV-345:** remove default tag ([5659d0d](https://github.com/RHEnVision/provisioning-backend/commit/5659d0d520402b721d5c6a3b2a20f95dbc285183))
 - **HMSPROV-345:** Add event_type header and resource type to kafka msg ([28a69da](https://github.com/RHEnVision/provisioning-backend/commit/28a69da29e676801de84ff15d978ddb9103ba4fd))
 - **HMSPROV-170:** change topic to platform.sources.status ([b63ff7a](https://github.com/RHEnVision/provisioning-backend/commit/b63ff7aaffd16b546e2f7b3c8fc7183977deab09))
-- Use correct topic for sources availability check ([3e7f820](https://github.com/RHEnVision/provisioning-backend/commit/3e7f8208394010c2ecada463f44284245f8470a6))
-- utilize clowder topic mapping ([8c2ef77](https://github.com/RHEnVision/provisioning-backend/commit/8c2ef7752b5331e5fc456781428bd2398328cf3d))
+- Use correct topic for sources availability check ([3e7f820](https://github.com/RHEnVision/provisioning-backend/commit/3e7f8208394010c2ecada463f44284245f8470a6)), related to [HMSPROV-170](https://issues.redhat.com/browse/HMSPROV-170)
+- utilize clowder topic mapping ([8c2ef77](https://github.com/RHEnVision/provisioning-backend/commit/8c2ef7752b5331e5fc456781428bd2398328cf3d)), related to [HMSPROV-343](https://issues.redhat.com/browse/HMSPROV-343)
 - **HMSPROV-368:** change version to BuildCommit ([f3991bb](https://github.com/RHEnVision/provisioning-backend/commit/f3991bb90a76034a9aa29d141f0f0ed340253a1e))
-- ensure pubkey is always present on AWS ([2c310dd](https://github.com/RHEnVision/provisioning-backend/commit/2c310dd338b929619fee437a6da44f731f68e81e))
+- ensure pubkey is always present on AWS ([2c310dd](https://github.com/RHEnVision/provisioning-backend/commit/2c310dd338b929619fee437a6da44f731f68e81e)), related to [HMSPROV-339](https://issues.redhat.com/browse/HMSPROV-339)
 
 <a name="0.12.0"></a>
 
@@ -317,13 +357,13 @@
 
 ### Bug Fixes
 
-- payload name not nullable ([996251d](https://github.com/RHEnVision/provisioning-backend/commit/996251d0c17dbf1b120d4c473a74f61854f77a61))
+- payload name not nullable ([996251d](https://github.com/RHEnVision/provisioning-backend/commit/996251d0c17dbf1b120d4c473a74f61854f77a61)), related to [HMSPROV-373](https://issues.redhat.com/browse/HMSPROV-373)
 - intermittent failures on CI for ASM queue test ([656ee05](https://github.com/RHEnVision/provisioning-backend/commit/656ee05b8d9634d671aff0067ea7b1dc8336a48d))
 - log topic alongside trace send message ([4f9a62a](https://github.com/RHEnVision/provisioning-backend/commit/4f9a62ac3c75612c4495615f641321ce9c7567ab))
 - enable Kafka in Clowder ([8ea9023](https://github.com/RHEnVision/provisioning-backend/commit/8ea90236707a4f0cd080b48bd0f6aec6a2368deb))
 - kafka port is a pointer ([4ca3076](https://github.com/RHEnVision/provisioning-backend/commit/4ca30768ed981a938f6d8d1de7d2142597ef29a9))
 - create topics in kafka startup script ([f7b2fab](https://github.com/RHEnVision/provisioning-backend/commit/f7b2fabce583884a94df6aa9974254c5ee20b42d))
-- scope existing pubkey search by source id ([af89244](https://github.com/RHEnVision/provisioning-backend/commit/af892449955be50118150015a6cf483c7d2ae97b))
+- scope existing pubkey search by source id ([af89244](https://github.com/RHEnVision/provisioning-backend/commit/af892449955be50118150015a6cf483c7d2ae97b)), related to [HMSPROV-366](https://issues.redhat.com/browse/HMSPROV-366)
 - **kafka:** CA config from string ([34f4c59](https://github.com/RHEnVision/provisioning-backend/commit/34f4c59af28b52087e52dc2f12d8273bc0966f6a))
 - **sources:** handle source without application type correctly ([75bc847](https://github.com/RHEnVision/provisioning-backend/commit/75bc8471cff0ffbb30908ad0bfec125fba3216e6))
 - break availability queue sender loop on context cancel ([0ec4201](https://github.com/RHEnVision/provisioning-backend/commit/0ec420179b2372e875d829910123efcf5203fdd9))
@@ -348,13 +388,13 @@
 ### Bug Fixes
 
 - missing cache type variable for api ([0ed8c1b](https://github.com/RHEnVision/provisioning-backend/commit/0ed8c1bc8ade1d3b8346240855adcb76d5ab5a3f))
-- **reservation:** generic reservation by id ([5131c7b](https://github.com/RHEnVision/provisioning-backend/commit/5131c7b08c4164dcb11cb93ecb55916665132ccc))
+- **reservation:** generic reservation by id ([5131c7b](https://github.com/RHEnVision/provisioning-backend/commit/5131c7b08c4164dcb11cb93ecb55916665132ccc)), related to [HMSPROV-349](https://issues.redhat.com/browse/HMSPROV-349)
 - null for aws_reservation_id when pending ([eb5e353](https://github.com/RHEnVision/provisioning-backend/commit/eb5e353d2d17541331bc460d587b95c48c15a75d))
 - print full errors in logs ([7cc2e10](https://github.com/RHEnVision/provisioning-backend/commit/7cc2e10181bd623549b6ff78d03480e82c47bff3))
 - **config:** guard for non-exixtend kafka config ([a5b3d9c](https://github.com/RHEnVision/provisioning-backend/commit/a5b3d9c552953f3ddb7824c67712719b7a83bd27))
 - **config:** unleash token as bearer header ([3bb424c](https://github.com/RHEnVision/provisioning-backend/commit/3bb424c889b8b84d8b982cae6e24ea9af1a927ba))
 - **config:** correct Unleash URL prefix ([bd6ab5a](https://github.com/RHEnVision/provisioning-backend/commit/bd6ab5a02d317a51e9a5a7ca742bbd372b2807bf))
-- **logging:** Disable middlewares for status routes ([811905d](https://github.com/RHEnVision/provisioning-backend/commit/811905dcf89335174a173f4362892c0f0931dce3))
+- **logging:** Disable middlewares for status routes ([811905d](https://github.com/RHEnVision/provisioning-backend/commit/811905dcf89335174a173f4362892c0f0931dce3)), related to [HMSPROV-333](https://issues.redhat.com/browse/HMSPROV-333)
 
 <a name="0.10.0"></a>
 
