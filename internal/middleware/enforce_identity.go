@@ -55,6 +55,7 @@ func EnforceIdentity(next http.Handler) http.Handler {
 
 		topLevelOrgIDFallback(&jsonData)
 
+		logger.Debug().RawJSON("user", []byte(idRaw)).Msg("Enforcing identity")
 		err = checkHeader(r.Context(), &jsonData, w)
 		if err != nil {
 			return

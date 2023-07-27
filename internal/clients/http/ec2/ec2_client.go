@@ -395,22 +395,25 @@ func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanc
 		KeyName:        &params.KeyName,
 		UserData:       &encodedUserData,
 	}
-	if name != nil {
-		input.TagSpecifications = []types.TagSpecification{
-			{
-				ResourceType: types.ResourceTypeInstance,
-				Tags: []types.Tag{
-					{
-						Key:   ptr.To("Name"),
-						Value: name,
-					},
-					{
-						Key:   ptr.To("rhhc:rid"),
-						Value: ptr.To(config.EnvironmentPrefix("r", strconv.FormatInt(reservation.ID, 10))),
-					},
+
+	input.TagSpecifications = []types.TagSpecification{
+		{
+			ResourceType: types.ResourceTypeInstance,
+			Tags: []types.Tag{
+				{
+					Key:   ptr.To("rhhc:rid"),
+					Value: ptr.To(config.EnvironmentPrefix("r", strconv.FormatInt(reservation.ID, 10))),
 				},
 			},
+		},
+	}
+
+	if name != nil {
+		t := types.Tag{
+			Key:   ptr.To("Name"),
+			Value: name,
 		}
+		input.TagSpecifications[0].Tags = append(input.TagSpecifications[0].Tags, t)
 	}
 
 	resp, err := c.ec2.RunInstances(ctx, input)
