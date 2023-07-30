@@ -65,6 +65,7 @@ func MountAPI(r *chi.Mux) {
 			// r.Use(middleware.EnforcePermissions("source", "read"))
 
 			r.Get("/", s.ListSources)
+			r.With(middleware.Pagination).Get("/", s.ListSources)
 			r.Route("/{ID}", func(r chi.Router) {
 				r.Get("/status", s.SourcesStatus)
 
@@ -84,7 +85,8 @@ func MountAPI(r *chi.Mux) {
 
 		r.Route("/pubkeys", func(r chi.Router) {
 			r.With(middleware.EnforcePermissions("pubkey", "write")).Post("/", s.CreatePubkey)
-			r.With(middleware.EnforcePermissions("pubkey", "read")).Get("/", s.ListPubkeys)
+			r.With(middleware.EnforcePermissions("pubkey", "read")).With(middleware.Pagination).Get("/", s.ListPubkeys)
+			r.Post("/", s.CreatePubkey)
 			r.Route("/{ID}", func(r chi.Router) {
 				r.With(middleware.EnforcePermissions("pubkey", "read")).Get("/", s.GetPubkey)
 				r.With(middleware.EnforcePermissions("pubkey", "write")).Delete("/", s.DeletePubkey)
@@ -92,7 +94,7 @@ func MountAPI(r *chi.Mux) {
 		})
 
 		r.Route("/reservations", func(r chi.Router) {
-			r.With(middleware.EnforcePermissions("reservation", "read")).Get("/", s.ListReservations)
+			r.With(middleware.EnforcePermissions("reservation", "read")).With(middleware.Pagination).Get("/", s.ListReservations)
 			// Different types do have different payloads, therefore TYPE must be part of
 			// URL and not a URL (filter) parameter.
 			r.Route("/{TYPE}", func(r chi.Router) {

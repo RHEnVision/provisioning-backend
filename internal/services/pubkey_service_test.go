@@ -24,6 +24,7 @@ func TestListPubkeysHandler(t *testing.T) {
 	ctx := stubs.WithAccountDaoOne(context.Background())
 	ctx = identity.WithTenant(t, ctx)
 	ctx = stubs.WithPubkeyDao(ctx)
+
 	err := stubs.AddPubkey(ctx, &models.Pubkey{
 		Name: factories.SeqNameWithPrefix("pubkey"),
 		Body: factories.GenerateRSAPubKey(t),
@@ -35,7 +36,7 @@ func TestListPubkeysHandler(t *testing.T) {
 	})
 	require.NoError(t, err, "failed to add stubbed key")
 
-	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/pubkeys", nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/pubkeys?limit=&offset=", nil)
 	require.NoError(t, err, "failed to create request")
 
 	rr := httptest.NewRecorder()

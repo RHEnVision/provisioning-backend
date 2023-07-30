@@ -8,6 +8,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -59,7 +60,10 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 func ListReservations(w http.ResponseWriter, r *http.Request) {
 	rDao := dao.GetReservationDao(r.Context())
 
-	reservations, err := rDao.List(r.Context(), 100, 0)
+	offset := page.Offset(r.Context()).Int64()
+	limit := page.Limit(r.Context()).Int64()
+
+	reservations, err := rDao.List(r.Context(), limit, offset)
 	if err != nil {
 		renderError(w, r, payloads.NewDAOError(r.Context(), "list reservations", err))
 		return
