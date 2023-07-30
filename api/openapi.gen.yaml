@@ -471,6 +471,21 @@ components:
                     nullable: true
                 provider:
                     type: string
+    parameters:
+        Limit:
+            name: limit
+            in: query
+            description: The number of items to return
+            schema:
+                type: integer
+                default: 100
+        Offset:
+            name: offset
+            in: query
+            description: The number of items to skip before starting to collect the result set
+            schema:
+                type: integer
+                default: 0
     responses:
         BadRequest:
             description: The request's parameters are not valid
@@ -901,6 +916,9 @@ paths:
             description: |
                 A pubkey represents an SSH public portion of a key pair with name and body. This operation returns list of all pubkeys for particular account.
             operationId: getPubkeyList
+            parameters:
+                - $ref: '#/components/parameters/Limit'
+                - $ref: '#/components/parameters/Offset'
             responses:
                 "200":
                     description: Returned on success.
@@ -998,6 +1016,9 @@ paths:
             description: |
                 A reservation is a way to activate a job, keeps all data needed for a job to start. This operation returns list of all reservations for particular account. To get a reservation with common fields, use /reservations/ID. To get a detailed reservation with all fields which are different per provider, use /reservations/aws/ID. Reservation can be in three states: pending, success, failed. This can be recognized by the success field (null for pending, true for success, false for failure). See the examples.
             operationId: getReservationsList
+            parameters:
+                - $ref: '#/components/parameters/Limit'
+                - $ref: '#/components/parameters/Offset'
             responses:
                 "200":
                     description: Returned on success.
@@ -1229,14 +1250,8 @@ paths:
                 Cloud credentials are kept in the sources application. This endpoint lists available sources for the particular account per individual type (AWS, Azure, ...). All the fields in the response are optional and can be omitted if Sources application also omits them.
             operationId: getSourceList
             parameters:
-                - name: provider
-                  in: query
-                  schema:
-                    type: string
-                    enum:
-                        - aws
-                        - azure
-                        - gcp
+                - $ref: '#/components/parameters/Limit'
+                - $ref: '#/components/parameters/Offset'
             responses:
                 "200":
                     description: Returned on success.

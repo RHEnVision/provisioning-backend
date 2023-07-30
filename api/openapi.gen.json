@@ -406,6 +406,26 @@
         }
       }
     },
+    "parameters": {
+      "Limit": {
+        "description": "The number of items to return",
+        "in": "query",
+        "name": "limit",
+        "schema": {
+          "default": 100,
+          "type": "integer"
+        }
+      },
+      "Offset": {
+        "description": "The number of items to skip before starting to collect the result set",
+        "in": "query",
+        "name": "offset",
+        "schema": {
+          "default": 0,
+          "type": "integer"
+        }
+      }
+    },
     "responses": {
       "BadRequest": {
         "content": {
@@ -1290,6 +1310,14 @@
       "get": {
         "description": "A pubkey represents an SSH public portion of a key pair with name and body. This operation returns list of all pubkeys for particular account.\n",
         "operationId": "getPubkeyList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1436,6 +1464,14 @@
       "get": {
         "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. This operation returns list of all reservations for particular account. To get a reservation with common fields, use /reservations/ID. To get a detailed reservation with all fields which are different per provider, use /reservations/aws/ID. Reservation can be in three states: pending, success, failed. This can be recognized by the success field (null for pending, true for success, false for failure). See the examples.\n",
         "operationId": "getReservationsList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1794,16 +1830,10 @@
         "operationId": "getSourceList",
         "parameters": [
           {
-            "in": "query",
-            "name": "provider",
-            "schema": {
-              "enum": [
-                "aws",
-                "azure",
-                "gcp"
-              ],
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
           }
         ],
         "responses": {

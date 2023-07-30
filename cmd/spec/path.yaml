@@ -107,6 +107,9 @@ paths:
       operationId: getPubkeyList
       tags:
         - Pubkey
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
       description: >
         A pubkey represents an SSH public portion of a key pair with name and body.
         This operation returns list of all pubkeys for particular account.
@@ -132,14 +135,8 @@ paths:
       tags:
         - Source
       parameters:
-      - name: provider
-        in: query
-        schema:
-          type: string
-          enum:
-            - aws
-            - azure
-            - gcp
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
       responses:
         '200':
           description: Returned on success.
@@ -341,6 +338,9 @@ paths:
       operationId: getReservationsList
       tags:
         - Reservation
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
       description: >
         A reservation is a way to activate a job, keeps all data needed for a job to start.
         This operation returns list of all reservations for particular account. To get a

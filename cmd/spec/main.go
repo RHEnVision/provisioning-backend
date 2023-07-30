@@ -67,6 +67,11 @@ func addExamples(gen *APISchemaGen) {
 	gen.addExample("v1.InstanceTypesGCPResponse", InstanceTypesGCPResponse)
 }
 
+func addParameters(gen *APISchemaGen) {
+	gen.addQueryParameter("Limit", LimitQueryParam)
+	gen.addQueryParameter("Offset", OffsetQueryParam)
+}
+
 // addErrorSchemas all generic errors, that can be returned.
 func addErrorSchemas(gen *APISchemaGen) {
 	// error payloads
@@ -99,7 +104,7 @@ func NewSchemaGenerator() *APISchemaGen {
 	s.Components.Schemas = make(map[string]*openapi3.SchemaRef)
 	s.Components.Responses = make(map[string]*openapi3.ResponseRef)
 	s.Components.Examples = make(map[string]*openapi3.ExampleRef)
-
+	s.Components.Parameters = make(map[string]*openapi3.ParameterRef)
 	return s
 }
 
@@ -137,6 +142,24 @@ func (s *APISchemaGen) addExample(name string, value interface{}) {
 	s.Components.Examples[name] = &openapi3.ExampleRef{Value: example}
 }
 
+func (s *APISchemaGen) addQueryParameter(name string, value Parameter) {
+	checkTags(reflect.TypeOf(value))
+
+	param := &openapi3.Parameter{
+		Name:        value.Name,
+		In:          value.In,
+		Description: value.Description,
+		Required:    value.Required,
+		Schema: &openapi3.SchemaRef{
+			Value: &openapi3.Schema{
+				Default: value.Default,
+				Type:    value.Type,
+			},
+		},
+	}
+	s.Components.Parameters[name] = &openapi3.ParameterRef{Value: param}
+}
+
 //nolint:goerr113
 func checkTags(rval reflect.Type) {
 	if rval.Kind() == reflect.Array || rval.Kind() == reflect.Slice {
@@ -164,6 +187,7 @@ func main() {
 	addErrorSchemas(gen)
 	addPayloads(gen)
 	addExamples(gen)
+	addParameters(gen)
 
 	// store schema part as buffer
 	schemasYaml, err := yaml.Marshal(&gen)
