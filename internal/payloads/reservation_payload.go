@@ -331,17 +331,18 @@ func NewGCPReservationResponse(reservation *models.GCPReservation, instances []*
 	}
 
 	response := GCPReservationResponsePayload{
-		NamePattern:      *reservation.Detail.NamePattern,
-		PubkeyID:         reservation.PubkeyID,
-		ImageID:          reservation.ImageID,
-		SourceID:         reservation.SourceID,
-		Zone:             reservation.Detail.Zone,
-		Amount:           reservation.Detail.Amount,
-		MachineType:      reservation.Detail.MachineType,
-		GCPOperationName: reservation.GCPOperationName,
-		ID:               reservation.ID,
-		PowerOff:         reservation.Detail.PowerOff,
-		Instances:        instanceIds,
+		NamePattern:        *reservation.Detail.NamePattern,
+		PubkeyID:           reservation.PubkeyID,
+		ImageID:            reservation.ImageID,
+		SourceID:           reservation.SourceID,
+		Zone:               reservation.Detail.Zone,
+		Amount:             reservation.Detail.Amount,
+		MachineType:        reservation.Detail.MachineType,
+		GCPOperationName:   reservation.GCPOperationName,
+		ID:                 reservation.ID,
+		PowerOff:           reservation.Detail.PowerOff,
+		Instances:          instanceIds,
+		LaunchTemplateName: reservation.Detail.LaunchTemplateName,
 	}
 	return &response
 }
