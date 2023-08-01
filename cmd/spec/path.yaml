@@ -260,8 +260,10 @@ paths:
         A launch template is a configuration set with a name that is available through hyperscaler
         API. When creating reservations, launch template can be provided in order to set additional
         configuration for instances.
-
-        Currently only AWS Launch Templates are supported.
+        In GCP, when using templates, propagated user attributes are not overridden or updated.
+        Only new attributes are added to the instance.
+        
+        Currently AWS and GCP Launch Templates are supported.
       operationId: getLaunchTemplatesList
       tags:
         - Source
@@ -279,6 +281,8 @@ paths:
             type: string
           required: true
           description: Hyperscaler region
+        - $ref: '#/components/parameters/Token'
+        - $ref: '#/components/parameters/Limit'
       responses:
         '200':
           description: Return on success.

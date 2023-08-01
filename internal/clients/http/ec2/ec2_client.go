@@ -10,6 +10,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -338,34 +339,37 @@ func (c *ec2Client) DescribeInstanceDetails(ctx context.Context, InstanceIds []s
 	return instanceDetailList, nil
 }
 
-func (c *ec2Client) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, error) {
+func (c *ec2Client) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListLaunchTemplates")
 	defer span.End()
 
-	input := &ec2.DescribeLaunchTemplatesInput{MaxResults: ptr.ToInt32(100)}
-	pag := ec2.NewDescribeLaunchTemplatesPaginator(c.ec2, input)
-
-	var res []*clients.LaunchTemplate
-	for pag.HasMorePages() {
-		resp, err := pag.NextPage(ctx)
-		if err != nil {
-			if isAWSUnauthorizedError(err) {
-				err = clients.UnauthorizedErr
-			}
-			span.SetStatus(codes.Error, err.Error())
-			return nil, fmt.Errorf("cannot list launch templates: %w", err)
-		}
-
-		for _, awsTemplate := range resp.LaunchTemplates {
-			t := clients.LaunchTemplate{
-				ID:   ptr.From(awsTemplate.LaunchTemplateId),
-				Name: ptr.From(awsTemplate.LaunchTemplateName),
-			}
-			res = append(res, &t)
-		}
+	limit := page.Limit(ctx).Int32()
+	input := &ec2.DescribeLaunchTemplatesInput{
+		MaxResults: &limit,
+		NextToken:  ptr.To(page.Token(ctx)),
 	}
 
-	return res, nil
+	resp, err := c.ec2.DescribeLaunchTemplates(ctx, input)
+	if err != nil {
+		if isAWSUnauthorizedError(err) {
+			err = clients.UnauthorizedErr
+		}
+		span.SetStatus(codes.Error, err.Error())
+		return nil, "", fmt.Errorf("cannot list launch templates: %w", err)
+	}
+	res := make([]*clients.LaunchTemplate, 0, len(resp.LaunchTemplates))
+	for _, awsTemplate := range resp.LaunchTemplates {
+		t := clients.LaunchTemplate{
+			ID:   ptr.From(awsTemplate.LaunchTemplateId),
+			Name: ptr.From(awsTemplate.LaunchTemplateName),
+		}
+		res = append(res, &t)
+	}
+	nextToken := resp.NextToken
+	if nextToken == nil {
+		nextToken = ptr.To("")
+	}
+	return res, *nextToken, nil
 }
 
 func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanceParams, amount int32, name *string, reservation *models.AWSReservation) ([]*string, *string, error) {
