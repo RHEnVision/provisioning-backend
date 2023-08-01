@@ -142,7 +142,7 @@ func (mock *EC2ClientStub) ListInstanceTypes(ctx context.Context) ([]*clients.In
 	}, nil
 }
 
-func (mock *EC2ClientStub) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, error) {
+func (mock *EC2ClientStub) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, string, error) {
 	return []*clients.LaunchTemplate{
 		{
 			ID:   "lt-8732678436272377",
@@ -152,7 +152,7 @@ func (mock *EC2ClientStub) ListLaunchTemplates(ctx context.Context) ([]*clients.
 			ID:   "lt-8732678438462378",
 			Name: "XXLarge AMD64 database",
 		},
-	}, nil
+	}, "", nil
 }
 
 func (mock *EC2ClientStub) CheckPermission(ctx context.Context, auth *clients.Authentication) ([]string, error) {

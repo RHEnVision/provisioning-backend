@@ -26,3 +26,12 @@ var OffsetQueryParam = Parameter{
 	Required:    false,
 	In:          "query",
 }
+
+var TokenQueryParam = Parameter{
+	Name:        "token",
+	Description: "The token used for requesting the next page of results; empty token for the first page",
+	Default:     "",
+	Type:        "string",
+	Required:    false,
+	In:          "query",
+}

@@ -75,9 +75,9 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	info := page.NewOffsetMetadata(r.Context(), r, totalRes)
+	meta := page.NewOffsetMetadata(r.Context(), r, totalRes)
 
-	if err := render.Render(w, r, payloads.NewReservationListResponse(reservations, info)); err != nil {
+	if err := render.Render(w, r, payloads.NewReservationListResponse(reservations, meta)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservations list", err))
 		return
 	}

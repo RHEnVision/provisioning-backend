@@ -11,9 +11,12 @@ func Pagination(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		offset := r.URL.Query().Get("offset")
 		limit := r.URL.Query().Get("limit")
+		token := r.URL.Query().Get("token")
 
 		newCtx := page.WithOffset(r.Context(), offset)
 		newCtx = page.WithLimit(newCtx, limit)
+		newCtx = page.WithToken(newCtx, token)
+
 		next.ServeHTTP(w, r.WithContext(newCtx))
 	})
 }

@@ -230,11 +230,11 @@
               "success": false
             }
           ],
-          "links": {
-            "next": "",
-            "previous": ""
-          },
           "metadata": {
+            "links": {
+              "next": "",
+              "previous": ""
+            },
             "total": 3
           }
         }
@@ -331,7 +331,14 @@
               "id": "lt-9843797432897342",
               "name": "XXL large backend API"
             }
-          ]
+          ],
+          "metadata": {
+            "links": {
+              "next": "",
+              "previous": ""
+            },
+            "total": 0
+          }
         }
       },
       "v1.NoopReservationResponsePayloadExample": {
@@ -351,11 +358,11 @@
               "type": "ssh-ed25519"
             }
           ],
-          "links": {
-            "next": "",
-            "previous": "/api/provisioning/v1/pubkeys?limit=2\u0026offset=0"
-          },
           "metadata": {
+            "links": {
+              "next": "",
+              "previous": "/api/provisioning/v1/pubkeys?limit=2\u0026offset=0"
+            },
             "total": 3
           }
         }
@@ -394,11 +401,11 @@
               "uid": ""
             }
           ],
-          "links": {
-            "next": "",
-            "previous": "/api/provisioning/v1/sources?limit=2\u0026offset=0"
-          },
           "metadata": {
+            "links": {
+              "next": "",
+              "previous": "/api/provisioning/v1/sources?limit=2\u0026offset=0"
+            },
             "total": 4
           }
         }
@@ -446,6 +453,15 @@
         "schema": {
           "default": 0,
           "type": "integer"
+        }
+      },
+      "Token": {
+        "description": "The token used for requesting the next page of results; empty token for the first page",
+        "in": "query",
+        "name": "token",
+        "schema": {
+          "default": "",
+          "type": "string"
         }
       }
     },
@@ -968,19 +984,19 @@
             },
             "type": "array"
           },
-          "links": {
-            "properties": {
-              "next": {
-                "type": "string"
-              },
-              "previous": {
-                "type": "string"
-              }
-            },
-            "type": "object"
-          },
           "metadata": {
             "properties": {
+              "links": {
+                "properties": {
+                  "next": {
+                    "type": "string"
+                  },
+                  "previous": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
               "total": {
                 "type": "integer"
               }
@@ -1054,6 +1070,25 @@
               "type": "object"
             },
             "type": "array"
+          },
+          "metadata": {
+            "properties": {
+              "links": {
+                "properties": {
+                  "next": {
+                    "type": "string"
+                  },
+                  "previous": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
           }
         },
         "type": "object"
@@ -1087,19 +1122,19 @@
             },
             "type": "array"
           },
-          "links": {
-            "properties": {
-              "next": {
-                "type": "string"
-              },
-              "previous": {
-                "type": "string"
-              }
-            },
-            "type": "object"
-          },
           "metadata": {
             "properties": {
+              "links": {
+                "properties": {
+                  "next": {
+                    "type": "string"
+                  },
+                  "previous": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
               "total": {
                 "type": "integer"
               }
@@ -1134,19 +1169,19 @@
             },
             "type": "array"
           },
-          "links": {
-            "properties": {
-              "next": {
-                "type": "string"
-              },
-              "previous": {
-                "type": "string"
-              }
-            },
-            "type": "object"
-          },
           "metadata": {
             "properties": {
+              "links": {
+                "properties": {
+                  "next": {
+                    "type": "string"
+                  },
+                  "previous": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
               "total": {
                 "type": "integer"
               }
@@ -2052,7 +2087,7 @@
     },
     "/sources/{ID}/launch_templates": {
       "get": {
-        "description": "Return a list of launch templates.\nA launch template is a configuration set with a name that is available through hyperscaler API. When creating reservations, launch template can be provided in order to set additional configuration for instances.\nCurrently only AWS Launch Templates are supported.\n",
+        "description": "Return a list of launch templates.\nA launch template is a configuration set with a name that is available through hyperscaler API. When creating reservations, launch template can be provided in order to set additional configuration for instances. In GCP, when using templates, propagated user attributes are not overridden or updated. Only new attributes are added to the instance.\nCurrently AWS and GCP Launch Templates are supported.\n",
         "operationId": "getLaunchTemplatesList",
         "parameters": [
           {
@@ -2073,6 +2108,12 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "#/components/parameters/Token"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
           }
         ],
         "responses": {

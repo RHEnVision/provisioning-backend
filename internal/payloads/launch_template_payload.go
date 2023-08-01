@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/go-chi/render"
 )
 
@@ -14,28 +15,21 @@ type LaunchTemplateResponse struct {
 }
 
 type LaunchTemplateListResponse struct {
-	Data []*LaunchTemplateResponse `json:"data" yaml:"data"`
-}
-
-func (s *LaunchTemplateResponse) Bind(_ *http.Request) error {
-	return nil
-}
-
-func (s *LaunchTemplateResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
-	return nil
+	Data     []*LaunchTemplateResponse `json:"data" yaml:"data"`
+	Metadata page.Metadata             `json:"metadata" yaml:"metadata"`
 }
 
 func (s *LaunchTemplateListResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
-func NewListLaunchTemplateResponse(sl []*clients.LaunchTemplate) render.Renderer {
+func NewListLaunchTemplateResponse(sl []*clients.LaunchTemplate, meta *page.Metadata) render.Renderer {
 	list := make([]*LaunchTemplateResponse, len(sl))
-	for i, instanceType := range sl {
+	for i, tmpl := range sl {
 		list[i] = &LaunchTemplateResponse{
-			ID:   instanceType.ID,
-			Name: instanceType.Name,
+			ID:   tmpl.ID,
+			Name: tmpl.Name,
 		}
 	}
-	return &LaunchTemplateListResponse{Data: list}
+	return &LaunchTemplateListResponse{Data: list, Metadata: *meta}
 }

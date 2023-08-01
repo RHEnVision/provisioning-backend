@@ -5,6 +5,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -63,13 +64,15 @@ func ListLaunchTemplateAWS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates, err := ec2Client.ListLaunchTemplates(r.Context())
+	templates, nextToken, err := ec2Client.ListLaunchTemplates(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewAWSError(r.Context(), "unable to list AWS EC2 launch templates", err))
 		return
 	}
 
-	if err := render.Render(w, r, payloads.NewListLaunchTemplateResponse(templates)); err != nil {
+	meta := page.NewTokenMetadata(r.Context(), r, nextToken)
+
+	if err := render.Render(w, r, payloads.NewListLaunchTemplateResponse(templates, meta)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render launch templates list", err))
 		return
 	}
@@ -95,13 +98,15 @@ func ListLaunchTemplateGCP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates, err := gcpClient.ListLaunchTemplates(r.Context())
+	templates, nextToken, err := gcpClient.ListLaunchTemplates(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewGCPError(r.Context(), "unable to list GCP launch templates", err))
 		return
 	}
 
-	if err := render.Render(w, r, payloads.NewListLaunchTemplateResponse(templates)); err != nil {
+	meta := page.NewTokenMetadata(r.Context(), r, nextToken)
+
+	if err := render.Render(w, r, payloads.NewListLaunchTemplateResponse(templates, meta)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render launch templates list", err))
 		return
 	}

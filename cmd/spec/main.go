@@ -70,6 +70,7 @@ func addExamples(gen *APISchemaGen) {
 func addParameters(gen *APISchemaGen) {
 	gen.addQueryParameter("Limit", LimitQueryParam)
 	gen.addQueryParameter("Offset", OffsetQueryParam)
+	gen.addQueryParameter("Token", TokenQueryParam)
 }
 
 // addErrorSchemas all generic errors, that can be returned.

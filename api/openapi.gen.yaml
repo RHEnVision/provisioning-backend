@@ -307,16 +307,16 @@ components:
                             success:
                                 type: boolean
                                 nullable: true
-                links:
-                    type: object
-                    properties:
-                        next:
-                            type: string
-                        previous:
-                            type: string
                 metadata:
                     type: object
                     properties:
+                        links:
+                            type: object
+                            properties:
+                                next:
+                                    type: string
+                                previous:
+                                    type: string
                         total:
                             type: integer
         v1.ListInstaceTypeResponse:
@@ -364,6 +364,18 @@ components:
                                 type: string
                             name:
                                 type: string
+                metadata:
+                    type: object
+                    properties:
+                        links:
+                            type: object
+                            properties:
+                                next:
+                                    type: string
+                                previous:
+                                    type: string
+                        total:
+                            type: integer
         v1.ListPubkeyResponse:
             type: object
             properties:
@@ -385,16 +397,16 @@ components:
                                 type: string
                             type:
                                 type: string
-                links:
-                    type: object
-                    properties:
-                        next:
-                            type: string
-                        previous:
-                            type: string
                 metadata:
                     type: object
                     properties:
+                        links:
+                            type: object
+                            properties:
+                                next:
+                                    type: string
+                                previous:
+                                    type: string
                         total:
                             type: integer
         v1.ListSourceResponse:
@@ -415,16 +427,16 @@ components:
                                 type: string
                             uid:
                                 type: string
-                links:
-                    type: object
-                    properties:
-                        next:
-                            type: string
-                        previous:
-                            type: string
                 metadata:
                     type: object
                     properties:
+                        links:
+                            type: object
+                            properties:
+                                next:
+                                    type: string
+                                previous:
+                                    type: string
                         total:
                             type: integer
         v1.NoopReservationResponse:
@@ -528,6 +540,13 @@ components:
             schema:
                 type: integer
                 default: 0
+        Token:
+            name: token
+            in: query
+            description: The token used for requesting the next page of results; empty token for the first page
+            schema:
+                type: string
+                default: ""
     responses:
         BadRequest:
             description: The request's parameters are not valid
@@ -759,10 +778,10 @@ components:
                         - Fetch instance(s) description
                       steps: 3
                       success: false
-                links:
-                    next: ""
-                    previous: ""
                 metadata:
+                    links:
+                        next: ""
+                        previous: ""
                     total: 3
         v1.GenericReservationResponsePayloadPendingExample:
             value:
@@ -832,6 +851,11 @@ components:
                 data:
                     - id: lt-9843797432897342
                       name: XXL large backend API
+                metadata:
+                    links:
+                        next: ""
+                        previous: ""
+                    total: 0
         v1.NoopReservationResponsePayloadExample:
             value:
                 reservation_id: 1310
@@ -844,10 +868,10 @@ components:
                       id: 3
                       name: My key
                       type: ssh-ed25519
-                links:
-                    next: ""
-                    previous: /api/provisioning/v1/pubkeys?limit=2&offset=0
                 metadata:
+                    links:
+                        next: ""
+                        previous: /api/provisioning/v1/pubkeys?limit=2&offset=0
                     total: 3
         v1.PubkeyRequestExample:
             value:
@@ -874,10 +898,10 @@ components:
                       source_type_id: ""
                       status: available
                       uid: ""
-                links:
-                    next: ""
-                    previous: /api/provisioning/v1/sources?limit=2&offset=0
                 metadata:
+                    links:
+                        next: ""
+                        previous: /api/provisioning/v1/sources?limit=2&offset=0
                     total: 4
         v1.SourceUploadInfoAWSResponse:
             value:
@@ -1395,8 +1419,8 @@ paths:
                 - Source
             description: |
                 Return a list of launch templates.
-                A launch template is a configuration set with a name that is available through hyperscaler API. When creating reservations, launch template can be provided in order to set additional configuration for instances.
-                Currently only AWS Launch Templates are supported.
+                A launch template is a configuration set with a name that is available through hyperscaler API. When creating reservations, launch template can be provided in order to set additional configuration for instances. In GCP, when using templates, propagated user attributes are not overridden or updated. Only new attributes are added to the instance.
+                Currently AWS and GCP Launch Templates are supported.
             operationId: getLaunchTemplatesList
             parameters:
                 - name: ID
@@ -1412,6 +1436,8 @@ paths:
                   required: true
                   schema:
                     type: string
+                - $ref: '#/components/parameters/Token'
+                - $ref: '#/components/parameters/Limit'
             responses:
                 "200":
                     description: Return on success.

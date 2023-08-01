@@ -75,7 +75,7 @@ func MountAPI(r *chi.Mux) {
 				// TODO DEPRECATED: replaced with upload_info
 				r.Get("/account_identity", s.GetAWSAccountIdentity)
 
-				r.Get("/launch_templates", s.ListLaunchTemplates)
+				r.With(middleware.Pagination).Get("/launch_templates", s.ListLaunchTemplates)
 				r.Get("/upload_info", s.GetSourceUploadInfo)
 				r.Route("/validate_permissions", func(r chi.Router) {
 					r.Get("/", s.ValidatePermissions)

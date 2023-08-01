@@ -83,8 +83,8 @@ type EC2 interface {
 	// ListInstanceTypesWithPaginator lists all instance types.
 	ListInstanceTypes(ctx context.Context) ([]*InstanceType, error)
 
-	// ListLaunchTemplates lists all launch templates.
-	ListLaunchTemplates(ctx context.Context) ([]*LaunchTemplate, error)
+	// ListLaunchTemplates lists all launch templates and returns the next page token.
+	ListLaunchTemplates(ctx context.Context) ([]*LaunchTemplate, string, error)
 
 	// RunInstances launches one or more instances.
 	//
@@ -156,5 +156,6 @@ type GCP interface {
 
 	GetInstanceDescriptionByID(ctx context.Context, id, zone string) (*InstanceDescription, error)
 
-	ListLaunchTemplates(ctx context.Context) ([]*LaunchTemplate, error)
+	// ListLaunchTemplates lists all launch templates and returns the next page token.
+	ListLaunchTemplates(ctx context.Context) ([]*LaunchTemplate, string, error)
 }
