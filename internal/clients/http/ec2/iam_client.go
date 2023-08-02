@@ -36,38 +36,36 @@ type Policy struct {
 	Statement []Statement `json:"Statement"`
 }
 
-func expectedStatement() Statement {
-	return Statement{
-		Sid:    "RedHatProvisioning",
-		Effect: "Allow",
-		Action: []string{
-			"iam:GetPolicyVersion",
-			"iam:GetPolicy",
-			"iam:ListAttachedRolePolicies",
-			"iam:GetRolePolicy",
-			"ec2:CreateKeyPair",
-			"ec2:CreateLaunchTemplate",
-			"ec2:CreateLaunchTemplateVersion",
-			"ec2:CreateTags",
-			"ec2:DeleteKeyPair",
-			"ec2:DeleteTags",
-			"ec2:DescribeAvailabilityZones",
-			"ec2:DescribeImages",
-			"ec2:DescribeInstanceTypes",
-			"ec2:DescribeInstances",
-			"ec2:DescribeKeyPairs",
-			"ec2:DescribeLaunchTemplates",
-			"ec2:DescribeLaunchTemplateVersions",
-			"ec2:DescribeRegions",
-			"ec2:DescribeSecurityGroups",
-			"ec2:DescribeSnapshotAttribute",
-			"ec2:DescribeTags",
-			"ec2:ImportKeyPair",
-			"ec2:RunInstances",
-			"ec2:StartInstances",
-			"iam:ListRolePolicies",
-		},
-	}
+var expectedStatement = Statement{
+	Sid:    "RedHatProvisioning",
+	Effect: "Allow",
+	Action: []string{
+		"iam:GetPolicyVersion",
+		"iam:GetPolicy",
+		"iam:ListAttachedRolePolicies",
+		"iam:GetRolePolicy",
+		"ec2:CreateKeyPair",
+		"ec2:CreateLaunchTemplate",
+		"ec2:CreateLaunchTemplateVersion",
+		"ec2:CreateTags",
+		"ec2:DeleteKeyPair",
+		"ec2:DeleteTags",
+		"ec2:DescribeAvailabilityZones",
+		"ec2:DescribeImages",
+		"ec2:DescribeInstanceTypes",
+		"ec2:DescribeInstances",
+		"ec2:DescribeKeyPairs",
+		"ec2:DescribeLaunchTemplates",
+		"ec2:DescribeLaunchTemplateVersions",
+		"ec2:DescribeRegions",
+		"ec2:DescribeSecurityGroups",
+		"ec2:DescribeSnapshotAttribute",
+		"ec2:DescribeTags",
+		"ec2:ImportKeyPair",
+		"ec2:RunInstances",
+		"ec2:StartInstances",
+		"iam:ListRolePolicies",
+	},
 }
 
 func getRoleName(arn string) (string, error) {
@@ -298,7 +296,7 @@ func (c *ec2Client) CheckPermission(ctx context.Context, auth *clients.Authentic
 		return nil, fmt.Errorf("could not list statements: %w", err)
 	}
 
-	missingPermissions := listMissingPermissions(statements, expectedStatement())
+	missingPermissions := listMissingPermissions(statements, expectedStatement)
 	if len(missingPermissions) != 0 {
 		return c.checkInlinePolicies(ctx, missingPermissions, roleName)
 	}
