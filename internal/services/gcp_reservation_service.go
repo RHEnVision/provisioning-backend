@@ -42,13 +42,13 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	resUUID := uuid.New().String()
 	detail := &models.GCPDetail{
-		NamePattern:        &payload.NamePattern,
-		Zone:               payload.Zone,
-		MachineType:        payload.MachineType,
-		Amount:             payload.Amount,
-		PowerOff:           payload.PowerOff,
-		UUID:               resUUID,
-		LaunchTemplateName: payload.LaunchTemplateName,
+		NamePattern:      &payload.NamePattern,
+		Zone:             payload.Zone,
+		MachineType:      payload.MachineType,
+		Amount:           payload.Amount,
+		PowerOff:         payload.PowerOff,
+		UUID:             resUUID,
+		LaunchTemplateID: payload.LaunchTemplateID,
 	}
 	reservation := &models.GCPReservation{
 		PubkeyID: payload.PubkeyID,
@@ -128,13 +128,13 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		AccountID: accountId,
 		Identity:  id,
 		Args: jobs.LaunchInstanceGCPTaskArgs{
-			ReservationID:      reservation.ID,
-			Zone:               reservation.Detail.Zone,
-			PubkeyID:           reservation.PubkeyID,
-			Detail:             reservation.Detail,
-			ImageName:          name,
-			ProjectID:          authentication,
-			LaunchTemplateName: reservation.Detail.LaunchTemplateName,
+			ReservationID:    reservation.ID,
+			Zone:             reservation.Detail.Zone,
+			PubkeyID:         reservation.PubkeyID,
+			Detail:           reservation.Detail,
+			ImageName:        name,
+			ProjectID:        authentication,
+			LaunchTemplateID: reservation.Detail.LaunchTemplateID,
 		},
 	}
 

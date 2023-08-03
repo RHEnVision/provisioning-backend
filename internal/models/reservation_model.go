@@ -107,8 +107,8 @@ type GCPDetail struct {
 	// UUID of instances created in the same reservation
 	UUID string `json:"uuid"`
 
-	// Optional launch template name global/instanceTemplates/NAME or empty string
-	LaunchTemplateName string `json:"launch_template_name"`
+	// Optional launch template id global/instanceTemplates/ID or empty string
+	LaunchTemplateID string `json:"launch_template_id"`
 
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff"`
