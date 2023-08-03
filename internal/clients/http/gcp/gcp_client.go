@@ -217,8 +217,8 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 		},
 	}
 
-	if params.LaunchTemplateName != "" {
-		template := fmt.Sprintf("global/instanceTemplates/%s", params.LaunchTemplateName)
+	if params.LaunchTemplateID != "" {
+		template := fmt.Sprintf("global/instanceTemplates/%s", params.LaunchTemplateID)
 		req.BulkInsertInstanceResourceResource.SourceInstanceTemplate = &template
 	}
 

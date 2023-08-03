@@ -143,8 +143,8 @@ type GCPReservationResponsePayload struct {
 	// The name of the gcp operation which was created.
 	GCPOperationName string `json:"gcp_operation_name,omitempty" yaml:"gcp_operation_name"`
 
-	// Optional launch template name global/instanceTemplates/NAME or empty string
-	LaunchTemplateName string `json:"launch_template_name,omitempty" yaml:"launch_template_name"`
+	// Optional launch template id global/instanceTemplates/ID or empty string
+	LaunchTemplateID string `json:"launch_template_id,omitempty" yaml:"launch_template_id"`
 
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff" yaml:"poweroff"`
@@ -217,8 +217,8 @@ type GCPReservationRequestPayload struct {
 	// Source ID.
 	SourceID string `json:"source_id" yaml:"source_id"`
 
-	// Optional launch template name global/instanceTemplates/NAME or empty string
-	LaunchTemplateName string `json:"launch_template_name,omitempty" yaml:"launch_template_name"`
+	// Optional launch template id global/instanceTemplates/ID or empty string
+	LaunchTemplateID string `json:"launch_template_id,omitempty" yaml:"launch_template_id"`
 
 	// Optional name pattern of the instance(s).
 	NamePattern string `json:"name_pattern" yaml:"name_pattern"`
@@ -331,18 +331,18 @@ func NewGCPReservationResponse(reservation *models.GCPReservation, instances []*
 	}
 
 	response := GCPReservationResponsePayload{
-		NamePattern:        *reservation.Detail.NamePattern,
-		PubkeyID:           reservation.PubkeyID,
-		ImageID:            reservation.ImageID,
-		SourceID:           reservation.SourceID,
-		Zone:               reservation.Detail.Zone,
-		Amount:             reservation.Detail.Amount,
-		MachineType:        reservation.Detail.MachineType,
-		GCPOperationName:   reservation.GCPOperationName,
-		ID:                 reservation.ID,
-		PowerOff:           reservation.Detail.PowerOff,
-		Instances:          instanceIds,
-		LaunchTemplateName: reservation.Detail.LaunchTemplateName,
+		NamePattern:      *reservation.Detail.NamePattern,
+		PubkeyID:         reservation.PubkeyID,
+		ImageID:          reservation.ImageID,
+		SourceID:         reservation.SourceID,
+		Zone:             reservation.Detail.Zone,
+		Amount:           reservation.Detail.Amount,
+		MachineType:      reservation.Detail.MachineType,
+		GCPOperationName: reservation.GCPOperationName,
+		ID:               reservation.ID,
+		PowerOff:         reservation.Detail.PowerOff,
+		Instances:        instanceIds,
+		LaunchTemplateID: reservation.Detail.LaunchTemplateID,
 	}
 	return &response
 }
