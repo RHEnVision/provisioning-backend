@@ -83,6 +83,8 @@ This is a setup in the account in which the service shall deploy the actual inst
     - iam.serviceAccounts.getIamPolicy
     - resourcemanager.projects.getIamPolicy
     - serviceusage.services.use
+    - compute.instances.setTags
+    - compute.regions.list
 
   d. Choose the role you have created and click SAVE
 
