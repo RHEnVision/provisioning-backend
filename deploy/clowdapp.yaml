@@ -25,7 +25,7 @@ objects:
         iqePlugin: provisioning
       deployments:
         - name: worker
-          replicas: 3
+          replicas: ${{WORKER_REPLICAS}}
           podSpec:
             image: ${IMAGE}:${IMAGE_TAG}
             command:
@@ -111,7 +111,7 @@ objects:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
         - name: statuser
-          replicas: 1
+          replicas: ${{STATUSER_REPLICAS}}
           metadata:
             annotations:
               ignore-check.kube-linter.io/minimum-three-replicas: "statuser pod runs in a single instance"
@@ -247,7 +247,7 @@ objects:
                 cpu: ${CPU_REQUESTS}
                 memory: ${MEMORY_REQUESTS}
         - name: api
-          replicas: 3
+          replicas: ${{API_REPLICAS}}
           webServices:
             public:
               enabled: true
@@ -490,7 +490,16 @@ parameters:
   - description: Memory limit for each pod (pod restart)
     name: MEMORY_LIMIT
     value: 600Mi
-  - description: Amount of replicas for pod serving stats to optionally scale to 0
+  - description: Amount of replicas for pod serving the API
+    name: API_REPLICAS
+    value: "3"
+  - description: Amount of replicas for pod processing jobs
+    name: WORKER_REPLICAS
+    value: "3"
+  - description: Amount of replicas for pod processing availability checks
+    name: STATUSER_REPLICAS
+    value: "1"
+  - description: Amount of replicas for pod processing stats
     name: STATS_REPLICAS
     value: "1"
   - description: Image tag
