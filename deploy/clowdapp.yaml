@@ -524,7 +524,7 @@ parameters:
     value: "debug"
   - description: RBAC checking enabled
     name: APP_RBAC_ENABLED
-    value: "false"
+    value: "true"
   - description: RBAC checking enabled
     name: REST_ENDPOINTS_RBAC_URL
     value: "http://rbac-service:8000/api/rbac/v1"
