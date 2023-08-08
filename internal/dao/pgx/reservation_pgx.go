@@ -5,12 +5,14 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5"
+	"github.com/rs/zerolog"
 )
 
 func init() {
@@ -358,5 +360,19 @@ func (x *reservationDao) Delete(ctx context.Context, id int64) error {
 	if tag.RowsAffected() != 1 {
 		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
 	}
+	return nil
+}
+
+func (x *reservationDao) Cleanup(ctx context.Context) error {
+	logger := zerolog.Ctx(ctx)
+	query := `DELETE FROM reservations WHERE created_at < now() - cast($1 as interval)`
+	reservationLifetime := config.Reservation.Lifetime.String()
+
+	tag, err := db.Pool.Exec(ctx, query, reservationLifetime)
+	if err != nil {
+		return fmt.Errorf("pgx error: %w", err)
+	}
+	logger.Trace().Msgf("Deleted %d reservation(s) older than %s", tag.RowsAffected(), reservationLifetime)
+
 	return nil
 }
