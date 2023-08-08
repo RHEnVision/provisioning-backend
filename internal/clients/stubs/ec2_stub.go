@@ -71,7 +71,7 @@ func (mock *EC2ClientStub) ImportPubkey(ctx context.Context, key *models.Pubkey,
 		KeyPairId:      &ec2KeyID,
 		PublicKey:      &key.Body,
 		Tags: []types.Tag{{
-			Key:   ptr.To("rhhc:id"),
+			Key:   ptr.To("rh-kid"),
 			Value: &tag,
 		}},
 	}

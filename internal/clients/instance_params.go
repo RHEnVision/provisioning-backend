@@ -15,6 +15,9 @@ type GCPInstanceParams struct {
 	// InstanceType to launch
 	MachineType string
 
+	// ReservationID contains reservation ID that is stored in GCP label
+	ReservationID int64
+
 	// UUID for instance that was created in a reservation
 	UUID string
 
