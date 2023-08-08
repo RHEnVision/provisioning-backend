@@ -43,6 +43,11 @@ var config struct {
 		JobQueue             time.Duration `env:"JOBQUEUE_INTERVAL" env-default:"1m" env-description:"how often to pull job queue statistics"`
 		ReservationsInterval time.Duration `env:"RESERVATIONS_INTERVAL" env-default:"10m" env-description:"how often to pull reservation statistics"`
 	} `env-prefix:"STATS_"`
+	Reservation struct {
+		CleanupEnabled  bool          `env:"CLEANUP_ENABLED" env-default:"false" env-description:"reservation cleanup enabled"`
+		Lifetime        time.Duration `env:"LIFETIME" env-default:"8760h" env-description:"how old reservation should be deleted, default equal to 365 days"`
+		CleanupInterval time.Duration `env:"CLEANUP_INTERVAL" env-default:"1h" env-description:"how often to cleanup the reservation"`
+	} `env-prefix:"RESERVATION_"`
 	Database struct {
 		Host        string        `env:"HOST" env-default:"localhost" env-description:"main database hostname"`
 		Port        uint16        `env:"PORT" env-default:"5432" env-description:"main database port"`
@@ -167,6 +172,7 @@ var config struct {
 var (
 	Application   = &config.App
 	Stats         = &config.Stats
+	Reservation   = &config.Reservation
 	Database      = &config.Database
 	Prometheus    = &config.Prometheus
 	Logging       = &config.Logging

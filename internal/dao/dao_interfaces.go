@@ -109,6 +109,9 @@ type ReservationDao interface {
 
 	// Delete deletes a reservation. Only used in tests and background cleanup job. UNSCOPED.
 	Delete(ctx context.Context, id int64) error
+
+	// Cleanup old reservations
+	Cleanup(ctx context.Context) error
 }
 
 var GetStatDao func(ctx context.Context) StatDao

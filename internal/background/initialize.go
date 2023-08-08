@@ -41,4 +41,9 @@ func InitializeStats(ctx context.Context) {
 
 	// start database statistics
 	go dbStatsLoop(ctx, config.Stats.ReservationsInterval)
+
+	// cleanup old reservations
+	if config.Reservation.CleanupEnabled {
+		go dbCleanup(ctx, config.Reservation.CleanupInterval)
+	}
 }

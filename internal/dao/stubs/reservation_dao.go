@@ -144,6 +144,10 @@ func (stub *reservationDaoStub) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
+func (stub *reservationDaoStub) Cleanup(ctx context.Context) error {
+	return nil
+}
+
 func (stub *reservationDaoStub) UpdateReservationInstance(ctx context.Context, reservationID int64, instance *clients.InstanceDescription) error {
 	for _, instRes := range stub.instances[reservationID] {
 		if instRes.InstanceID == instance.ID {
