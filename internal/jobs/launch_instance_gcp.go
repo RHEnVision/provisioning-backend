@@ -112,6 +112,7 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 		Zone:             args.Zone,
 		KeyBody:          pk.Body,
 		StartupScript:    string(userData),
+		ReservationID:    args.ReservationID,
 		UUID:             args.Detail.UUID,
 		LaunchTemplateID: args.LaunchTemplateID,
 	}

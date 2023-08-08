@@ -186,7 +186,8 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 			MinCount:    &amount,
 			InstanceProperties: &computepb.InstanceProperties{
 				Labels: map[string]string{
-					"rhhcc-rid": params.UUID,
+					"rh-rid":  config.EnvironmentPrefix("r", strconv.FormatInt(params.ReservationID, 10)),
+					"rh-uuid": params.UUID,
 				},
 				Disks: []*computepb.AttachedDisk{
 					{
@@ -251,7 +252,7 @@ func (c *gcpClient) ListInstancesIDsByLabel(ctx context.Context, uuid string) ([
 
 	logger := logger(ctx)
 	ids := make([]*string, 0)
-	filter := fmt.Sprintf("labels.rhhcc-rid=%v", uuid)
+	filter := fmt.Sprintf("labels.rh-uuid=%v", uuid)
 	lstReq := &computepb.AggregatedListInstancesRequest{
 		Project: c.auth.Payload,
 		Filter:  &filter,

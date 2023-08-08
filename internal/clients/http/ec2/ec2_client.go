@@ -166,7 +166,7 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 			ResourceType: types.ResourceTypeKeyPair,
 			Tags: []types.Tag{
 				{
-					Key:   ptr.To("rhhc:id"),
+					Key:   ptr.To("rh-kid"),
 					Value: ptr.To(tag),
 				},
 			},
@@ -401,7 +401,7 @@ func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanc
 			ResourceType: types.ResourceTypeInstance,
 			Tags: []types.Tag{
 				{
-					Key:   ptr.To("rhhc:rid"),
+					Key:   ptr.To("rh-rid"),
 					Value: ptr.To(config.EnvironmentPrefix("r", strconv.FormatInt(reservation.ID, 10))),
 				},
 			},
