@@ -80,6 +80,7 @@
 - n2-highcpu-8
 - n2-highcpu-80
 - n2-highcpu-96
+- n2-highmem-128
 - n2-highmem-16
 - n2-highmem-2
 - n2-highmem-32
@@ -88,6 +89,7 @@
 - n2-highmem-64
 - n2-highmem-8
 - n2-highmem-80
+- n2-highmem-96
 - n2-standard-128
 - n2-standard-16
 - n2-standard-2
