@@ -2803,6 +2803,11 @@
                   }
                 },
                 "type": "object"
+              },
+              "external_id": {
+                "description": "If the authentication is related to a AWS Source, it may contain an external ID.",
+                "example": "a2f8ec37-6d74-4af8-9e92-b83345651202",
+                "type": "string"
               }
             },
             "type": "object"
