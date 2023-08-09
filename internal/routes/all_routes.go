@@ -61,10 +61,11 @@ func MountAPI(r *chi.Mux) {
 
 		// OpenAPI documented and supported routes
 		r.Route("/sources", func(r chi.Router) {
+			// https://issues.redhat.com/browse/HMS-2305
+			// r.Use(middleware.EnforcePermissions("source", "read"))
+
 			r.Get("/", s.ListSources)
 			r.Route("/{ID}", func(r chi.Router) {
-				r.Use(middleware.EnforcePermissions("source", "read"))
-
 				r.Get("/status", s.SourcesStatus)
 
 				// TODO DEPRECATED: move this to outside of /sources (see below)
