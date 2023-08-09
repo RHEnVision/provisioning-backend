@@ -19,22 +19,23 @@ import (
 
 // Defines values for Distributions.
 const (
-	Centos8  Distributions = "centos-8"
-	Centos9  Distributions = "centos-9"
-	Fedora35 Distributions = "fedora-35"
-	Fedora36 Distributions = "fedora-36"
-	Fedora37 Distributions = "fedora-37"
-	Fedora38 Distributions = "fedora-38"
-	Rhel8    Distributions = "rhel-8"
-	Rhel84   Distributions = "rhel-84"
-	Rhel85   Distributions = "rhel-85"
-	Rhel86   Distributions = "rhel-86"
-	Rhel87   Distributions = "rhel-87"
-	Rhel88   Distributions = "rhel-88"
-	Rhel9    Distributions = "rhel-9"
-	Rhel90   Distributions = "rhel-90"
-	Rhel91   Distributions = "rhel-91"
-	Rhel92   Distributions = "rhel-92"
+	Centos8      Distributions = "centos-8"
+	Centos9      Distributions = "centos-9"
+	Fedora37     Distributions = "fedora-37"
+	Fedora38     Distributions = "fedora-38"
+	Fedora39     Distributions = "fedora-39"
+	Rhel8        Distributions = "rhel-8"
+	Rhel84       Distributions = "rhel-84"
+	Rhel85       Distributions = "rhel-85"
+	Rhel86       Distributions = "rhel-86"
+	Rhel87       Distributions = "rhel-87"
+	Rhel88       Distributions = "rhel-88"
+	Rhel8Nightly Distributions = "rhel-8-nightly"
+	Rhel9        Distributions = "rhel-9"
+	Rhel90       Distributions = "rhel-90"
+	Rhel91       Distributions = "rhel-91"
+	Rhel92       Distributions = "rhel-92"
+	Rhel9Nightly Distributions = "rhel-9-nightly"
 )
 
 // Defines values for ImageRequestArchitecture.
@@ -67,6 +68,7 @@ const (
 	ImageTypesRhelEdgeInstaller ImageTypes = "rhel-edge-installer"
 	ImageTypesVhd               ImageTypes = "vhd"
 	ImageTypesVsphere           ImageTypes = "vsphere"
+	ImageTypesVsphereOva        ImageTypes = "vsphere-ova"
 )
 
 // Defines values for UploadStatusStatus.
@@ -205,9 +207,10 @@ type ComposeMetadata struct {
 
 // ComposeRequest defines model for ComposeRequest.
 type ComposeRequest struct {
-	Customizations *Customizations `json:"customizations,omitempty"`
-	Distribution   Distributions   `json:"distribution"`
-	ImageName      *string         `json:"image_name,omitempty"`
+	Customizations   *Customizations `json:"customizations,omitempty"`
+	Distribution     Distributions   `json:"distribution"`
+	ImageDescription *string         `json:"image_description,omitempty"`
+	ImageName        *string         `json:"image_name,omitempty"`
 
 	// ImageRequests Array of exactly one image request. Having more image requests in one compose is currently not supported.
 	ImageRequests []ImageRequest `json:"image_requests"`
@@ -276,6 +279,7 @@ type CustomRepository struct {
 type Customizations struct {
 	CustomRepositories  *[]CustomRepository `json:"custom_repositories,omitempty"`
 	Filesystem          *[]Filesystem       `json:"filesystem,omitempty"`
+	Openscap            *OpenSCAP           `json:"openscap,omitempty"`
 	Packages            *[]string           `json:"packages,omitempty"`
 	PayloadRepositories *[]Repository       `json:"payload_repositories,omitempty"`
 	Subscription        *Subscription       `json:"subscription,omitempty"`
@@ -376,6 +380,11 @@ type OSTree struct {
 	// fetching metadata and content.
 	Rhsm *bool   `json:"rhsm,omitempty"`
 	Url  *string `json:"url,omitempty"`
+}
+
+// OpenSCAP defines model for OpenSCAP.
+type OpenSCAP struct {
+	ProfileId string `json:"profile_id"`
 }
 
 // Package defines model for Package.

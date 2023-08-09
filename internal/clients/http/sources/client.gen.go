@@ -296,6 +296,9 @@ type AuthenticationRead struct {
 			TenantId *string `json:"tenant_id,omitempty"`
 		} `json:"azure,omitempty"`
 
+		// ExternalId If the authentication is related to a AWS Source, it may contain an external ID.
+		ExternalId *string `json:"external_id,omitempty"`
+
 		// Marketplace If the authentication is of the "marketplace-token" type, then this key will contain an unexpired token for the API key that the authentication stores.
 		Marketplace *struct {
 			// AccessToken The authorization token
