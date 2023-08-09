@@ -9,10 +9,10 @@ install-go: ## Install required Go version
 .PHONY: install-tools
 install-tools: ## Install required Go commands into ./bin
 	@# NOTE: also update .github/workflows version
-	GOBIN=$(GOBIN) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
-	GOBIN=$(GOBIN) $(GO) install golang.org/x/tools/cmd/goimports@v0.9.1
-	GOBIN=$(GOBIN) $(GO) install github.com/jackc/tern/v2@v2.1.0
-	GOBIN=$(GOBIN) $(GO) install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.12.4
+	GOBIN=$(GOBIN) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
+	GOBIN=$(GOBIN) $(GO) install golang.org/x/tools/cmd/goimports@v0.12.0
+	GOBIN=$(GOBIN) $(GO) install github.com/jackc/tern/v2@v2.1.1
+	GOBIN=$(GOBIN) $(GO) install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.13.4
 	GOBIN=$(GOBIN) $(GO) install mvdan.cc/gofumpt@v0.5.0
 
 .PHONY: update-tools
