@@ -13,6 +13,10 @@ type LaunchTemplateResponse struct {
 	Name string `json:"name" yaml:"name"`
 }
 
+type LaunchTemplateListResponse struct {
+	Data []*LaunchTemplateResponse `json:"data" yaml:"data"`
+}
+
 func (s *LaunchTemplateResponse) Bind(_ *http.Request) error {
 	return nil
 }
@@ -21,13 +25,17 @@ func (s *LaunchTemplateResponse) Render(_ http.ResponseWriter, _ *http.Request) 
 	return nil
 }
 
-func NewListLaunchTemplateResponse(sl []*clients.LaunchTemplate) []render.Renderer {
-	list := make([]render.Renderer, len(sl))
+func (s *LaunchTemplateListResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
+	return nil
+}
+
+func NewListLaunchTemplateResponse(sl []*clients.LaunchTemplate) render.Renderer {
+	list := make([]*LaunchTemplateResponse, len(sl))
 	for i, instanceType := range sl {
 		list[i] = &LaunchTemplateResponse{
 			ID:   instanceType.ID,
 			Name: instanceType.Name,
 		}
 	}
-	return list
+	return &LaunchTemplateListResponse{Data: list}
 }

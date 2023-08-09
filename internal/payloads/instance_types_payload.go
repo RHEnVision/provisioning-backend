@@ -9,6 +9,10 @@ import (
 
 type InstanceTypeResponse clients.InstanceType
 
+type InstanceTypeListResponse struct {
+	Data []*InstanceTypeResponse `json:"data" yaml:"data"`
+}
+
 func (s *InstanceTypeResponse) Bind(_ *http.Request) error {
 	return nil
 }
@@ -17,8 +21,12 @@ func (s *InstanceTypeResponse) Render(_ http.ResponseWriter, _ *http.Request) er
 	return nil
 }
 
-func NewListInstanceTypeResponse(sl []*clients.InstanceType) []render.Renderer {
-	list := make([]render.Renderer, len(sl))
+func (s *InstanceTypeListResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
+	return nil
+}
+
+func NewListInstanceTypeResponse(sl []*clients.InstanceType) render.Renderer {
+	list := make([]*InstanceTypeResponse, len(sl))
 	for i, it := range sl {
 		list[i] = &InstanceTypeResponse{
 			Name:               it.Name,
@@ -31,5 +39,5 @@ func NewListInstanceTypeResponse(sl []*clients.InstanceType) []render.Renderer {
 			AzureDetail:        it.AzureDetail,
 		}
 	}
-	return list
+	return &InstanceTypeListResponse{Data: list}
 }

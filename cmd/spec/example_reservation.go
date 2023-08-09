@@ -18,7 +18,7 @@ func MustParseTime(t string) time.Time {
 	return result
 }
 
-var GenericReservationResponsePayloadPendingExample = payloads.GenericReservationResponsePayload{
+var GenericReservationResponsePayloadPendingExample = payloads.GenericReservationResponse{
 	ID:         1310,
 	Provider:   1,
 	CreatedAt:  ReservationTime.Add(-10 * time.Second),
@@ -31,7 +31,7 @@ var GenericReservationResponsePayloadPendingExample = payloads.GenericReservatio
 	Success:    nil,
 }
 
-var GenericReservationResponsePayloadSuccessExample = payloads.GenericReservationResponsePayload{
+var GenericReservationResponsePayloadSuccessExample = payloads.GenericReservationResponse{
 	ID:         1305,
 	Provider:   1,
 	CreatedAt:  ReservationTime.Add(-10 * time.Second),
@@ -44,7 +44,7 @@ var GenericReservationResponsePayloadSuccessExample = payloads.GenericReservatio
 	Success:    ptr.To(true),
 }
 
-var GenericReservationResponsePayloadFailureExample = payloads.GenericReservationResponsePayload{
+var GenericReservationResponsePayloadFailureExample = payloads.GenericReservationResponse{
 	ID:         1313,
 	Provider:   1,
 	CreatedAt:  ReservationTime.Add(-10 * time.Second),
@@ -57,13 +57,15 @@ var GenericReservationResponsePayloadFailureExample = payloads.GenericReservatio
 	Success:    ptr.To(false),
 }
 
-var GenericReservationResponsePayloadListExample = []payloads.GenericReservationResponsePayload{
-	GenericReservationResponsePayloadPendingExample,
-	GenericReservationResponsePayloadSuccessExample,
-	GenericReservationResponsePayloadFailureExample,
+var GenericReservationResponsePayloadListExample = payloads.GenericReservationListResponse{
+	Data: []*payloads.GenericReservationResponse{
+		&GenericReservationResponsePayloadPendingExample,
+		&GenericReservationResponsePayloadSuccessExample,
+		&GenericReservationResponsePayloadFailureExample,
+	},
 }
 
-var AwsReservationRequestPayloadExample = payloads.AWSReservationRequestPayload{
+var AwsReservationRequestPayloadExample = payloads.AWSReservationRequest{
 	PubkeyID:         42,
 	SourceID:         "654321",
 	Region:           "us-east-1",
@@ -75,7 +77,7 @@ var AwsReservationRequestPayloadExample = payloads.AWSReservationRequestPayload{
 	PowerOff:         false,
 }
 
-var AwsReservationResponsePayloadPendingExample = payloads.AWSReservationResponsePayload{
+var AwsReservationResponsePayloadPendingExample = payloads.AWSReservationResponse{
 	PubkeyID:         42,
 	SourceID:         "654321",
 	Region:           "us-east-1",
@@ -87,7 +89,7 @@ var AwsReservationResponsePayloadPendingExample = payloads.AWSReservationRespons
 	PowerOff:         false,
 }
 
-var AwsReservationResponsePayloadDoneExample = payloads.AWSReservationResponsePayload{
+var AwsReservationResponsePayloadDoneExample = payloads.AWSReservationResponse{
 	ID:               1305,
 	PubkeyID:         42,
 	SourceID:         "654321",
@@ -107,7 +109,7 @@ var AwsReservationResponsePayloadDoneExample = payloads.AWSReservationResponsePa
 	},
 }
 
-var AzureReservationRequestPayloadExample = payloads.AzureReservationRequestPayload{
+var AzureReservationRequestPayloadExample = payloads.AzureReservationRequest{
 	PubkeyID:     42,
 	SourceID:     "654321",
 	Location:     "useast",
@@ -118,7 +120,7 @@ var AzureReservationRequestPayloadExample = payloads.AzureReservationRequestPayl
 	PowerOff:     false,
 }
 
-var AzureReservationResponsePayloadPendingExample = payloads.AzureReservationResponsePayload{
+var AzureReservationResponsePayloadPendingExample = payloads.AzureReservationResponse{
 	ID:           1310,
 	PubkeyID:     42,
 	SourceID:     "654321",
@@ -131,7 +133,7 @@ var AzureReservationResponsePayloadPendingExample = payloads.AzureReservationRes
 	Instances:    nil,
 }
 
-var AzureReservationResponsePayloadDoneExample = payloads.AzureReservationResponsePayload{
+var AzureReservationResponsePayloadDoneExample = payloads.AzureReservationResponse{
 	ID:           1310,
 	PubkeyID:     42,
 	SourceID:     "654321",
@@ -150,7 +152,7 @@ var AzureReservationResponsePayloadDoneExample = payloads.AzureReservationRespon
 	}},
 }
 
-var GCPReservationRequestPayloadExample = payloads.GCPReservationRequestPayload{
+var GCPReservationRequestPayloadExample = payloads.GCPReservationRequest{
 	PubkeyID:         42,
 	SourceID:         "654321",
 	Zone:             "us-east-4",
@@ -161,7 +163,7 @@ var GCPReservationRequestPayloadExample = payloads.GCPReservationRequestPayload{
 	LaunchTemplateID: "",
 }
 
-var GCPReservationResponsePayloadPendingExample = payloads.GCPReservationResponsePayload{
+var GCPReservationResponsePayloadPendingExample = payloads.GCPReservationResponse{
 	ID:               1305,
 	PubkeyID:         42,
 	SourceID:         "654321",
@@ -175,7 +177,7 @@ var GCPReservationResponsePayloadPendingExample = payloads.GCPReservationRespons
 	PowerOff:         false,
 }
 
-var GCPReservationResponsePayloadDoneExample = payloads.GCPReservationResponsePayload{
+var GCPReservationResponsePayloadDoneExample = payloads.GCPReservationResponse{
 	ID:               1305,
 	PubkeyID:         42,
 	SourceID:         "654321",
@@ -195,6 +197,6 @@ var GCPReservationResponsePayloadDoneExample = payloads.GCPReservationResponsePa
 	},
 }
 
-var NoopReservationResponsePayloadExample = payloads.NoopReservationResponsePayload{
+var NoopReservationResponsePayloadExample = payloads.NoopReservationResponse{
 	ID: 1310,
 }

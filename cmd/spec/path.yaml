@@ -116,9 +116,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/v1.PubkeyResponse'
+                $ref: '#/components/schemas/v1.ListPubkeyResponse'
               examples:
                 example:
                   $ref: '#/components/examples/v1.PubkeyListResponseExample'
@@ -148,9 +146,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/v1.SourceResponse'
+                  $ref: '#/components/schemas/v1.ListSourceResponse'
               examples:
                 example:
                   $ref: '#/components/examples/v1.SourceListResponseExample'
@@ -247,9 +243,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/v1.InstanceTypeResponse'
+                $ref: '#/components/schemas/v1.ListInstaceTypeResponse'
         '404':
           $ref: "#/components/responses/NotFound"
         '500':
@@ -287,9 +281,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/v1.LaunchTemplatesResponse'
+                $ref: '#/components/schemas/v1.ListLaunchTemplateResponse'
               examples:
                 example:
                   $ref: '#/components/examples/v1.LaunchTemplateListResponse'
@@ -334,9 +326,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/v1.InstanceTypeResponse'
+                $ref: '#/components/schemas/v1.ListInstaceTypeResponse'
               examples:
                 aws:
                   $ref: '#/components/examples/v1.InstanceTypesAWSResponse'
@@ -365,9 +355,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/v1.GenericReservationResponsePayload'
+                $ref: '#/components/schemas/v1.ListGenericReservationResponse'
               examples:
                 example:
                   $ref: '#/components/examples/v1.GenericReservationResponsePayloadListExample'
@@ -393,7 +381,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v1.GenericReservationResponsePayload'
+                $ref: '#/components/schemas/v1.GenericReservationResponse'
               examples:
                 pending:
                   $ref: '#/components/examples/v1.GenericReservationResponsePayloadPendingExample'

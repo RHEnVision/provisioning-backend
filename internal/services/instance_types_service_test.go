@@ -8,9 +8,9 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	clientStub "github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
+	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	"github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
@@ -39,13 +39,12 @@ func TestListInstanceTypesHandler(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-		var result []clients.InstanceType
-
+		var result payloads.InstanceTypeListResponse
 		err = json.NewDecoder(rr.Body).Decode(&result)
 		require.NoError(t, err, "failed to decode response body")
 
-		assert.Equal(t, 3, len(result), "expected three result in response json")
-		for _, it := range result {
+		assert.Equal(t, 3, len(result.Data), "expected three result in response json")
+		for _, it := range result.Data {
 			names = append(names, it.Name.String())
 		}
 		assert.Contains(t, names, "a1.2xlarge", "expected result to contain a1.2xlarge instance type")
@@ -84,9 +83,9 @@ func TestListAzureBuiltinInstanceTypesHandler(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-	var result []clients.InstanceType
+	var result payloads.InstanceTypeListResponse
 	err = json.NewDecoder(rr.Body).Decode(&result)
 	require.NoError(t, err, "failed to decode response body")
 
-	assert.Less(t, 1, len(result), "the instance types response is empty")
+	assert.Less(t, 1, len(result.Data), "the instance types response is empty")
 }

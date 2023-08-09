@@ -26,7 +26,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	var accountId int64 = identity.AccountId(r.Context())
 	var id identity.Principal = identity.Identity(r.Context())
 
-	payload := &payloads.AWSReservationRequestPayload{}
+	payload := &payloads.AWSReservationRequest{}
 	if err := render.Bind(r, payload); err != nil {
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "AWS reservation", err))
 		return

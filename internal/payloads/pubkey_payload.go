@@ -24,12 +24,19 @@ type PubkeyResponse struct {
 	Fingerprint       string `json:"fingerprint,omitempty" yaml:"fingerprint,omitempty"`
 	FingerprintLegacy string `json:"fingerprint_legacy,omitempty" yaml:"fingerprint_legacy,omitempty"`
 }
+type PubkeyListResponse struct {
+	Data []*PubkeyResponse `json:"data" yaml:"data"`
+}
 
 func (p *PubkeyRequest) Bind(_ *http.Request) error {
 	return nil
 }
 
 func (p *PubkeyResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
+	return nil
+}
+
+func (p *PubkeyListResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
@@ -40,7 +47,7 @@ func (p *PubkeyRequest) NewModel() *models.Pubkey {
 	}
 }
 
-func NewPubkeyResponse(pubkey *models.Pubkey) render.Renderer {
+func NewPubkeyResponse(pubkey *models.Pubkey) *PubkeyResponse {
 	return &PubkeyResponse{
 		ID:                pubkey.ID,
 		AccountID:         pubkey.AccountID,
@@ -52,10 +59,10 @@ func NewPubkeyResponse(pubkey *models.Pubkey) render.Renderer {
 	}
 }
 
-func NewPubkeyListResponse(pubkeys []*models.Pubkey) []render.Renderer {
-	list := make([]render.Renderer, len(pubkeys))
+func NewPubkeyListResponse(pubkeys []*models.Pubkey) render.Renderer {
+	list := make([]*PubkeyResponse, len(pubkeys))
 	for i, pubkey := range pubkeys {
 		list[i] = NewPubkeyResponse(pubkey)
 	}
-	return list
+	return &PubkeyListResponse{Data: list}
 }

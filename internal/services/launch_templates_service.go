@@ -69,7 +69,7 @@ func ListLaunchTemplateAWS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := render.RenderList(w, r, payloads.NewListLaunchTemplateResponse(templates)); err != nil {
+	if err := render.Render(w, r, payloads.NewListLaunchTemplateResponse(templates)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render launch templates list", err))
 		return
 	}
@@ -101,7 +101,7 @@ func ListLaunchTemplateGCP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := render.RenderList(w, r, payloads.NewListLaunchTemplateResponse(templates)); err != nil {
+	if err := render.Render(w, r, payloads.NewListLaunchTemplateResponse(templates)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render launch templates list", err))
 		return
 	}

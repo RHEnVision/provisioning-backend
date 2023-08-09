@@ -23,7 +23,7 @@ import (
 func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	logger := zerolog.Ctx(r.Context())
 
-	payload := &payloads.AzureReservationRequestPayload{}
+	payload := &payloads.AzureReservationRequest{}
 	if err := render.Bind(r, payload); err != nil {
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Azure reservation", err))
 		return

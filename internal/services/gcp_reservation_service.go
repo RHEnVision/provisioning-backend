@@ -25,7 +25,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	var accountId int64 = identity.AccountId(r.Context())
 	var id identity.Principal = identity.Identity(r.Context())
 
-	payload := &payloads.GCPReservationRequestPayload{}
+	payload := &payloads.GCPReservationRequest{}
 	if err := render.Bind(r, payload); err != nil {
 		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "GCP reservation", err))
 		return

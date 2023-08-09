@@ -37,7 +37,7 @@ func ListBuiltinInstanceTypes(typeFunc InstanceTypesForZoneFunc) func(w http.Res
 			return
 		}
 
-		if err := render.RenderList(w, r, payloads.NewListInstanceTypeResponse(instances)); err != nil {
+		if err := render.Render(w, r, payloads.NewListInstanceTypeResponse(instances)); err != nil {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render instance types list", err))
 			return
 		}
