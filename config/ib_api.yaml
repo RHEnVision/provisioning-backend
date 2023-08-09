@@ -484,6 +484,10 @@ components:
           type: string
           example: "MyImageName"
           maxLength: 100
+        image_description:
+          type: string
+          example: "MyImageDescription"
+          maxLength: 250
         image_requests:
           type: array
           minItems: 1
@@ -499,21 +503,22 @@ components:
       type: string
       enum:
         - rhel-8
+        - rhel-8-nightly
         - rhel-84
         - rhel-85
         - rhel-86
         - rhel-87
         - rhel-88
         - rhel-9
+        - rhel-9-nightly
         - rhel-90
         - rhel-91
         - rhel-92
         - centos-8
         - centos-9
-        - fedora-35
-        - fedora-36
         - fedora-37
         - fedora-38
+        - fedora-39
     ImageRequest:
       type: object
       additionalProperties: false
@@ -546,6 +551,7 @@ components:
         - guest-image
         - image-installer
         - vsphere
+        - vsphere-ova
         # backwards compatible aliases
         - ami  # == aws
         - rhel-edge-commit  # == edge-commit
@@ -723,6 +729,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CustomRepository'
+        openscap:
+          $ref: '#/components/schemas/OpenSCAP'
         filesystem:
           type: array
           maxItems: 128
@@ -966,6 +974,14 @@ components:
           type: integer
         ssl_verify:
           type: boolean
+    OpenSCAP:
+      type: object
+      required:
+        - profile_id
+      properties:
+        profile_id:
+          type: string
+          example: "xccdf_org.ssgproject.content_profile_cis"
     ClonesResponse:
       required:
         - meta

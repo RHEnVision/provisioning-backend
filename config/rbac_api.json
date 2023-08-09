@@ -1187,6 +1187,20 @@
             }
           },
           {
+            "name": "admin_only",
+            "in": "query",
+            "description": "Get only admin users within an account.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "default": "false"
+            }
+          },
+          {
             "name": "principal_username",
             "in": "query",
             "required": false,
@@ -1754,7 +1768,7 @@
           {
             "name": "application",
             "in": "query",
-            "description": "The application name(s) to filter roles by, from permissions. This is an exact match. You may also use a comma-separated list to match on multiple applications.",
+            "description": "The application name(s) to filter roles by, from permissions or external tenant name. This is an exact match. You may also use a comma-separated list to match on multiple applications.",
             "required": false,
             "schema": {
               "type": "string"
@@ -3095,6 +3109,16 @@
           },
           "is_org_admin": {
             "type": "boolean"
+          },
+          "external_source_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              }, {
+                "type": "integer"
+              }
+            ],
+            "example": "1"
           }
         }
       },
