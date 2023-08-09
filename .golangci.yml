@@ -19,7 +19,8 @@ linters:
     - scopelint # deprecated by exportloopref
     - gci # too strict
     - contextcheck # too restrictive
-    - gomoddirectives # TODO remove after scany/tern v2 are released
+    - depguard # too verbose
+    - tagalign # cleanenv is unreadable
 linters-settings:
   govet:
     check-shadowing: true
