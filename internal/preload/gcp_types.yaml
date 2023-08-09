@@ -326,6 +326,150 @@ c3-highcpu-176:
     storage_gb: 0
     supported: true
     arch: x86_64
+c3-highmem-4:
+    name: c3-highmem-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-highmem-8:
+    name: c3-highmem-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 62495
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-highmem-22:
+    name: c3-highmem-22
+    vcpus: 22
+    cores: 0
+    memory_mib: 171861
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-highmem-44:
+    name: c3-highmem-44
+    vcpus: 44
+    cores: 0
+    memory_mib: 343723
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-highmem-88:
+    name: c3-highmem-88
+    vcpus: 88
+    cores: 0
+    memory_mib: 687446
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-highmem-176:
+    name: c3-highmem-176
+    vcpus: 176
+    cores: 0
+    memory_mib: 1374892
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-4:
+    name: c3-standard-4
+    vcpus: 4
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-4-lssd:
+    name: c3-standard-4-lssd
+    vcpus: 4
+    cores: 0
+    memory_mib: 15623
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-8:
+    name: c3-standard-8
+    vcpus: 8
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-8-lssd:
+    name: c3-standard-8-lssd
+    vcpus: 8
+    cores: 0
+    memory_mib: 31247
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-22:
+    name: c3-standard-22
+    vcpus: 22
+    cores: 0
+    memory_mib: 85930
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-22-lssd:
+    name: c3-standard-22-lssd
+    vcpus: 22
+    cores: 0
+    memory_mib: 85930
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-44:
+    name: c3-standard-44
+    vcpus: 44
+    cores: 0
+    memory_mib: 171861
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-44-lssd:
+    name: c3-standard-44-lssd
+    vcpus: 44
+    cores: 0
+    memory_mib: 171861
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-88:
+    name: c3-standard-88
+    vcpus: 88
+    cores: 0
+    memory_mib: 343723
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-88-lssd:
+    name: c3-standard-88-lssd
+    vcpus: 88
+    cores: 0
+    memory_mib: 343723
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-176:
+    name: c3-standard-176
+    vcpus: 176
+    cores: 0
+    memory_mib: 687446
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+c3-standard-176-lssd:
+    name: c3-standard-176-lssd
+    vcpus: 176
+    cores: 0
+    memory_mib: 687446
+    storage_gb: 0
+    supported: true
+    arch: x86_64
 e2-highcpu-2:
     name: e2-highcpu-2
     vcpus: 2
@@ -539,6 +683,14 @@ g2-standard-96:
     vcpus: 96
     cores: 0
     memory_mib: 374970
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+h3-standard-88:
+    name: h3-standard-88
+    vcpus: 88
+    cores: 0
+    memory_mib: 343723
     storage_gb: 0
     supported: true
     arch: x86_64
