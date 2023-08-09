@@ -15,16 +15,20 @@ type SourceResponse struct {
 	Uid          string `json:"uid" yaml:"uid"`
 }
 
-func (s *SourceResponse) Bind(_ *http.Request) error {
-	return nil
+type SourceListResponse struct {
+	Data []*SourceResponse `json:"data" yaml:"data"`
 }
 
 func (s *SourceResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
-func NewListSourcesResponse(sourceList []*clients.Source) []render.Renderer {
-	list := make([]render.Renderer, len(sourceList))
+func (s *SourceListResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
+	return nil
+}
+
+func NewListSourcesResponse(sourceList []*clients.Source) render.Renderer {
+	list := make([]*SourceResponse, len(sourceList))
 	for i, source := range sourceList {
 		list[i] = &SourceResponse{
 			ID:           source.ID,
@@ -33,7 +37,7 @@ func NewListSourcesResponse(sourceList []*clients.Source) []render.Renderer {
 			Uid:          source.Uid,
 		}
 	}
-	return list
+	return &SourceListResponse{Data: list}
 }
 
 type SourceUploadInfoResponse struct {

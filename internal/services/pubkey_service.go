@@ -55,7 +55,7 @@ func ListPubkeys(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := render.RenderList(w, r, payloads.NewPubkeyListResponse(pubkeys)); err != nil {
+	if err := render.Render(w, r, payloads.NewPubkeyListResponse(pubkeys)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render pubkeys list", err))
 		return
 	}

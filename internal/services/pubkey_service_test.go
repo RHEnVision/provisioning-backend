@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/RHEnVision/provisioning-backend/internal/services"
 	_ "github.com/RHEnVision/provisioning-backend/internal/testing/initialization"
 	"github.com/stretchr/testify/require"
@@ -43,12 +44,11 @@ func TestListPubkeysHandler(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rr.Code, "Wrong status code")
 
-	var pubkeys []models.Pubkey
-
-	err = json.NewDecoder(rr.Body).Decode(&pubkeys)
+	var result payloads.PubkeyListResponse
+	err = json.NewDecoder(rr.Body).Decode(&result)
 	require.NoError(t, err, "failed to decode response body")
 
-	assert.Equal(t, 2, len(pubkeys), "expected two pubkeys in response json")
+	assert.Equal(t, 2, len(result.Data), "expected two pubkeys in response json")
 }
 
 func TestCreatePubkeyHandler(t *testing.T) {

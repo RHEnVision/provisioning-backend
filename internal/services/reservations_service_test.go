@@ -68,7 +68,7 @@ func TestGetReservationDetail(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, rr.Code, "Wrong status code")
 
-		var response payloads.GenericReservationResponsePayload
+		var response payloads.GenericReservationResponse
 		err = json.NewDecoder(rr.Body).Decode(&response)
 		require.NoError(t, err, "failed to decode response body")
 

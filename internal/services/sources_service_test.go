@@ -15,7 +15,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/require"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 	clientStub "github.com/RHEnVision/provisioning-backend/internal/clients/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
@@ -37,12 +36,11 @@ func TestListSourcesHandler(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-		var result []sources.Source
-
+		var result payloads.SourceListResponse
 		err = json.NewDecoder(rr.Body).Decode(&result)
 		require.NoError(t, err, "failed to decode response body")
 
-		assert.Equal(t, 2, len(result), "expected two result in response json")
+		assert.Equal(t, 2, len(result.Data), "expected two result in response json")
 	})
 
 	t.Run("with provider", func(t *testing.T) {
@@ -59,12 +57,11 @@ func TestListSourcesHandler(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
 
-		var result []payloads.SourceResponse
-
+		var result payloads.SourceListResponse
 		err = json.NewDecoder(rr.Body).Decode(&result)
 		require.NoError(t, err, "failed to decode response body")
 
-		assert.Equal(t, 2, len(result), "expected two result in response json")
+		assert.Equal(t, 2, len(result.Data), "expected two result in response json")
 	})
 
 	t.Run("with invalid provider", func(t *testing.T) {

@@ -5,13 +5,17 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 )
 
-var SourceListResponse = []payloads.SourceResponse{{
-	ID:   "654321",
-	Name: "My AWS account",
-}, {
-	ID:   "543621",
-	Name: "My other AWS account",
-}}
+var SourceListResponse = payloads.SourceListResponse{
+	Data: []*payloads.SourceResponse{
+		{
+			ID:   "654321",
+			Name: "My AWS account",
+		}, {
+			ID:   "543621",
+			Name: "My other AWS account",
+		},
+	},
+}
 
 var SourceUploadInfoAWSResponse = payloads.SourceUploadInfoResponse{
 	Provider: "aws",

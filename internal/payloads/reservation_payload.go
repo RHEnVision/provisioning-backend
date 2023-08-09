@@ -11,7 +11,7 @@ import (
 // ReservationRequest is empty, account comes in HTTP header and
 // provider type in HTTP URL. All other fields are auto-generated.
 
-type GenericReservationResponsePayload struct {
+type GenericReservationResponse struct {
 	ID int64 `json:"id" yaml:"id"`
 
 	// Provider type. Required.
@@ -50,7 +50,7 @@ type InstanceResponse struct {
 	Detail models.ReservationInstanceDetail `json:"detail" yaml:"detail"`
 }
 
-type AWSReservationResponsePayload struct {
+type AWSReservationResponse struct {
 	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 
 	// Pubkey ID.
@@ -87,7 +87,7 @@ type AWSReservationResponsePayload struct {
 	Instances []InstanceResponse `json:"instances,omitempty" yaml:"instances"`
 }
 
-type AzureReservationResponsePayload struct {
+type AzureReservationResponse struct {
 	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 
 	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
@@ -116,7 +116,7 @@ type AzureReservationResponsePayload struct {
 	Instances []InstanceResponse `json:"instances,omitempty" yaml:"instances"`
 }
 
-type GCPReservationResponsePayload struct {
+type GCPReservationResponse struct {
 	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 
 	// Pubkey ID.
@@ -153,11 +153,11 @@ type GCPReservationResponsePayload struct {
 	Instances []InstanceResponse `json:"instances,omitempty" yaml:"instances"`
 }
 
-type NoopReservationResponsePayload struct {
+type NoopReservationResponse struct {
 	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 }
 
-type AWSReservationRequestPayload struct {
+type AWSReservationRequest struct {
 	// Pubkey ID. Always required even when launch template provides one.
 	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
 
@@ -186,7 +186,7 @@ type AWSReservationRequestPayload struct {
 	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 }
 
-type AzureReservationRequestPayload struct {
+type AzureReservationRequest struct {
 	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
 
 	SourceID string `json:"source_id" yaml:"source_id"`
@@ -210,7 +210,7 @@ type AzureReservationRequestPayload struct {
 	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 }
 
-type GCPReservationRequestPayload struct {
+type GCPReservationRequest struct {
 	// Pubkey ID.
 	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
 
@@ -239,31 +239,39 @@ type GCPReservationRequestPayload struct {
 	PowerOff bool `json:"poweroff" yaml:"poweroff"`
 }
 
-func (p *GenericReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
+type GenericReservationListResponse struct {
+	Data []*GenericReservationResponse `json:"data" yaml:"data"`
+}
+
+func (p *GenericReservationResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
-func (p *AWSReservationRequestPayload) Bind(_ *http.Request) error {
+func (p *AWSReservationRequest) Bind(_ *http.Request) error {
 	return nil
 }
 
-func (p *AWSReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
+func (p *AWSReservationResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
-func (p *AzureReservationRequestPayload) Bind(_ *http.Request) error {
+func (p *AzureReservationRequest) Bind(_ *http.Request) error {
 	return nil
 }
 
-func (p *AzureReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
+func (p *AzureReservationResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
-func (p *GCPReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
+func (p *GCPReservationResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
-func (p *NoopReservationResponsePayload) Render(_ http.ResponseWriter, _ *http.Request) error {
+func (p *NoopReservationResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
+	return nil
+}
+
+func (p *GenericReservationListResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
@@ -271,7 +279,7 @@ func NewReservationResponse(reservation *models.Reservation) render.Renderer {
 	return reservationResponseMapper(reservation)
 }
 
-func (p *GCPReservationRequestPayload) Bind(_ *http.Request) error {
+func (p *GCPReservationRequest) Bind(_ *http.Request) error {
 	return nil
 }
 
@@ -281,7 +289,7 @@ func NewAWSReservationResponse(reservation *models.AWSReservation, instances []*
 		instancesResponse[iter] = InstanceResponse{InstanceID: inst.InstanceID, Detail: inst.Detail}
 	}
 
-	response := AWSReservationResponsePayload{
+	response := AWSReservationResponse{
 		PubkeyID:         reservation.PubkeyID,
 		ImageID:          reservation.ImageID,
 		SourceID:         reservation.SourceID,
@@ -306,7 +314,7 @@ func NewAzureReservationResponse(reservation *models.AzureReservation, instances
 		instanceIds[iter] = InstanceResponse{InstanceID: inst.InstanceID, Detail: inst.Detail}
 	}
 
-	response := AzureReservationResponsePayload{
+	response := AzureReservationResponse{
 		PubkeyID:     reservation.PubkeyID,
 		ImageID:      reservation.ImageID,
 		SourceID:     reservation.SourceID,
@@ -330,7 +338,7 @@ func NewGCPReservationResponse(reservation *models.GCPReservation, instances []*
 		}
 	}
 
-	response := GCPReservationResponsePayload{
+	response := GCPReservationResponse{
 		NamePattern:      *reservation.Detail.NamePattern,
 		PubkeyID:         reservation.PubkeyID,
 		ImageID:          reservation.ImageID,
@@ -348,20 +356,20 @@ func NewGCPReservationResponse(reservation *models.GCPReservation, instances []*
 }
 
 func NewNoopReservationResponse(reservation *models.NoopReservation) render.Renderer {
-	return &NoopReservationResponsePayload{
+	return &NoopReservationResponse{
 		ID: reservation.ID,
 	}
 }
 
-func NewReservationListResponse(reservations []*models.Reservation) []render.Renderer {
-	list := make([]render.Renderer, len(reservations))
+func NewReservationListResponse(reservations []*models.Reservation) render.Renderer {
+	list := make([]*GenericReservationResponse, len(reservations))
 	for i, reservation := range reservations {
 		list[i] = reservationResponseMapper(reservation)
 	}
-	return list
+	return &GenericReservationListResponse{Data: list}
 }
 
-func reservationResponseMapper(reservation *models.Reservation) *GenericReservationResponsePayload {
+func reservationResponseMapper(reservation *models.Reservation) *GenericReservationResponse {
 	var finishedAt *time.Time
 	if reservation.FinishedAt.Valid {
 		finishedAt = &reservation.FinishedAt.Time
@@ -370,7 +378,7 @@ func reservationResponseMapper(reservation *models.Reservation) *GenericReservat
 	if reservation.Success.Valid {
 		success = &reservation.Success.Bool
 	}
-	return &GenericReservationResponsePayload{
+	return &GenericReservationResponse{
 		ID:         reservation.ID,
 		Provider:   int(reservation.Provider),
 		CreatedAt:  reservation.CreatedAt,

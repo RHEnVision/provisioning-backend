@@ -65,7 +65,7 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := render.RenderList(w, r, payloads.NewReservationListResponse(reservations)); err != nil {
+	if err := render.Render(w, r, payloads.NewReservationListResponse(reservations)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservations list", err))
 		return
 	}
