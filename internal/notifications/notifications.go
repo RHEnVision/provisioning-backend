@@ -80,7 +80,10 @@ func (x *client) FailedLaunch(ctx context.Context, reservationId int64, jobError
 	}
 
 	notificationEvent := []kafka.NotificationEvent{{Payload: marshalError}}
-	notificationMsg, err := kafka.NotificationMessage{Context: reservation, EventType: kafka.NotificationFailureEventType, Events: notificationEvent}.GenericMessage(ctx)
+	notificationMsg, err := kafka.NotificationMessage{
+		Context:   kafka.NotificationContext{Provider: reservation.Provider.String(), LaunchID: reservationId},
+		EventType: kafka.NotificationFailureEventType, Events: notificationEvent,
+	}.GenericMessage(ctx)
 	if err != nil {
 		logger.Error().Err(err).Msg("Unable to create notification failure message")
 		return
