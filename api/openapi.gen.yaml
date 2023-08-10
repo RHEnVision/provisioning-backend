@@ -702,7 +702,7 @@ info:
     description: Provisioning service API
     license:
         name: GPL-3.0
-    version: 1.4.0
+    version: 1.5.0
 paths:
     /availability_status/sources:
         post:

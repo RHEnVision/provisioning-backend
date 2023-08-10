@@ -1,4 +1,24 @@
 <!-- insertion marker -->
+<a name="1.5.0"></a>
+
+## [1.5.0](https://github.com/RHEnVision/provisioning-backend/compare/1.4.0...1.5.0) (2023-08-09)
+
+### Bug Fixes
+
+- **HMS-1453:** disable RBAC for sources ([dc8bb55](https://github.com/RHEnVision/provisioning-backend/commit/dc8bb555018696c422b46b4da7e30f485688596f))
+- **HMS-1453:** list sources can be public ([c1f1cd9](https://github.com/RHEnVision/provisioning-backend/commit/c1f1cd991d1bf71540981dc10b12200ec3883a7c))
+- **HMS-1453:** platform RBAC support enabled ([a812045](https://github.com/RHEnVision/provisioning-backend/commit/a8120450aadce624fe7401c6d6643904cbce9173))
+- **HMS-2295:** add numeric rid to GCP ([0a66644](https://github.com/RHEnVision/provisioning-backend/commit/0a66644174d22772e29d5518b359f4212f65a570))
+- **HMS-2290:** Make replicas configurable ([43be8f6](https://github.com/RHEnVision/provisioning-backend/commit/43be8f63f1705d3a6148961dc3b13f041a48133a))
+- **HMS-2274:** Add setTags permission to GCP ([c6f22d8](https://github.com/RHEnVision/provisioning-backend/commit/c6f22d802f787a25d5daf3922173a957e44f9496))
+- **HMS-2233:** reservation id tag for AWS ([3a74b17](https://github.com/RHEnVision/provisioning-backend/commit/3a74b17cf83bea73898a5000382d593ab00d8ebf))
+- **HMS-1453:** platform RBAC support ([2a1951b](https://github.com/RHEnVision/provisioning-backend/commit/2a1951b7c6732e246939893549cd088bbe33a692))
+
+### Code Refactoring
+
+- Change launch template name to id in GCP ([2b0ccb9](https://github.com/RHEnVision/provisioning-backend/commit/2b0ccb936b106a7cde3c39a952990f4fac2009db))
+- Add missing launch template to payload ([34e1c2f](https://github.com/RHEnVision/provisioning-backend/commit/34e1c2fcf01664a053aacaca80af5424c0ab9a7d))
+
 <a name="1.4.0"></a>
 
 ## [1.4.0](https://github.com/RHEnVision/provisioning-backend/compare/1.3.0...1.4.0) (2023-07-26)
