@@ -9,6 +9,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
+	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/go-chi/render"
@@ -109,6 +110,9 @@ var errStatus = map[error]*userPayload{
 	clients.ForbiddenErr:      {403, "forbidden; returned from a backend service"},
 	clients.Non2xxResponseErr: {500, "unsuccessful response;returned from a backend service"},
 
+	// database errors
+	dao.ErrReservationRateExceeded: {429, "too many pending reservations for this account, wait and try again"},
+
 	// image builder specific errors
 	httpClients.CloneNotFoundErr:        {404, "image builder could not find compose clone"},
 	httpClients.ComposeNotFoundErr:      {404, "image builder could not find compose"},
@@ -136,14 +140,22 @@ func findUserPayload(err error) *userPayload {
 	return findUserPayload(errors.Unwrap(err))
 }
 
-func NewClientError(ctx context.Context, err error) *ResponseError {
+func findUserResponse(ctx context.Context, logMsg string, err error) *ResponseError {
 	if payload := findUserPayload(err); payload != nil {
 		logger := log.Ctx(ctx).Warn()
 		if payload.code >= 500 {
 			logger = log.Ctx(ctx).Error()
 		}
-		logger.Msgf("Client error: %s", err)
+		logger.Msgf("%s: %s", logMsg, err)
 		return NewResponseError(ctx, payload.code, payload.message, err)
+	}
+
+	return nil
+}
+
+func NewClientError(ctx context.Context, err error) *ResponseError {
+	if response := findUserResponse(ctx, "Client error", err); response != nil {
+		return response
 	}
 	log.Ctx(ctx).Error().Msgf("Unknown client error: %s", err)
 	return NewResponseError(ctx, 500, "backend client error", err)
@@ -170,6 +182,9 @@ func NewEnqueueTaskError(ctx context.Context, message string, err error) *Respon
 }
 
 func NewDAOError(ctx context.Context, message string, err error) *ResponseError {
+	if response := findUserResponse(ctx, "DAO error", err); response != nil {
+		return response
+	}
 	message = fmt.Sprintf("DAO error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)
 }
