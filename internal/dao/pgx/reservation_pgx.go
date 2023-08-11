@@ -3,6 +3,7 @@ package pgx
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -137,8 +138,12 @@ func (x *reservationDao) createGenericReservation(ctx context.Context, reservati
 		reservation.StepTitles,
 		reservation.Status).Scan(&reservation.ID, &reservation.CreatedAt)
 	if err != nil {
+		if strings.Contains(err.Error(), "too many pending reservations") {
+			return fmt.Errorf("%w: %s", dao.ErrReservationRateExceeded, err.Error())
+		}
 		return fmt.Errorf("failed to create reservation record: %w", err)
 	}
+
 	return nil
 }
 

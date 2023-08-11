@@ -33,4 +33,7 @@ var (
 
 	// ErrStubContextAlreadySet is returned when stub object was already added to the context
 	ErrStubContextAlreadySet = errors.New("context object already set")
+
+	// ErrReservationRateExceeded is returned when SQL constraint does not allow to insert more reservations
+	ErrReservationRateExceeded = errors.New("rate limit exceeded")
 )
