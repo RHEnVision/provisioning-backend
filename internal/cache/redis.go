@@ -53,6 +53,7 @@ func Initialize() {
 		// register all Cacheable types
 		gob.Register(&models.Account{})
 		gob.Register(&clients.AccountDetailsAWS{})
+		gob.Register(&clients.AccessList{})
 
 		client = redis.NewClient(&redis.Options{
 			Addr:     config.RedisHostAndPort(),
@@ -124,7 +125,7 @@ func Find(ctx context.Context, key string, value Cacheable) error {
 	}
 
 	metrics.IncCacheHit(prefix, "hit")
-	zerolog.Ctx(ctx).Trace().Bool("cache", true).Msgf("Cache hit for key '%s' type %T", key, value)
+	zerolog.Ctx(ctx).Trace().Bool("cache", true).Msgf("Cache hit for key '%s%s' type %T", prefix, key, value)
 	return nil
 }
 
