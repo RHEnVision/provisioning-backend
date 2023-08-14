@@ -32,7 +32,7 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 	pType := models.ProviderTypeFromString(chi.URLParam(r, "TYPE"))
 
 	// Check permission for individual provider type
-	if CheckPermissionAndRender(w, r, fmt.Sprintf("reservation.%s", pType), "write") != nil {
+	if CheckPermissionAndRender(w, r, "write", "reservation", pType.String()) != nil {
 		return
 	}
 
@@ -81,8 +81,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check permission for individual provider type
-	if CheckPermissionAndRender(w, r, fmt.Sprintf("reservation.%s", providerType), "read") != nil {
+	if CheckPermissionAndRender(w, r, "read", "reservation", providerType.String()) != nil {
 		return
 	}
 
