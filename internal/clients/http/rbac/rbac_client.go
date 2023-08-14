@@ -2,14 +2,17 @@ package rbac
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/headers"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/rs/zerolog"
@@ -76,57 +79,74 @@ func (c *rbac) GetPrincipalAccess(ctx context.Context) (clients.RbacAcl, error) 
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetPrincipalAccess")
 	defer span.End()
 
-	start := time.Now()
-	defer func() {
-		metrics.RbacAclFetchDuration.Observe(float64(time.Since(start).Nanoseconds()) / 1000000)
-	}()
-
+	logger := zerolog.Ctx(ctx)
+	rhId := identity.Identity(ctx)
+	orgID := rhId.Identity.OrgID
+	accountNumber := rhId.Identity.AccountNumber
+	var fullRequest bool
 	var result clients.AccessList
-	records := math.MaxInt
-	offset := 0
-	maxQueries := 10
 
-	// keep fetching until we have all the records
-	for len(result) < records {
-		params := GetPrincipalAccessParams{
-			Application: "provisioning",
-			Limit:       FetchLimit,
-			Offset:      &offset,
+	err := cache.Find(ctx, orgID+accountNumber, &result)
+	if errors.Is(err, cache.ErrNotFound) {
+		fullRequest = true
+		start := time.Now()
+		defer func() {
+			metrics.RbacAclFetchDuration.Observe(float64(time.Since(start).Nanoseconds()) / 1000000)
+		}()
+
+		records := math.MaxInt
+		offset := 0
+		maxQueries := 10
+
+		// keep fetching until we have all the records
+		for len(result) < records {
+			params := GetPrincipalAccessParams{
+				Application: "provisioning",
+				Limit:       FetchLimit,
+				Offset:      &offset,
+			}
+			resp, gpaErr := c.client.GetPrincipalAccessWithResponse(ctx, &params, headers.AddRbacIdentityHeader, headers.AddEdgeRequestIdHeader)
+			if gpaErr != nil {
+				return nil, fmt.Errorf("get principal access: %w", gpaErr)
+			}
+
+			gpaErr = http.HandleHTTPResponses(ctx, resp.StatusCode())
+			if gpaErr != nil {
+				return nil, fmt.Errorf("get principal access: %w", gpaErr)
+			}
+			logger.Trace().
+				Int("limit", *FetchLimit).
+				Int("offset", offset).
+				Int("length", len(result)).
+				Int("entries", len(resp.JSON200.Data)).
+				Int("return_code", resp.StatusCode()).
+				Msg("Performed get principal access RBAC call")
+
+			if resp.JSON200 == nil || resp.JSON200.Meta == nil || resp.JSON200.Meta.Count == nil {
+				return nil, ErrMetaNotPresent
+			}
+			records = int(*resp.JSON200.Meta.Count)
+
+			for _, a := range resp.JSON200.Data {
+				result = append(result, clients.NewAccess(a.Permission))
+			}
+			offset += *FetchLimit
+
+			maxQueries -= 1
+			if maxQueries <= 0 {
+				logger.Warn().Msg("Maximum amount of RBAC requests reached, giving up")
+				break
+			}
 		}
-		resp, err := c.client.GetPrincipalAccessWithResponse(ctx, &params, headers.AddRbacIdentityHeader, headers.AddEdgeRequestIdHeader)
+
+		err = cache.Set(ctx, orgID+accountNumber, &result)
 		if err != nil {
-			return nil, fmt.Errorf("get principal access: %w", err)
+			return nil, fmt.Errorf("acl cache set error: %w", err)
 		}
-
-		err = http.HandleHTTPResponses(ctx, resp.StatusCode())
-		if err != nil {
-			return nil, fmt.Errorf("get principal access: %w", err)
-		}
-		zerolog.Ctx(ctx).Trace().
-			Int("limit", *FetchLimit).
-			Int("offset", offset).
-			Int("length", len(result)).
-			Int("entries", len(resp.JSON200.Data)).
-			Int("return_code", resp.StatusCode()).
-			Msg("Performed get principal access RBAC call")
-
-		if resp.JSON200 == nil || resp.JSON200.Meta == nil || resp.JSON200.Meta.Count == nil {
-			return nil, ErrMetaNotPresent
-		}
-		records = int(*resp.JSON200.Meta.Count)
-
-		for _, a := range resp.JSON200.Data {
-			result = append(result, clients.NewAccess(a.Permission))
-		}
-		offset += *FetchLimit
-
-		maxQueries -= 1
-		if maxQueries <= 0 {
-			zerolog.Ctx(ctx).Warn().Msg("Maximum amount of RBAC requests reached, giving up")
-			break
-		}
+	} else if err != nil {
+		return nil, fmt.Errorf("acl cache get error: %w", err)
 	}
 
-	zerolog.Ctx(ctx).Trace().Msgf("Access list: %s", result.String())
+	logger.Debug().Msgf("ACL (cache: %t): %s", !fullRequest, result.String())
 	return result, nil
 }

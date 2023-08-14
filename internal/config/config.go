@@ -26,7 +26,7 @@ var config struct {
 		} `env-prefix:"NOTIFICATIONS_"`
 		Cache struct {
 			Type       string        `env:"TYPE" env-default:"none" env-description:"application cache (none, redis)"`
-			Expiration time.Duration `env:"EXPIRATION" env-default:"1h" env-description:"expiration for both memory and Redis (time interval syntax)"`
+			Expiration time.Duration `env:"EXPIRATION" env-default:"10m" env-description:"expiration for Redis application cache (time interval syntax)"`
 			Redis      struct {
 				Host     string `env:"HOST" env-default:"localhost" env-description:"redis hostname"`
 				Port     int    `env:"PORT" env-default:"6379" env-description:"redis port"`

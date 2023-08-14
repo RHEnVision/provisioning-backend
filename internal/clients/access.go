@@ -55,3 +55,7 @@ func (l AccessList) String() string {
 	}
 	return sb.String()
 }
+
+func (AccessList) CacheKeyName() string {
+	return "acl"
+}
