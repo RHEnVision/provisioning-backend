@@ -130,7 +130,7 @@ func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*
 	}
 	stsClient := sts.NewFromConfig(*cfg)
 	if err != nil {
-		logger.Error().Err(err).Msg("Cannot create STS client")
+		logger.Warn().Err(err).Msg("Cannot create STS client")
 		return nil, fmt.Errorf("cannot create STS client %w", err)
 	}
 
@@ -139,7 +139,7 @@ func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*
 		RoleSessionName: ptr.To("name"),
 	})
 	if err != nil {
-		logger.Error().Err(err).Msg("Cannot assume role")
+		logger.Warn().Err(err).Msg("Cannot assume role")
 		return nil, fmt.Errorf("cannot assume role %w", err)
 	}
 
