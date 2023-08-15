@@ -112,9 +112,9 @@ func TestSourcesClient_ListAllProvisioningSources(t *testing.T) {
 	client, err := sources.NewSourcesClientWithUrl(ctx, ts.URL)
 	require.NoError(t, err, "failed to initialize sources client with test server")
 
-	sources, clientErr := client.ListAllProvisioningSources(ctx)
+	sources, total, clientErr := client.ListAllProvisioningSources(ctx)
 	assert.NoError(t, clientErr, "Could not list all provisioning sources")
-	assert.Equal(t, 2, len(sources))
+	assert.Equal(t, 2, total)
 	assert.Equal(t, "1", sources[0].SourceTypeID)
 	assert.Equal(t, "2", sources[1].SourceTypeID)
 }

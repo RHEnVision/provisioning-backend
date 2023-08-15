@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 )
 
@@ -14,6 +15,13 @@ var SourceListResponse = payloads.SourceListResponse{
 			ID:   "543621",
 			Name: "My other AWS account",
 		},
+	},
+	Metadata: page.Metadata{
+		Total: 4,
+	},
+	Links: page.Links{
+		Previous: "/api/provisioning/v1/sources?limit=2&offset=0",
+		Next:     "",
 	},
 }
 

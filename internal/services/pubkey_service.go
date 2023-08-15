@@ -59,7 +59,15 @@ func ListPubkeys(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := render.Render(w, r, payloads.NewPubkeyListResponse(pubkeys)); err != nil {
+	totalPubkeys, err := pubkeyDao.Count(r.Context())
+	if err != nil {
+		renderError(w, r, payloads.NewDAOError(r.Context(), "count pubkeys", err))
+		return
+	}
+
+	info := page.APIInfoResponse(r.Context(), r, totalPubkeys)
+
+	if err := render.Render(w, r, payloads.NewPubkeyListResponse(pubkeys, info)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render pubkeys list", err))
 		return
 	}

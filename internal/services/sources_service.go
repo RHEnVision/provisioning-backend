@@ -9,12 +9,31 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 )
 
 func ListSources(w http.ResponseWriter, r *http.Request) {
+	provider := r.URL.Query().Get("provider")
+	asProviderType := models.ProviderTypeFromString(provider)
+
+	if provider == "" {
+		ListAllProvisioningSources(w, r)
+		return
+	}
+	switch asProviderType {
+	case models.ProviderTypeAWS, models.ProviderTypeGCP, models.ProviderTypeAzure:
+		ListProvisioningSourcesByProvider(w, r, asProviderType)
+		return
+	default:
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown provider: %s", provider), clients.UnknownProviderErr))
+		return
+	}
+}
+
+func ListAllProvisioningSources(w http.ResponseWriter, r *http.Request) {
 	var sourcesList []*clients.Source
 
 	client, err := clients.GetSourcesClient(r.Context())
@@ -22,26 +41,39 @@ func ListSources(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
 	}
-	provider := r.URL.Query().Get("provider")
-	asProviderType := models.ProviderTypeFromString(provider)
-	if asProviderType != models.ProviderTypeUnknown {
-		sourcesList, err = client.ListProvisioningSourcesByProvider(r.Context(), asProviderType)
-		if err != nil {
-			renderError(w, r, payloads.NewClientError(r.Context(), err))
-			return
-		}
-	} else if provider == "" {
-		sourcesList, err = client.ListAllProvisioningSources(r.Context())
-		if err != nil {
-			renderError(w, r, payloads.NewClientError(r.Context(), err))
-			return
-		}
-	} else {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown provider: %s", provider), clients.UnknownProviderErr))
+
+	sourcesList, total, err := client.ListAllProvisioningSources(r.Context())
+	if err != nil {
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
 	}
 
-	if err := render.Render(w, r, payloads.NewListSourcesResponse(sourcesList)); err != nil {
+	info := page.APIInfoResponse(r.Context(), r, total)
+
+	if err := render.Render(w, r, payloads.NewListSourcesResponse(sourcesList, info)); err != nil {
+		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render sources list", err))
+		return
+	}
+}
+
+func ListProvisioningSourcesByProvider(w http.ResponseWriter, r *http.Request, asProviderType models.ProviderType) {
+	var sourcesList []*clients.Source
+
+	client, err := clients.GetSourcesClient(r.Context())
+	if err != nil {
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
+		return
+	}
+
+	sourcesList, total, err := client.ListProvisioningSourcesByProvider(r.Context(), asProviderType)
+	if err != nil {
+		renderError(w, r, payloads.NewClientError(r.Context(), err))
+		return
+	}
+
+	info := page.APIInfoResponse(r.Context(), r, total)
+
+	if err := render.Render(w, r, payloads.NewListSourcesResponse(sourcesList, info)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render sources list", err))
 		return
 	}

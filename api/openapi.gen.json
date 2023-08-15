@@ -229,7 +229,14 @@
               "steps": 3,
               "success": false
             }
-          ]
+          ],
+          "links": {
+            "next": "",
+            "previous": ""
+          },
+          "metadata": {
+            "total": 3
+          }
         }
       },
       "v1.GenericReservationResponsePayloadPendingExample": {
@@ -339,11 +346,18 @@
               "body": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
               "fingerprint": "gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk=",
               "fingerprint_legacy": "ee:f1:d4:62:99:ab:17:d9:3b:00:66:62:32:b2:55:9e",
-              "id": 1,
+              "id": 3,
               "name": "My key",
               "type": "ssh-ed25519"
             }
-          ]
+          ],
+          "links": {
+            "next": "",
+            "previous": "/api/provisioning/v1/pubkeys?limit=2\u0026offset=0"
+          },
+          "metadata": {
+            "total": 3
+          }
         }
       },
       "v1.PubkeyRequestExample": {
@@ -377,7 +391,14 @@
               "source_type_id": "",
               "uid": ""
             }
-          ]
+          ],
+          "links": {
+            "next": "",
+            "previous": "/api/provisioning/v1/sources?limit=2\u0026offset=0"
+          },
+          "metadata": {
+            "total": 4
+          }
         }
       },
       "v1.SourceUploadInfoAWSResponse": {
@@ -944,6 +965,25 @@
               "type": "object"
             },
             "type": "array"
+          },
+          "links": {
+            "properties": {
+              "next": {
+                "type": "string"
+              },
+              "previous": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "metadata": {
+            "properties": {
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
           }
         },
         "type": "object"
@@ -1044,6 +1084,25 @@
               "type": "object"
             },
             "type": "array"
+          },
+          "links": {
+            "properties": {
+              "next": {
+                "type": "string"
+              },
+              "previous": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "metadata": {
+            "properties": {
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
           }
         },
         "type": "object"
@@ -1069,6 +1128,25 @@
               "type": "object"
             },
             "type": "array"
+          },
+          "links": {
+            "properties": {
+              "next": {
+                "type": "string"
+              },
+              "previous": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "metadata": {
+            "properties": {
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
           }
         },
         "type": "object"
@@ -1829,6 +1907,18 @@
         "description": "Cloud credentials are kept in the sources application. This endpoint lists available sources for the particular account per individual type (AWS, Azure, ...). All the fields in the response are optional and can be omitted if Sources application also omits them.\n",
         "operationId": "getSourceList",
         "parameters": [
+          {
+            "in": "query",
+            "name": "provider",
+            "schema": {
+              "enum": [
+                "aws",
+                "azure",
+                "gcp"
+              ],
+              "type": "string"
+            }
+          },
           {
             "$ref": "#/components/parameters/Limit"
           },

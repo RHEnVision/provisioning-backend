@@ -69,7 +69,15 @@ func ListReservations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := render.Render(w, r, payloads.NewReservationListResponse(reservations)); err != nil {
+	totalRes, err := rDao.Count(r.Context())
+	if err != nil {
+		renderError(w, r, payloads.NewDAOError(r.Context(), "count reservations", err))
+		return
+	}
+
+	info := page.APIInfoResponse(r.Context(), r, totalRes)
+
+	if err := render.Render(w, r, payloads.NewReservationListResponse(reservations, info)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservations list", err))
 		return
 	}

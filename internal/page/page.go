@@ -2,7 +2,12 @@ package page
 
 import (
 	"context"
+	"fmt"
+	"net/http"
+	"net/url"
 	"strconv"
+
+	"github.com/RHEnVision/provisioning-backend/internal/math"
 
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/rs/zerolog"
@@ -22,6 +27,19 @@ const (
 	defaultValueLimit  = 100
 	defaultValueOffset = 0
 )
+
+type Links struct {
+	Previous string `json:"previous"`
+	Next     string `json:"next"`
+}
+type Metadata struct {
+	Total int `json:"total"`
+}
+
+type Info struct {
+	Metadata Metadata `json:"metadata"`
+	Links    Links    `json:"links"`
+}
 
 // WithOffset returns context copy with offset value.
 func WithOffset(ctx context.Context, offsetStr string) context.Context {
@@ -73,4 +91,42 @@ func (o limitOffset) Int64() int64 {
 
 func (o limitOffset) String() string {
 	return strconv.Itoa(int(o))
+}
+
+func APIInfoResponse(ctx context.Context, r *http.Request, total int) *Info {
+	limit := Limit(ctx).Int()
+	offset := Offset(ctx).Int()
+	var prev, next string
+
+	// First page: offset is 0
+	if offset == 0 {
+		prev = ""
+	} else {
+		prevOffset := math.Max(0, offset-limit)
+		q := url.Values{}
+		q.Add("limit", strconv.Itoa(limit))
+		q.Add("offset", strconv.Itoa(prevOffset))
+		prev = fmt.Sprintf("%v?%v", r.URL.Path, q.Encode())
+	}
+
+	// Last page: offset + Limit >= Total
+	if offset+limit >= total {
+		next = ""
+	} else {
+		nextOffset := offset + limit
+		q := url.Values{}
+		q.Add("limit", strconv.Itoa(limit))
+		q.Add("offset", strconv.Itoa(nextOffset))
+		next = fmt.Sprintf("%v?%v", r.URL.Path, q.Encode())
+	}
+
+	return &Info{
+		Metadata: Metadata{
+			Total: total,
+		},
+		Links: Links{
+			Next:     next,
+			Previous: prev,
+		},
+	}
 }

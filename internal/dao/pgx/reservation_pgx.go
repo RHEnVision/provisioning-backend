@@ -235,6 +235,19 @@ func (x *reservationDao) GetGCPById(ctx context.Context, id int64) (*models.GCPR
 	return result, nil
 }
 
+func (x *reservationDao) Count(ctx context.Context) (int, error) {
+	query := `SELECT COUNT(*) FROM reservations WHERE account_id = $1`
+	accountId := identity.AccountId(ctx)
+
+	var result int
+	err := db.Pool.QueryRow(ctx, query, accountId).Scan(&result)
+	if err != nil {
+		return 0, fmt.Errorf("pgx error: %w", err)
+	}
+
+	return result, nil
+}
+
 func (x *reservationDao) List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error) {
 	query := `SELECT * FROM reservations WHERE account_id = $1 ORDER BY id LIMIT $2 OFFSET $3`
 

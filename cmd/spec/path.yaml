@@ -135,6 +135,14 @@ paths:
       tags:
         - Source
       parameters:
+        - name: provider
+          in: query
+          schema:
+            type: string
+            enum:
+                - aws
+                - azure
+                - gcp
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Offset'
       responses:

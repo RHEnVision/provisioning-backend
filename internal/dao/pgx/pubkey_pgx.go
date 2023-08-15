@@ -110,6 +110,19 @@ func (x *pubkeyDao) List(ctx context.Context, limit, offset int64) ([]*models.Pu
 	return result, nil
 }
 
+func (x *pubkeyDao) Count(ctx context.Context) (int, error) {
+	query := `SELECT COUNT(*) FROM pubkeys WHERE account_id = $1`
+	accountId := identity.AccountId(ctx)
+
+	var result int
+	err := db.Pool.QueryRow(ctx, query, accountId).Scan(&result)
+	if err != nil {
+		return 0, fmt.Errorf("pgx error: %w", err)
+	}
+
+	return result, nil
+}
+
 func (x *pubkeyDao) Delete(ctx context.Context, id int64) error {
 	query := `DELETE FROM pubkeys WHERE account_id = $1 AND id = $2`
 	accountId := identity.AccountId(ctx)

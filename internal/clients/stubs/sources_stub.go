@@ -98,7 +98,7 @@ func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (strin
 	return "11", nil
 }
 
-func (mock *SourcesClientStub) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
+func (mock *SourcesClientStub) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, int, error) {
 	TestSourceData := []*clients.Source{
 		{
 			ID:           "1",
@@ -113,10 +113,10 @@ func (mock *SourcesClientStub) ListAllProvisioningSources(ctx context.Context) (
 			Uid:          "31b5338b-685d-4056-ba39-d00b4d7f19cc",
 		},
 	}
-	return TestSourceData, nil
+	return TestSourceData, 2, nil
 }
 
-func (mock *SourcesClientStub) ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*clients.Source, error) {
+func (mock *SourcesClientStub) ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*clients.Source, int, error) {
 	TestSourceData := []*clients.Source{
 		{
 			ID:           "1",
@@ -131,7 +131,7 @@ func (mock *SourcesClientStub) ListProvisioningSourcesByProvider(ctx context.Con
 			Uid:          "31b5338b-685d-4056-ba39-d00b4d7f19cc",
 		},
 	}
-	return TestSourceData, nil
+	return TestSourceData, 2, nil
 }
 
 // APIClient
