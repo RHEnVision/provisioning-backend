@@ -2,7 +2,6 @@ package image_builder
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -45,21 +44,20 @@ func (c *ibClient) Ready(ctx context.Context) error {
 	defer span.End()
 
 	logger := logger(ctx)
-	resp, err := c.client.GetReadiness(ctx, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
+	resp, err := c.client.GetReadinessWithResponse(ctx, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Error().Err(err).Msg("Readiness request failed for image builder")
 		return err
 	}
-	defer func() {
-		if tempErr := resp.Body.Close(); tempErr != nil {
-			logger.Error().Err(tempErr).Msg("Readiness request for image builder: response body close error")
-		}
-	}()
 
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
-	if err != nil {
-		return fmt.Errorf("ready call: %w", err)
+	if resp == nil {
+		return fmt.Errorf("ready call: empty response: %w", clients.UnexpectedBackendResponse)
 	}
+
+	if resp.StatusCode() < 200 || resp.StatusCode() > 299 {
+		return fmt.Errorf("ready call: %w: %d", clients.UnexpectedBackendResponse, resp.StatusCode())
+	}
+
 	return nil
 }
 
@@ -73,6 +71,9 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, err
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)
 	if err != nil {
 		return "", err
+	}
+	if imageStatus == nil {
+		return "", fmt.Errorf("%w: no image status", http.ImageStatusErr)
 	}
 
 	if imageStatus.Type != UploadTypesAws {
@@ -97,8 +98,15 @@ func (c *ibClient) GetAzureImageID(ctx context.Context, composeID string) (strin
 	if err != nil {
 		return "", err
 	}
+	if composeStatus == nil {
+		logger.Warn().Msg("Compose status is not ready")
+		return "", fmt.Errorf("getting azure id: %w", http.ImageStatusErr)
+	}
 
 	logger.Trace().Msgf("Verifying Azure type")
+	if composeStatus.ImageStatus.UploadStatus == nil {
+		return "", fmt.Errorf("%w: upload status is nil", http.UploadStatusErr)
+	}
 	if composeStatus.ImageStatus.UploadStatus.Type != UploadTypesAzure {
 		return "", fmt.Errorf("%w: expected image type Azure, got %s", http.UnknownImageTypeErr, composeStatus.ImageStatus.UploadStatus.Type)
 	}
@@ -126,6 +134,10 @@ func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (strin
 	imageStatus, err := c.fetchImageStatus(ctx, composeID)
 	if err != nil {
 		return "", err
+	}
+
+	if imageStatus == nil {
+		return "", fmt.Errorf("%w: no image status", http.ImageStatusErr)
 	}
 
 	if imageStatus.Type != UploadTypesGcp {
@@ -174,12 +186,12 @@ func (c *ibClient) getComposeStatus(ctx context.Context, composeID string) (*Com
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
 	}
 
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
-	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			return nil, fmt.Errorf("fetch image status call: %w", http.ComposeNotFoundErr)
-		}
-		return nil, fmt.Errorf("fetch image status call: %w", err)
+	if resp == nil {
+		return nil, fmt.Errorf("cannot get compose status: empty response: %w", clients.UnexpectedBackendResponse)
+	}
+
+	if resp.JSON200 == nil {
+		return nil, fmt.Errorf("fetch image status call: %w", clients.UnexpectedBackendResponse)
 	}
 
 	return resp.JSON200, nil
@@ -194,7 +206,7 @@ func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadS
 		return nil, err
 	}
 
-	if composeStatus.ImageStatus.Status != ImageStatusStatusSuccess {
+	if composeStatus == nil || composeStatus.ImageStatus.Status != ImageStatusStatusSuccess {
 		logger.Warn().Msg("Compose status is not ready")
 		return nil, http.ImageStatusErr
 	}
@@ -217,12 +229,12 @@ func (c *ibClient) checkClone(ctx context.Context, composeID string) (*UploadSta
 		return nil, fmt.Errorf("cannot get compose status: %w", err)
 	}
 
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
-	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			return nil, fmt.Errorf("fetch image status call: %w", http.CloneNotFoundErr)
-		}
-		return nil, fmt.Errorf("fetch image status call: %w", err)
+	if resp == nil {
+		return nil, fmt.Errorf("cannot get compose status: empty response: %w", clients.UnexpectedBackendResponse)
+	}
+
+	if resp.JSON200 == nil {
+		return nil, fmt.Errorf("fetch image status call: %w", clients.UnexpectedBackendResponse)
 	}
 
 	if ImageStatusStatus(resp.JSON200.Status) != ImageStatusStatusSuccess {

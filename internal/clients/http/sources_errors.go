@@ -1,6 +1,7 @@
 package http
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -15,4 +16,5 @@ var (
 	ApplicationReadErr                  = fmt.Errorf("application read returned no application type in sources: %w", clients.NotFoundErr)
 	SourceTypeNameNotFoundErr           = fmt.Errorf("source type name not found: %w", clients.NotFoundErr)
 	NotEvenErr                          = fmt.Errorf("number of keys and values is not even when building a query")
+	SourcesInvalidAuthentication        = errors.New("insufficient data for authentication")
 )
