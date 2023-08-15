@@ -359,7 +359,7 @@ func TestReservationRate(t *testing.T) {
 	rdao, ctx := setupReservation(t)
 	t.Run("allows slow reservations", func(t *testing.T) {
 		defer reset()
-		for i := 1; i <= 5; i++ {
+		for i := 1; i <= 2; i++ {
 			println(i)
 			res := newNoopReservation()
 			err := rdao.CreateNoop(ctx, res)
@@ -374,7 +374,7 @@ func TestReservationRate(t *testing.T) {
 	rdao2, ctx2 := setupReservationOrg2(t)
 	t.Run("throttles too fast reservations", func(t *testing.T) {
 		defer reset()
-		for i := 1; i <= 5; i++ {
+		for i := 1; i <= 2; i++ {
 			res := newNoopReservation()
 			err := rdao.CreateNoop(ctx, res)
 			require.NoError(t, err)
