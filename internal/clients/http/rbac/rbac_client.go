@@ -55,28 +55,27 @@ func (c *rbac) Ready(ctx context.Context) error {
 	defer span.End()
 
 	logger := logger(ctx)
-	resp, err := c.client.GetStatus(ctx, headers.AddRbacIdentityHeader, headers.AddEdgeRequestIdHeader)
+	resp, err := c.client.GetStatusWithResponse(ctx, headers.AddRbacIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Error().Err(err).Msgf("Readiness request failed for RBAC: %s", err.Error())
 		return err
 	}
-	defer func() {
-		if tempErr := resp.Body.Close(); tempErr != nil {
-			logger.Error().Err(tempErr).Msg("Readiness request for RBAC: response body close error")
-		}
-	}()
 
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
-	if err != nil {
-		return fmt.Errorf("ready call: %w", err)
+	if resp == nil {
+		return fmt.Errorf("ready call: empty response: %w", clients.UnexpectedBackendResponse)
 	}
+
+	if resp.StatusCode() < 200 || resp.StatusCode() > 299 {
+		return fmt.Errorf("ready call: %w: %d", clients.UnexpectedBackendResponse, resp.StatusCode())
+	}
+
 	return nil
 }
 
 // ErrMetaNotPresent is returned when metadata for pagination is not present in the response.
 var ErrMetaNotPresent = fmt.Errorf("RBAC did not return metadata: %w", clients.HttpClientErr)
 
-// Maximum possible entries returned in one request
+// FetchLimit is the maximum possible entries returned in one request
 var FetchLimit = ptr.To(500)
 
 func (c *rbac) GetPrincipalAccess(ctx context.Context) (clients.RbacAcl, error) {
@@ -114,10 +113,14 @@ func (c *rbac) GetPrincipalAccess(ctx context.Context) (clients.RbacAcl, error) 
 				return nil, fmt.Errorf("get principal access: %w", gpaErr)
 			}
 
-			gpaErr = http.HandleHTTPResponses(ctx, resp.StatusCode())
-			if gpaErr != nil {
-				return nil, fmt.Errorf("get principal access: %w", gpaErr)
+			if resp == nil {
+				return nil, fmt.Errorf("get principal access: empty response: %w", clients.UnexpectedBackendResponse)
 			}
+
+			if resp.JSON200 == nil {
+				return nil, fmt.Errorf("get principal access: %w", clients.UnexpectedBackendResponse)
+			}
+
 			logger.Trace().
 				Int("limit", *FetchLimit).
 				Int("offset", offset).

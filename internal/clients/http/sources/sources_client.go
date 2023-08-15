@@ -68,21 +68,20 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 	defer span.End()
 
 	logger := logger(ctx)
-	resp, err := c.client.ListApplicationTypes(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
+	resp, err := c.client.ListApplicationTypesWithResponse(ctx, &ListApplicationTypesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Error().Err(err).Msg("Readiness request failed for sources")
 		return err
 	}
-	defer func() {
-		if tempErr := resp.Body.Close(); tempErr != nil {
-			logger.Error().Err(tempErr).Msg("Readiness request for sources: response body close error")
-		}
-	}()
 
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
-	if err != nil {
-		return fmt.Errorf("ready call: %w", err)
+	if resp == nil {
+		return fmt.Errorf("ready call: empty response: %w", clients.UnexpectedBackendResponse)
 	}
+
+	if resp.StatusCode() < 200 || resp.StatusCode() > 299 {
+		return fmt.Errorf("ready call: %w: %d", clients.UnexpectedBackendResponse, resp.StatusCode())
+	}
+
 	return nil
 }
 
@@ -114,12 +113,16 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", err)
 	}
 
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
-	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			return nil, 0, fmt.Errorf("list provisioning sources call: %w", http.SourceNotFoundErr)
-		}
-		return nil, 0, fmt.Errorf("list provisioning sources call: %w", err)
+	if resp == nil {
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: empty response: %w", clients.UnexpectedBackendResponse)
+	}
+
+	if resp.JSON200 == nil {
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", clients.UnexpectedBackendResponse)
+	}
+
+	if resp.JSON200.Data == nil {
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.NoResponseData)
 	}
 
 	result := make([]*clients.Source, 0, len(*resp.JSON200.Data))
@@ -163,16 +166,20 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", err)
 	}
+	if resp == nil {
+		return nil, 0, fmt.Errorf("list provisioning sources call: empty response: %w", clients.UnexpectedBackendResponse)
+	}
 
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
-	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			return nil, 0, fmt.Errorf("list provisioning sources call: %w", http.SourceNotFoundErr)
-		}
-		return nil, 0, fmt.Errorf("list provisioning sources call: %w", err)
+	if resp.JSON200 == nil {
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.UnexpectedBackendResponse)
+	}
+
+	if resp.JSON200.Data == nil {
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.NoResponseData)
 	}
 
 	result := make([]*clients.Source, len(*resp.JSON200.Data))
+
 	for i, src := range *resp.JSON200.Data {
 		newSrc := clients.Source{
 			ID:           ptr.From(src.Id),
@@ -203,28 +210,36 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 		return nil, fmt.Errorf("cannot list source authentication: %w", err)
 	}
 
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
-	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			return nil, fmt.Errorf("get source authentication call: %w", http.AuthenticationForSourcesNotFoundErr)
-		}
-		return nil, fmt.Errorf("get source authentication call: %w", err)
-	}
-
 	// Filter authentications to include only auth where resource_type == "Application". We do this because
 	// Sources API currently does not provide a good server-side filtering.
+
+	if resp == nil {
+		return nil, fmt.Errorf("get source authentication call: empty response: %w", clients.UnexpectedBackendResponse)
+	}
+	if resp.JSON200 == nil {
+		return nil, fmt.Errorf("get source authentication call: %w", clients.UnexpectedBackendResponse)
+	}
+
+	if resp.JSON200.Data == nil {
+		return nil, fmt.Errorf("get source authentication call: %w", clients.NoResponseData)
+	}
 	auth, err := filterSourceAuthentications(*resp.JSON200.Data)
 	if err != nil {
 		at := zerolog.Arr()
 		for _, auth := range *resp.JSON200.Data {
-			at.Str(*auth.Authtype)
+			if auth.Authtype != nil {
+				at.Str(*auth.Authtype)
+			}
 		}
 		// Likely a super-key that hasn't been processed by super-key-worker yet
 		logger.Warn().Str("source_id", sourceId).RawJSON("response", resp.Body).Array("filtered", at).Msg("Source does not have Provisioning authentication")
 		return nil, err
 	}
 
-	authentication, err := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, string(*auth.Authtype), *auth.ResourceId)
+	if auth.Username == nil || auth.Authtype == nil || auth.ResourceId == nil {
+		return nil, fmt.Errorf("cannot create source from source authentication type: %w", http.SourcesInvalidAuthentication)
+	}
+	authentication, err := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, *auth.Authtype, *auth.ResourceId)
 	if err != nil {
 		return nil, fmt.Errorf("cannot create source from source authentication type: %w", err)
 	}
@@ -258,18 +273,19 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return "", fmt.Errorf("failed to fetch ApplicationTypes: %w", err)
 	}
+
+	if resp == nil {
+		return "", fmt.Errorf("failed to fetch ApplicationTypes: empty response: %w", clients.UnexpectedBackendResponse)
+	}
+
 	defer func() {
 		if tempErr := resp.Body.Close(); tempErr != nil {
 			logger.Error().Err(tempErr).Msg("ApplicationTypes fetching from sources: response body close error")
 		}
 	}()
 
-	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
-	if err != nil {
-		if errors.Is(err, clients.NotFoundErr) {
-			return "", fmt.Errorf("load app ID call: %w", http.ApplicationTypeNotFoundErr)
-		}
-		return "", fmt.Errorf("load app ID call: %w", err)
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return "", fmt.Errorf("failed to fetch ApplicationTypes: %w: %d", clients.UnexpectedBackendResponse, resp.StatusCode)
 	}
 
 	var appTypesData dataElement

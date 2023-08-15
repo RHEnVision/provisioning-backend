@@ -18,4 +18,8 @@ var (
 	UnknownAuthenticationTypeErr = errors.New("unknown authentication type")
 	UnknownProviderErr           = errors.New("unknown provider type")
 	MissingProvisioningSources   = errors.New("missing provisioning source authentication")
+
+	// Client errors
+	UnexpectedBackendResponse = errors.New("backend service returned unexpected HTTP code")
+	NoResponseData            = errors.New("no data in response")
 )
