@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 
 	"github.com/go-chi/render"
 )
@@ -25,7 +26,9 @@ type PubkeyResponse struct {
 	FingerprintLegacy string `json:"fingerprint_legacy,omitempty" yaml:"fingerprint_legacy,omitempty"`
 }
 type PubkeyListResponse struct {
-	Data []*PubkeyResponse `json:"data" yaml:"data"`
+	Data     []*PubkeyResponse `json:"data" yaml:"data"`
+	Metadata page.Metadata     `json:"metadata" yaml:"metadata"`
+	Links    page.Links        `json:"links" yaml:"links"`
 }
 
 func (p *PubkeyRequest) Bind(_ *http.Request) error {
@@ -59,10 +62,10 @@ func NewPubkeyResponse(pubkey *models.Pubkey) *PubkeyResponse {
 	}
 }
 
-func NewPubkeyListResponse(pubkeys []*models.Pubkey) render.Renderer {
+func NewPubkeyListResponse(pubkeys []*models.Pubkey, info *page.Info) render.Renderer {
 	list := make([]*PubkeyResponse, len(pubkeys))
 	for i, pubkey := range pubkeys {
 		list[i] = NewPubkeyResponse(pubkey)
 	}
-	return &PubkeyListResponse{Data: list}
+	return &PubkeyListResponse{Data: list, Metadata: info.Metadata, Links: info.Links}
 }

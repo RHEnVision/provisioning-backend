@@ -103,6 +103,10 @@ func (stub *reservationDaoStub) GetGCPById(ctx context.Context, id int64) (*mode
 	return nil, dao.ErrNoRows
 }
 
+func (stub *reservationDaoStub) Count(ctx context.Context) (int, error) {
+	return len(stub.storeAWS) + len(stub.storeAzure) + len(stub.storeGCP), nil
+}
+
 func (stub *reservationDaoStub) List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error) {
 	return nil, nil
 }

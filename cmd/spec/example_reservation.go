@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 )
@@ -62,6 +63,13 @@ var GenericReservationResponsePayloadListExample = payloads.GenericReservationLi
 		&GenericReservationResponsePayloadPendingExample,
 		&GenericReservationResponsePayloadSuccessExample,
 		&GenericReservationResponsePayloadFailureExample,
+	},
+	Metadata: page.Metadata{
+		Total: 3,
+	},
+	Links: page.Links{
+		Previous: "",
+		Next:     "",
 	},
 }
 

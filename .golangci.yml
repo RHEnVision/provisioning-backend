@@ -21,6 +21,7 @@ linters:
     - contextcheck # too restrictive
     - depguard # too verbose
     - tagalign # cleanenv is unreadable
+    - exhaustive
 linters-settings:
   govet:
     check-shadowing: true

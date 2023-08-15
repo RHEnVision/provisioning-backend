@@ -38,6 +38,7 @@ type PubkeyDao interface {
 	Update(ctx context.Context, pk *models.Pubkey) error
 	GetById(ctx context.Context, id int64) (*models.Pubkey, error)
 	List(ctx context.Context, limit, offset int64) ([]*models.Pubkey, error)
+	Count(ctx context.Context) (int, error)
 	Delete(ctx context.Context, id int64) error
 
 	UnscopedCreateResource(ctx context.Context, pkr *models.PubkeyResource) error
@@ -78,6 +79,9 @@ type ReservationDao interface {
 
 	// GetGCPById returns reservation for a particular account.
 	GetGCPById(ctx context.Context, id int64) (*models.GCPReservation, error)
+
+	// Count returns total reservations for a particular account.
+	Count(ctx context.Context) (int, error)
 
 	// List returns reservation for a particular account.
 	List(ctx context.Context, limit, offset int64) ([]*models.Reservation, error)

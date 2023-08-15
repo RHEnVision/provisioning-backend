@@ -82,6 +82,10 @@ func (stub *pubkeyDaoStub) List(ctx context.Context, limit, offset int64) ([]*mo
 	return filtered, nil
 }
 
+func (stub *pubkeyDaoStub) Count(ctx context.Context) (int, error) {
+	return len(stub.store), nil
+}
+
 func (stub *pubkeyDaoStub) Delete(ctx context.Context, id int64) error {
 	for idx, p := range stub.store {
 		if p.AccountID == ctxAccountId(ctx) && p.ID == id {

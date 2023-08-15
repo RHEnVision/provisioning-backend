@@ -86,7 +86,7 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 	return nil
 }
 
-func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*clients.Source, error) {
+func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*clients.Source, int, error) {
 	logger := logger(ctx)
 	params := &ListApplicationTypeSourcesParams{}
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListProvisioningSourcesByProvider")
@@ -95,13 +95,13 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to get provisioning type id")
-		return nil, fmt.Errorf("failed to get provisioning app type: %w", err)
+		return nil, 0, fmt.Errorf("failed to get provisioning app type: %w", err)
 	}
 
 	sourcesProviderName := provider.SourcesProviderName()
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to get provider name according to sources service")
-		return nil, fmt.Errorf("failed to get provider name according to sources service: %w", err)
+		return nil, 0, fmt.Errorf("failed to get provider name according to sources service: %w", err)
 	}
 
 	offset := page.Offset(ctx).String()
@@ -111,15 +111,15 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 		headers.AddEdgeRequestIdHeader, BuildQuery("filter[source_type][name]", sourcesProviderName, "offset", offset, "limit", limit))
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
-		return nil, fmt.Errorf("failed to get ApplicationTypes: %w", err)
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", err)
 	}
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return nil, fmt.Errorf("list provisioning sources call: %w", http.SourceNotFoundErr)
+			return nil, 0, fmt.Errorf("list provisioning sources call: %w", http.SourceNotFoundErr)
 		}
-		return nil, fmt.Errorf("list provisioning sources call: %w", err)
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", err)
 	}
 
 	result := make([]*clients.Source, 0, len(*resp.JSON200.Data))
@@ -134,10 +134,15 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 		result = append(result, &newSrc)
 	}
 
-	return result, nil
+	total := 0
+	if resp.JSON200.Meta != nil {
+		total = *resp.JSON200.Meta.Count
+	}
+
+	return result, total, nil
 }
 
-func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, error) {
+func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, int, error) {
 	logger := logger(ctx)
 	params := &ListApplicationTypeSourcesParams{}
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListAllProvisioningSources")
@@ -146,7 +151,7 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to get provisioning type id")
-		return nil, fmt.Errorf("failed to get provisioning app type: %w", err)
+		return nil, 0, fmt.Errorf("failed to get provisioning app type: %w", err)
 	}
 
 	params.Offset = page.Offset(ctx).IntPtr()
@@ -155,15 +160,15 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, params, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
-		return nil, fmt.Errorf("failed to get ApplicationTypes: %w", err)
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", err)
 	}
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode())
 	if err != nil {
 		if errors.Is(err, clients.NotFoundErr) {
-			return nil, fmt.Errorf("list provisioning sources call: %w", http.SourceNotFoundErr)
+			return nil, 0, fmt.Errorf("list provisioning sources call: %w", http.SourceNotFoundErr)
 		}
-		return nil, fmt.Errorf("list provisioning sources call: %w", err)
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", err)
 	}
 
 	result := make([]*clients.Source, len(*resp.JSON200.Data))
@@ -176,7 +181,13 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 		}
 		result[i] = &newSrc
 	}
-	return result, nil
+
+	total := 0
+	if resp.JSON200.Meta != nil {
+		total = *resp.JSON200.Meta.Count
+	}
+
+	return result, total, nil
 }
 
 func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) (*clients.Authentication, error) {

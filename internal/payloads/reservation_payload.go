@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/go-chi/render"
 )
 
@@ -240,7 +241,9 @@ type GCPReservationRequest struct {
 }
 
 type GenericReservationListResponse struct {
-	Data []*GenericReservationResponse `json:"data" yaml:"data"`
+	Data     []*GenericReservationResponse `json:"data" yaml:"data"`
+	Metadata page.Metadata                 `json:"metadata" yaml:"metadata"`
+	Links    page.Links                    `json:"links" yaml:"links"`
 }
 
 func (p *GenericReservationResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
@@ -361,12 +364,12 @@ func NewNoopReservationResponse(reservation *models.NoopReservation) render.Rend
 	}
 }
 
-func NewReservationListResponse(reservations []*models.Reservation) render.Renderer {
+func NewReservationListResponse(reservations []*models.Reservation, info *page.Info) render.Renderer {
 	list := make([]*GenericReservationResponse, len(reservations))
 	for i, reservation := range reservations {
 		list[i] = reservationResponseMapper(reservation)
 	}
-	return &GenericReservationListResponse{Data: list}
+	return &GenericReservationListResponse{Data: list, Metadata: info.Metadata, Links: info.Links}
 }
 
 func reservationResponseMapper(reservation *models.Reservation) *GenericReservationResponse {
