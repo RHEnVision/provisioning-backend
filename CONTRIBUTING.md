@@ -29,7 +29,8 @@ For **feat** and **fix** types a Jira issue link is required.
 Please use the scope like `feat(HMS-XXX): subject`
 or put the issue reference in commit body as `Fixes: HMS-XXX` or `Refs: HMS-XXX`
 
-Use `make check-commits` to check commit message locally.
+To check commit message locally please install
+https://github.com/RHEnVision/changelog and then run `make check-commits`.
 
 ## Basic guidelines for code contributions
 
