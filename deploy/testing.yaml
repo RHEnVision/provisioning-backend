@@ -16,7 +16,7 @@ objects:
     testing:
       iqe:
         debug: false
-        dynaconfEnvName: ${IQE_ENV}
+        dynaconfEnvName: ${ENV_FOR_DYNACONF}
         marker: ${IQE_MARKER}
 parameters:
 - name: IMAGE_TAG
@@ -27,6 +27,9 @@ parameters:
   generate: expression
   from: "[a-z0-9]{6}"
 - name: IQE_ENV
+  value: 'stage_post_deploy'
+# REPLACING IQE_ENV
+- name: ENV_FOR_DYNACONF
   value: 'stage_post_deploy'
 - name: IQE_MARKER
   value: 'stage'
