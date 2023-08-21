@@ -184,7 +184,11 @@ func (b *kafkaBroker) NewWriter(ctx context.Context) *kafka.Writer {
 func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time, handler func(ctx context.Context, message *GenericMessage)) {
 	logger := zerolog.Ctx(ctx)
 	r := b.NewReader(ctx, topic)
-	defer r.Close()
+	defer func() {
+		if tempErr := r.Close(); tempErr != nil {
+			logger.Warn().Err(tempErr).Msg("Unable to close the kafka reader")
+		}
+	}()
 
 	err := r.SetOffsetAt(ctx, since)
 	if err != nil {
@@ -253,7 +257,11 @@ func (b *kafkaBroker) Send(ctx context.Context, messages ...*GenericMessage) err
 
 	commonTopic := messages[0].Topic
 	w := b.NewWriter(ctx)
-	defer w.Close()
+	defer func() {
+		if tempErr := w.Close(); tempErr != nil {
+			logger.Warn().Err(tempErr).Msg("Unable to close the kafka writer")
+		}
+	}()
 
 	logger.Trace().Str("topic", commonTopic).Msgf("Sending %d messages to Kafka", len(messages))
 

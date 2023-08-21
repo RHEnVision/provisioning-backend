@@ -196,7 +196,12 @@ func Seed(ctx context.Context, seedScript string) error {
 	if err != nil {
 		return fmt.Errorf("unable to open seed script %s: %w", seedScript, err)
 	}
-	defer file.Close()
+	defer func() {
+		if tempErr := file.Close(); tempErr != nil {
+			logger.Error().Err(tempErr).Msgf("Error when closing the seed script %s", seedScript)
+		}
+	}()
+
 	buffer, err := io.ReadAll(file)
 	if err != nil {
 		return fmt.Errorf("unable to read seed script %s: %w", seedScript, err)
