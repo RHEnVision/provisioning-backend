@@ -50,7 +50,11 @@ func (c *ibClient) Ready(ctx context.Context) error {
 		logger.Error().Err(err).Msg("Readiness request failed for image builder")
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if tempErr := resp.Body.Close(); tempErr != nil {
+			logger.Error().Err(tempErr).Msg("Readiness request for image builder: response body close error")
+		}
+	}()
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
 	if err != nil {

@@ -72,7 +72,11 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 		logger.Error().Err(err).Msg("Readiness request failed for sources")
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if tempErr := resp.Body.Close(); tempErr != nil {
+			logger.Error().Err(tempErr).Msg("Readiness request for sources: response body close error")
+		}
+	}()
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
 	if err != nil {
@@ -232,7 +236,11 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
 		return "", fmt.Errorf("failed to fetch ApplicationTypes: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if tempErr := resp.Body.Close(); tempErr != nil {
+			logger.Error().Err(tempErr).Msg("ApplicationTypes fetching from sources: response body close error")
+		}
+	}()
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
 	if err != nil {

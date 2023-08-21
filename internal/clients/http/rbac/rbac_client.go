@@ -60,7 +60,11 @@ func (c *rbac) Ready(ctx context.Context) error {
 		logger.Error().Err(err).Msgf("Readiness request failed for RBAC: %s", err.Error())
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if tempErr := resp.Body.Close(); tempErr != nil {
+			logger.Error().Err(tempErr).Msg("Readiness request for RBAC: response body close error")
+		}
+	}()
 
 	err = http.HandleHTTPResponses(ctx, resp.StatusCode)
 	if err != nil {
