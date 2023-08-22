@@ -5,13 +5,14 @@ metadata:
   name: provisioning-cleanup-resources
 objects:
 - apiVersion: batch/v1
-  kind: Job
+  kind: CronJob
   metadata:
     name: provisioning-cleanup-${IMAGE_TAG}-${UID}
     annotations:
       "ignore-check.kube-linter.io/no-liveness-probe": "probes not required on Job pods"
       "ignore-check.kube-linter.io/no-readiness-probe": "probes not required on Job pods"
   spec:
+    schedule: ${CRON_SCHEDULE}
     backoffLimit: 0
     template:
       spec:
@@ -68,3 +69,7 @@ parameters:
   description: "Unique job name suffix"
   generate: expression
   from: "[a-z0-9]{6}"
+- name: CRON_SCHEDULE
+  description: "Schedule for cron job"
+  value: ''
+  required: true
