@@ -383,12 +383,14 @@
               "id": "654321",
               "name": "My AWS account",
               "source_type_id": "",
+              "status": "available",
               "uid": ""
             },
             {
               "id": "543621",
               "name": "My other AWS account",
               "source_type_id": "",
+              "status": "available",
               "uid": ""
             }
           ],
@@ -1121,6 +1123,9 @@
                 "source_type_id": {
                   "type": "string"
                 },
+                "status": {
+                  "type": "string"
+                },
                 "uid": {
                   "type": "string"
                 }
@@ -1232,6 +1237,9 @@
           "source_type_id": {
             "type": "string"
           },
+          "status": {
+            "type": "string"
+          },
           "uid": {
             "type": "string"
           }
@@ -1284,7 +1292,7 @@
       "name": "GPL-3.0"
     },
     "title": "provisioning-api",
-    "version": "1.5.0"
+    "version": "1.6.0"
   },
   "openapi": "3.0.0",
   "paths": {

@@ -130,6 +130,7 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 			Name:         ptr.From(src.Name),
 			SourceTypeID: ptr.From(src.SourceTypeId),
 			Uid:          ptr.From(src.Uid),
+			Status:       string(*src.AvailabilityStatus),
 		}
 		result = append(result, &newSrc)
 	}
@@ -178,6 +179,7 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 			Name:         ptr.From(src.Name),
 			SourceTypeID: ptr.From(src.SourceTypeId),
 			Uid:          ptr.From(src.Uid),
+			Status:       string(*src.AvailabilityStatus),
 		}
 		result[i] = &newSrc
 	}

@@ -13,4 +13,7 @@ type Source struct {
 
 	// UUID of the inventory source installation
 	Uid string
+
+	// Status of the source
+	Status string
 }
