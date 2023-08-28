@@ -14,6 +14,7 @@ type SourceResponse struct {
 	Name         string `json:"name,omitempty" yaml:"name"`
 	SourceTypeID string `json:"source_type_id" yaml:"source_type_id"`
 	Uid          string `json:"uid" yaml:"uid"`
+	Status       string `json:"status" yaml:"status"`
 }
 
 type SourceListResponse struct {
@@ -38,6 +39,7 @@ func NewListSourcesResponse(sourceList []*clients.Source, info *page.Info) rende
 			Name:         source.Name,
 			SourceTypeID: source.SourceTypeID,
 			Uid:          source.Uid,
+			Status:       source.Status,
 		}
 	}
 	return &SourceListResponse{Data: list, Metadata: info.Metadata, Links: info.Links}
