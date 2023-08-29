@@ -186,11 +186,10 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 		PowerOff:     args.Detail.PowerOff,
 		InsightsTags: true,
 	}
-	userData, err := userdata.GenerateUserData(&userDataInput)
+	userData, err := userdata.GenerateUserData(ctx, &userDataInput)
 	if err != nil {
 		return fmt.Errorf("cannot generate user data: %w", err)
 	}
-	logger.Trace().Bool("userdata", true).Msg(string(userData))
 
 	ec2Client, err := clients.GetEC2Client(ctx, args.ARN, args.Region)
 	if err != nil {

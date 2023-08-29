@@ -105,8 +105,6 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "LaunchInstanceAzureStep")
 	defer span.End()
 
-	logger := zerolog.Ctx(ctx)
-
 	// status updates before and after the code logic
 	updateStatusBefore(ctx, args.ReservationID, "Launching instance(s)")
 	defer updateStatusAfter(ctx, args.ReservationID, "Launched instance(s)", 1)
@@ -137,11 +135,10 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 		PowerOff:     reservation.Detail.PowerOff,
 		InsightsTags: true,
 	}
-	userData, err := userdata.GenerateUserData(&userDataInput)
+	userData, err := userdata.GenerateUserData(ctx, &userDataInput)
 	if err != nil {
 		return fmt.Errorf("cannot generate user data: %w", err)
 	}
-	logger.Trace().Bool("userdata", true).Msg(string(userData))
 
 	vmParams := clients.AzureInstanceParams{
 		Location:          location,
