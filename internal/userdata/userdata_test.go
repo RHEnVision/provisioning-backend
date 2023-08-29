@@ -1,6 +1,7 @@
 package userdata
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 	"strings"
@@ -25,7 +26,7 @@ func validateYAML(str []byte) error {
 
 func TestGenerateDefaults(t *testing.T) {
 	userDataInput := UserData{}
-	userData, err := GenerateUserData(&userDataInput)
+	userData, err := GenerateUserData(context.Background(), &userDataInput)
 	require.NoError(t, err)
 	expected := `#cloud-config`
 
@@ -38,7 +39,7 @@ func TestGenerateAWSTags(t *testing.T) {
 		Type:         models.ProviderTypeAWS,
 		InsightsTags: true,
 	}
-	userData, err := GenerateUserData(&userDataInput)
+	userData, err := GenerateUserData(context.Background(), &userDataInput)
 	require.NoError(t, err)
 	expected := `#cloud-config
 write_files:
@@ -66,7 +67,7 @@ func TestGenerateAzureTags(t *testing.T) {
 		Type:         models.ProviderTypeAzure,
 		InsightsTags: true,
 	}
-	userData, err := GenerateUserData(&userDataInput)
+	userData, err := GenerateUserData(context.Background(), &userDataInput)
 	require.NoError(t, err)
 	expected := `#cloud-config
 write_files:
@@ -93,7 +94,7 @@ func TestGenerateGCPTags(t *testing.T) {
 		Type:         models.ProviderTypeGCP,
 		InsightsTags: true,
 	}
-	userData, err := GenerateUserData(&userDataInput)
+	userData, err := GenerateUserData(context.Background(), &userDataInput)
 	require.NoError(t, err)
 	expected := `#! /bin/bash
 PUBLIC_IP4=$(/usr/bin/curl -sH "Metadata-Flavor: Google" --connect-timeout 5 http://metadata/computeMetadata/v1/instance/network-interfaces/0/ip)
@@ -109,7 +110,7 @@ func TestGeneratePoweroff(t *testing.T) {
 	userDataInput := UserData{
 		PowerOff: true,
 	}
-	userData, err := GenerateUserData(&userDataInput)
+	userData, err := GenerateUserData(context.Background(), &userDataInput)
 	require.NoError(t, err)
 	expected := `#cloud-config
 power_state:
@@ -128,7 +129,7 @@ func TestGenerateCustomPoweroff(t *testing.T) {
 		PowerOffDelayMin: 42,
 		PowerOffMessage:  "Blah",
 	}
-	userData, err := GenerateUserData(&userDataInput)
+	userData, err := GenerateUserData(context.Background(), &userDataInput)
 	require.NoError(t, err)
 	expected := `#cloud-config
 power_state:

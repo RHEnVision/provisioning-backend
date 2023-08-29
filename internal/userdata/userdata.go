@@ -4,11 +4,13 @@ package userdata
 
 import (
 	"bytes"
+	"context"
 	_ "embed"
 	"fmt"
 	"text/template"
 
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/rs/zerolog"
 )
 
 type UserData struct {
@@ -66,7 +68,9 @@ func init() {
 }
 
 // GenerateUserData creates a cloud-init user-data from a build-in template.
-func GenerateUserData(userData *UserData) ([]byte, error) {
+func GenerateUserData(ctx context.Context, userData *UserData) ([]byte, error) {
+	logger := zerolog.Ctx(ctx)
+
 	if userData.PowerOffDelayMin < 1 {
 		userData.PowerOffDelayMin = 1
 	}
@@ -85,5 +89,7 @@ func GenerateUserData(userData *UserData) ([]byte, error) {
 		return nil, fmt.Errorf("cannot generate user data: %w", err)
 	}
 
-	return buffer.Bytes(), nil
+	udBytes := buffer.Bytes()
+	logger.Trace().Bytes("payload", udBytes).Msg("Generated userdata")
+	return udBytes, nil
 }
