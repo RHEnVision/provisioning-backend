@@ -17,6 +17,7 @@ GOLINT?=$(GOBIN)/golangci-lint
 GOFUMPT?=$(GOBIN)/gofumpt
 GOIMPORTS?=$(GOBIN)/goimports
 OAPICODEGEN?=$(GOBIN)/oapi-codegen
+CDAEMON?=$(GOBIN)/CompileDaemon
 TERN?=$(GOBIN)/tern
 
 .PHONY: check-go

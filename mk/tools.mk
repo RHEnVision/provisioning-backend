@@ -14,6 +14,7 @@ install-tools: ## Install required Go commands into ./bin
 	GOBIN=$(GOBIN) $(GO) install github.com/jackc/tern/v2@v2.1.1
 	GOBIN=$(GOBIN) $(GO) install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.13.4
 	GOBIN=$(GOBIN) $(GO) install mvdan.cc/gofumpt@v0.5.0
+	GOBIN=$(GOBIN) $(GO) install github.com/githubnemo/CompileDaemon@latest
 
 .PHONY: update-tools
 update-tools: ## Update required Go commands
