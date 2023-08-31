@@ -15,6 +15,8 @@ IQE_CJI_TIMEOUT="30m"  # This is the time to wait for smoke test to complete or 
 
 #EXTRA_DEPLOY_ARGS=
 
+printenv
+
 # Install bonfire repo/initialize
 # https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd/bootstrap.sh
 # This script automates the install / config of bonfire
