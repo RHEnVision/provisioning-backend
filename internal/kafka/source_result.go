@@ -16,6 +16,7 @@ type SourceResult struct {
 	ResourceID         string          `json:"resource_id"`
 	ResourceType       string          `json:"resource_type"`
 	Status             StatusType      `json:"status"`
+	UserError          string          `json:"error"`
 	Err                error           `json:"-"` // Sources do not support error field
 	MissingPermissions []string        `json:"-"` // Sources do not support reason field
 }

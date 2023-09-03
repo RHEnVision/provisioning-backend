@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -26,6 +27,7 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/sources"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 
@@ -134,6 +136,7 @@ func checkSourceAvailabilityAzure(cancelCtx context.Context) {
 				ResourceID:     s.SourceApplicationID,
 				ResourceType:   "Application",
 			}
+			sr.UserError = "Could not log into Azure account"
 			sr.Status = kafka.StatusAvailable
 			chSend <- sr
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure.String(), sr.Status.String(), nil)
@@ -175,6 +178,7 @@ func checkSourceAvailabilityAWS(cancelCtx context.Context) {
 			if err != nil {
 				sr.Status = kafka.StatusUnavailable
 				sr.Err = err
+				sr.UserError = "Could not log into AWS account"
 				logger.Warn().Err(err).Msg("Could not get aws assumed client")
 			} else {
 				sr.Status = kafka.StatusAvailable
@@ -182,6 +186,7 @@ func checkSourceAvailabilityAWS(cancelCtx context.Context) {
 				if err != nil {
 					sr.Status = kafka.StatusUnavailable
 					sr.Err = err
+					sr.UserError = fmt.Sprintf("Missing AWS permissions %s", strings.Join(permissions, ", "))
 					sr.MissingPermissions = permissions
 					if logger.Info().Enabled() {
 						arr := zerolog.Arr()
@@ -232,6 +237,7 @@ func checkSourceAvailabilityGCP(cancelCtx context.Context) {
 			if err != nil {
 				sr.Status = kafka.StatusUnavailable
 				sr.Err = err
+				sr.UserError = "Could not list log into GCP account"
 				logger.Warn().Err(err).Msg("Could not get gcp client")
 				chSend <- sr
 			}
@@ -239,6 +245,7 @@ func checkSourceAvailabilityGCP(cancelCtx context.Context) {
 			if err != nil {
 				sr.Status = kafka.StatusUnavailable
 				sr.Err = err
+				sr.UserError = "Could not list gcp regions using the provided source"
 				logger.Warn().Err(err).Msg("Could not list gcp regions")
 				chSend <- sr
 			} else {
