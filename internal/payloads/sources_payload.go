@@ -20,7 +20,6 @@ type SourceResponse struct {
 type SourceListResponse struct {
 	Data     []*SourceResponse `json:"data" yaml:"data"`
 	Metadata page.Metadata     `json:"metadata" yaml:"metadata"`
-	Links    page.Links        `json:"links" yaml:"links"`
 }
 
 func (s *SourceResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
@@ -31,7 +30,7 @@ func (s *SourceListResponse) Render(_ http.ResponseWriter, _ *http.Request) erro
 	return nil
 }
 
-func NewListSourcesResponse(sourceList []*clients.Source, info *page.Info) render.Renderer {
+func NewListSourcesResponse(sourceList []*clients.Source, meta *page.Metadata) render.Renderer {
 	list := make([]*SourceResponse, len(sourceList))
 	for i, source := range sourceList {
 		list[i] = &SourceResponse{
@@ -42,7 +41,7 @@ func NewListSourcesResponse(sourceList []*clients.Source, info *page.Info) rende
 			Status:       source.Status,
 		}
 	}
-	return &SourceListResponse{Data: list, Metadata: info.Metadata, Links: info.Links}
+	return &SourceListResponse{Data: list, Metadata: *meta}
 }
 
 type SourceUploadInfoResponse struct {

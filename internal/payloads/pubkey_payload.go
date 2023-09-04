@@ -28,7 +28,6 @@ type PubkeyResponse struct {
 type PubkeyListResponse struct {
 	Data     []*PubkeyResponse `json:"data" yaml:"data"`
 	Metadata page.Metadata     `json:"metadata" yaml:"metadata"`
-	Links    page.Links        `json:"links" yaml:"links"`
 }
 
 func (p *PubkeyRequest) Bind(_ *http.Request) error {
@@ -62,10 +61,10 @@ func NewPubkeyResponse(pubkey *models.Pubkey) *PubkeyResponse {
 	}
 }
 
-func NewPubkeyListResponse(pubkeys []*models.Pubkey, info *page.Info) render.Renderer {
+func NewPubkeyListResponse(pubkeys []*models.Pubkey, meta *page.Metadata) render.Renderer {
 	list := make([]*PubkeyResponse, len(pubkeys))
 	for i, pubkey := range pubkeys {
 		list[i] = NewPubkeyResponse(pubkey)
 	}
-	return &PubkeyListResponse{Data: list, Metadata: info.Metadata, Links: info.Links}
+	return &PubkeyListResponse{Data: list, Metadata: *meta}
 }

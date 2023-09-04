@@ -20,10 +20,10 @@ var SourceListResponse = payloads.SourceListResponse{
 	},
 	Metadata: page.Metadata{
 		Total: 4,
-	},
-	Links: page.Links{
-		Previous: "/api/provisioning/v1/sources?limit=2&offset=0",
-		Next:     "",
+		Links: page.Links{
+			Previous: "/api/provisioning/v1/sources?limit=2&offset=0",
+			Next:     "",
+		},
 	},
 }
 

@@ -48,7 +48,7 @@ func ListAllProvisioningSources(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	info := page.APIInfoResponse(r.Context(), r, total)
+	info := page.NewOffsetMetadata(r.Context(), r, total)
 
 	if err := render.Render(w, r, payloads.NewListSourcesResponse(sourcesList, info)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render sources list", err))
@@ -71,7 +71,7 @@ func ListProvisioningSourcesByProvider(w http.ResponseWriter, r *http.Request, a
 		return
 	}
 
-	info := page.APIInfoResponse(r.Context(), r, total)
+	info := page.NewOffsetMetadata(r.Context(), r, total)
 
 	if err := render.Render(w, r, payloads.NewListSourcesResponse(sourcesList, info)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render sources list", err))

@@ -66,10 +66,10 @@ var GenericReservationResponsePayloadListExample = payloads.GenericReservationLi
 	},
 	Metadata: page.Metadata{
 		Total: 3,
-	},
-	Links: page.Links{
-		Previous: "",
-		Next:     "",
+		Links: page.Links{
+			Previous: "",
+			Next:     "",
+		},
 	},
 }
 
