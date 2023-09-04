@@ -37,7 +37,7 @@ type RedisWorker struct {
 	concurrency  int
 	loopWG       sync.WaitGroup
 
-	// number of in-flight jobs (must be use via atomic functions)
+	// number of in-flight jobs (must be used via atomic functions)
 	inFlight int64
 }
 
@@ -70,6 +70,12 @@ func (w *RedisWorker) RegisterHandler(jtype JobType, handler JobHandler, args an
 }
 
 func loggerWithJob(ctx context.Context, job *Job) *zerolog.Logger {
+	if job == nil {
+		logger := zerolog.Ctx(ctx)
+		logger.Warn().Msgf("Invalid job, logging without the job ID")
+		return logger
+	}
+
 	logger := zerolog.Ctx(ctx).With().
 		Str("job_id", job.ID.String()).
 		Str("job_type", string(job.Type)).
@@ -79,6 +85,10 @@ func loggerWithJob(ctx context.Context, job *Job) *zerolog.Logger {
 
 func (w *RedisWorker) Enqueue(ctx context.Context, job *Job) error {
 	var err error
+	if job == nil {
+		return fmt.Errorf("unable to enqueue job: %w", JobNotFound)
+	}
+
 	if job.ID == uuid.Nil {
 		job.ID, err = uuid.NewRandom()
 		if err != nil {
@@ -193,6 +203,9 @@ func (w *RedisWorker) fetchJob(ctx context.Context) {
 
 func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
 	defer recoverAndLog(ctx)
+	if job == nil {
+		return
+	}
 
 	defer atomic.AddInt64(&w.inFlight, -1)
 	logger := loggerWithJob(ctx, job)
@@ -203,7 +216,7 @@ func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
 		cCtx, cFunc := context.WithTimeout(ctx, config.Worker.Timeout)
 		defer func() {
 			if c := cCtx.Err(); c != nil {
-				zerolog.Ctx(ctx).Error().Err(c).Msg("Job was either cancelled or timeout occured")
+				zerolog.Ctx(ctx).Error().Err(c).Msg("Job was either cancelled or timeout occurred")
 			}
 			cFunc()
 		}()

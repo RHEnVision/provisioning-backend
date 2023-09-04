@@ -8,6 +8,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/notifications"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/rs/zerolog"
@@ -44,14 +45,20 @@ type LaunchInstanceAzureTaskArgs struct {
 }
 
 func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
-	args, ok := job.Args.(LaunchInstanceAzureTaskArgs)
-	if !ok {
-		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
-		zerolog.Ctx(ctx).Error().Err(err).Msg("Type assertion error for job")
+	logger := zerolog.Ctx(ctx)
+	if job == nil {
+		logger.Error().Msg("No job for HandleLaunchInstanceAzure")
 		return
 	}
 
-	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	args, ok := job.Args.(LaunchInstanceAzureTaskArgs)
+	if !ok {
+		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
+		logger.Error().Err(err).Msg("Type assertion error for job")
+		return
+	}
+
+	logger = ptr.To(logger.With().Int64("reservation_id", args.ReservationID).Logger())
 	ctx = logger.WithContext(ctx)
 
 	logger.Info().Msg("Started launch instance Azure job")

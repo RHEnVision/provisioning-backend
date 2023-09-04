@@ -40,16 +40,21 @@ type LaunchInstanceGCPTaskArgs struct {
 	LaunchTemplateID string
 }
 
-// Unmarshall arguments and handle error
+// HandleLaunchInstanceGCP unmarshalls arguments and handles error
 func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
+	logger := zerolog.Ctx(ctx)
+	if job == nil {
+		logger.Error().Msg("No job for HandleLaunchInstanceGCP")
+		return
+	}
 	args, ok := job.Args.(LaunchInstanceGCPTaskArgs)
 	if !ok {
 		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
-		zerolog.Ctx(ctx).Error().Err(err).Msg("Type assertion error for job")
+		logger.Error().Err(err).Msg("Type assertion error for job")
 		return
 	}
 
-	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	logger = ptr.To(logger.With().Int64("reservation_id", args.ReservationID).Logger())
 	ctx = logger.WithContext(ctx)
 	nc := notifications.GetNotificationClient(ctx)
 
@@ -69,7 +74,7 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 	finishJob(ctx, args.ReservationID, jobErr)
 }
 
-// Job logic, when error is returned the job status is updated accordingly
+// DoLaunchInstanceGCP is a job logic, when error is returned the job status is updated accordingly
 func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
 	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started launch instance GCP job")

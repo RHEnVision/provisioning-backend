@@ -10,6 +10,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/notifications"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
@@ -42,16 +43,22 @@ type LaunchInstanceAWSTaskArgs struct {
 	ARN *clients.Authentication
 }
 
-// Unmarshall arguments and handle error
+// HandleLaunchInstanceAWS unmarshalls arguments and handles error
 func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
-	args, ok := job.Args.(LaunchInstanceAWSTaskArgs)
-	if !ok {
-		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
-		zerolog.Ctx(ctx).Error().Err(err).Msg("Type assertion error for job")
+	logger := zerolog.Ctx(ctx)
+	if job == nil {
+		logger.Error().Msg("No job for HandleLaunchInstanceAWS")
 		return
 	}
 
-	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
+	args, ok := job.Args.(LaunchInstanceAWSTaskArgs)
+	if !ok {
+		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
+		logger.Error().Err(err).Msg("Type assertion error for job")
+		return
+	}
+
+	logger = ptr.To(logger.With().Int64("reservation_id", args.ReservationID).Logger())
 	ctx = logger.WithContext(ctx)
 	nc := notifications.GetNotificationClient(ctx)
 
@@ -78,7 +85,7 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 	finishJob(ctx, args.ReservationID, jobErr)
 }
 
-// Job logic, when error is returned the job status is updated accordingly
+// DoEnsurePubkeyOnAWS is a job logic, when error is returned the job status is updated accordingly
 func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
 	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started pubkey upload AWS job")

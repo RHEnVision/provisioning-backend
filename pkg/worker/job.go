@@ -5,9 +5,8 @@ import (
 	"errors"
 
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
-	"github.com/rs/zerolog"
-
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
 )
 
 func init() {
@@ -73,6 +72,11 @@ type Stats struct {
 }
 
 func contextLogger(ctx context.Context, job *Job) context.Context {
+	if job == nil {
+		zerolog.Ctx(ctx).Error().Err(JobNotFound).Msg("No job, context not changed")
+		return ctx
+	}
+
 	accountId := job.AccountID
 	id := job.Identity
 	logger := zerolog.Ctx(ctx).With().
