@@ -11,8 +11,8 @@ import (
 
 // See models.Pubkey
 type PubkeyRequest struct {
-	Name string `json:"name" yaml:"name"`
-	Body string `json:"body" yaml:"body"`
+	Name string `json:"name" yaml:"name" description:"Public portion of a SSH key pair"`
+	Body string `json:"body" yaml:"body" description:"User facing name of the newly created pubkey"`
 }
 
 // See models.Pubkey
