@@ -34,9 +34,9 @@ var PubkeyListResponse = payloads.PubkeyListResponse{
 	},
 	Metadata: page.Metadata{
 		Total: 3,
-	},
-	Links: page.Links{
-		Previous: "/api/provisioning/v1/pubkeys?limit=2&offset=0",
-		Next:     "",
+		Links: page.Links{
+			Previous: "/api/provisioning/v1/pubkeys?limit=2&offset=0",
+			Next:     "",
+		},
 	},
 }

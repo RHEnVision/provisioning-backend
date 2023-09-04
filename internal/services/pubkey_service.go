@@ -65,9 +65,9 @@ func ListPubkeys(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	info := page.APIInfoResponse(r.Context(), r, totalPubkeys)
+	meta := page.NewOffsetMetadata(r.Context(), r, totalPubkeys)
 
-	if err := render.Render(w, r, payloads.NewPubkeyListResponse(pubkeys, info)); err != nil {
+	if err := render.Render(w, r, payloads.NewPubkeyListResponse(pubkeys, meta)); err != nil {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render pubkeys list", err))
 		return
 	}

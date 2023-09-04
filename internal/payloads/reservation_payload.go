@@ -243,7 +243,6 @@ type GCPReservationRequest struct {
 type GenericReservationListResponse struct {
 	Data     []*GenericReservationResponse `json:"data" yaml:"data"`
 	Metadata page.Metadata                 `json:"metadata" yaml:"metadata"`
-	Links    page.Links                    `json:"links" yaml:"links"`
 }
 
 func (p *GenericReservationResponse) Render(_ http.ResponseWriter, _ *http.Request) error {
@@ -364,12 +363,12 @@ func NewNoopReservationResponse(reservation *models.NoopReservation) render.Rend
 	}
 }
 
-func NewReservationListResponse(reservations []*models.Reservation, info *page.Info) render.Renderer {
+func NewReservationListResponse(reservations []*models.Reservation, meta *page.Metadata) render.Renderer {
 	list := make([]*GenericReservationResponse, len(reservations))
 	for i, reservation := range reservations {
 		list[i] = reservationResponseMapper(reservation)
 	}
-	return &GenericReservationListResponse{Data: list, Metadata: info.Metadata, Links: info.Links}
+	return &GenericReservationListResponse{Data: list, Metadata: *meta}
 }
 
 func reservationResponseMapper(reservation *models.Reservation) *GenericReservationResponse {
