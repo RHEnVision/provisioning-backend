@@ -108,18 +108,21 @@ func NewSchemaGenerator() *APISchemaGen {
 	return s
 }
 
-// Schema customizer allowing tagging with nullable to work
-var enableNullableOpt = openapi3gen.SchemaCustomizer(
+// Schema customizer allowing tagging with description and nullable to work
+var enableNullableAndDescriptionOpts = openapi3gen.SchemaCustomizer(
 	func(_name string, _t reflect.Type, tag reflect.StructTag, schema *openapi3.Schema) error {
 		if tag.Get("nullable") == "true" {
 			schema.Nullable = true
+		}
+		if desc, ok := tag.Lookup("description"); ok && desc != "-" {
+			schema.Description = desc
 		}
 		return nil
 	},
 )
 
 func (s *APISchemaGen) addSchema(name string, model interface{}) {
-	schema, err := openapi3gen.NewSchemaRefForValue(model, s.Components.Schemas, enableNullableOpt)
+	schema, err := openapi3gen.NewSchemaRefForValue(model, s.Components.Schemas, enableNullableAndDescriptionOpts)
 	if err != nil {
 		panic(err)
 	}
