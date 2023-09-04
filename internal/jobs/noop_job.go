@@ -19,8 +19,13 @@ type NoopJobArgs struct {
 
 var NoOperationFailure = errors.New("job failed on request")
 
-// Unmarshall arguments and handle error
+// HandleNoop unmarshalls arguments and handle error
 func HandleNoop(ctx context.Context, job *worker.Job) {
+	if job == nil {
+		zerolog.Ctx(ctx).Error().Msg("No job to handle")
+		return
+	}
+
 	args, ok := job.Args.(NoopJobArgs)
 	if !ok {
 		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
@@ -42,7 +47,7 @@ func HandleNoop(ctx context.Context, job *worker.Job) {
 	finishJob(ctx, args.ReservationID, jobErr)
 }
 
-// Job logic, when error is returned the job status is updated accordingly
+// DoNoop is a job logic, when error is returned the job status is updated accordingly
 func DoNoop(ctx context.Context, args *NoopJobArgs) error {
 	logger := zerolog.Ctx(ctx)
 

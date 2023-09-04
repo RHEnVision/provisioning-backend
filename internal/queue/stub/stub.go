@@ -6,6 +6,7 @@ package stub
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
@@ -13,7 +14,10 @@ import (
 
 type enqueueCtxKeyType string
 
-var ContextReadError = errors.New("failed to find or convert dao stored in testing context")
+var (
+	ContextReadError = errors.New("failed to find or convert dao stored in testing context")
+	JobNotFoundError = errors.New("no job found")
+)
 
 var enqueueCtxKey enqueueCtxKeyType = "enqueuer-stub"
 
@@ -58,6 +62,9 @@ func (h hollowEnqueuer) Enqueue(_ context.Context, _ *worker.Job) error {
 }
 
 func (s *stubEnqueuer) Enqueue(ctx context.Context, job *worker.Job) error {
+	if job == nil {
+		return fmt.Errorf("failed to enqueue: %w", JobNotFoundError)
+	}
 	s.enqueued = append(s.enqueued, job)
 	return nil
 }
