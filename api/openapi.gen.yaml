@@ -438,8 +438,10 @@ components:
             properties:
                 body:
                     type: string
+                    description: User facing name of the newly created pubkey
                 name:
                     type: string
+                    description: Public portion of a SSH key pair
         v1.PubkeyResponse:
             type: object
             properties:

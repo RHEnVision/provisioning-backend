@@ -1168,9 +1168,11 @@
       "v1.PubkeyRequest": {
         "properties": {
           "body": {
+            "description": "User facing name of the newly created pubkey",
             "type": "string"
           },
           "name": {
+            "description": "Public portion of a SSH key pair",
             "type": "string"
           }
         },
