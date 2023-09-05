@@ -13,54 +13,61 @@ objects:
       "ignore-check.kube-linter.io/no-readiness-probe": "probes not required on Job pods"
   spec:
     schedule: ${CRON_SCHEDULE}
-    backoffLimit: 0
-    template:
+    jobTemplate:
       spec:
-        imagePullSecrets:
-        - name: quay-cloudservices-pull
-        restartPolicy: Never
-        containers:
-        - name: provisioning-cleanup-${IMAGE_TAG}-${UID}
-          image: quay.io/redhatqe/cloudwash
-          imagePullPolicy: Always
-          args:
-          - swach -d azure --all # remove "-d (dry run)" after overall review.
-          env:
-          - name:  CLEANUP_PROVIDERS_AZURE_AUTH_CLIENT_ID
-            valueFrom:
-              secretKeyRef:
-                key: azure_client_id
-                name: provisioning-azure-auth-secret
-                optional: true
-          - name: CLEANUP_PROVIDERS_AZURE_AUTH_SECRET_ID
-            valueFrom:
-              secretKeyRef:
-                key: azure_client_secret
-                name: provisioning-azure-auth-secret
-                optional: true
-          - name: CLEANUP_PROVIDERS_AZURE_AUTH_TENANT_ID
-            valueFrom:
-              secretKeyRef:
-                key: azure_tenant_id
-                name: provisioning-azure-auth-secret
-                optional: true
-          - name: CLEANUP_PROVIDERS_AZURE_AUTH_SUBSCRIPTION_ID
-            valueFrom:
-              secretKeyRef:
-                key: subscription_id
-                name: provisioning-azure-auth-secret
-                optional: true
-          - name: CLEANUP_PROVIDERS_AZURE_AUTH_RESOURCE_GROUPS
-            valueFrom:
-              secretKeyRef:
-                key: resource_group
-                name: provisioning-azure-auth-secret
-          - name: CLEANUP_PROVIDERS_AZURE_AUTH_REGIONS
-            valueFrom:
-              secretKeyRef:
-                key: location
-                name: provisioning-azure-auth-secret
-                optional: true
+        backoffLimit: 0
+        template:
+          spec:
+            imagePullSecrets:
+              - name: quay-cloudservices-pull
+            restartPolicy: Never
+            containers:
+              - name: provisioning-cleanup-${IMAGE_TAG}-${UID}
+                image: quay.io/redhatqe/cloudwash
+                imagePullPolicy: Always
+                command:
+                  - swach
+                args:
+                  - "-d"
+                  - "azure"
+                  - "--all"
+                env:
+                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_CLIENT_ID
+                    valueFrom:
+                      secretKeyRef:
+                        key: azure_client_id
+                        name: provisioning-azure-auth-secret
+                        optional: true
+                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_SECRET_ID
+                    valueFrom:
+                      secretKeyRef:
+                        key: azure_client_secret
+                        name: provisioning-azure-auth-secret
+                        optional: true
+                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_TENANT_ID
+                    valueFrom:
+                      secretKeyRef:
+                        key: azure_tenant_id
+                        name: provisioning-azure-auth-secret
+                        optional: true
+                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_SUBSCRIPTION_ID
+                    valueFrom:
+                      secretKeyRef:
+                        key: subscription_id
+                        name: provisioning-azure-auth-secret
+                        optional: true
+                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_RESOURCE_GROUPS
+                    valueFrom:
+                      secretKeyRef:
+                        key: resource_group
+                        name: provisioning-azure-auth-secret
+                        optional: true
+                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_REGIONS
+                    valueFrom:
+                      secretKeyRef:
+                        key: location
+                        name: provisioning-azure-auth-secret
+                        optional: true
 parameters:
 - name: IMAGE_TAG
   value: ''
