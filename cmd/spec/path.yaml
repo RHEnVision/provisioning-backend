@@ -8,20 +8,20 @@ info:
   version: 1.0.0
 tags:
   - name: Pubkey
-    description: Public SSH keys operations
+    description: >
+      A pubkey represents the SSH public portion of a key pair with a name and body.
+      Public key types and fingerprints are detected during their creation process.
+      Two types are supported: RSA and ssh-ed25519.
+      Fingerprints are calculated in two ways: using the standard SHA method and the legacy MD5 method, which is available under the fingerprint_legacy field.
+      Each public key has a unique name and body and helps in verifying the uniqueness of the keys.
+      Using this API, you can perform the following operations.
 paths:
   /pubkeys/{ID}:
     get:
       operationId: getPubkeyById
       tags:
         - Pubkey
-      description: >
-        A pubkey represents an SSH public portion of a key pair with name and body.
-        Pubkeys must have unique name and body (SSH public key fingerprint) per each account.
-        Pubkey type is detected during create operation as well as fingerprints.
-        Currently two types are supported: RSA and ssh-ed25519. Also, two fingerprint
-        types are calculated: standard SHA fingerprint and legacy MD5 fingerprint available
-        under fingerprint_legacy field. Fingerprints are used to check uniqueness of key.
+      description: Gets details of the specified public key.
       parameters:
         - name: ID
           in: path
@@ -32,7 +32,7 @@ paths:
             format: int64
       responses:
         "200":
-          description: 'Returned on success'
+          description: 'OK. Returned on success'
           content:
             application/json:
               schema:
@@ -49,18 +49,19 @@ paths:
       tags:
         - Pubkey
       description: >
-        A pubkey represents an SSH public portion of a key pair with name and body.
-        If a pubkey was uploaded to one or more clouds, the deletion request will
-        attempt to delete those SSH keys from all clouds. This means in order to delete
-        a pubkey the account must have valid credentials to all cloud accounts the pubkey
-        was uploaded to, otherwise the delete operation will fail and the pubkey will
-        not be deleted from Provisioning database.
-        This operation returns no body.
+        Deletes SSH keys that were uploaded with the specified public key from all the clouds.
+        If a public key (pubkey) has been uploaded to one or more cloud providers,
+        the deletion request attempts to remove those SSH keys from all associated clouds.
+        Therefore, to delete a public key, the account must possess valid credentials
+        for all cloud accounts to which the pubkey was uploaded.
+        Otherwise, the delete operation fails,
+        and the public key is not removed from the Provisioning database.
+        This operation does not return a response body.
       parameters:
         - name: ID
           in: path
           required: true
-          description: 'Database ID of resource.'
+          description: 'Enter the database ID of resource.'
           schema:
             type: integer
             format: int64
@@ -77,10 +78,9 @@ paths:
       tags:
         - Pubkey
       description: >
-        A pubkey represents an SSH public portion of a key pair with name and body.
-        When pubkey is created, it is stored in the Provisioning database. Pubkeys are
-        uploaded to clouds when an instance is launched. Some fields (e.g. type or
-        fingerprint) are read only.
+        Creates a new public key and stores it in the provisioning database.
+        Public keys are uploaded to clouds at the time of launching an instance.
+        Some fields such as type or fingerprint are read-only.
       requestBody:
         content:
           application/json:
@@ -93,7 +93,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'Returned on success.'
+          description: 'OK. Returned on success.'
           content:
             application/json:
               schema:
@@ -111,11 +111,10 @@ paths:
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Offset'
       description: >
-        A pubkey represents an SSH public portion of a key pair with name and body.
-        This operation returns list of all pubkeys for particular account.
+        Returns a list of all public keys available in a particular account.
       responses:
         '200':
-          description: 'Returned on success.'
+          description: 'OK. Returned on success.'
           content:
             application/json:
               schema:
