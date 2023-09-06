@@ -2,9 +2,8 @@ package clients
 
 import (
 	"context"
+	"errors"
 	"fmt"
-
-	"github.com/RHEnVision/provisioning-backend/internal/clients/supported"
 )
 
 type ArchitectureType string
@@ -16,6 +15,8 @@ const (
 	ArchitectureTypeAppleX86_64 ArchitectureType = "apple-x86_64"
 	ArchitectureTypeAppleArm64  ArchitectureType = "apple-arm64"
 )
+
+var ErrArchitectureNotSupported = errors.New("architecture is not supported")
 
 func (at *ArchitectureType) String() string {
 	return string(*at)
@@ -34,5 +35,5 @@ func MapArchitectures(_ context.Context, arch string) (ArchitectureType, error) 
 	case arch == "aarch64" || arch == "arm64" || arch == "Arm64" || arch == "arm":
 		return ArchitectureTypeArm64, nil
 	}
-	return "", fmt.Errorf("%s: %w", arch, supported.ErrArchitectureNotSupported)
+	return "", fmt.Errorf("%s: %w", arch, ErrArchitectureNotSupported)
 }
