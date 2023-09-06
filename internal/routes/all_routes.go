@@ -69,9 +69,6 @@ func MountAPI(r *chi.Mux) {
 			r.Route("/{ID}", func(r chi.Router) {
 				r.Get("/status", s.SourcesStatus)
 
-				// TODO DEPRECATED: move this to outside of /sources (see below)
-				r.Get("/instance_types", s.ListInstanceTypes)
-
 				// TODO DEPRECATED: replaced with upload_info
 				r.Get("/account_identity", s.GetAWSAccountIdentity)
 
