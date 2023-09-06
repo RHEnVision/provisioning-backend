@@ -11,7 +11,7 @@ type Parameter struct {
 
 var LimitQueryParam = Parameter{
 	Name:        "limit",
-	Description: "The number of items to return",
+	Description: "The number of items to return.",
 	Default:     100,
 	Type:        "integer",
 	Required:    false,
@@ -20,7 +20,7 @@ var LimitQueryParam = Parameter{
 
 var OffsetQueryParam = Parameter{
 	Name:        "offset",
-	Description: "The number of items to skip before starting to collect the result set",
+	Description: "The number of items to skip before starting to collect the result set.",
 	Default:     0,
 	Type:        "integer",
 	Required:    false,
