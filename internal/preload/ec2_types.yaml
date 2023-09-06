@@ -1654,6 +1654,38 @@ hpc6id.32xlarge:
     storage_gb: 15200
     supported: true
     arch: x86_64
+hpc7a.12xlarge:
+    name: hpc7a.12xlarge
+    vcpus: 24
+    cores: 24
+    memory_mib: 786432
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+hpc7a.24xlarge:
+    name: hpc7a.24xlarge
+    vcpus: 48
+    cores: 48
+    memory_mib: 786432
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+hpc7a.48xlarge:
+    name: hpc7a.48xlarge
+    vcpus: 96
+    cores: 96
+    memory_mib: 786432
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+hpc7a.96xlarge:
+    name: hpc7a.96xlarge
+    vcpus: 192
+    cores: 192
+    memory_mib: 786432
+    storage_gb: 0
+    supported: true
+    arch: x86_64
 hpc7g.4xlarge:
     name: hpc7g.4xlarge
     vcpus: 16
@@ -3258,6 +3290,102 @@ m6in.xlarge:
     name: m6in.xlarge
     vcpus: 4
     cores: 2
+    memory_mib: 16384
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.2xlarge:
+    name: m7a.2xlarge
+    vcpus: 8
+    cores: 8
+    memory_mib: 32768
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.4xlarge:
+    name: m7a.4xlarge
+    vcpus: 16
+    cores: 16
+    memory_mib: 65536
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.8xlarge:
+    name: m7a.8xlarge
+    vcpus: 32
+    cores: 32
+    memory_mib: 131072
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.12xlarge:
+    name: m7a.12xlarge
+    vcpus: 48
+    cores: 48
+    memory_mib: 196608
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.16xlarge:
+    name: m7a.16xlarge
+    vcpus: 64
+    cores: 64
+    memory_mib: 262144
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.24xlarge:
+    name: m7a.24xlarge
+    vcpus: 96
+    cores: 96
+    memory_mib: 393216
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.32xlarge:
+    name: m7a.32xlarge
+    vcpus: 128
+    cores: 128
+    memory_mib: 524288
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.48xlarge:
+    name: m7a.48xlarge
+    vcpus: 192
+    cores: 192
+    memory_mib: 786432
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.large:
+    name: m7a.large
+    vcpus: 2
+    cores: 2
+    memory_mib: 8192
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.medium:
+    name: m7a.medium
+    vcpus: 1
+    cores: 1
+    memory_mib: 4096
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.metal-48xl:
+    name: m7a.metal-48xl
+    vcpus: 192
+    cores: 192
+    memory_mib: 786432
+    storage_gb: 0
+    supported: true
+    arch: x86_64
+m7a.xlarge:
+    name: m7a.xlarge
+    vcpus: 4
+    cores: 4
     memory_mib: 16384
     storage_gb: 0
     supported: true
