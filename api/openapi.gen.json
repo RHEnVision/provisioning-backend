@@ -2001,55 +2001,6 @@
         ]
       }
     },
-    "/sources/{ID}/instance_types": {
-      "get": {
-        "deprecated": true,
-        "description": "Deprecated endpoint, use /instance_types instead.",
-        "operationId": "getInstanceTypeList",
-        "parameters": [
-          {
-            "description": "Source ID from Sources Database",
-            "in": "path",
-            "name": "ID",
-            "required": true,
-            "schema": {
-              "format": "int64",
-              "type": "integer"
-            }
-          },
-          {
-            "description": "Hyperscaler region",
-            "in": "query",
-            "name": "region",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/v1.ListInstaceTypeResponse"
-                }
-              }
-            },
-            "description": "Return on success."
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalError"
-          }
-        },
-        "tags": [
-          "Source"
-        ]
-      }
-    },
     "/sources/{ID}/launch_templates": {
       "get": {
         "description": "Return a list of launch templates.\nA launch template is a configuration set with a name that is available through hyperscaler API. When creating reservations, launch template can be provided in order to set additional configuration for instances.\nCurrently only AWS Launch Templates are supported.\n",

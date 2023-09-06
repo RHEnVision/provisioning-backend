@@ -1357,38 +1357,6 @@ paths:
                 "500":
                     $ref: '#/components/responses/InternalError'
             deprecated: true
-    /sources/{ID}/instance_types:
-        get:
-            tags:
-                - Source
-            description: Deprecated endpoint, use /instance_types instead.
-            operationId: getInstanceTypeList
-            parameters:
-                - name: ID
-                  in: path
-                  description: Source ID from Sources Database
-                  required: true
-                  schema:
-                    type: integer
-                    format: int64
-                - name: region
-                  in: query
-                  description: Hyperscaler region
-                  required: true
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: Return on success.
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/v1.ListInstaceTypeResponse'
-                "404":
-                    $ref: '#/components/responses/NotFound'
-                "500":
-                    $ref: '#/components/responses/InternalError'
-            deprecated: true
     /sources/{ID}/launch_templates:
         get:
             tags:
