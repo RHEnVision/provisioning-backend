@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/supported"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/rs/zerolog"
 )
@@ -27,7 +26,7 @@ func NewInstanceTypes(ctx context.Context, types []types.InstanceTypeInfo) ([]*c
 				Cores:        *types[i].VCpuInfo.DefaultCores,
 				MemoryMiB:    *types[i].MemoryInfo.SizeInMiB,
 				Architecture: arch,
-				Supported:    supported.IsSupported(string(types[i].InstanceType)),
+				Supported:    *types[i].MemoryInfo.SizeInMiB >= 2000,
 			}
 			if types[i].InstanceStorageInfo != nil {
 				it.EphemeralStorageGB = *types[i].InstanceStorageInfo.TotalSizeInGB
