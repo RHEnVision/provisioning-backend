@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/notifications"
+
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
@@ -14,12 +16,19 @@ import (
 
 const TraceName = telemetry.TracePrefix + "internal/jobs"
 
-var ErrTypeAssertion = errors.New("type assert error")
+var (
+	ErrTypeAssertion = errors.New("type assert error")
+	ErrPanicInJob    = errors.New("panic during job")
+)
 
 func finishJob(ctx context.Context, reservationId int64, jobErr error) {
+	nc := notifications.GetNotificationClient(ctx)
+
 	if jobErr != nil {
+		nc.FailedLaunch(ctx, reservationId, jobErr)
 		finishWithError(ctx, reservationId, jobErr)
 	} else {
+		nc.SuccessfulLaunch(ctx, reservationId)
 		finishWithSuccess(ctx, reservationId)
 	}
 }
@@ -31,25 +40,26 @@ func finishWithSuccess(ctx context.Context, reservationId int64) {
 		ctx = copyContext(ctx)
 	}
 
+	// get details
 	rDao := dao.GetReservationDao(ctx)
 	reservation, err := rDao.GetById(ctx, reservationId)
 	if err != nil {
 		logger.Warn().Err(err).Msg("unable to update job status: get by id")
 		return
 	}
-	logger.Debug().Msgf("Job step: %d/%d", reservation.Step, reservation.Steps)
+	if reservation.Step == reservation.Steps {
+		logger.Info().Msgf("Finishing reservation with success at step %d/%d", reservation.Step, reservation.Steps)
+	} else {
+		logger.Error().Msgf("Finishing reservation with success at step %d/%d", reservation.Step, reservation.Steps)
+	}
 
 	// total count of reservations
 	metrics.IncReservationCount(reservation.Provider.String(), "success")
 
-	// if this was the last step, set the success flag
-	if reservation.Step >= reservation.Steps {
-		logger.Info().Msgf("All jobs executed, marking job as success")
-
-		err = rDao.FinishWithSuccess(ctx, reservationId)
-		if err != nil {
-			logger.Warn().Err(err).Msg("unable to update job status: finish")
-		}
+	// and finish
+	err = rDao.FinishWithSuccess(ctx, reservationId)
+	if err != nil {
+		logger.Warn().Err(err).Msg("unable to update job status: finish")
 	}
 }
 
@@ -62,17 +72,19 @@ func finishWithError(ctx context.Context, reservationId int64, jobError error) {
 		ctx = copyContext(ctx)
 	}
 
+	// get details
 	rDao := dao.GetReservationDao(ctx)
 	reservation, err := rDao.GetById(ctx, reservationId)
 	if err != nil {
 		logger.Warn().Err(err).Msg("unable to update job status: get by id")
 		return
 	}
-	logger.Error().Err(jobError).Msgf("Reservation for %s returned an error", reservation.Provider.String())
+	logger.Error().Err(jobError).Msgf("Finishing reservation with error at step %d/%d", reservation.Step, reservation.Steps)
 
 	// total count of reservations
 	metrics.IncReservationCount(reservation.Provider.String(), "failure")
 
+	// and finish
 	err = rDao.FinishWithError(ctx, reservationId, jobError.Error())
 	if err != nil {
 		logger.Warn().Err(err).Msg("unable to update job status: finish")
