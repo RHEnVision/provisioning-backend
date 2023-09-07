@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
@@ -54,28 +56,36 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 		return
 	}
 
+	// ensure panic finishes the job
 	logger = ptr.To(logger.With().Int64("reservation_id", args.ReservationID).Logger())
 	ctx = logger.WithContext(ctx)
-	nc := notifications.GetNotificationClient(ctx)
+	defer func() {
+		if r := recover(); r != nil {
+			panicErr := fmt.Errorf("%w: %s", ErrPanicInJob, r)
+			finishWithError(ctx, args.ReservationID, panicErr)
+		}
+	}()
 
 	jobErr := DoLaunchInstanceGCP(ctx, &args)
 	if jobErr != nil {
 		finishWithError(ctx, args.ReservationID, jobErr)
-		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
 		return
 	}
 
 	jobErr = FetchInstancesDescriptionGCP(ctx, &args)
 	if jobErr != nil {
-		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
-	} else {
-		nc.SuccessfulLaunch(ctx, args.ReservationID)
+		finishWithError(ctx, args.ReservationID, jobErr)
+		return
 	}
+
 	finishJob(ctx, args.ReservationID, jobErr)
 }
 
 // DoLaunchInstanceGCP is a job logic, when error is returned the job status is updated accordingly
 func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "DoLaunchInstanceGCP")
+	defer span.End()
+
 	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started launch instance GCP job")
 	logger.Info().Interface("args", args).Msg("Processing launch instance GCP job")
@@ -88,11 +98,13 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 
 	pk, err := pkD.GetById(ctx, args.PubkeyID)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot get pubkey by id")
 		return fmt.Errorf("cannot get pubkey by id: %w", err)
 	}
 
 	gcpClient, err := clients.GetGCPClient(ctx, args.ProjectID)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot get gcp client")
 		return fmt.Errorf("cannot get gcp client: %w", err)
 	}
 
@@ -104,6 +116,7 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 	}
 	userData, err := userdata.GenerateUserData(ctx, &userDataInput)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot generate user data")
 		return fmt.Errorf("cannot generate user data: %w", err)
 	}
 
@@ -124,6 +137,7 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 
 	instances, opName, err := gcpClient.InsertInstances(ctx, params, args.Detail.Amount)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot run instances for gcp client")
 		return fmt.Errorf("cannot run instances for gcp client: %w", err)
 	}
 
@@ -131,7 +145,8 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 
 	err = rDao.UpdateOperationNameForGCP(ctx, args.ReservationID, *opName)
 	if err != nil {
-		return fmt.Errorf("cannot update operation name for GCP : %w", err)
+		span.SetStatus(codes.Error, "cannot update operation name for GCP")
+		return fmt.Errorf("cannot update operation name for GCP: %w", err)
 	}
 
 	// For each instance that was created in GCP, add it as a DB record
@@ -141,6 +156,7 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 			InstanceID:    *instanceId,
 		})
 		if err != nil {
+			span.SetStatus(codes.Error, "cannot create instance reservation")
 			return fmt.Errorf("cannot create instance reservation for id %d: %w", instanceId, err)
 		}
 		logger.Info().Str("instance_id", *instanceId).Msgf("Created new instance via GCP reservation %s", *opName)
@@ -150,6 +166,9 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 }
 
 func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "FetchInstancesDescriptionGCP")
+	defer span.End()
+
 	logger := *zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started Fetch Instances Description GCP")
 
@@ -161,10 +180,12 @@ func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTa
 
 	gcpClient, err := clients.GetGCPClient(ctx, args.ProjectID)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot get gcp client")
 		return fmt.Errorf("cannot get gcp client: %w", err)
 	}
 	ids, err := gcpClient.ListInstancesIDsByLabel(ctx, args.Detail.UUID)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot list instances ids by tag")
 		return fmt.Errorf("cannot list instances ids by tag: %w", err)
 	}
 
@@ -174,6 +195,7 @@ func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTa
 			instanceDesc, err = gcpClient.GetInstanceDescriptionByID(ctx, *id, args.Zone)
 
 			if err != nil {
+				span.SetStatus(codes.Error, "cannot get instance description")
 				return fmt.Errorf("cannot get instance description : %w", err)
 			}
 
@@ -193,6 +215,7 @@ func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTa
 
 		err = rDao.UpdateReservationInstance(ctx, args.ReservationID, instanceDesc)
 		if err != nil {
+			span.SetStatus(codes.Error, "cannot update instance description")
 			return fmt.Errorf("cannot update instance description: %w", err)
 		}
 	}

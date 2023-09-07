@@ -7,7 +7,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
@@ -58,29 +57,33 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 		return
 	}
 
+	// ensure panic finishes the job
 	logger = ptr.To(logger.With().Int64("reservation_id", args.ReservationID).Logger())
 	ctx = logger.WithContext(ctx)
+	defer func() {
+		if r := recover(); r != nil {
+			panicErr := fmt.Errorf("%w: %s", ErrPanicInJob, r)
+			finishWithError(ctx, args.ReservationID, panicErr)
+		}
+	}()
 
 	logger.Info().Msg("Started launch instance Azure job")
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "LaunchInstanceAzureJob")
 	defer span.End()
-	nc := notifications.GetNotificationClient(ctx)
+
 	jobErr := DoEnsureAzureResourceGroup(ctx, &args)
 	if jobErr != nil {
 		finishWithError(ctx, args.ReservationID, jobErr)
-		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
 		return
 	}
 
 	jobErr = DoLaunchInstanceAzure(ctx, &args)
 	if jobErr != nil {
-		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
-	} else {
-		nc.SuccessfulLaunch(ctx, args.ReservationID)
+		finishWithError(ctx, args.ReservationID, jobErr)
+		return
 	}
-	finishJob(ctx, args.ReservationID, jobErr)
 
-	logger.Info().Msg("Finished launch instance Azure job")
+	finishJob(ctx, args.ReservationID, jobErr)
 }
 
 func DoEnsureAzureResourceGroup(ctx context.Context, args *LaunchInstanceAzureTaskArgs) error {
@@ -95,6 +98,8 @@ func DoEnsureAzureResourceGroup(ctx context.Context, args *LaunchInstanceAzureTa
 
 	azureClient, err := clients.GetAzureClient(ctx, args.Subscription)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot create new Azure client")
+		logger.Error().Err(err).Msg("Cannot create new Azure client")
 		return fmt.Errorf("cannot create new Azure client: %w", err)
 	}
 
@@ -105,6 +110,7 @@ func DoEnsureAzureResourceGroup(ctx context.Context, args *LaunchInstanceAzureTa
 		return fmt.Errorf("failed to ensure resource group: %w", err)
 	}
 	logger.Trace().Msgf("Using resource group id=%s", *resourceGroupID)
+
 	return nil
 }
 
@@ -144,6 +150,7 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 	}
 	userData, err := userdata.GenerateUserData(ctx, &userDataInput)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot generate user data")
 		return fmt.Errorf("cannot generate user data: %w", err)
 	}
 

@@ -5,11 +5,13 @@ import (
 	"errors"
 	"fmt"
 
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/notifications"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
@@ -58,28 +60,31 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 		return
 	}
 
+	// ensure panic finishes the job
 	logger = ptr.To(logger.With().Int64("reservation_id", args.ReservationID).Logger())
 	ctx = logger.WithContext(ctx)
-	nc := notifications.GetNotificationClient(ctx)
+	defer func() {
+		if r := recover(); r != nil {
+			panicErr := fmt.Errorf("%w: %s", ErrPanicInJob, r)
+			finishWithError(ctx, args.ReservationID, panicErr)
+		}
+	}()
 
 	jobErr := DoEnsurePubkeyOnAWS(ctx, &args)
 	if jobErr != nil {
 		finishWithError(ctx, args.ReservationID, jobErr)
-		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
 		return
 	}
 
 	jobErr = DoLaunchInstanceAWS(ctx, &args)
 	if jobErr != nil {
 		finishWithError(ctx, args.ReservationID, jobErr)
-		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
 		return
 	}
+
 	jobErr = FetchInstancesDescriptionAWS(ctx, &args)
 	if jobErr != nil {
-		nc.FailedLaunch(ctx, args.ReservationID, jobErr)
-	} else {
-		nc.SuccessfulLaunch(ctx, args.ReservationID)
+		finishWithError(ctx, args.ReservationID, jobErr)
 	}
 
 	finishJob(ctx, args.ReservationID, jobErr)
@@ -87,6 +92,9 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 
 // DoEnsurePubkeyOnAWS is a job logic, when error is returned the job status is updated accordingly
 func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "DoEnsurePubkeyOnAWS")
+	defer span.End()
+
 	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started pubkey upload AWS job")
 
@@ -100,12 +108,14 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	resDao := dao.GetReservationDao(ctx)
 	awsReservation, err := resDao.GetAWSById(ctx, args.ReservationID)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot get aws reservation by id")
 		return fmt.Errorf("cannot get aws reservation by id: %w", err)
 	}
 
 	pubkey, err := pkDao.GetById(ctx, args.PubkeyID)
 	if err != nil {
-		return fmt.Errorf("cannot upload aws pubkey: %w", err)
+		span.SetStatus(codes.Error, "cannot get aws key")
+		return fmt.Errorf("cannot get aws pubkey: %w", err)
 	}
 
 	// Fetch our DB record for the resource to update if necessary
@@ -119,12 +129,14 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 				Region:   args.Region,
 			}
 		} else {
+			span.SetStatus(codes.Error, "unable to check pubkey resource")
 			return fmt.Errorf("unable to check pubkey resource: %w", errDao)
 		}
 	}
 
 	ec2Client, err := clients.GetEC2Client(ctx, args.ARN, args.Region)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot create new ec2 client from config")
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
 
@@ -132,6 +144,8 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	fingerprint := pubkey.FindAwsFingerprint(ctx)
 	ec2Name, err := ec2Client.GetPubkeyName(ctx, fingerprint)
 	if err != nil {
+		span.SetStatus(codes.Error, "key error")
+
 		// if not found on AWS, import
 		if errors.Is(err, http.PubkeyNotFoundErr) {
 			pkr.Tag = ""
@@ -157,12 +171,14 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	awsReservation.Detail.PubkeyName = ec2Name
 	err = resDao.UnscopedUpdateAWSDetail(ctx, awsReservation.Reservation.ID, awsReservation.Detail)
 	if err != nil {
+		span.SetStatus(codes.Error, "failed to save AWS pubkey name to DB")
 		return fmt.Errorf("failed to save AWS pubkey name to DB: %w", err)
 	}
 
 	if pkr.ID == 0 {
 		err = pkDao.UnscopedCreateResource(ctx, pkr)
 		if err != nil {
+			span.SetStatus(codes.Error, "cannot create resource for aws pubkey")
 			return fmt.Errorf("cannot create resource for aws pubkey: %w", err)
 		}
 	}
@@ -171,6 +187,9 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 }
 
 func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "DoLaunchInstanceAWS")
+	defer span.End()
+
 	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started launch instance AWS job")
 
@@ -184,6 +203,7 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 
 	reservation, err := resD.GetAWSById(ctx, args.ReservationID)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot get aws reservation by id")
 		return fmt.Errorf("cannot get aws reservation by id: %w", err)
 	}
 
@@ -195,11 +215,13 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	}
 	userData, err := userdata.GenerateUserData(ctx, &userDataInput)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot generate user data")
 		return fmt.Errorf("cannot generate user data: %w", err)
 	}
 
 	ec2Client, err := clients.GetEC2Client(ctx, args.ARN, args.Region)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot create new ec2 client from config")
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
 
@@ -214,6 +236,7 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	logger.Trace().Msg("Executing RunInstances")
 	instances, awsReservationId, err := ec2Client.RunInstances(ctx, req, args.Detail.Amount, args.Detail.Name, reservation)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot run instances")
 		return fmt.Errorf("cannot run instances: %w", err)
 	}
 
@@ -224,6 +247,7 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 			InstanceID:    *instanceId,
 		})
 		if err != nil {
+			span.SetStatus(codes.Error, "cannot create instance reservation")
 			return fmt.Errorf("cannot create instance reservation for id %d: %w", instanceId, err)
 		}
 		logger.Info().Str("instance_id", *instanceId).Msgf("Created new instance via AWS reservation %s", *awsReservationId)
@@ -233,6 +257,7 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	// Save the AWS reservation id in aws_reservation_details table
 	err = resD.UpdateReservationIDForAWS(ctx, args.ReservationID, *awsReservationId)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot UpdateReservationIDForAWS")
 		return fmt.Errorf("cannot UpdateReservationIDForAWS: %w", err)
 	}
 
@@ -240,6 +265,9 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 }
 
 func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
+	ctx, span := otel.Tracer(TraceName).Start(ctx, "FetchInstancesDescriptionAWS")
+	defer span.End()
+
 	logger := zerolog.Ctx(ctx)
 	logger.Debug().Msg("Started fetch instances description")
 
@@ -249,6 +277,7 @@ func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTa
 	rDao := dao.GetReservationDao(ctx)
 	instances, err := rDao.ListInstances(ctx, args.ReservationID)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot get instances list")
 		return fmt.Errorf("cannot get instances list: %w", err)
 	}
 	instancesIDList := make([]string, len(instances))
@@ -257,12 +286,14 @@ func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTa
 	}
 	ec2Client, err := clients.GetEC2Client(ctx, args.ARN, args.Region)
 	if err != nil {
+		span.SetStatus(codes.Error, "cannot create new ec2 client from config")
 		return fmt.Errorf("cannot create new ec2 client from config: %w", err)
 	}
 
 	err = waitAndRetry(ctx, func() error {
 		instancesDescriptionList, errRetry := ec2Client.DescribeInstanceDetails(ctx, instancesIDList)
 		if errRetry != nil {
+			span.SetStatus(codes.Error, "cannot get list instances description")
 			return fmt.Errorf("cannot get list instances description: %w", errRetry)
 		}
 
@@ -273,13 +304,15 @@ func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTa
 		for _, instance := range instancesDescriptionList {
 			errRetry := rDao.UpdateReservationInstance(ctx, args.ReservationID, instance)
 			if errRetry != nil {
-				return fmt.Errorf("cannot update instance description: %w", err)
+				span.SetStatus(codes.Error, "cannot update instance description")
+				return fmt.Errorf("cannot update instance description: %w", errRetry)
 			}
 		}
 		return nil
 	}, 1000, 500, 500, 1000, 2000)
 
 	if err != nil {
+		span.SetStatus(codes.Error, "giving up")
 		return fmt.Errorf("giving up: %w", err)
 	}
 
