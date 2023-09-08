@@ -40,10 +40,8 @@ type Metadata struct {
 
 // WithOffset returns context copy with offset value.
 func WithOffset(ctx context.Context, offsetStr string) context.Context {
-	logger := zerolog.Ctx(ctx)
 	offset, err := strconv.Atoi(offsetStr)
 	if err != nil || offset < 0 {
-		logger.Err(err).Msg("Offset is missing or invalid, setting offset value to 0")
 		offset = defaultValueOffset
 	}
 	return context.WithValue(ctx, offsetCtxKey, offset)
@@ -51,10 +49,8 @@ func WithOffset(ctx context.Context, offsetStr string) context.Context {
 
 // WithLimit returns context copy with limit value.
 func WithLimit(ctx context.Context, limitStr string) context.Context {
-	logger := zerolog.Ctx(ctx)
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil || limit < 0 {
-		logger.Err(err).Msg("Limit is missing or invalid, setting limit value to 100")
 		limit = defaultValueLimit
 	}
 	return context.WithValue(ctx, limitCtxKey, limit)
