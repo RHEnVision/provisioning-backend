@@ -165,13 +165,10 @@ func (w *RedisWorker) dequeueLoop(ctx context.Context, i, total int) {
 
 func recoverAndLog(ctx context.Context) {
 	if rec := recover(); rec != nil {
-		logger := zerolog.Ctx(ctx).Error()
-
-		if err, ok := rec.(error); ok {
-			logger.Err(err).Stack().Msg("Job queue panic")
-		} else {
-			logger.Msgf("Error during job handling: %v, stacktrace: %s", rec, debug.Stack())
-		}
+		zerolog.Ctx(ctx).Error().
+			Bool("panic", true).
+			Bytes("stacktrace", debug.Stack()).
+			Msgf("Unhandled panic in worker: %s", rec)
 	}
 }
 
