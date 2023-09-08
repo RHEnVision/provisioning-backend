@@ -75,11 +75,11 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 	}
 
 	if resp == nil {
-		return fmt.Errorf("ready call: empty response: %w", clients.UnexpectedBackendResponse)
+		return fmt.Errorf("ready call: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.StatusCode() < 200 || resp.StatusCode() > 299 {
-		return fmt.Errorf("ready call: %w: %d", clients.UnexpectedBackendResponse, resp.StatusCode())
+		return fmt.Errorf("ready call: %w: %d", clients.ErrUnexpectedBackendResponse, resp.StatusCode())
 	}
 
 	return nil
@@ -114,15 +114,15 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 	}
 
 	if resp == nil {
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: empty response: %w", clients.UnexpectedBackendResponse)
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.JSON200 == nil {
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", clients.UnexpectedBackendResponse)
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.JSON200.Data == nil {
-		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.NoResponseData)
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrNoResponseData)
 	}
 
 	result := make([]*clients.Source, 0, len(*resp.JSON200.Data))
@@ -167,15 +167,15 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", err)
 	}
 	if resp == nil {
-		return nil, 0, fmt.Errorf("list provisioning sources call: empty response: %w", clients.UnexpectedBackendResponse)
+		return nil, 0, fmt.Errorf("list provisioning sources call: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.JSON200 == nil {
-		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.UnexpectedBackendResponse)
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.JSON200.Data == nil {
-		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.NoResponseData)
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrNoResponseData)
 	}
 
 	result := make([]*clients.Source, len(*resp.JSON200.Data))
@@ -214,14 +214,14 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 	// Sources API currently does not provide a good server-side filtering.
 
 	if resp == nil {
-		return nil, fmt.Errorf("get source authentication call: empty response: %w", clients.UnexpectedBackendResponse)
+		return nil, fmt.Errorf("get source authentication call: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
 	if resp.JSON200 == nil {
-		return nil, fmt.Errorf("get source authentication call: %w", clients.UnexpectedBackendResponse)
+		return nil, fmt.Errorf("get source authentication call: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.JSON200.Data == nil {
-		return nil, fmt.Errorf("get source authentication call: %w", clients.NoResponseData)
+		return nil, fmt.Errorf("get source authentication call: %w", clients.ErrNoResponseData)
 	}
 	auth, err := filterSourceAuthentications(*resp.JSON200.Data)
 	if err != nil {
@@ -275,7 +275,7 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 	}
 
 	if resp == nil {
-		return "", fmt.Errorf("failed to fetch ApplicationTypes: empty response: %w", clients.UnexpectedBackendResponse)
+		return "", fmt.Errorf("failed to fetch ApplicationTypes: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	defer func() {
@@ -285,7 +285,7 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 	}()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return "", fmt.Errorf("failed to fetch ApplicationTypes: %w: %d", clients.UnexpectedBackendResponse, resp.StatusCode)
+		return "", fmt.Errorf("failed to fetch ApplicationTypes: %w: %d", clients.ErrUnexpectedBackendResponse, resp.StatusCode)
 	}
 
 	var appTypesData dataElement

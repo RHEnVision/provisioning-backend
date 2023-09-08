@@ -75,7 +75,7 @@ func TestListSourcesHandler(t *testing.T) {
 		rr := httptest.NewRecorder()
 		handler := http.HandlerFunc(ListSources)
 		handler.ServeHTTP(rr, req)
-		require.Error(t, clients.UnknownProviderErr, "provider is not supported")
+		require.Error(t, clients.ErrUnknownProvider, "provider is not supported")
 		require.Equal(t, http.StatusBadRequest, rr.Code, "bad request")
 	})
 }

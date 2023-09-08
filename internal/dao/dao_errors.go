@@ -3,6 +3,8 @@ package dao
 import (
 	"errors"
 
+	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
+
 	"github.com/jackc/pgx/v5"
 )
 
@@ -17,13 +19,13 @@ var (
 	ErrAffectedMismatch = errors.New("unexpected affected rows")
 
 	// ErrValidation is returned when model does not validate
-	ErrValidation = errors.New("validation error")
+	ErrValidation = usrerr.New(400, "validation error", "invalid input")
 
 	// ErrTransformation is returned when model transformation fails
 	ErrTransformation = errors.New("transformation error")
 
 	// ErrWrongAccount is returned on DAO operations with not matching account id in the context
-	ErrWrongAccount = errors.New("wrong account")
+	ErrWrongAccount = usrerr.New(403, "wrong account", "incorrect user account")
 
 	// ErrStubGeneric is a generic error returned for test-related cases
 	ErrStubGeneric = errors.New("generic stub error")
@@ -35,5 +37,5 @@ var (
 	ErrStubContextAlreadySet = errors.New("context object already set")
 
 	// ErrReservationRateExceeded is returned when SQL constraint does not allow to insert more reservations
-	ErrReservationRateExceeded = errors.New("rate limit exceeded")
+	ErrReservationRateExceeded = usrerr.New(429, "rate limit exceeded", "too many reservations, wait and retry")
 )

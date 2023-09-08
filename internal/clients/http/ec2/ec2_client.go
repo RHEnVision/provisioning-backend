@@ -154,7 +154,7 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 	defer span.End()
 
 	if !c.assumed {
-		return "", http.ServiceAccountUnsupportedOperationErr
+		return "", http.ServiceAccountUnsupportedOpErr
 	}
 	logger := logger(ctx)
 	logger.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
@@ -176,7 +176,7 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 	output, err := c.ec2.ImportKeyPair(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
-			err = clients.UnauthorizedErr
+			err = clients.ErrUnauthorized
 		} else if isAWSOperationError(err, "InvalidKeyPair.Duplicate") {
 			err = http.DuplicatePubkeyErr
 		}
@@ -192,7 +192,7 @@ func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (stri
 	defer span.End()
 
 	if !c.assumed {
-		return "", http.ServiceAccountUnsupportedOperationErr
+		return "", http.ServiceAccountUnsupportedOpErr
 	}
 	logger := logger(ctx)
 	logger.Trace().Msgf("Fetching AWS key with fingerprint '%s' to get its name", fingerprint)
@@ -201,7 +201,7 @@ func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (stri
 	output, err := c.ec2.DescribeKeyPairs(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
-			err = clients.UnauthorizedErr
+			err = clients.ErrUnauthorized
 		}
 		span.SetStatus(codes.Error, err.Error())
 		return "", fmt.Errorf("cannot fetch SSH key to update its tag %s: %w", fingerprint, err)
@@ -219,7 +219,7 @@ func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
 	defer span.End()
 
 	if !c.assumed {
-		return http.ServiceAccountUnsupportedOperationErr
+		return http.ServiceAccountUnsupportedOpErr
 	}
 	logger := logger(ctx)
 	logger.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
@@ -229,7 +229,7 @@ func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
 	_, err := c.ec2.DeleteKeyPair(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
-			err = clients.UnauthorizedErr
+			err = clients.ErrUnauthorized
 		}
 		span.SetStatus(codes.Error, err.Error())
 		return fmt.Errorf("cannot delete SSH key %v: %w", input.KeyPairId, err)
@@ -246,7 +246,7 @@ func (c *ec2Client) ListAllRegions(ctx context.Context) ([]clients.Region, error
 	output, err := c.ec2.DescribeRegions(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
-			err = clients.UnauthorizedErr
+			err = clients.ErrUnauthorized
 		}
 		return nil, fmt.Errorf("cannot list regions: %w", err)
 	}
@@ -273,7 +273,7 @@ func (c *ec2Client) ListAllZones(ctx context.Context, region clients.Region) ([]
 	output, err := c.ec2.DescribeAvailabilityZones(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
-			err = clients.UnauthorizedErr
+			err = clients.ErrUnauthorized
 		}
 		return nil, fmt.Errorf("cannot list zones: %w", err)
 	}
@@ -298,7 +298,7 @@ func (c *ec2Client) ListInstanceTypes(ctx context.Context) ([]*clients.InstanceT
 		resp, err := pag.NextPage(ctx)
 		if err != nil {
 			if isAWSUnauthorizedError(err) {
-				err = clients.UnauthorizedErr
+				err = clients.ErrUnauthorized
 			}
 			span.SetStatus(codes.Error, err.Error())
 			return nil, fmt.Errorf("cannot list instance types: %w", err)
@@ -326,7 +326,7 @@ func (c *ec2Client) DescribeInstanceDetails(ctx context.Context, InstanceIds []s
 	resp, err := c.ec2.DescribeInstances(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
-			err = clients.UnauthorizedErr
+			err = clients.ErrUnauthorized
 		}
 		span.SetStatus(codes.Error, err.Error())
 		return nil, fmt.Errorf("cannot fetch instances description: %w", err)
@@ -352,7 +352,7 @@ func (c *ec2Client) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchT
 	resp, err := c.ec2.DescribeLaunchTemplates(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
-			err = clients.UnauthorizedErr
+			err = clients.ErrUnauthorized
 		}
 		span.SetStatus(codes.Error, err.Error())
 		return nil, "", fmt.Errorf("cannot list launch templates: %w", err)
@@ -377,7 +377,7 @@ func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanc
 	defer span.End()
 
 	if !c.assumed {
-		return nil, nil, http.ServiceAccountUnsupportedOperationErr
+		return nil, nil, http.ServiceAccountUnsupportedOpErr
 	}
 	logger := logger(ctx)
 	logger.Trace().Msg("Run AWS EC2 instance")
@@ -423,7 +423,7 @@ func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanc
 	resp, err := c.ec2.RunInstances(ctx, input)
 	if err != nil {
 		if isAWSUnauthorizedError(err) {
-			err = clients.UnauthorizedErr
+			err = clients.ErrUnauthorized
 		}
 		span.SetStatus(codes.Error, err.Error())
 		return nil, nil, fmt.Errorf("cannot run instances: %w", err)

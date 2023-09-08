@@ -7,6 +7,8 @@ import (
 	"math"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
+
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
@@ -62,18 +64,18 @@ func (c *rbac) Ready(ctx context.Context) error {
 	}
 
 	if resp == nil {
-		return fmt.Errorf("ready call: empty response: %w", clients.UnexpectedBackendResponse)
+		return fmt.Errorf("ready call: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.StatusCode() < 200 || resp.StatusCode() > 299 {
-		return fmt.Errorf("ready call: %w: %d", clients.UnexpectedBackendResponse, resp.StatusCode())
+		return fmt.Errorf("ready call: %w: %d", clients.ErrUnexpectedBackendResponse, resp.StatusCode())
 	}
 
 	return nil
 }
 
 // ErrMetaNotPresent is returned when metadata for pagination is not present in the response.
-var ErrMetaNotPresent = fmt.Errorf("RBAC did not return metadata: %w", clients.HttpClientErr)
+var ErrMetaNotPresent = fmt.Errorf("RBAC did not return metadata: %w", usrerr.ErrBadRequest400)
 
 // FetchLimit is the maximum possible entries returned in one request
 var FetchLimit = ptr.To(500)
@@ -114,11 +116,11 @@ func (c *rbac) GetPrincipalAccess(ctx context.Context) (clients.RbacAcl, error) 
 			}
 
 			if resp == nil {
-				return nil, fmt.Errorf("get principal access: empty response: %w", clients.UnexpectedBackendResponse)
+				return nil, fmt.Errorf("get principal access: empty response: %w", clients.ErrUnexpectedBackendResponse)
 			}
 
 			if resp.JSON200 == nil {
-				return nil, fmt.Errorf("get principal access: %w", clients.UnexpectedBackendResponse)
+				return nil, fmt.Errorf("get principal access: %w", clients.ErrUnexpectedBackendResponse)
 			}
 
 			logger.Trace().
