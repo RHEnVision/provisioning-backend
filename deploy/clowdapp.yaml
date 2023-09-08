@@ -442,9 +442,11 @@ objects:
         - prefix: ${FLOORIST_QUERY_PREFIX}/reservations
           query: >-
             (select 'aws'                                        as provider,
+            r.id,
             r.created_at,
             r.finished_at,
             r.success,
+            r.status || ' (' || r.step || '/' || r.steps || ')' as status,
             a.account_number,
             a.org_id,
             d.source_id,
@@ -461,9 +463,11 @@ objects:
             union all
 
             (select 'azure'                     as provider,
+            r.id,
             r.created_at,
             r.finished_at,
             r.success,
+            r.status || ' (' || r.step || '/' || r.steps || ')' as status,
             a.account_number,
             a.org_id,
             d.source_id,
