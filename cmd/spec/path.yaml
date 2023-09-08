@@ -156,32 +156,6 @@ paths:
                   $ref: '#/components/examples/v1.SourceListResponseExample'
         '500':
           $ref: "#/components/responses/InternalError"
-  /sources/{ID}/account_identity:
-    get:
-      description: 'This endpoint is deprecated. Please use upload_info instead'
-      deprecated: true
-      operationId: getSourceAccountIdentity
-      tags:
-        - Source
-      parameters:
-      - in: path
-        name: ID
-        schema:
-          type: integer
-          format: int64
-        required: true
-        description: 'Source ID from Sources Database'
-      responses:
-        '200':
-          description: Return on success.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/v1.AccountIDTypeResponse'
-        '404':
-          $ref: "#/components/responses/NotFound"
-        '500':
-          $ref: "#/components/responses/InternalError"
   /sources/{ID}/upload_info:
     get:
       operationId: getSourceUploadInfo
@@ -230,7 +204,7 @@ paths:
         configuration for instances.
         In GCP, when using templates, propagated user attributes are not overridden or updated.
         Only new attributes are added to the instance.
-        
+
         Currently AWS and GCP Launch Templates are supported.
       operationId: getLaunchTemplatesList
       tags:

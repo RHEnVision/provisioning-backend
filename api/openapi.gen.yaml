@@ -1354,32 +1354,6 @@ paths:
                                     $ref: '#/components/examples/v1.SourceListResponseExample'
                 "500":
                     $ref: '#/components/responses/InternalError'
-    /sources/{ID}/account_identity:
-        get:
-            tags:
-                - Source
-            description: This endpoint is deprecated. Please use upload_info instead
-            operationId: getSourceAccountIdentity
-            parameters:
-                - name: ID
-                  in: path
-                  description: Source ID from Sources Database
-                  required: true
-                  schema:
-                    type: integer
-                    format: int64
-            responses:
-                "200":
-                    description: Return on success.
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/v1.AccountIDTypeResponse'
-                "404":
-                    $ref: '#/components/responses/NotFound'
-                "500":
-                    $ref: '#/components/responses/InternalError'
-            deprecated: true
     /sources/{ID}/launch_templates:
         get:
             tags:

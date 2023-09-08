@@ -1996,46 +1996,6 @@
         ]
       }
     },
-    "/sources/{ID}/account_identity": {
-      "get": {
-        "deprecated": true,
-        "description": "This endpoint is deprecated. Please use upload_info instead",
-        "operationId": "getSourceAccountIdentity",
-        "parameters": [
-          {
-            "description": "Source ID from Sources Database",
-            "in": "path",
-            "name": "ID",
-            "required": true,
-            "schema": {
-              "format": "int64",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/v1.AccountIDTypeResponse"
-                }
-              }
-            },
-            "description": "Return on success."
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalError"
-          }
-        },
-        "tags": [
-          "Source"
-        ]
-      }
-    },
     "/sources/{ID}/launch_templates": {
       "get": {
         "description": "Return a list of launch templates.\nA launch template is a configuration set with a name that is available through hyperscaler API. When creating reservations, launch template can be provided in order to set additional configuration for instances. In GCP, when using templates, propagated user attributes are not overridden or updated. Only new attributes are added to the instance.\nCurrently AWS and GCP Launch Templates are supported.\n",

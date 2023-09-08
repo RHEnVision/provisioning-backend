@@ -79,38 +79,6 @@ func ListProvisioningSourcesByProvider(w http.ResponseWriter, r *http.Request, a
 	}
 }
 
-func GetAWSAccountIdentity(w http.ResponseWriter, r *http.Request) {
-	sourceId := chi.URLParam(r, "ID")
-
-	sourcesClient, err := clients.GetSourcesClient(r.Context())
-	if err != nil {
-		renderError(w, r, payloads.NewClientError(r.Context(), err))
-		return
-	}
-
-	authentication, err := sourcesClient.GetAuthentication(r.Context(), sourceId)
-	if err != nil {
-		renderError(w, r, payloads.NewClientError(r.Context(), err))
-		return
-	}
-
-	if typeErr := authentication.MustBe(models.ProviderTypeAWS); typeErr != nil {
-		renderError(w, r, payloads.NewClientError(r.Context(), typeErr))
-		return
-	}
-
-	uploadInfo, err := getAWSAccountDetails(r.Context(), sourceId, authentication)
-	if err != nil {
-		renderError(w, r, payloads.NewClientError(r.Context(), err))
-		return
-	}
-
-	if err := render.Render(w, r, payloads.NewAccountIdentityResponse(uploadInfo)); err != nil {
-		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render account id", err))
-		return
-	}
-}
-
 func GetSourceUploadInfo(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "ID")
 
