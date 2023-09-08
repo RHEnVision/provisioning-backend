@@ -51,11 +51,11 @@ func (c *ibClient) Ready(ctx context.Context) error {
 	}
 
 	if resp == nil {
-		return fmt.Errorf("ready call: empty response: %w", clients.UnexpectedBackendResponse)
+		return fmt.Errorf("ready call: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.StatusCode() < 200 || resp.StatusCode() > 299 {
-		return fmt.Errorf("ready call: %w: %d", clients.UnexpectedBackendResponse, resp.StatusCode())
+		return fmt.Errorf("ready call: %w: %d", clients.ErrUnexpectedBackendResponse, resp.StatusCode())
 	}
 
 	return nil
@@ -64,7 +64,7 @@ func (c *ibClient) Ready(ctx context.Context) error {
 func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
 	logger := logger(ctx)
 	if _, err := uuid.Parse(composeID); err != nil {
-		return "", fmt.Errorf("compose ID '%s' is not valid UUID: %w", composeID, clients.BadRequestErr)
+		return "", fmt.Errorf("compose ID '%s' is not valid UUID: %w", composeID, clients.ErrBadRequest)
 	}
 	logger.Trace().Str("compose_id", composeID).Msgf("Getting AMI of compose ID %v", composeID)
 
@@ -187,11 +187,11 @@ func (c *ibClient) getComposeStatus(ctx context.Context, composeID string) (*Com
 	}
 
 	if resp == nil {
-		return nil, fmt.Errorf("cannot get compose status: empty response: %w", clients.UnexpectedBackendResponse)
+		return nil, fmt.Errorf("cannot get compose status: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.JSON200 == nil {
-		return nil, fmt.Errorf("fetch image status call: %w", clients.UnexpectedBackendResponse)
+		return nil, fmt.Errorf("fetch image status call: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	return resp.JSON200, nil
@@ -230,11 +230,11 @@ func (c *ibClient) checkClone(ctx context.Context, composeID string) (*UploadSta
 	}
 
 	if resp == nil {
-		return nil, fmt.Errorf("cannot get compose status: empty response: %w", clients.UnexpectedBackendResponse)
+		return nil, fmt.Errorf("cannot get compose status: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.JSON200 == nil {
-		return nil, fmt.Errorf("fetch image status call: %w", clients.UnexpectedBackendResponse)
+		return nil, fmt.Errorf("fetch image status call: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if ImageStatusStatus(resp.JSON200.Status) != ImageStatusStatusSuccess {

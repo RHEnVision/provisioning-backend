@@ -88,7 +88,7 @@ func processMessage(msgCtx context.Context, message *kafka.GenericMessage) {
 	authentication, err := sourcesClient.GetAuthentication(ctx, sourceId)
 	if err != nil {
 		metrics.IncTotalInvalidAvailabilityCheckReqs()
-		if errors.Is(err, clients.NotFoundErr) {
+		if errors.Is(err, clients.ErrNotFound) {
 			logger.Warn().Err(err).Msg("Not found error from sources")
 			return
 		}

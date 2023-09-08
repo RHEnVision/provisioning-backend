@@ -7,9 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
-	"github.com/RHEnVision/provisioning-backend/internal/dao"
+	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
+
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/go-chi/render"
@@ -101,40 +100,22 @@ type userPayload struct {
 	message string
 }
 
-var errStatus = map[error]*userPayload{
-	// generic errors
-	clients.HttpClientErr:     {500, "unknown backend client error"},
-	clients.BadRequestErr:     {400, "bad request; returned from a backend service"},
-	clients.NotFoundErr:       {404, "not found; returned from a backend service"},
-	clients.UnauthorizedErr:   {401, "unauthorized; returned from a backend service"},
-	clients.ForbiddenErr:      {403, "forbidden; returned from a backend service"},
-	clients.Non2xxResponseErr: {500, "unsuccessful response;returned from a backend service"},
-
-	// database errors
-	dao.ErrReservationRateExceeded: {429, "too many pending reservations for this account, wait and try again"},
-
-	// image builder specific errors
-	httpClients.CloneNotFoundErr:        {404, "image builder could not find compose clone"},
-	httpClients.ComposeNotFoundErr:      {404, "image builder could not find compose"},
-	httpClients.ImageStatusErr:          {400, "image builder compose not successfully built"},
-	httpClients.UnknownImageTypeErr:     {400, "wrong type of image builder compose"},
-	httpClients.UploadStatusErr:         {400, "wrong compose status of image builder compose"},
-	httpClients.ImageRequestNotFoundErr: {404, "image builder compose request not found"},
-
-	// sources specific errors
-	clients.UnknownAuthenticationTypeErr: {500, "unknown authentication type"},
-	clients.UnknownProviderErr:           {500, "unknown provider type"},
-	clients.MissingProvisioningSources:   {500, "backend service missing provisioning source"},
-	httpClients.NotEvenErr:               {500, "client arguments error"},
-}
-
 func findUserPayload(err error) *userPayload {
 	if err == nil {
 		return nil
 	}
 
-	if result, ok := errStatus[err]; ok {
-		return result
+	var ue *usrerr.Error
+	if errors.As(err, &ue) {
+		msg := ue.UserMessage
+		if msg == "" {
+			msg = ue.Error()
+		}
+
+		return &userPayload{
+			code:    ue.StatusCode,
+			message: msg,
+		}
 	}
 
 	return findUserPayload(errors.Unwrap(err))

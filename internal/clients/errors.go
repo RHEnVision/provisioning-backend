@@ -1,25 +1,20 @@
 package clients
 
 import (
-	"errors"
-	"fmt"
+	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
 )
 
 var (
-	// Common errors
-	HttpClientErr     = errors.New("HTTP client")
-	BadRequestErr     = fmt.Errorf("%w: backend service returned bad request (400)", HttpClientErr)
-	NotFoundErr       = fmt.Errorf("%w: backend service returned not found (404) or no data", HttpClientErr)
-	UnauthorizedErr   = fmt.Errorf("%w: backend service returned unauthorized (401)", HttpClientErr)
-	ForbiddenErr      = fmt.Errorf("%w: backend service returned forbidden (403)", HttpClientErr)
-	Non2xxResponseErr = fmt.Errorf("%w: backend service did not return 2xx", HttpClientErr)
+	ErrBadRequest     = usrerr.New(401, "backend service returned bad request", "")
+	ErrNotFound       = usrerr.New(404, "backend service returned not found or no data", "")
+	ErrUnauthorized   = usrerr.New(401, "backend service returned unauthorized", "")
+	ErrForbidden      = usrerr.New(403, "backend service returned forbidden", "")
+	ErrNon2xxResponse = usrerr.New(500, "backend service returned unexpedced response code", "")
 
-	// Sources errors (some others are defined in http package too)
-	UnknownAuthenticationTypeErr = errors.New("unknown authentication type")
-	UnknownProviderErr           = errors.New("unknown provider type")
-	MissingProvisioningSources   = errors.New("missing provisioning source authentication")
+	ErrUnknownAuthenticationType  = usrerr.New(500, "unknown authentication type", "sources backend error")
+	ErrUnknownProvider            = usrerr.New(500, "unknown provider type", "sources backend error")
+	ErrMissingProvisioningSources = usrerr.New(500, "missing provisioning source authentication", "sources backend error")
 
-	// Client errors
-	UnexpectedBackendResponse = errors.New("backend service returned unexpected HTTP code")
-	NoResponseData            = errors.New("no data in response")
+	ErrUnexpectedBackendResponse = usrerr.New(500, "backend service returned unexpected HTTP code", "unexpected backend data")
+	ErrNoResponseData            = usrerr.New(500, "no data in response", "missing backend data")
 )

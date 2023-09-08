@@ -34,7 +34,7 @@ func NewAuthenticationFromSourceAuthType(ctx context.Context, str, authType, app
 	default:
 		zerolog.Ctx(ctx).Warn().Msgf("Unknown auth type returned from sources: %s", authType)
 		a.ProviderType = models.ProviderTypeUnknown
-		return &a, UnknownAuthenticationTypeErr
+		return &a, ErrUnknownAuthenticationType
 	}
 	return &a, nil
 }
@@ -52,7 +52,7 @@ func (auth *Authentication) Is(providerType models.ProviderType) bool {
 // MustBe returns nil, if authentication is of given type. Otherwise, returns an error.
 func (auth *Authentication) MustBe(providerType models.ProviderType) error {
 	if !auth.Is(providerType) {
-		return fmt.Errorf("%w: %s", UnknownAuthenticationTypeErr, auth.ProviderType.String())
+		return fmt.Errorf("%w: %s", ErrUnknownAuthenticationType, auth.ProviderType.String())
 	}
 
 	return nil

@@ -4,6 +4,9 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
+	"github.com/go-playground/validator/v10"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
 )
@@ -16,16 +19,20 @@ func TestFindUserPayload(t *testing.T) {
 
 	tests := []test{
 		{
-			clients.HttpClientErr,
-			&userPayload{500, "unknown backend client error"},
+			usrerr.ErrBadRequest400,
+			&userPayload{400, "bad request"},
 		},
 		{
 			httpClients.CloneNotFoundErr,
-			&userPayload{404, "image builder could not find compose clone"},
+			&userPayload{404, "image clone not found"},
 		},
 		{
-			clients.MissingProvisioningSources,
-			&userPayload{500, "backend service missing provisioning source"},
+			clients.ErrMissingProvisioningSources,
+			&userPayload{500, "sources backend error"},
+		},
+		{
+			validator.ValidationErrors{},
+			nil,
 		},
 	}
 

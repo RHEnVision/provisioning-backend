@@ -28,7 +28,7 @@ func ListSources(w http.ResponseWriter, r *http.Request) {
 		ListProvisioningSourcesByProvider(w, r, asProviderType)
 		return
 	default:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown provider: %s", provider), clients.UnknownProviderErr))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown provider: %s", provider), clients.ErrUnknownProvider))
 		return
 	}
 }
