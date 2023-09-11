@@ -15,13 +15,13 @@ import (
 )
 
 var (
-	UnknownProviderTypeError        = errors.New("unknown provider type parameter")
-	ProviderTypeMismatchError       = errors.New("reservation type does not match requested provider type")
-	ProviderTypeNotImplementedError = errors.New("provider type not yet implemented")
-	UnknownInstanceTypeNameError    = errors.New("unknown instance type")
-	ArchitectureMismatch            = errors.New("instance type and image architecture mismatch")
-	BothTypeAndTemplateMissingError = errors.New("instance type or launch template not set")
-	UnsupportedRegionError          = errors.New("unknown region/location/zone")
+	ErrUnknownProviderType        = errors.New("unknown provider type parameter")
+	ErrProviderTypeMismatch       = errors.New("reservation type does not match requested provider type")
+	ErrProviderTypeNotImplemented = errors.New("provider type not yet implemented")
+	ErrUnknownInstanceTypeName    = errors.New("unknown instance type")
+	ErrArchitectureMismatch       = errors.New("instance type and image architecture mismatch")
+	ErrBothTypeAndTemplateMissing = errors.New("instance type or launch template not set")
+	ErrUnsupportedRegion          = errors.New("unknown region/location/zone")
 )
 
 // CreateReservation dispatches requests to type provider specific handlers
@@ -46,14 +46,14 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 		if config.FeatureEnabled(r.Context(), "azure") {
 			CreateAzureReservation(w, r)
 		} else {
-			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "azure reservation is not implemented", ProviderTypeNotImplementedError))
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "azure reservation is not implemented", ErrProviderTypeNotImplemented))
 		}
 	case models.ProviderTypeGCP:
 		CreateGCPReservation(w, r)
 	case models.ProviderTypeUnknown:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", UnknownProviderTypeError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ErrUnknownProviderType))
 	default:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", UnknownProviderTypeError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ErrUnknownProviderType))
 	}
 }
 
@@ -106,7 +106,7 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if providerType != models.ProviderTypeUnknown && reservation.Provider != providerType {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider type", ProviderTypeMismatchError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider type", ErrProviderTypeMismatch))
 		return
 	}
 
@@ -171,6 +171,6 @@ func GetReservationDetail(w http.ResponseWriter, r *http.Request) {
 			renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		}
 	default:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ProviderTypeNotImplementedError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ErrProviderTypeNotImplemented))
 	}
 }

@@ -19,10 +19,10 @@ func present(args ...string) bool {
 func validate() error {
 	if Cloudwatch.Enabled {
 		if Cloudwatch.Region == "" || Cloudwatch.Key == "" || Cloudwatch.Secret == "" {
-			return validateMissingSecretError
+			return ErrValidateMissingSecret
 		}
 		if Cloudwatch.Group == "" || Cloudwatch.Stream == "" {
-			return validateGroupStreamError
+			return ErrValidateGroupStream
 		}
 	}
 

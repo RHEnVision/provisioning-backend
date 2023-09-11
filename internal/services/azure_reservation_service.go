@@ -37,7 +37,7 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 		payload.Location = "eastus_1"
 	}
 	if !preload.AzureInstanceType.ValidateRegion(payload.Location) {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported location", UnsupportedRegionError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported location", ErrUnsupportedRegion))
 		return
 	}
 
@@ -101,11 +101,11 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	supportedArch := "x86_64"
 	it := preload.AzureInstanceType.FindInstanceType(clients.InstanceTypeName(payload.InstanceSize))
 	if it == nil {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown instance size: %s", payload.InstanceSize), UnknownInstanceTypeNameError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown instance size: %s", payload.InstanceSize), ErrUnknownInstanceTypeName))
 		return
 	}
 	if it.Architecture.String() != supportedArch {
-		renderError(w, r, payloads.NewWrongArchitectureUserError(r.Context(), ArchitectureMismatch))
+		renderError(w, r, payloads.NewWrongArchitectureUserError(r.Context(), ErrArchitectureMismatch))
 		return
 	}
 

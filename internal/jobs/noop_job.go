@@ -17,7 +17,7 @@ type NoopJobArgs struct {
 	Sleep         time.Duration // Sleep (delay) duration (used in tests)
 }
 
-var NoOperationFailure = errors.New("job failed on request")
+var ErrNoOperationFailure = errors.New("job failed on request")
 
 // HandleNoop unmarshalls arguments and handle error
 func HandleNoop(ctx context.Context, job *worker.Job) {
@@ -60,7 +60,7 @@ func DoNoop(ctx context.Context, args *NoopJobArgs) error {
 	logger.Info().Msg("No operation finished")
 
 	if args.Fail {
-		return NoOperationFailure
+		return ErrNoOperationFailure
 	}
 
 	return nilUnlessTimeout(ctx)

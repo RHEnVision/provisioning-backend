@@ -35,5 +35,5 @@ var (
 	ErrPubkeyNotFound              = usrerr.New(404, "pubkey not found in AWS account", "")
 	ErrServiceAccountUnsupportedOp = usrerr.New(500, "unsupported operation on service account", "")
 	ErrARNParsing                  = usrerr.New(500, "ARN parsing error", "")
-	ErrNoReservation               = usrerr.New(404, "no reservation has found in AWS response", "")
+	ErrNoReservation               = usrerr.New(404, "no reservation was found in AWS response", "")
 )

@@ -24,7 +24,7 @@ func WithImageBuilderClient(parent context.Context) context.Context {
 func getImageBuilderClientStub(ctx context.Context) (si clients.ImageBuilder, err error) {
 	var ok bool
 	if si, ok = ctx.Value(imageBuilderCtxKey).(*ImageBuilderClientStub); !ok {
-		err = ContextReadError
+		err = ErrContextRead
 	}
 	return si, err
 }

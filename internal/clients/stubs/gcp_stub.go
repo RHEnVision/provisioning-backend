@@ -51,7 +51,7 @@ func getCustomerGCPClientStub(ctx context.Context, auth *clients.Authentication)
 	var err error
 	var ok bool
 	if si, ok = ctx.Value(gcpCtxKey).(*GCPClientStub); !ok {
-		err = ContextReadError
+		err = ErrContextRead
 	}
 	return si, err
 }
@@ -59,7 +59,7 @@ func getCustomerGCPClientStub(ctx context.Context, auth *clients.Authentication)
 func getServiceGCPClientStub(ctx context.Context) (si clients.ServiceGCP, err error) {
 	var ok bool
 	if si, ok = ctx.Value(serviceGCPCtxKey).(*GCPServiceClientStub); !ok {
-		err = ContextReadError
+		err = ErrContextRead
 	}
 	return si, err
 }
@@ -88,7 +88,7 @@ func (mock *GCPClientStub) GetInstanceDescriptionByID(ctx context.Context, id, z
 			return instanceDesc, nil
 		}
 	}
-	return nil, MissingInstanceIDErr
+	return nil, ErrMissingInstanceID
 }
 
 func (mock *GCPClientStub) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, string, error) {

@@ -193,8 +193,8 @@ var (
 
 // Errors
 var (
-	validateMissingSecretError = errors.New("config error: Cloudwatch enabled but Region or Key or Secret are blank")
-	validateGroupStreamError   = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
+	ErrValidateMissingSecret = errors.New("config error: Cloudwatch enabled but Region or Key or Secret are blank")
+	ErrValidateGroupStream   = errors.New("config error: Cloudwatch enabled but Group or Stream is blank")
 )
 
 var hostname string

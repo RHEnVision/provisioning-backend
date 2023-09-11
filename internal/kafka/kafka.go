@@ -33,8 +33,8 @@ type kafkaBroker struct {
 var _ Broker = &kafkaBroker{}
 
 var (
-	DifferentTopicErr       = errors.New("messages in batch have different topics")
-	UnknownSaslMechanismErr = errors.New("unknown SASL mechanism")
+	ErrDifferentTopic       = errors.New("messages in batch have different topics")
+	ErrUnknownSASLMechanism = errors.New("unknown SASL mechanism")
 )
 
 func createSASLMechanism(saslMechanismName string, username string, password string) (sasl.Mechanism, error) {
@@ -59,7 +59,7 @@ func createSASLMechanism(saslMechanismName string, username string, password str
 
 		return mechanism, nil
 	default:
-		return nil, fmt.Errorf("%w: %s", UnknownSaslMechanismErr, saslMechanismName)
+		return nil, fmt.Errorf("%w: %s", ErrUnknownSASLMechanism, saslMechanismName)
 	}
 }
 
@@ -247,7 +247,7 @@ func header(name string, headers []protocol.Header) string {
 }
 
 // Send one or more generic messages with the same topic. If there is a message with
-// different topic than the first one, DifferentTopicErr is returned.
+// different topic than the first one, ErrDifferentTopic is returned.
 func (b *kafkaBroker) Send(ctx context.Context, messages ...*GenericMessage) error {
 	logger := zerolog.Ctx(ctx)
 
@@ -268,7 +268,7 @@ func (b *kafkaBroker) Send(ctx context.Context, messages ...*GenericMessage) err
 	kMessages := make([]kafka.Message, len(messages))
 	for i, m := range messages {
 		if m.Topic != commonTopic {
-			return DifferentTopicErr
+			return ErrDifferentTopic
 		}
 		kMessages[i] = m.KafkaMessage()
 		if logger.Trace().Enabled() {

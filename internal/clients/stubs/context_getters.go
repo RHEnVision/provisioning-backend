@@ -27,7 +27,7 @@ func getAzureClientStub(ctx context.Context) (*AzureClientStub, error) {
 	var si *AzureClientStub
 	var ok bool
 	if si, ok = ctx.Value(azureCtxKey).(*AzureClientStub); !ok {
-		return nil, ContextReadError
+		return nil, ErrContextRead
 	}
 	return si, nil
 }

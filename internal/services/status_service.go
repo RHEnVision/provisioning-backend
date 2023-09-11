@@ -18,7 +18,7 @@ func ReadyService(w http.ResponseWriter, r *http.Request) {
 	writeOk(w, r)
 }
 
-var UnknownReadinessServiceErr = errors.New("unknown service for readiness test")
+var ErrUnknownReadinessService = errors.New("unknown service for readiness test")
 
 func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
 	service := chi.URLParam(r, "SRV")
@@ -53,7 +53,7 @@ func ReadyBackendService(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	default:
-		renderError(w, r, payloads.NewURLParsingError(r.Context(), "unable to parse SRV parameter", UnknownReadinessServiceErr))
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "unable to parse SRV parameter", ErrUnknownReadinessService))
 		return
 	}
 

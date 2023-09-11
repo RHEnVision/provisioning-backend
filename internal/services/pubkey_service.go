@@ -150,7 +150,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 				logger.Warn().Msgf("Skipping pubkey resource %d with empty handle", res.ID)
 			}
 		} else {
-			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "delete not implemented for this provider", ProviderTypeNotImplementedError))
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "delete not implemented for this provider", ErrProviderTypeNotImplemented))
 		}
 	}
 
