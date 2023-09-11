@@ -74,4 +74,7 @@ type AzureInstanceParams struct {
 
 	// UserData for the instance launch
 	UserData []byte
+
+	// Tags carries list of key-value tags
+	Tags map[string]*string
 }
