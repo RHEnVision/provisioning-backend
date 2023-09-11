@@ -45,7 +45,7 @@ func (c *client) BeginCreateVM(ctx context.Context, networkInterface *armnetwork
 		return "", err
 	}
 
-	vmAzureParams := c.prepareVirtualMachineParameters(vmParams.Location, armcompute.VirtualMachineSizeTypes(vmParams.InstanceType), networkInterface, vmParams.ImageID, vmParams.Pubkey.Body, vmParams.UserData, vmName)
+	vmAzureParams := c.prepareVirtualMachineParameters(vmParams, networkInterface, vmName)
 
 	poller, err := vmClient.BeginCreateOrUpdate(ctx, vmParams.ResourceGroupName, vmName, *vmAzureParams, nil)
 	if err != nil {
@@ -416,19 +416,20 @@ func (c *client) createNetworkInterface(ctx context.Context, location string, re
 	return &resp.Interface, nil
 }
 
-func (c *client) prepareVirtualMachineParameters(location string, instanceType armcompute.VirtualMachineSizeTypes, networkInterface *armnetwork.Interface, imageID string, sshKeyBody string, userData []byte, vmName string) *armcompute.VirtualMachine {
-	userDataEncoded := make([]byte, base64.StdEncoding.EncodedLen(len(userData)))
-	base64.StdEncoding.Encode(userDataEncoded, userData)
+func (c *client) prepareVirtualMachineParameters(vmParams clients.AzureInstanceParams, networkInterface *armnetwork.Interface, vmName string) *armcompute.VirtualMachine {
+	userDataEncoded := make([]byte, base64.StdEncoding.EncodedLen(len(vmParams.UserData)))
+	base64.StdEncoding.Encode(userDataEncoded, vmParams.UserData)
 
 	return &armcompute.VirtualMachine{
-		Location: to.Ptr(location),
+		Location: to.Ptr(vmParams.Location),
 		Identity: &armcompute.VirtualMachineIdentity{
 			Type: to.Ptr(armcompute.ResourceIdentityTypeNone),
 		},
+		Tags: vmParams.Tags,
 		Properties: &armcompute.VirtualMachineProperties{
 			StorageProfile: &armcompute.StorageProfile{
 				ImageReference: &armcompute.ImageReference{
-					ID: ptr.To(imageID),
+					ID: ptr.To(vmParams.ImageID),
 				},
 				OSDisk: &armcompute.OSDisk{
 					// Name:         ptr.To(vmName + "_disk1"),
@@ -441,7 +442,7 @@ func (c *client) prepareVirtualMachineParameters(location string, instanceType a
 				},
 			},
 			HardwareProfile: &armcompute.HardwareProfile{
-				VMSize: to.Ptr(instanceType), // VM size include vCPUs,RAM,Data Disks,Temp storage.
+				VMSize: to.Ptr(armcompute.VirtualMachineSizeTypes(vmParams.InstanceType)), // VM size include vCPUs,RAM,Data Disks,Temp storage.
 			},
 			OSProfile: &armcompute.OSProfile{ //
 				ComputerName:  to.Ptr(vmName),
@@ -453,7 +454,7 @@ func (c *client) prepareVirtualMachineParameters(location string, instanceType a
 						PublicKeys: []*armcompute.SSHPublicKey{
 							{
 								Path:    to.Ptr(fmt.Sprintf("/home/%s/.ssh/authorized_keys", adminUsername)),
-								KeyData: to.Ptr(sshKeyBody),
+								KeyData: to.Ptr(vmParams.Pubkey.Body),
 							},
 						},
 					},

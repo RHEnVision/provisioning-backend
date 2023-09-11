@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -407,6 +409,10 @@ func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanc
 				{
 					Key:   ptr.To("rh-rid"),
 					Value: ptr.To(config.EnvironmentPrefix("r", strconv.FormatInt(reservation.ID, 10))),
+				},
+				{
+					Key:   ptr.To("rh-org"),
+					Value: ptr.To(identity.Identity(ctx).Identity.OrgID),
 				},
 			},
 		},

@@ -26,11 +26,11 @@ func (c *client) CreateVMs(ctx context.Context, vmParams clients.AzureInstancePa
 	resumeTokens := make([]string, amount)
 	var i int64
 	for i = 0; i < amount; i++ {
-		uuid, err := uuid.NewUUID()
+		uid, err := uuid.NewUUID()
 		if err != nil {
 			return vmDescriptions, fmt.Errorf("could not generate a new UUID: %w", err)
 		}
-		vmName := fmt.Sprintf("%s-%s", vmNamePrefix, uuid.String())
+		vmName := fmt.Sprintf("%s-%s", vmNamePrefix, uid.String())
 
 		networkInterface, publicIP, err := c.prepareVMNetworking(ctx, subnet, nsg, vmParams, vmName)
 		if err != nil {

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
+
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/page"
@@ -187,6 +189,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 				Labels: map[string]string{
 					"rh-rid":  config.EnvironmentPrefix("r", strconv.FormatInt(params.ReservationID, 10)),
 					"rh-uuid": params.UUID,
+					"rh-org":  identity.Identity(ctx).Identity.OrgID,
 				},
 				Disks: []*computepb.AttachedDisk{
 					{

@@ -3,6 +3,10 @@ package jobs
 import (
 	"context"
 	"fmt"
+	"strconv"
+
+	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -154,6 +158,10 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 		Pubkey:            pubkey,
 		InstanceType:      clients.InstanceTypeName(reservation.Detail.InstanceSize),
 		UserData:          userData,
+		Tags: map[string]*string{
+			"rh-rid": ptr.To(config.EnvironmentPrefix("r", strconv.FormatInt(reservation.ID, 10))),
+			"rh-org": ptr.To(identity.Identity(ctx).Identity.OrgID),
+		},
 	}
 
 	instanceDescriptions, err := azureClient.CreateVMs(ctx, vmParams, reservation.Detail.Amount, vmNamePrefix)
