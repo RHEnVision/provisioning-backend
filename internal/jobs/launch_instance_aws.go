@@ -147,12 +147,12 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 		span.SetStatus(codes.Error, "key error")
 
 		// if not found on AWS, import
-		if errors.Is(err, http.PubkeyNotFoundErr) {
+		if errors.Is(err, http.ErrPubkeyNotFound) {
 			pkr.Tag = ""
 			pkr.RandomizeTag()
 			pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
 
-			if errors.Is(err, http.DuplicatePubkeyErr) {
+			if errors.Is(err, http.ErrDuplicatePubkey) {
 				// key not found by fingerprint but importing failed for duplicate err so fingerprints do not match
 				return fmt.Errorf("key with fingerprint %s not found on AWS, but importing the key failed: %w", pubkey.Fingerprint, err)
 			} else if err != nil {

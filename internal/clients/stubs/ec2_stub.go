@@ -85,7 +85,7 @@ func (mock *EC2ClientStub) GetPubkeyName(ctx context.Context, fingerprint string
 			return *key.KeyName, nil
 		}
 	}
-	return "", http.PubkeyNotFoundErr
+	return "", http.ErrPubkeyNotFound
 }
 
 func (mock *EC2ClientStub) DeleteSSHKey(ctx context.Context, handle string) error {
