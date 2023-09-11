@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-var UnknownProviderFromSourcesErr = errors.New("unknown provider returned from sources")
+var ErrUnknownProviderFromSources = errors.New("unknown provider returned from sources")
 
 // SourcesStatus fetches information from sources and then performs a smallest possible
 // request on the cloud provider (list keys or similar). Reports an error if sources configuration
@@ -54,7 +54,7 @@ func SourcesStatus(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 	case models.ProviderTypeNoop:
 	case models.ProviderTypeUnknown:
 	default:
-		renderError(w, r, payloads.NewStatusError(r.Context(), "unknown sources provider", UnknownProviderFromSourcesErr))
+		renderError(w, r, payloads.NewStatusError(r.Context(), "unknown sources provider", ErrUnknownProviderFromSources))
 		return
 	}
 

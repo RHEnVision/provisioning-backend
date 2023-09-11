@@ -49,7 +49,7 @@ func getSourcesClient(ctx context.Context) (clients.Sources, error) {
 func getSourcesClientStub(ctx context.Context) (si *SourcesClientStub, err error) {
 	var ok bool
 	if si, ok = ctx.Value(sourcesCtxKey).(*SourcesClientStub); !ok {
-		err = ContextReadError
+		err = ErrContextRead
 	}
 	return si, err
 }
@@ -69,7 +69,7 @@ func (stub *SourcesClientStub) addSource(ctx context.Context, provider models.Pr
 		stub.auths[id] = clients.NewAuthentication("test@org.com", provider)
 	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
 		// not implemented
-		return nil, NotImplementedErr
+		return nil, ErrNotImplemented
 	}
 
 	stub.sources = append(stub.sources, source)
@@ -89,7 +89,7 @@ func (stub *SourcesClientStub) GetAuthentication(ctx context.Context, sourceId s
 
 	auth, ok := stub.auths[sourceId]
 	if !ok {
-		return nil, SourceAuthenticationNotFound
+		return nil, ErrSourceAuthenticationNotFound
 	}
 	return auth, nil
 }

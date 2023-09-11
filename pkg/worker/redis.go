@@ -86,7 +86,7 @@ func loggerWithJob(ctx context.Context, job *Job) *zerolog.Logger {
 func (w *RedisWorker) Enqueue(ctx context.Context, job *Job) error {
 	var err error
 	if job == nil {
-		return fmt.Errorf("unable to enqueue job: %w", JobNotFound)
+		return fmt.Errorf("unable to enqueue job: %w", ErrJobNotFound)
 	}
 
 	if job.ID == uuid.Nil {

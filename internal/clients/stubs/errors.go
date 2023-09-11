@@ -5,8 +5,8 @@ import (
 )
 
 var (
-	NotImplementedErr            = errors.New("stub not yet implemented")
-	MissingInstanceIDErr         = errors.New("instance id is not present")
-	SourceAuthenticationNotFound = errors.New("stubbed authentication for source not found")
-	ContextReadError             = errors.New("failed to find or convert dao stored in testing context")
+	ErrNotImplemented               = errors.New("stub not yet implemented")
+	ErrMissingInstanceID            = errors.New("instance id is not present")
+	ErrSourceAuthenticationNotFound = errors.New("stubbed authentication for source not found")
+	ErrContextRead                  = errors.New("failed to find or convert dao stored in testing context")
 )

@@ -36,7 +36,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	// Check for preloaded region
 	if !preload.GCPInstanceType.ValidateRegion(payload.Zone) {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported zone", UnsupportedRegionError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported zone", ErrUnsupportedRegion))
 		return
 	}
 

@@ -35,7 +35,7 @@ type Job struct {
 	Args any
 }
 
-var HandlerNotFoundErr = errors.New("handler not registered")
+var ErrHandlerNotFound = errors.New("handler not registered")
 
 // JobEnqueuer sends Job messages into worker queue.
 type JobEnqueuer interface {
@@ -73,7 +73,7 @@ type Stats struct {
 
 func contextLogger(ctx context.Context, job *Job) context.Context {
 	if job == nil {
-		zerolog.Ctx(ctx).Error().Err(JobNotFound).Msg("No job, context not changed")
+		zerolog.Ctx(ctx).Error().Err(ErrJobNotFound).Msg("No job, context not changed")
 		return ctx
 	}
 

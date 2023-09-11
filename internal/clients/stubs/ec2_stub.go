@@ -51,7 +51,7 @@ func getEC2StubFromContext(ctx context.Context) (*EC2ClientStub, error) {
 	var err error
 	var ok bool
 	if si, ok = ctx.Value(ec2CtxKey).(*EC2ClientStub); !ok {
-		err = ContextReadError
+		err = ErrContextRead
 	}
 	return si, err
 }

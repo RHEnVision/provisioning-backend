@@ -4,4 +4,4 @@ import (
 	"errors"
 )
 
-var JobNotFound = errors.New("job not found")
+var ErrJobNotFound = errors.New("job not found")

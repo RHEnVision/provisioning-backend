@@ -112,7 +112,7 @@ func GetSourceUploadInfo(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	case models.ProviderTypeNoop, models.ProviderTypeUnknown:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ProviderTypeNotImplementedError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ErrProviderTypeNotImplemented))
 		return
 	}
 

@@ -40,13 +40,13 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		payload.Region = "us-east-1"
 	}
 	if !preload.EC2InstanceType.ValidateRegion(payload.Region) {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported region", UnsupportedRegionError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported region", ErrUnsupportedRegion))
 		return
 	}
 
 	// Either Launch Template or Instance Type must be set. Both can be set too, in that case, instance type overrides the launch template.
 	if payload.InstanceType == "" && payload.LaunchTemplateID == "" {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Both instance type and launch template are missing", BothTypeAndTemplateMissingError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Both instance type and launch template are missing", ErrBothTypeAndTemplateMissing))
 		return
 	}
 
@@ -56,11 +56,11 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		supportedArch := "x86_64"
 		it := preload.EC2InstanceType.FindInstanceType(clients.InstanceTypeName(payload.InstanceType))
 		if it == nil {
-			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown type: %s", payload.InstanceType), UnknownInstanceTypeNameError))
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown type: %s", payload.InstanceType), ErrUnknownInstanceTypeName))
 			return
 		}
 		if it.Architecture.String() != supportedArch {
-			renderError(w, r, payloads.NewWrongArchitectureUserError(r.Context(), ArchitectureMismatch))
+			renderError(w, r, payloads.NewWrongArchitectureUserError(r.Context(), ErrArchitectureMismatch))
 			return
 		}
 	}

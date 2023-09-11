@@ -40,7 +40,7 @@ func NewRegionalInstanceTypes() *RegionalTypeAvailability {
 	}
 }
 
-var UnknownRegionZoneCombinationErr error = errors.New("unknown region and zone combination")
+var ErrUnknownRegionZoneCombination error = errors.New("unknown region and zone combination")
 
 func key(region, zone string) string {
 	if zone == "" {
@@ -52,7 +52,7 @@ func key(region, zone string) string {
 func (rit *RegionalTypeAvailability) NamesForZone(region, zone string) ([]InstanceTypeName, error) {
 	result, ok := rit.types[key(region, zone)]
 	if !ok {
-		return nil, UnknownRegionZoneCombinationErr
+		return nil, ErrUnknownRegionZoneCombination
 	}
 	return result, nil
 }
@@ -111,7 +111,7 @@ func (rit *RegionalTypeAvailability) Load(fsTypes embed.FS, path string) error {
 	return nil
 }
 
-var RegionAndZoneSplitErr = errors.New("unable to split region and zone for")
+var ErrRegionAndZoneSplit = errors.New("unable to split region and zone for")
 
 func splitRegionZone(str string) (string, string, error) {
 	result := strings.Split(str, regionSeparator)
@@ -121,7 +121,7 @@ func splitRegionZone(str string) (string, string, error) {
 	} else if len(result) == 1 {
 		return result[0], "", nil
 	} else {
-		return "", "", fmt.Errorf("%w: %s", RegionAndZoneSplitErr, str)
+		return "", "", fmt.Errorf("%w: %s", ErrRegionAndZoneSplit, str)
 	}
 }
 

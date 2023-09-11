@@ -31,11 +31,11 @@ func ListLaunchTemplates(w http.ResponseWriter, r *http.Request) {
 	case models.ProviderTypeAWS:
 		ListLaunchTemplateAWS(w, r)
 	case models.ProviderTypeAzure:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "azure reservation is not implemented", ProviderTypeNotImplementedError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "azure reservation is not implemented", ErrProviderTypeNotImplemented))
 	case models.ProviderTypeGCP:
 		ListLaunchTemplateGCP(w, r)
 	default:
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", UnknownProviderTypeError))
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "provider is not supported", ErrUnknownProviderType))
 	}
 }
 

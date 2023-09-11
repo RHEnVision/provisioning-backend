@@ -28,7 +28,7 @@ func (w *MemoryWorker) RegisterHandler(jtype JobType, handler JobHandler, _ any)
 func (w *MemoryWorker) Enqueue(ctx context.Context, job *Job) error {
 	var err error
 	if job == nil {
-		return fmt.Errorf("unable to enqueue job: %w", JobNotFound)
+		return fmt.Errorf("unable to enqueue job: %w", ErrJobNotFound)
 	}
 
 	if job.ID == uuid.Nil {
@@ -59,7 +59,7 @@ func (w *MemoryWorker) dequeueLoop(ctx context.Context) {
 
 func (w *MemoryWorker) processJob(ctx context.Context, job *Job) {
 	if job == nil {
-		zerolog.Ctx(ctx).Error().Err(JobNotFound).Msg("No job to process")
+		zerolog.Ctx(ctx).Error().Err(ErrJobNotFound).Msg("No job to process")
 		return
 	}
 
