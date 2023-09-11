@@ -156,7 +156,7 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 	defer span.End()
 
 	if !c.assumed {
-		return "", http.ServiceAccountUnsupportedOpErr
+		return "", http.ErrServiceAccountUnsupportedOp
 	}
 	logger := logger(ctx)
 	logger.Trace().Msgf("Importing AWS key-pair named '%s' with tag '%s'", key.Name, tag)
@@ -180,7 +180,7 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 		if isAWSUnauthorizedError(err) {
 			err = clients.ErrUnauthorized
 		} else if isAWSOperationError(err, "InvalidKeyPair.Duplicate") {
-			err = http.DuplicatePubkeyErr
+			err = http.ErrDuplicatePubkey
 		}
 		span.SetStatus(codes.Error, err.Error())
 		return "", fmt.Errorf("cannot import SSH key %s: %w", key.Name, err)
@@ -194,7 +194,7 @@ func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (stri
 	defer span.End()
 
 	if !c.assumed {
-		return "", http.ServiceAccountUnsupportedOpErr
+		return "", http.ErrServiceAccountUnsupportedOp
 	}
 	logger := logger(ctx)
 	logger.Trace().Msgf("Fetching AWS key with fingerprint '%s' to get its name", fingerprint)
@@ -211,7 +211,7 @@ func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (stri
 
 	if len(output.KeyPairs) == 0 {
 		span.SetStatus(codes.Error, fmt.Sprintf("no KeyPair with fingerprint (%s) found", fingerprint))
-		return "", fmt.Errorf("SSH key not found by its fingerprint: %w", http.PubkeyNotFoundErr)
+		return "", fmt.Errorf("SSH key not found by its fingerprint: %w", http.ErrPubkeyNotFound)
 	}
 	return *output.KeyPairs[0].KeyName, nil
 }
@@ -221,7 +221,7 @@ func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
 	defer span.End()
 
 	if !c.assumed {
-		return http.ServiceAccountUnsupportedOpErr
+		return http.ErrServiceAccountUnsupportedOp
 	}
 	logger := logger(ctx)
 	logger.Trace().Msgf("Deleting AWS key-pair with handle %s", handle)
@@ -379,7 +379,7 @@ func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanc
 	defer span.End()
 
 	if !c.assumed {
-		return nil, nil, http.ServiceAccountUnsupportedOpErr
+		return nil, nil, http.ErrServiceAccountUnsupportedOp
 	}
 	logger := logger(ctx)
 	logger.Trace().Msg("Run AWS EC2 instance")
@@ -455,7 +455,7 @@ func (c *ec2Client) parseRunInstancesResponse(respAWS *ec2.RunInstancesOutput) [
 
 func (c *ec2Client) parseDescribeInstances(respAWS *ec2.DescribeInstancesOutput) ([]*clients.InstanceDescription, error) {
 	if len(respAWS.Reservations) == 0 {
-		return nil, http.NoReservationErr
+		return nil, http.ErrNoReservation
 	}
 	instances := respAWS.Reservations[0].Instances
 	list := make([]*clients.InstanceDescription, len(instances))

@@ -73,15 +73,15 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, err
 		return "", err
 	}
 	if imageStatus == nil {
-		return "", fmt.Errorf("%w: no image status", http.ImageStatusErr)
+		return "", fmt.Errorf("%w: no image status", http.ErrImageStatus)
 	}
 
 	if imageStatus.Type != UploadTypesAws {
-		return "", fmt.Errorf("%w: expected image type AWS", http.UnknownImageTypeErr)
+		return "", fmt.Errorf("%w: expected image type AWS", http.ErrUnknownImageType)
 	}
 	uploadStatus, err := imageStatus.Options.AsAWSUploadStatus()
 	if err != nil {
-		return "", fmt.Errorf("%w: not an AWS status", http.UploadStatusErr)
+		return "", fmt.Errorf("%w: not an AWS status", http.ErrUploadStatus)
 	}
 
 	logger.Info().Str("compose_id", composeID).Str("ami", uploadStatus.Ami).
@@ -100,24 +100,24 @@ func (c *ibClient) GetAzureImageID(ctx context.Context, composeID string) (strin
 	}
 	if composeStatus == nil {
 		logger.Warn().Msg("Compose status is not ready")
-		return "", fmt.Errorf("getting azure id: %w", http.ImageStatusErr)
+		return "", fmt.Errorf("getting azure id: %w", http.ErrImageStatus)
 	}
 
 	logger.Trace().Msgf("Verifying Azure type")
 	if composeStatus.ImageStatus.UploadStatus == nil {
-		return "", fmt.Errorf("%w: upload status is nil", http.UploadStatusErr)
+		return "", fmt.Errorf("%w: upload status is nil", http.ErrUploadStatus)
 	}
 	if composeStatus.ImageStatus.UploadStatus.Type != UploadTypesAzure {
-		return "", fmt.Errorf("%w: expected image type Azure, got %s", http.UnknownImageTypeErr, composeStatus.ImageStatus.UploadStatus.Type)
+		return "", fmt.Errorf("%w: expected image type Azure, got %s", http.ErrUnknownImageType, composeStatus.ImageStatus.UploadStatus.Type)
 	}
 	if len(composeStatus.Request.ImageRequests) < 1 {
-		logger.Error().Msg(http.ImageRequestNotFoundErr.Error())
-		return "", http.ImageRequestNotFoundErr
+		logger.Error().Msg(http.ErrImageRequestNotFound.Error())
+		return "", http.ErrImageRequestNotFound
 	}
 
 	uploadOptions, err := composeStatus.ImageStatus.UploadStatus.Options.AsAzureUploadStatus()
 	if err != nil {
-		return "", fmt.Errorf("%w: not an Azure status", http.UploadStatusErr)
+		return "", fmt.Errorf("%w: not an Azure status", http.ErrUploadStatus)
 	}
 
 	azureUploadRequest, err := composeStatus.Request.ImageRequests[0].UploadRequest.Options.AsAzureUploadRequestOptions()
@@ -137,15 +137,15 @@ func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (strin
 	}
 
 	if imageStatus == nil {
-		return "", fmt.Errorf("%w: no image status", http.ImageStatusErr)
+		return "", fmt.Errorf("%w: no image status", http.ErrImageStatus)
 	}
 
 	if imageStatus.Type != UploadTypesGcp {
-		return "", fmt.Errorf("%w: expected image type GCP", http.UnknownImageTypeErr)
+		return "", fmt.Errorf("%w: expected image type GCP", http.ErrUnknownImageType)
 	}
 	uploadStatus, err := imageStatus.Options.AsGCPUploadStatus()
 	if err != nil {
-		return "", fmt.Errorf("%w: not a GCP status", http.UploadStatusErr)
+		return "", fmt.Errorf("%w: not a GCP status", http.ErrUploadStatus)
 	}
 
 	result := fmt.Sprintf("projects/%s/global/images/%s", uploadStatus.ProjectId, uploadStatus.ImageName)
@@ -208,7 +208,7 @@ func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadS
 
 	if composeStatus == nil || composeStatus.ImageStatus.Status != ImageStatusStatusSuccess {
 		logger.Warn().Msg("Compose status is not ready")
-		return nil, http.ImageStatusErr
+		return nil, http.ErrImageStatus
 	}
 
 	return composeStatus.ImageStatus.UploadStatus, nil
@@ -239,7 +239,7 @@ func (c *ibClient) checkClone(ctx context.Context, composeID string) (*UploadSta
 
 	if ImageStatusStatus(resp.JSON200.Status) != ImageStatusStatusSuccess {
 		logger.Warn().Msg("Clone status is not ready")
-		return nil, http.ImageStatusErr
+		return nil, http.ErrImageStatus
 	}
 
 	return resp.JSON200, nil

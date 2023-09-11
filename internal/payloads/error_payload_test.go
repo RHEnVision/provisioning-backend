@@ -23,7 +23,7 @@ func TestFindUserPayload(t *testing.T) {
 			&userPayload{400, "bad request"},
 		},
 		{
-			httpClients.CloneNotFoundErr,
+			httpClients.ErrCloneNotFound,
 			&userPayload{404, "image clone not found"},
 		},
 		{

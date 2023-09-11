@@ -141,7 +141,7 @@ func DeletePubkey(w http.ResponseWriter, r *http.Request) {
 						renderError(w, r, payloads.NewAWSError(r.Context(), "unable to delete AWS public key", errDelete))
 						return
 					}
-				} else if errors.Is(errAuth, httpClients.AuthenticationForSourcesNotFoundErr) {
+				} else if errors.Is(errAuth, httpClients.ErrAuthenticationForSourcesNotFound) {
 					logger.Warn().Msgf("Skipping source %s authorization which is no longer available", res.SourceID)
 				} else {
 					logger.Warn().Err(errAuth).Msg("Skipping source authorization because sources returned an error")

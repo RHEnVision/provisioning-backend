@@ -237,7 +237,7 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 	}
 
 	if auth.Username == nil || auth.Authtype == nil || auth.ResourceId == nil {
-		return nil, fmt.Errorf("cannot create source from source authentication type: %w", http.SourcesInvalidAuthentication)
+		return nil, fmt.Errorf("cannot create source from source authentication type: %w", http.ErrSourcesInvalidAuthentication)
 	}
 	authentication, err := clients.NewAuthenticationFromSourceAuthType(ctx, *auth.Username, *auth.Authtype, *auth.ResourceId)
 	if err != nil {
@@ -298,13 +298,13 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 			return t.Id, nil
 		}
 	}
-	return "", http.ApplicationTypeNotFoundErr
+	return "", http.ErrApplicationTypeNotFound
 }
 
 func BuildQuery(keysAndValues ...string) func(ctx context.Context, req *stdhttp.Request) error {
 	return func(ctx context.Context, req *stdhttp.Request) error {
 		if len(keysAndValues)%2 != 0 {
-			return http.NotEvenErr
+			return http.ErrNotEven
 		}
 		queryParams := make([]string, 0)
 		for i := 0; i < len(keysAndValues); i += 2 {
@@ -333,5 +333,5 @@ func filterSourceAuthentications(authentications []AuthenticationRead) (Authenti
 			}
 		}
 	}
-	return AuthenticationRead{}, http.ApplicationReadErr
+	return AuthenticationRead{}, http.ErrApplicationRead
 }

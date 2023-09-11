@@ -71,14 +71,14 @@ var expectedStatement = Statement{
 func getRoleName(arn string) (string, error) {
 	arnParts := strings.Split(arn, ":")
 	if len(arnParts) == 0 {
-		return "", fmt.Errorf("%w: ARN has no colons: %s", http.ARNParsingError, arn)
+		return "", fmt.Errorf("%w: ARN has no colons: %s", http.ErrARNParsing, arn)
 	}
 	roleName := strings.Split(arnParts[len(arnParts)-1], "/")
 	if len(roleName) != 2 {
 		return "", fmt.Errorf("%w: ARN has incorrect syntax: %s rolename parsing result: %s",
-			http.ARNParsingError, arn, roleName)
+			http.ErrARNParsing, arn, roleName)
 	} else if roleName[0] != "role" {
-		return "", fmt.Errorf("%w: ARN does not have any role: %s", http.ARNParsingError, arn)
+		return "", fmt.Errorf("%w: ARN does not have any role: %s", http.ErrARNParsing, arn)
 	}
 	return roleName[1], nil
 }
