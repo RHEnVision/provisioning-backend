@@ -96,14 +96,6 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	}
 	logger.Debug().Msgf("Found pubkey %d named '%s'", pk.ID, pk.Name)
 
-	// create reservation in the database
-	err = rDao.CreateAWS(r.Context(), reservation)
-	if err != nil {
-		renderError(w, r, payloads.NewDAOError(r.Context(), "create reservation", err))
-		return
-	}
-	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
-
 	// Get Sources client
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
@@ -145,6 +137,14 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// The last step: create reservation in the database and submit new job
+	err = rDao.CreateAWS(r.Context(), reservation)
+	if err != nil {
+		renderError(w, r, payloads.NewDAOError(r.Context(), "create reservation", err))
+		return
+	}
+	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
+
 	launchJob := worker.Job{
 		Type:      jobs.TypeLaunchInstanceAws,
 		Identity:  id,
@@ -166,6 +166,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
 	}
+	logger.Debug().Msgf("Enqueued reservation job %s", launchJob.ID)
 
 	// Return response payload
 	unused := make([]*models.ReservationInstance, 0, 0)

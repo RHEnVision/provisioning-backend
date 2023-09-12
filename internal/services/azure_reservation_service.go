@@ -126,7 +126,7 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.Steps = int32(len(jobs.LaunchInstanceAzureSteps))
 	reservation.StepTitles = jobs.LaunchInstanceAzureSteps
 
-	// create reservation in the database
+	// The last step: create reservation in the database and submit new job
 	err = rDao.CreateAzure(r.Context(), reservation)
 	if err != nil {
 		renderError(w, r, payloads.NewDAOError(r.Context(), "create Azure reservation", err))
@@ -153,6 +153,7 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
 	}
+	logger.Debug().Msgf("Enqueued reservation job %s", launchJob.ID)
 
 	// Return response payload
 	unused := make([]*models.ReservationInstance, 0, 0)
