@@ -72,14 +72,6 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	}
 	logger.Debug().Msgf("Found pubkey %d named '%s'", pk.ID, pk.Name)
 
-	// create reservation in the database
-	err = rDao.CreateGCP(r.Context(), reservation)
-	if err != nil {
-		renderError(w, r, payloads.NewDAOError(r.Context(), "create reservation", err))
-		return
-	}
-	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
-
 	// Get Sources client
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
@@ -123,6 +115,14 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		name = payload.ImageID
 	}
 
+	// The last step: create reservation in the database and submit new job
+	err = rDao.CreateGCP(r.Context(), reservation)
+	if err != nil {
+		renderError(w, r, payloads.NewDAOError(r.Context(), "create reservation", err))
+		return
+	}
+	logger.Debug().Msgf("Created a new reservation %d", reservation.ID)
+
 	launchJob := worker.Job{
 		Type:      jobs.TypeLaunchInstanceGcp,
 		AccountID: accountId,
@@ -143,6 +143,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewEnqueueTaskError(r.Context(), "job enqueue error", err))
 		return
 	}
+	logger.Debug().Msgf("Enqueued reservation job %s", launchJob.ID)
 
 	unused := make([]*models.ReservationInstance, 0, 0)
 	// Return response payload
