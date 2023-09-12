@@ -104,46 +104,7 @@ Create a new policy for the Tenant account:
 * Click Next, Next.
 * Give the policy a name: `redhat-provisioning-policy-1`
 * Click on Create Policy
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "RedHatProvisioning",
-            "Effect": "Allow",
-            "Action": [
-                "iam:GetPolicyVersion",
-                "iam:GetPolicy",
-                "iam:ListAttachedRolePolicies",
-                "iam:GetRolePolicy",
-                "ec2:CreateKeyPair",
-                "ec2:CreateLaunchTemplate",
-                "ec2:CreateLaunchTemplateVersion",
-                "ec2:CreateTags",
-                "ec2:DeleteKeyPair",
-                "ec2:DeleteTags",
-                "ec2:DescribeAvailabilityZones",
-                "ec2:DescribeImages",
-                "ec2:DescribeInstanceTypes",
-                "ec2:DescribeInstances",
-                "ec2:DescribeKeyPairs",
-                "ec2:DescribeLaunchTemplates",
-                "ec2:DescribeLaunchTemplateVersions",
-                "ec2:DescribeRegions",
-                "ec2:DescribeSecurityGroups",
-                "ec2:DescribeSnapshotAttribute",
-                "ec2:DescribeTags",
-                "ec2:ImportKeyPair",
-                "ec2:RunInstances",
-                "ec2:StartInstances",
-                "iam:ListRolePolicies"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-```
+* Copy contents of [aws-iam-role-policy.json](aws-iam-role-policy.json)
 
 #### Tenant account role
 
