@@ -1,8 +1,6 @@
 package http
 
 import (
-	"errors"
-
 	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
 )
 
@@ -15,7 +13,6 @@ var (
 	ErrAuthenticationForSourcesNotFound = usrerr.New(404, "authentications for source weren't found in sources", "")
 	ErrApplicationRead                  = usrerr.New(500, "application read returned no application type in sources", "")
 	ErrSourceTypeNameNotFound           = usrerr.New(404, "source type name not found", "")
-	ErrNotEven                          = errors.New("number of keys and values is not even when building a query")
 	ErrSourcesInvalidAuthentication     = usrerr.New(400, "insufficient data for authentication", "")
 )
 

@@ -304,7 +304,7 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 func BuildQuery(keysAndValues ...string) func(ctx context.Context, req *stdhttp.Request) error {
 	return func(ctx context.Context, req *stdhttp.Request) error {
 		if len(keysAndValues)%2 != 0 {
-			return http.ErrNotEven
+			panic("cannot build sources query: invalid input")
 		}
 		queryParams := make([]string, 0)
 		for i := 0; i < len(keysAndValues); i += 2 {
