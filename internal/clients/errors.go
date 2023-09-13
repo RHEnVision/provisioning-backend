@@ -5,11 +5,9 @@ import (
 )
 
 var (
-	ErrBadRequest     = usrerr.New(401, "backend service returned bad request", "")
-	ErrNotFound       = usrerr.New(404, "backend service returned not found or no data", "")
-	ErrUnauthorized   = usrerr.New(401, "backend service returned unauthorized", "")
-	ErrForbidden      = usrerr.New(403, "backend service returned forbidden", "")
-	ErrNon2xxResponse = usrerr.New(500, "backend service returned unexpedced response code", "")
+	ErrBadRequest   = usrerr.New(401, "backend service returned bad request", "")
+	ErrNotFound     = usrerr.New(404, "backend service returned not found or no data", "")
+	ErrUnauthorized = usrerr.New(401, "backend service returned unauthorized", "")
 
 	ErrUnknownAuthenticationType  = usrerr.New(500, "unknown authentication type", "sources backend error")
 	ErrUnknownProvider            = usrerr.New(500, "unknown provider type", "sources backend error")
