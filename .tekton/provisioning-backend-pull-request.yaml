@@ -157,6 +157,8 @@ spec:
         value: $(params.git-url)
       - name: revision
         value: $(params.revision)
+      - name: enableSymlinkCheck
+        value: false
       runAfter:
       - init
       taskRef:
