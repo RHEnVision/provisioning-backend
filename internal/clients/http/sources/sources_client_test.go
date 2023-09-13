@@ -133,6 +133,7 @@ func TestSourcesClient_BuildQuery(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, "filter%5Bsource_type%5D%5Bname%5D=amazon", req.URL.RawQuery)
 	})
+
 	t.Run("Build Query with even and multiple number of keys and values", func(t *testing.T) {
 		fn := sources.BuildQuery("filter[resource_type]", "Application", "filter[authtype][starts_with]", "provisioning")
 		err := fn(context.Background(), req)
@@ -141,8 +142,8 @@ func TestSourcesClient_BuildQuery(t *testing.T) {
 	})
 
 	t.Run("Build Query with odd number of keys and values", func(t *testing.T) {
-		fn := sources.BuildQuery("filter[resource_type]")
-		err := fn(context.Background(), req)
-		assert.Error(t, err, "number of keys and values is not even when building a query")
+		assert.Panics(t, func() {
+			_ = sources.BuildQuery("keyWithNoValue")(context.Background(), req)
+		})
 	})
 }
