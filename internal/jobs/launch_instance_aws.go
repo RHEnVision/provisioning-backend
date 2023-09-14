@@ -154,7 +154,8 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 
 			if errors.Is(err, http.ErrDuplicatePubkey) {
 				// key not found by fingerprint but importing failed for duplicate err so fingerprints do not match
-				return fmt.Errorf("key with fingerprint %s not found on AWS, but importing the key failed: %w", pubkey.Fingerprint, err)
+				logger.Warn().Msgf("Pubkey with fingerprint %s not found on AWS, but importing the key failed: %s", pubkey.Fingerprint, err.Error())
+				return fmt.Errorf("cannot upload aws pubkey because of duplicate: %w", err)
 			} else if err != nil {
 				return fmt.Errorf("cannot upload aws pubkey: %w", err)
 			}
