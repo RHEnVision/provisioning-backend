@@ -143,29 +143,40 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 	// check presence on AWS first
 	fingerprint := pubkey.FindAwsFingerprint(ctx)
 	ec2Name, err := ec2Client.GetPubkeyName(ctx, fingerprint)
-	if err != nil {
-		span.SetStatus(codes.Error, "key error")
+
+	if errors.Is(err, http.ErrPubkeyNotFound) {
+		logger.Trace().Msgf("Pubkey with fingerprint '%s' not found, importing type %s key '%s'", fingerprint, pubkey.Type, pubkey.Body)
 
 		// if not found on AWS, import
-		if errors.Is(err, http.ErrPubkeyNotFound) {
-			pkr.Tag = ""
-			pkr.RandomizeTag()
-			pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
+		pkr.Tag = ""
+		pkr.RandomizeTag()
+		var retryCount int
+		origName := pubkey.Name
+	retry:
+		pkr.Handle, err = ec2Client.ImportPubkey(ctx, pubkey, pkr.FormattedTag())
 
-			if errors.Is(err, http.ErrDuplicatePubkey) {
-				// key not found by fingerprint but importing failed for duplicate err so fingerprints do not match
-				logger.Warn().Msgf("Pubkey with fingerprint %s not found on AWS, but importing the key failed: %s", pubkey.Fingerprint, err.Error())
-				return fmt.Errorf("cannot upload aws pubkey because of duplicate: %w", err)
-			} else if err != nil {
-				return fmt.Errorf("cannot upload aws pubkey: %w", err)
+		if errors.Is(err, http.ErrDuplicatePubkey) {
+			retryCount += 1
+			pubkey.Name = fmt.Sprintf("%s%d", origName, retryCount+1)
+			if retryCount < 4 {
+				goto retry
 			}
-			ec2Name = pubkey.Name
-		} else {
-			logger.Error().Err(err).Str("pubkey_fingerprint", fingerprint).Msg("Cannot fetch name of pubkey by its fingerprint")
-			return fmt.Errorf("cannot fetch name of pubkey by its fingerprint: %w", err)
+			// key not found by fingerprint but importing failed for duplicate err so fingerprints do not match
+			span.SetStatus(codes.Error, "import duplicate key error")
+			return fmt.Errorf("key with fingerprint %s not found on AWS, but importing the key failed: %w", pubkey.Fingerprint, err)
 		}
+
+		if err != nil {
+			return fmt.Errorf("cannot upload aws pubkey: %w", err)
+		}
+
+		ec2Name = pubkey.Name
+	} else if err != nil {
+		span.SetStatus(codes.Error, "import key error")
+		logger.Error().Err(err).Str("pubkey_fingerprint", fingerprint).Msg("Cannot fetch name of pubkey by its fingerprint")
+		return fmt.Errorf("cannot fetch name of pubkey by its fingerprint: %w", err)
 	} else {
-		logger.Debug().Msgf("Found pubkey by fingerprint (%s) with name '%s'", fingerprint, ec2Name)
+		logger.Debug().Msgf("Found pubkey by fingerprint '%s' with name '%s'", fingerprint, ec2Name)
 	}
 
 	// update the AWS key name in reservation details
