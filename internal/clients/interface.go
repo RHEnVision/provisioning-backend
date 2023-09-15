@@ -90,7 +90,7 @@ type EC2 interface {
 	//
 	// All arguments are required except: launchTemplateID (empty string means no template in use).
 	//
-	RunInstances(ctx context.Context, details *AWSInstanceParams, amount int32, name *string, reservation *models.AWSReservation) ([]*string, *string, error)
+	RunInstances(ctx context.Context, details *AWSInstanceParams, amount int32, name string, reservation *models.AWSReservation) ([]*string, *string, error)
 
 	// GetAccountId returns AWS account number.
 	GetAccountId(ctx context.Context) (string, error)
