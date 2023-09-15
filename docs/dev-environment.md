@@ -116,7 +116,7 @@ Statuser process (`pbstatuser`) is a custom executable that runs in a single ins
 
 [Sources](https://github.com/RedHatInsights/sources-api-go) is an authentication inventory. Since it only requires Go, Redis and Postgres, we created a shell script that automatically checks out sources from git, compiles it, installs and creates postgres database, seeds data and starts the Sources application.
 
-Follow [instructions](../scripts/README.sources) to perform the setup. Note that configuration via `sources.local.conf` is **required** before the setup procedure. This has been written and tested for Fedora Linux, in other operating systems perform all the commands manually.
+Follow [instructions (section Sources service)](../scripts/README.md) to perform the setup. Note that configuration via `sources.local.conf` is **required** before the setup procedure. This has been written and tested for Fedora Linux, in other operating systems perform all the commands manually.
 
 Tip: On MacOS, you can install Sources on a remote Fedora Linux (or a small VM) and configure the application to connect there, instead of localhost.
 
