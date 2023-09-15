@@ -84,7 +84,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.Steps = 3
 	reservation.StepTitles = []string{"Ensure public key", "Launch instance(s)", "Fetch instance(s) description"}
 	newName := config.Application.InstancePrefix + payload.Name
-	reservation.Detail.Name = &newName
+	reservation.Detail.Name = newName
 
 	// validate pubkey - must be always present because of data integrity (foreign keys)
 	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)

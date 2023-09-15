@@ -299,7 +299,7 @@ func NewAWSReservationResponse(reservation *models.AWSReservation, instances []*
 		Amount:           reservation.Detail.Amount,
 		InstanceType:     reservation.Detail.InstanceType,
 		ID:               reservation.ID,
-		Name:             StringNullToEmpty(reservation.Detail.Name),
+		Name:             reservation.Detail.Name,
 		PowerOff:         reservation.Detail.PowerOff,
 		Instances:        instancesResponse,
 		LaunchTemplateID: reservation.Detail.LaunchTemplateID,

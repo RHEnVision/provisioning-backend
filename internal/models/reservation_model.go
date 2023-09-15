@@ -54,7 +54,7 @@ type AWSDetail struct {
 	Region string `json:"region"`
 
 	// Optional instance name
-	Name *string `json:"name"`
+	Name string `json:"name"`
 
 	// Optional launch template id ("lt-987432987342") or empty string
 	LaunchTemplateID string `json:"launch_template_id"`

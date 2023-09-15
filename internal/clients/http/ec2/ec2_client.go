@@ -374,7 +374,7 @@ func (c *ec2Client) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchT
 	return res, *nextToken, nil
 }
 
-func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanceParams, amount int32, name *string, reservation *models.AWSReservation) ([]*string, *string, error) {
+func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanceParams, amount int32, name string, reservation *models.AWSReservation) ([]*string, *string, error) {
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "RunInstances")
 	defer span.End()
 
@@ -418,10 +418,10 @@ func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanc
 		},
 	}
 
-	if name != nil {
+	if name != "" {
 		t := types.Tag{
 			Key:   ptr.To("Name"),
-			Value: name,
+			Value: &name,
 		}
 		input.TagSpecifications[0].Tags = append(input.TagSpecifications[0].Tags, t)
 	}
