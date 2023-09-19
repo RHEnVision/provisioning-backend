@@ -7,7 +7,7 @@ objects:
 - apiVersion: batch/v1
   kind: CronJob
   metadata:
-    name: provisioning-cleanup-${IMAGE_TAG}-${UID}
+    name: provisioning-cleanup
     annotations:
       "ignore-check.kube-linter.io/no-liveness-probe": "probes not required on Job pods"
       "ignore-check.kube-linter.io/no-readiness-probe": "probes not required on Job pods"
@@ -22,7 +22,7 @@ objects:
               - name: quay-cloudservices-pull
             restartPolicy: Never
             containers:
-              - name: provisioning-cleanup-${IMAGE_TAG}-${UID}
+              - name: provisioning-cleanup
                 image: quay.io/redhatqe/cloudwash
                 imagePullPolicy: Always
                 command:
