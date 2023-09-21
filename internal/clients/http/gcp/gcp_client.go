@@ -191,17 +191,6 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 					"rh-uuid": params.UUID,
 					"rh-org":  identity.Identity(ctx).Identity.OrgID,
 				},
-				Disks: []*computepb.AttachedDisk{
-					{
-						InitializeParams: &computepb.AttachedDiskInitializeParams{
-							SourceImage: &params.ImageName,
-						},
-						AutoDelete: ptr.To(true),
-						Boot:       ptr.To(true),
-						Type:       ptr.To(computepb.AttachedDisk_PERSISTENT.String()),
-					},
-				},
-				MachineType: ptr.To(params.MachineType),
 				NetworkInterfaces: []*computepb.NetworkInterface{
 					{
 						AccessConfigs: []*computepb.AccessConfig{
@@ -223,6 +212,23 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 	if params.LaunchTemplateID != "" {
 		template := fmt.Sprintf("global/instanceTemplates/%s", params.LaunchTemplateID)
 		req.BulkInsertInstanceResourceResource.SourceInstanceTemplate = &template
+	}
+
+	if params.MachineType != "" {
+		req.BulkInsertInstanceResourceResource.InstanceProperties.MachineType = ptr.To(params.MachineType)
+	}
+
+	if params.ImageName != "" {
+		req.BulkInsertInstanceResourceResource.InstanceProperties.Disks = []*computepb.AttachedDisk{
+			{
+				InitializeParams: &computepb.AttachedDiskInitializeParams{
+					SourceImage: &params.ImageName,
+				},
+				AutoDelete: ptr.To(true),
+				Boot:       ptr.To(true),
+				Type:       ptr.To(computepb.AttachedDisk_PERSISTENT.String()),
+			},
+		}
 	}
 
 	op, err := client.BulkInsert(ctx, req)
