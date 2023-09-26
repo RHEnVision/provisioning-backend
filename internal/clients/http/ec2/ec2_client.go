@@ -396,10 +396,16 @@ func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanc
 		LaunchTemplate: templateSpec,
 		MaxCount:       ptr.To(amount),
 		MinCount:       ptr.To(amount),
-		InstanceType:   params.InstanceType,
-		ImageId:        ptr.To(params.AMI),
 		KeyName:        &params.KeyName,
 		UserData:       &encodedUserData,
+	}
+
+	if params.InstanceType != "" {
+		input.InstanceType = params.InstanceType
+	}
+
+	if params.AMI != "" {
+		input.ImageId = ptr.To(params.AMI)
 	}
 
 	input.TagSpecifications = []types.TagSpecification{
