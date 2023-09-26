@@ -39,16 +39,16 @@ accountID="3340851"
 dbPod=$(oc get pods -o custom-columns=POD:.metadata.name --no-headers | grep 'image-builder-db')
 
 # AWS stub
-imageID="ad6d6a99-7a95-4b74-8760-cce28df35bda" # created on 2023-08-23
-imageName="pipeline-aws"
+imageID="506db9be-347f-430d-a26a-82c7b66052bc" # created on 2023-09-25
+imageName="hms-pipeline-aws-20230925"
 
 composeRequestAWSJson='{"image_name": "'$imageName'", "distribution": "rhel-92", "customizations": {}, "image_requests": [{"image_type": "aws", "architecture": "x86_64", "upload_request": {"type": "aws", "options": {"share_with_accounts": ["093942615996"]}}}]}'
 oc exec $dbPod -- psql -d image-builder -c "INSERT INTO public.composes (job_id, request, created_at, account_number, org_id, image_name, deleted) VALUES
 ('$imageID', '$composeRequestAWSJson', '$(date +"%Y-%m-%d %T")', '$orgID', '$accountID', '$imageName', false);"
 
 # GCP stub
-imageID="6c79ab2c-176d-4e24-80ca-bd9f3a019ca6" # created on 2023-08-23
-imageName="pipeline-gcp"
+imageID="f5909d80-1f56-45bc-8ff5-b549374366a4" # created on 2023-09-25
+imageName="hms-pipeline-gcp-20230925"
 
 composeRequestGCPJson='{"image_name": "'$imageName'", "distribution": "rhel-92", "customizations": {}, "image_requests": [{"image_type": "gcp", "architecture": "x86_64", "upload_request": {"type": "gcp", "options": {"share_with_accounts": ["user:oezr@redhat.com"]}}}]}'
 oc exec $dbPod -- psql -d image-builder -c "INSERT INTO public.composes (job_id, request, created_at, account_number, org_id, image_name, deleted) VALUES
