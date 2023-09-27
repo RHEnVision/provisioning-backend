@@ -93,7 +93,6 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 	// status updates before and after the code logic
 	updateStatusBefore(ctx, args.ReservationID, "Launching instance(s)")
 	defer updateStatusAfter(ctx, args.ReservationID, "Launched instance(s)", 1)
-	name := "inst-####"
 	pkD := dao.GetPubkeyDao(ctx)
 
 	pk, err := pkD.GetById(ctx, args.PubkeyID)
@@ -120,11 +119,8 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 		return fmt.Errorf("cannot generate user data: %w", err)
 	}
 
-	if args.Detail.NamePattern != nil {
-		name = fmt.Sprintf("%s-#####", *args.Detail.NamePattern)
-	}
 	params := &clients.GCPInstanceParams{
-		NamePattern:      ptr.To(name),
+		NamePattern:      args.Detail.NamePattern,
 		ImageName:        args.ImageName,
 		MachineType:      args.Detail.MachineType,
 		Zone:             args.Zone,

@@ -85,4 +85,30 @@ func TestCreateGCPReservationHandler(t *testing.T) {
 		assert.Contains(t, rr.Body.String(), "Unsupported zone")
 		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
 	})
+
+	t.Run("failed reservation with invalid name pattern", func(t *testing.T) {
+		var err error
+		values := map[string]interface{}{
+			"name_pattern": "Envision",
+			"source_id":    source.ID,
+			"image_id":     "80967e7f-efef-4eee-85b0-bd4cef4c455d",
+			"amount":       1,
+			"zone":         "us-central1-a",
+			"machine_type": "n1-standard-1",
+			"pubkey_id":    pk.ID,
+		}
+		if json_data, err = json.Marshal(values); err != nil {
+			t.Fatalf("unable to marshal values to json: %v", err)
+		}
+
+		req, err := http.NewRequestWithContext(ctx, "POST", "/api/provisioning/reservations/gcp", bytes.NewBuffer(json_data))
+		require.NoError(t, err, "failed to create request")
+		req.Header.Add("Content-Type", "application/json")
+
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(services.CreateGCPReservation)
+		handler.ServeHTTP(rr, req)
+		assert.Contains(t, rr.Body.String(), "Invalid name pattern")
+		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+	})
 }

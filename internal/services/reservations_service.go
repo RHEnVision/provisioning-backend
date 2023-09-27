@@ -22,6 +22,7 @@ var (
 	ErrArchitectureMismatch       = errors.New("instance type and image architecture mismatch")
 	ErrBothTypeAndTemplateMissing = errors.New("instance type or launch template not set")
 	ErrUnsupportedRegion          = errors.New("unknown region/location/zone")
+	ErrInvalidNamePattern         = errors.New("name pattern is not RFC-1035 compatible")
 )
 
 // CreateReservation dispatches requests to type provider specific handlers

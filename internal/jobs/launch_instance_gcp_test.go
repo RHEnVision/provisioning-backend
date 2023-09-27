@@ -33,7 +33,7 @@ func prepareGCPReservation(t *testing.T, ctx context.Context, pk *models.Pubkey)
 	detail := &models.GCPDetail{
 		Zone:        "europe-west8-c",
 		MachineType: "e2-micro",
-		NamePattern: ptr.To("instance"),
+		NamePattern: ptr.To("instance-#####"),
 		Amount:      1,
 		PowerOff:    false,
 	}

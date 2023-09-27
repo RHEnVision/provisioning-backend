@@ -3,6 +3,8 @@ package services
 import (
 	"fmt"
 	"net/http"
+	"regexp"
+	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	"github.com/google/uuid"
@@ -40,9 +42,21 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	namePattern := "inst-####"
+	// Verify name pattern is lower cased and add #####
+	if payload.NamePattern != "" {
+		ok := isValidNamePattern(payload.NamePattern)
+		if ok {
+			namePattern = fmt.Sprintf("%s-#####", payload.NamePattern)
+		} else {
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Invalid name pattern", ErrInvalidNamePattern))
+			return
+		}
+	}
+
 	resUUID := uuid.New().String()
 	detail := &models.GCPDetail{
-		NamePattern:      &payload.NamePattern,
+		NamePattern:      &namePattern,
 		Zone:             payload.Zone,
 		MachineType:      payload.MachineType,
 		Amount:           payload.Amount,
@@ -151,4 +165,13 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		renderError(w, r, payloads.NewRenderError(r.Context(), "unable to render reservation", err))
 		return
 	}
+}
+
+func isValidNamePattern(namePattern string) bool {
+	if strings.ToLower(namePattern) != namePattern {
+		return false
+	}
+	// Define a regular expression pattern to match valid RFC-1035-compatible names
+	pattern := regexp.MustCompile(`^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$`)
+	return pattern.MatchString(namePattern)
 }

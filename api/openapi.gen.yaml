@@ -1262,7 +1262,7 @@ paths:
             tags:
                 - Reservation
             description: |
-                A reservation is a way to activate a job, keeps all data needed for a job to start. A GCP reservation is a reservation created for a GCP job. Image Builder UUID image is required and needs to be shared with the service account. Furthermore, by specifying the name pattern for example as "instance", instances names will be created in the format: "instance-#####". A single account can create maximum of 2 reservations per second.
+                A reservation is a way to activate a job, keeps all data needed for a job to start. A GCP reservation is a reservation created for a GCP job. Image Builder UUID image is required and needs to be shared with the service account. Furthermore, by specifying the RFC-1035 compatible name pattern for example as "instance", instances names will be created in the format: "instance-#####". A single account can create maximum of 2 reservations per second.
             operationId: createGCPReservation
             requestBody:
                 description: gcp request body
