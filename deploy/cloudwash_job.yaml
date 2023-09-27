@@ -31,6 +31,14 @@ objects:
                   - "-d"
                   - "azure"
                   - "--all"
+                volumeMounts:
+                  - name: config-volume
+                    mountPath: /opt/app-root/src/cloudwash/settings.yaml
+                    subPath: settings.yaml
+            volumes:
+              - name: config-volume
+                configMap:
+                  name: cloudwash-config
                 env:
                   - name: CLEANUP_PROVIDERS_AZURE_AUTH_CLIENT_ID
                     valueFrom:
