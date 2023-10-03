@@ -103,6 +103,8 @@ objects:
                 value: ${APP_CACHE_TYPE}
               - name: WORKER_QUEUE
                 value: ${WORKER_QUEUE}
+              - name: KAFKA_TLS_ENABLED
+                value: ${KAFKA_TLS_ENABLED}
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}
@@ -190,6 +192,8 @@ objects:
                 value: ${APP_INSTANCE_PREFIX}
               - name: APP_CACHE_TYPE
                 value: ${APP_CACHE_TYPE}
+              - name: KAFKA_TLS_ENABLED
+                value: ${KAFKA_TLS_ENABLED}
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}
@@ -239,6 +243,8 @@ objects:
                 value: ${APP_INSTANCE_PREFIX}
               - name: APP_CACHE_TYPE
                 value: ${APP_CACHE_TYPE}
+              - name: KAFKA_TLS_ENABLED
+                value: ${KAFKA_TLS_ENABLED}
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}
@@ -365,6 +371,8 @@ objects:
                 value: ${APP_CACHE_TYPE}
               - name: WORKER_QUEUE
                 value: ${WORKER_QUEUE}
+              - name: KAFKA_TLS_ENABLED
+                value: ${KAFKA_TLS_ENABLED}
             resources:
               limits:
                 cpu: ${{CPU_LIMIT}}
@@ -572,3 +580,6 @@ parameters:
   - description: Notification service enabled
     name: APP_NOTIFICATIONS_ENABLED
     value: "true"
+  - description: Kafka TLS connection
+    name: KAFKA_TLS_ENABLED
+    value: "false"
