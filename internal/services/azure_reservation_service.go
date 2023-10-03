@@ -89,9 +89,13 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 		azureImageName = fmt.Sprintf("/subscriptions/%s%s", authentication.Payload, azureImageName)
 	} else {
 		// Format Image ID for image names passed manually in here.
-		// Assumes 'redhat-deployed' resource group.
+		// Assumes the image is in the resource group we want to deploy into.
 		if strings.HasPrefix(payload.ImageID, "composer-api") {
-			azureImageName = fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/images/%s", authentication.Payload, "redhat-deployed", payload.ImageID)
+			rg := payload.ResourceGroup
+			if rg == "" {
+				rg = jobs.DefaultAzureResourceGroupName
+			}
+			azureImageName = fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/images/%s", authentication.Payload, rg, payload.ImageID)
 		} else {
 			// Anything else is treated like a direct Azure image ID (e.g. from https://imagedirectory.cloud)
 			azureImageName = payload.ImageID
@@ -111,11 +115,12 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 
 	name := config.Application.InstancePrefix + payload.Name
 	detail := &models.AzureDetail{
-		Location:     payload.Location,
-		InstanceSize: payload.InstanceSize,
-		Amount:       payload.Amount,
-		PowerOff:     payload.PowerOff,
-		Name:         name,
+		Location:      payload.Location,
+		ResourceGroup: payload.ResourceGroup,
+		InstanceSize:  payload.InstanceSize,
+		Amount:        payload.Amount,
+		PowerOff:      payload.PowerOff,
+		Name:          name,
 	}
 	reservation := &models.AzureReservation{
 		PubkeyID: payload.PubkeyID,
@@ -139,12 +144,13 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 		Identity:  identity.Identity(r.Context()),
 		AccountID: identity.AccountId(r.Context()),
 		Args: jobs.LaunchInstanceAzureTaskArgs{
-			ReservationID: reservation.ID,
-			Location:      reservation.Detail.Location,
-			PubkeyID:      pk.ID,
-			SourceID:      reservation.SourceID,
-			AzureImageID:  azureImageName,
-			Subscription:  authentication,
+			ReservationID:     reservation.ID,
+			ResourceGroupName: reservation.Detail.ResourceGroup,
+			Location:          reservation.Detail.Location,
+			PubkeyID:          pk.ID,
+			SourceID:          reservation.SourceID,
+			AzureImageID:      azureImageName,
+			Subscription:      authentication,
 		},
 	}
 

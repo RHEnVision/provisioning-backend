@@ -20,9 +20,9 @@ import (
 )
 
 const (
-	resourceGroupName = "redhat-deployed"
-	location          = "eastus"
-	vmNamePrefix      = "redhat-vm"
+	DefaultAzureResourceGroupName = "redhat-deployed"
+	location                      = "eastus"
+	vmNamePrefix                  = "redhat-vm"
 )
 
 var LaunchInstanceAzureSteps = []string{"Prepare resource group", "Launch instance(s)"}
@@ -43,6 +43,9 @@ type LaunchInstanceAzureTaskArgs struct {
 	// AzureImageID as fetched from image builder
 	AzureImageID string
 
+	// ResourceGroupName passed by a user, if left blank, defaults to 'redhat-deployed'
+	ResourceGroupName string
+
 	// The Subscription fetched from Sources which is linked to a specific source
 	Subscription *clients.Authentication
 }
@@ -59,6 +62,11 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 		err := fmt.Errorf("%w: job %s, reservation: %#v", ErrTypeAssertion, job.ID, job.Args)
 		logger.Error().Err(err).Msg("Type assertion error for job")
 		return
+	}
+
+	if args.ResourceGroupName == "" {
+		logger.Debug().Msg("Resource group has not been set, defaulting to 'redhat-deployed'")
+		args.ResourceGroupName = DefaultAzureResourceGroupName
 	}
 
 	// ensure panic finishes the job
@@ -107,7 +115,7 @@ func DoEnsureAzureResourceGroup(ctx context.Context, args *LaunchInstanceAzureTa
 		return fmt.Errorf("cannot create new Azure client: %w", err)
 	}
 
-	resourceGroupID, err := azureClient.EnsureResourceGroup(ctx, resourceGroupName, location)
+	resourceGroupID, err := azureClient.EnsureResourceGroup(ctx, args.ResourceGroupName, location)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create resource group")
 		logger.Error().Err(err).Msg("Cannot create resource group")
@@ -160,7 +168,7 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 
 	vmParams := clients.AzureInstanceParams{
 		Location:          location,
-		ResourceGroupName: resourceGroupName,
+		ResourceGroupName: args.ResourceGroupName,
 		ImageID:           args.AzureImageID,
 		Pubkey:            pubkey,
 		InstanceType:      clients.InstanceTypeName(reservation.Detail.InstanceSize),

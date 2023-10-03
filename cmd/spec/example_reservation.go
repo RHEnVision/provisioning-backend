@@ -118,14 +118,15 @@ var AwsReservationResponsePayloadDoneExample = payloads.AWSReservationResponse{
 }
 
 var AzureReservationRequestPayloadExample = payloads.AzureReservationRequest{
-	PubkeyID:     42,
-	SourceID:     "654321",
-	Location:     "useast",
-	InstanceSize: "Basic_A0",
-	Amount:       1,
-	ImageID:      "composer-api-081fc867-838f-44a5-af03-8b8def808431",
-	Name:         "my-instance",
-	PowerOff:     false,
+	PubkeyID:      42,
+	SourceID:      "654321",
+	Location:      "useast_1",
+	ResourceGroup: "redhat-hcc",
+	InstanceSize:  "Basic_A0",
+	Amount:        1,
+	ImageID:       "composer-api-081fc867-838f-44a5-af03-8b8def808431",
+	Name:          "my-instance",
+	PowerOff:      false,
 }
 
 var AzureReservationResponsePayloadPendingExample = payloads.AzureReservationResponse{

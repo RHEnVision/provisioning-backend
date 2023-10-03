@@ -64,10 +64,11 @@
           "amount": 1,
           "image_id": "composer-api-081fc867-838f-44a5-af03-8b8def808431",
           "instance_size": "Basic_A0",
-          "location": "useast",
+          "location": "useast_1",
           "name": "my-instance",
           "poweroff": false,
           "pubkey_id": 42,
+          "resource_group": "redhat-hcc",
           "source_id": "654321"
         }
       },
@@ -676,6 +677,10 @@
           "pubkey_id": {
             "format": "int64",
             "type": "integer"
+          },
+          "resource_group": {
+            "description": "Azure resource group name to deploy the VM resources into. Optional, defaults to 'redhat-deployed'.",
+            "type": "string"
           },
           "source_id": {
             "type": "string"

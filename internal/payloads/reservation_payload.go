@@ -195,6 +195,9 @@ type AzureReservationRequest struct {
 	// Image Builder UUID of the image that should be launched. This can be directly Azure image ID.
 	ImageID string `json:"image_id" yaml:"image_id"`
 
+	// ResourceGroup to use to deploy the resources into
+	ResourceGroup string `json:"resource_group" yaml:"resource_group" description:"Azure resource group name to deploy the VM resources into. Optional, defaults to 'redhat-deployed'."`
+
 	// Azure Location to deploy into.
 	Location string `json:"location" yaml:"location"`
 
