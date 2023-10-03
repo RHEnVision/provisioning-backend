@@ -64,18 +64,19 @@ func TestDoEnsureAzureResourceGroup(t *testing.T) {
 	require.NoError(t, err, "failed to add stubbed reservation")
 
 	args := &jobs.LaunchInstanceAzureTaskArgs{
-		AzureImageID:  "/subscriptions/subUUID/rgName/images/uuid2",
-		Location:      "useast",
-		PubkeyID:      pk.ID,
-		ReservationID: res.ID,
-		SourceID:      "2",
-		Subscription:  clients.NewAuthentication("subUUID", models.ProviderTypeAzure),
+		AzureImageID:      "/subscriptions/subUUID/rgName/images/uuid2",
+		Location:          "useast",
+		PubkeyID:          pk.ID,
+		ReservationID:     res.ID,
+		SourceID:          "2",
+		Subscription:      clients.NewAuthentication("subUUID", models.ProviderTypeAzure),
+		ResourceGroupName: "testGroup",
 	}
 
 	err = jobs.DoEnsureAzureResourceGroup(ctx, args)
 	require.NoError(t, err, "the ensure resource group failed to run")
 
-	assert.True(t, clientStubs.DidCreateAzureResourceGroup(ctx, "redhat-deployed"))
+	assert.True(t, clientStubs.DidCreateAzureResourceGroup(ctx, "testGroup"))
 }
 
 func TestDoLaunchInstanceAzure(t *testing.T) {

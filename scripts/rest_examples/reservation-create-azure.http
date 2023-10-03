@@ -7,9 +7,10 @@ X-Rh-Identity: {{identity}}
   "name": "azure-linux-us-east",
   "location": "eastus_1",
   "source_id": "{{azure-source-id}}",
-  "image_id": "composer-api-081fc867-838f-44a5-af03-8b8def808431",
+  "image_id": "composer-api-e7e1c242-4ce8-4d5e-a5d0-75720e91afca",
   "amount": 1,
   "instance_size": "Standard_B1ls",
   "pubkey_id": 2,
-  "poweroff": true
+  "poweroff": true,
+  "resource_group": "{{azure-resource-group}}"
 }

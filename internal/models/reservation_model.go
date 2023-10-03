@@ -149,6 +149,9 @@ type AzureDetail struct {
 
 	// Immediately power off the system after initialization
 	PowerOff bool `json:"poweroff"`
+
+	// ResourceGroup is name of Resource Group to put the created resources into
+	ResourceGroup string `json:"resource_group"`
 }
 
 type AzureReservation struct {
