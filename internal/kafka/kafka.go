@@ -39,7 +39,7 @@ var (
 
 func createSASLMechanism(saslMechanismName string, username string, password string) (sasl.Mechanism, error) {
 	switch strings.ToLower(saslMechanismName) {
-	case "plain":
+	case "plain", "none":
 		return plain.Mechanism{
 			Username: username,
 			Password: password,
@@ -76,30 +76,34 @@ func InitializeKafkaBroker(ctx context.Context) error {
 }
 
 func NewKafkaBroker(ctx context.Context) (Broker, error) {
+	var pool *x509.CertPool
 	var tlsConfig *tls.Config
 	var saslMechanism sasl.Mechanism
 
 	logger := zerolog.Ctx(ctx)
-	logger.Debug().Msgf("Setting up Kafka transport: %v CA:%v SASL:%v", config.Kafka.Brokers,
-		config.Kafka.CACert != "", config.Kafka.SASL.SaslMechanism != "" && config.Kafka.SASL.SaslMechanism != "none")
+	logger.Debug().Msgf("Setting up Kafka transport: %v", config.Kafka.Brokers)
 
-	// configure TLS when CA certificate was provided
 	if config.Kafka.CACert != "" {
-		logger.Debug().Str("cert", config.Kafka.CACert).Msg("Adding CA certificates to the pool")
+		logger.Debug().Str("cert", config.Kafka.CACert).Msg("Configuring TLS CA pool for Kafka")
 
 		pemCerts := config.Kafka.CACert
-		pool := x509.NewCertPool()
+		pool = x509.NewCertPool()
 		if ok := pool.AppendCertsFromPEM([]byte(pemCerts)); !ok {
 			logger.Warn().Msg("Could not add an CA cert to the pool")
 		}
+	}
 
+	if config.Kafka.TlsEnabled && !config.InEphemeralClowder() {
+		logger.Debug().Msg("Configuring Kafka for TLS")
+
+		//nolint:gosec
 		tlsConfig = &tls.Config{
-			MinVersion: tls.VersionTLS13,
-			RootCAs:    pool,
+			MinVersion:         tls.VersionTLS12,
+			RootCAs:            pool,
+			InsecureSkipVerify: config.Kafka.TlsSkipVerify,
 		}
 	}
 
-	// configure SASL if mechanism was provided
 	if config.Kafka.SASL.SaslMechanism != "" {
 		var err error
 		saslMechanism, err = createSASLMechanism(config.Kafka.SASL.SaslMechanism, config.Kafka.SASL.Username, config.Kafka.SASL.Password)

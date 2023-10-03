@@ -155,11 +155,13 @@ var config struct {
 		Dsn string `env:"DSN" env-default:"" env-description:"data source name (empty value disables Sentry)"`
 	} `env-prefix:"SENTRY_"`
 	Kafka struct {
-		Enabled  bool     `env:"ENABLED" env-default:"false" env-description:"kafka service enabled"`
-		Brokers  []string `env:"BROKERS" env-default:"localhost:9092" env-description:"kafka hostname:port list of brokers"`
-		AuthType string   `env:"AUTH_TYPE" env-default:"" env-description:"kafka authentication type (mtls, sasl or empty)"`
-		CACert   string   `env:"CA_CERT" env-default:"" env-description:"kafka TLS CA certificate path"`
-		SASL     struct {
+		Enabled       bool     `env:"ENABLED" env-default:"false" env-description:"kafka service enabled"`
+		TlsEnabled    bool     `env:"TLS_ENABLED" env-default:"false" env-description:"enable TLS or use plaintext when false"`
+		TlsSkipVerify bool     `env:"TLS_SKIP_VERIFY" env-default:"false" env-description:"do not verify TLS server certificate"`
+		Brokers       []string `env:"BROKERS" env-default:"localhost:9092" env-description:"kafka hostname:port list of brokers"`
+		AuthType      string   `env:"AUTH_TYPE" env-default:"" env-description:"kafka authentication type (mtls, sasl or empty)"`
+		CACert        string   `env:"CA_CERT" env-default:"" env-description:"kafka TLS CA certificate path (use the OS cert store when blank)"`
+		SASL          struct {
 			Username         string `env:"USERNAME" env-default:"" env-description:"kafka SASL username"`
 			Password         string `env:"PASSWORD" env-default:"" env-description:"kafka SASL password"`
 			SaslMechanism    string `env:"MECHANISM" env-default:"" env-description:"kafka SASL mechanism (scram-sha-512, scram-sha-256 or plain)"`
