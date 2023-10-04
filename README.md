@@ -7,9 +7,10 @@ Provisioning backend service for cloud.redhat.com.
 
 ## Components
 
-* pbapi - API backend service
-* pbworker - backend job processing worker
-* pbmigrate - database migration tool with embedded SQL scripts
+* pbackend api - API backend service
+* pbackend worker - backend job processing worker
+* pbackend statuser - backend sources processing worker (single instance)
+* pbackend migrate - database migration tool with embedded SQL scripts
 
 ## Building
 
@@ -25,8 +26,8 @@ make build
 
 Configuration is done via configuration files in `config/` directory, see [config/api.env.example](config/api.env.example) file for list of options with documentation. The application expects `config/app.env` file to be present, other programs from this git repo also look up additional file which will override values:
 
-* `pbworker` looks up `config/worker.env`
-* `pbmigrate` looks up `config/migrate.env`
+* `worker` looks up `config/worker.env`
+* `migrate` looks up `config/migrate.env`
 * `typesctl` looks up `config/typesctl.env`
 * integration (DAO) tests look up `config/test.env`
 
@@ -41,6 +42,7 @@ To run all the components from this repository, you will need:
 * Go compiler
 * PostgreSQL server with UUID module
 * GNU Makefile
+* [Backend services](https://github.com/RHEnVision/provisioning-compose)
 
 ```
 dnf install postgresql-server postgresql-contrib
