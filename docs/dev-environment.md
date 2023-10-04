@@ -66,18 +66,6 @@ A make utility is used, we test on GNU Make which is available on all supported 
 
 There are few utilities that you will need like code linter, `goimports` or migration tool for creating new migrations. Install them with `make install-tools`.
 
-## Postgres
-
-Installation and configuration of Postgres is not covered neither in this article nor in the README. Full administrator access into an empty database is assumed as the application performs DDL commands during start. Or create a user with create table privileges.
-
-Tip: On MacOS, you can install Postgres on a remote Linux (or a small VM) and configure the application to connect there, instead of localhost.
-
-## Kafka
-
-In order to work on Kafka integrated services (statuser, sources), Kafka local deployment is needed. We do simply use the official Kafka binary that can be simply extracted and started.
-
-The [scripts](../scripts) directory contains README with further instructions and scripts which can download, extract, configure and start Kafka for local development.
-
 ## Compilation and startup
 
 Use `make` command to compile the main application, use `make run` or start it manually via `./pbapi`.
@@ -92,10 +80,6 @@ Notable records created via seed script:
 
 * Account number 13 with organization id 000013. This account is the first account (ID=1) and it is very often used on many examples (including this document). For [example](../scripts/rest_examples/http-client.env.json), RH-Identity-Header is an HTTP header that MUST be present in ALL requests, it is a base64-encoded JSON string which includes account number.
 * An example SSH public key.
-
-## Backend services
-
-The application integrates with multiple backend services:
 
 ## Worker
 
@@ -112,24 +96,25 @@ In stage/prod, we currently use `redis`.
 
 Statuser process (`pbstatuser`) is a custom executable that runs in a single instance responsible for performing sources availability checks. These are requested over HTTP from the Sources app (see below), messages are enqueued in Kafka where the statuser instance picks them up in batches, performs checking, and sends the results back to Kafka to Sources.
 
-## Sources
+## Backend services
 
-[Sources](https://github.com/RedHatInsights/sources-api-go) is an authentication inventory. Since it only requires Go, Redis and Postgres, we created a shell script that automatically checks out sources from git, compiles it, installs and creates postgres database, seeds data and starts the Sources application.
+The application integrates with multiple backend services:
 
-Follow [instructions (section Sources service)](../scripts/README.md) to perform the setup. Note that configuration via `sources.local.conf` is **required** before the setup procedure. This has been written and tested for Fedora Linux, in other operating systems perform all the commands manually.
+* Postgres
+* Kafka
+* Redis
+* RBAC Service
+* Sources Service
+* Notifications Service
 
-Tip: On MacOS, you can install Sources on a remote Fedora Linux (or a small VM) and configure the application to connect there, instead of localhost.
+All backend services can be started easily via [provisioning-compose](https://github.com/RHEnVision/provisioning-compose) on a local machine or remotely.
 
-Tip: Alternatively, the application supports connecting to the stage environment through a HTTP proxy. See [configuration example](../config/api.env.example) for more details. Make sure to use account number from stage environment instead of the pre-seeded account number 000013.
-
-## Image Builder
+### Image Builder on Stage
 
 Because Image Builder is more complex for installation, we do not recommend installing it on your local machine right now. Configure connection through HTTP proxy to the stage environment in `config/api.env`. See [configuration example](../config/api.env.example) for an example, you will need to ask someone from the company for real URLs for the service and the proxy.
 
-## Notifications
+### Notifications on Stage
 
-[Notifications](https://github.com/RedHatInsights/notifications-backend) service handles notifications across services and allows email templates, webhooks triggering and 3rd party apps integration (i.e slack)
-For local development, you can use [provisioning-compose](https://github.com/RHEnVision/provisioning-compose) to roll up notifications setup.
 When you just want to verify a notification kafka's messages, you can use `send-notification.http` to send a message directly to stage env, please notice that a cookie session is required, [click here](https://internal.console.stage.redhat.com/api/turnpike/session/) to generate one. 
 
 ## Writing Go code
