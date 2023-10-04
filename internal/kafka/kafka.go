@@ -81,7 +81,14 @@ func NewKafkaBroker(ctx context.Context) (Broker, error) {
 	var saslMechanism sasl.Mechanism
 
 	logger := zerolog.Ctx(ctx)
-	logger.Debug().Msgf("Setting up Kafka transport: %v", config.Kafka.Brokers)
+	logger.Info().Msgf("Setting up Kafka transport: %v Verify:%t CA:%t Auth:%s Proto:%sSASLMech:%s",
+		config.Kafka.Brokers,
+		!config.Kafka.TlsSkipVerify,
+		config.Kafka.CACert != "",
+		config.Kafka.AuthType,
+		config.Kafka.SecurityProtocol,
+		config.Kafka.SASL.SaslMechanism,
+	)
 
 	if config.Kafka.CACert != "" {
 		logger.Debug().Str("cert", config.Kafka.CACert).Msg("Configuring TLS CA pool for Kafka")
@@ -93,18 +100,17 @@ func NewKafkaBroker(ctx context.Context) (Broker, error) {
 		}
 	}
 
-	if config.Kafka.TlsEnabled && !config.InEphemeralClowder() {
+	if strings.Contains(strings.ToUpper(config.Kafka.SecurityProtocol), "SSL") {
 		logger.Debug().Msg("Configuring Kafka for TLS")
 
 		//nolint:gosec
 		tlsConfig = &tls.Config{
-			MinVersion:         tls.VersionTLS12,
 			RootCAs:            pool,
 			InsecureSkipVerify: config.Kafka.TlsSkipVerify,
 		}
 	}
 
-	if config.Kafka.SASL.SaslMechanism != "" {
+	if strings.Contains(strings.ToUpper(config.Kafka.AuthType), "SASL") && config.Kafka.SASL.SaslMechanism != "" {
 		var err error
 		saslMechanism, err = createSASLMechanism(config.Kafka.SASL.SaslMechanism, config.Kafka.SASL.Username, config.Kafka.SASL.Password)
 		if err != nil {

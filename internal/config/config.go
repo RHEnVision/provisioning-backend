@@ -155,17 +155,16 @@ var config struct {
 		Dsn string `env:"DSN" env-default:"" env-description:"data source name (empty value disables Sentry)"`
 	} `env-prefix:"SENTRY_"`
 	Kafka struct {
-		Enabled       bool     `env:"ENABLED" env-default:"false" env-description:"kafka service enabled"`
-		TlsEnabled    bool     `env:"TLS_ENABLED" env-default:"false" env-description:"enable TLS or use plaintext when false"`
-		TlsSkipVerify bool     `env:"TLS_SKIP_VERIFY" env-default:"false" env-description:"do not verify TLS server certificate"`
-		Brokers       []string `env:"BROKERS" env-default:"localhost:9092" env-description:"kafka hostname:port list of brokers"`
-		AuthType      string   `env:"AUTH_TYPE" env-default:"" env-description:"kafka authentication type (mtls, sasl or empty)"`
-		CACert        string   `env:"CA_CERT" env-default:"" env-description:"kafka TLS CA certificate path (use the OS cert store when blank)"`
-		SASL          struct {
-			Username         string `env:"USERNAME" env-default:"" env-description:"kafka SASL username"`
-			Password         string `env:"PASSWORD" env-default:"" env-description:"kafka SASL password"`
-			SaslMechanism    string `env:"MECHANISM" env-default:"" env-description:"kafka SASL mechanism (scram-sha-512, scram-sha-256 or plain)"`
-			SecurityProtocol string `env:"PROTOCOL" env-default:"" env-description:"kafka SASL security protocol"`
+		Enabled          bool     `env:"ENABLED" env-default:"false" env-description:"kafka service enabled"`
+		AuthType         string   `env:"AUTH_TYPE" env-default:"" env-description:"kafka authentication type (MTLS, SASL or empty)"`
+		SecurityProtocol string   `env:"PROTOCOL" env-default:"" env-description:"kafka SASL security protocol (PLAINTEXT, SSL, SASL_PLAINTEXT, or SASL_SSL, empty means PLAINTEXT)"`
+		TlsSkipVerify    bool     `env:"TLS_SKIP_VERIFY" env-default:"false" env-description:"do not verify TLS server certificate"`
+		Brokers          []string `env:"BROKERS" env-default:"localhost:9092" env-description:"kafka hostname:port list of brokers"`
+		CACert           string   `env:"CA_CERT" env-default:"" env-description:"kafka TLS CA certificate path (use the OS cert store when blank)"`
+		SASL             struct {
+			Username      string `env:"USERNAME" env-default:"" env-description:"kafka SASL username"`
+			Password      string `env:"PASSWORD" env-default:"" env-description:"kafka SASL password"`
+			SaslMechanism string `env:"MECHANISM" env-default:"" env-description:"kafka SASL mechanism (scram-sha-512, scram-sha-256 or plain)"`
 		} `env-prefix:"SASL_"`
 	} `env-prefix:"KAFKA_"`
 }
@@ -281,7 +280,7 @@ func Initialize(configFiles ...string) {
 			for i, b := range cfg.Kafka.Brokers {
 				config.Kafka.Brokers[i] = fmt.Sprintf("%s:%d", b.Hostname, *b.Port)
 
-				// assumption: TLS/SASL credentials are always the same for all nodes in a cluster
+				// assumption: SASL credentials are always the same for all nodes in a cluster
 				if b.Authtype != nil && *b.Authtype != "" {
 					config.Kafka.AuthType = string(*b.Authtype)
 				}
@@ -290,7 +289,7 @@ func Initialize(configFiles ...string) {
 				}
 				if b.Sasl != nil {
 					if b.SecurityProtocol != nil && *b.SecurityProtocol != "" {
-						config.Kafka.SASL.SecurityProtocol = *b.SecurityProtocol
+						config.Kafka.SecurityProtocol = *b.SecurityProtocol
 					}
 					if b.Sasl.SaslMechanism != nil && *b.Sasl.SaslMechanism != "" {
 						config.Kafka.SASL.SaslMechanism = *b.Sasl.SaslMechanism
