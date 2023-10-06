@@ -37,7 +37,7 @@ func (c *client) CreateVMs(ctx context.Context, vmParams clients.AzureInstancePa
 			return nil, err
 		}
 
-		vmDescriptions[i].PublicIPv4 = *publicIP.Properties.IPAddress
+		vmDescriptions[i].IPv4 = *publicIP.Properties.IPAddress
 
 		resumeTokens[i], err = c.BeginCreateVM(ctx, networkInterface, vmParams, vmName)
 		if err != nil {
