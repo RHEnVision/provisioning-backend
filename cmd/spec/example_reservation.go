@@ -111,8 +111,9 @@ var AwsReservationResponsePayloadDoneExample = payloads.AWSReservationResponse{
 	PowerOff:         false,
 	Instances: []payloads.InstanceResponse{
 		{InstanceID: "i-2324343212", Detail: models.ReservationInstanceDetail{
-			PublicDNS:  "",
-			PublicIPv4: "10.0.0.88",
+			PublicDNS:   "ec2-184-73-141-211.compute-1.amazonaws.com",
+			PublicIPv4:  "184.73.141.211",
+			PrivateIPv4: "172.31.36.10",
 		}},
 	},
 }

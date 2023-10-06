@@ -83,7 +83,7 @@ func (mock *GCPClientStub) Status(ctx context.Context) error {
 func (mock *GCPClientStub) GetInstanceDescriptionByID(ctx context.Context, id, zone string) (*clients.InstanceDescription, error) {
 	for _, instanceID := range mock.Instances {
 		if ptr.From(instanceID) == id {
-			instanceDesc := &clients.InstanceDescription{ID: id, PublicIPv4: fmt.Sprintf("10.0.0.%v", ipCounter)}
+			instanceDesc := &clients.InstanceDescription{ID: id, IPv4: fmt.Sprintf("10.0.0.%v", ipCounter)}
 			ipCounter = ipCounter + 1
 			return instanceDesc, nil
 		}

@@ -44,6 +44,10 @@ components:
                             detail:
                                 type: object
                                 properties:
+                                    private_ipv4:
+                                        type: string
+                                    private_ipv6:
+                                        type: string
                                     public_dns:
                                         type: string
                                     public_ipv4:
@@ -121,6 +125,10 @@ components:
                             detail:
                                 type: object
                                 properties:
+                                    private_ipv4:
+                                        type: string
+                                    private_ipv6:
+                                        type: string
                                     public_dns:
                                         type: string
                                     public_ipv4:
@@ -182,6 +190,10 @@ components:
                             detail:
                                 type: object
                                 properties:
+                                    private_ipv4:
+                                        type: string
+                                    private_ipv6:
+                                        type: string
                                     public_dns:
                                         type: string
                                     public_ipv4:
@@ -619,8 +631,10 @@ components:
                 instance_type: t3.small
                 instances:
                     - detail:
-                        publicdns: ""
-                        publicipv4: 10.0.0.88
+                        privateipv4: 172.31.36.10
+                        privateipv6: ""
+                        publicdns: ec2-184-73-141-211.compute-1.amazonaws.com
+                        publicipv4: 184.73.141.211
                       instance_id: i-2324343212
                 launch_template_id: ""
                 name: my-instance
@@ -661,6 +675,8 @@ components:
                 instance_size: Basic_A0
                 instances:
                     - detail:
+                        privateipv4: ""
+                        privateipv6: ""
                         publicdns: ""
                         publicipv4: 10.0.0.88
                       instance_id: /subscriptions/4b9d213f-712f-4d17-a483-8a10bbe9df3a/resourceGroups/redhat-deployed/providers/Microsoft.Compute/images/composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7
@@ -700,6 +716,8 @@ components:
                 image_id: 08a48fed-de87-40ab-a571-f64e30bd0aa8
                 instances:
                     - detail:
+                        privateipv4: ""
+                        privateipv6: ""
                         publicdns: ""
                         publicipv4: 10.0.0.88
                       instance_id: "3003942005876582747"
@@ -930,7 +948,7 @@ info:
     description: Provisioning service API
     license:
         name: GPL-3.0
-    version: 1.7.0
+    version: 1.8.0
 paths:
     /availability_status/sources:
         post:

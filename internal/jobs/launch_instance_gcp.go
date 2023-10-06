@@ -195,7 +195,7 @@ func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTa
 				return fmt.Errorf("cannot get instance description : %w", err)
 			}
 
-			if instanceDesc.PublicIPv4 == "" {
+			if instanceDesc.IPv4 == "" {
 				return ErrTryAgain
 			}
 

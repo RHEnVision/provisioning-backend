@@ -6,7 +6,7 @@ X-Rh-Identity: {{identity}}
 {
   "name": "azure-linux-us-east",
   "location": "eastus_1",
-  "source_id": "{{azure-source-id}}",
+  "source_id": "{{source_id_azure}}",
   "image_id": "composer-api-e7e1c242-4ce8-4d5e-a5d0-75720e91afca",
   "amount": 1,
   "instance_size": "Standard_B1ls",

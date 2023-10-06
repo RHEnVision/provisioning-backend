@@ -173,9 +173,9 @@ func (mock *EC2ClientStub) DescribeInstanceDetails(ctx context.Context, Instance
 	ip := "54.11.88.17"
 	return []*clients.InstanceDescription{
 		{
-			ID:         id,
-			PublicDNS:  dns,
-			PublicIPv4: ip,
+			ID:   id,
+			DNS:  dns,
+			IPv4: ip,
 		},
 	}, nil
 }
