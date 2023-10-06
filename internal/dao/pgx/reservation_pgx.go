@@ -169,8 +169,10 @@ func (x *reservationDao) CreateInstance(ctx context.Context, instance *models.Re
 func (x *reservationDao) UpdateReservationInstance(ctx context.Context, reservationID int64, instance *clients.InstanceDescription) error {
 	query := `UPDATE reservation_instances SET detail = $3 WHERE reservation_id = $1 AND instance_id = $2`
 	detail := &models.ReservationInstanceDetail{
-		PublicIPv4: instance.PublicIPv4,
-		PublicDNS:  instance.PublicDNS,
+		PublicIPv4:  instance.IPv4,
+		PublicDNS:   instance.DNS,
+		PrivateIPv4: instance.PrivateIPv4,
+		PrivateIPv6: instance.PrivateIPv6,
 	}
 	tag, err := db.Pool.Exec(ctx, query, reservationID, instance.ID, detail)
 	if err != nil {

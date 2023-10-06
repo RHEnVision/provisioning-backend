@@ -317,7 +317,7 @@ func (c *gcpClient) GetInstanceDescriptionByID(ctx context.Context, id, zone str
 	instanceDesc := clients.InstanceDescription{ID: instanceId}
 	for _, n := range instance.NetworkInterfaces {
 		if len(n.AccessConfigs) > 0 && n.AccessConfigs[0] != nil {
-			instanceDesc.PublicIPv4 = *n.AccessConfigs[0].NatIP
+			instanceDesc.IPv4 = *n.AccessConfigs[0].NatIP
 			break
 		}
 	}

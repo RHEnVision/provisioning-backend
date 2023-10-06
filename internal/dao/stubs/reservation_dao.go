@@ -155,7 +155,7 @@ func (stub *reservationDaoStub) Cleanup(ctx context.Context) error {
 func (stub *reservationDaoStub) UpdateReservationInstance(ctx context.Context, reservationID int64, instance *clients.InstanceDescription) error {
 	for _, instRes := range stub.instances[reservationID] {
 		if instRes.InstanceID == instance.ID {
-			instRes.Detail.PublicIPv4 = instance.PublicIPv4
+			instRes.Detail.PublicIPv4 = instance.IPv4
 		}
 	}
 	return nil

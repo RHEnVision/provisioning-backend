@@ -308,12 +308,19 @@ func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTa
 			span.SetStatus(codes.Error, "cannot get list instances description")
 			return fmt.Errorf("cannot get list instances description: %w", errRetry)
 		}
+		logger.Trace().Msgf("AWS returned %d instance details", len(instancesDescriptionList))
 
 		if len(instancesDescriptionList) == 0 {
 			return ErrTryAgain
 		}
 
 		for _, instance := range instancesDescriptionList {
+			logger.Trace().Msgf("Instance id %s private IPv4:%s public IPv4:%s DNS:%s",
+				instance.ID,
+				instance.PrivateIPv4,
+				instance.IPv4,
+				instance.DNS,
+			)
 			errRetry := rDao.UpdateReservationInstance(ctx, args.ReservationID, instance)
 			if errRetry != nil {
 				span.SetStatus(codes.Error, "cannot update instance description")
@@ -321,7 +328,7 @@ func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTa
 			}
 		}
 		return nil
-	}, 1000, 500, 500, 1000, 2000)
+	}, 500, 500, 1000, 1000, 2000)
 
 	if err != nil {
 		span.SetStatus(codes.Error, "giving up")

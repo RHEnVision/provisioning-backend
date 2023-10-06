@@ -28,8 +28,10 @@
           "instances": [
             {
               "detail": {
-                "publicdns": "",
-                "publicipv4": "10.0.0.88"
+                "privateipv4": "172.31.36.10",
+                "privateipv6": "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+                "publicdns": "ec2-184-73-141-211.compute-1.amazonaws.com",
+                "publicipv4": "184.73.141.211"
               },
               "instance_id": "i-2324343212"
             }
@@ -80,6 +82,8 @@
           "instances": [
             {
               "detail": {
+                "privateipv4": "",
+                "privateipv6": "",
                 "publicdns": "",
                 "publicipv4": "10.0.0.88"
               },
@@ -129,6 +133,8 @@
           "instances": [
             {
               "detail": {
+                "privateipv4": "",
+                "privateipv6": "",
                 "publicdns": "",
                 "publicipv4": "10.0.0.88"
               },
@@ -589,6 +595,12 @@
               "properties": {
                 "detail": {
                   "properties": {
+                    "private_ipv4": {
+                      "type": "string"
+                    },
+                    "private_ipv6": {
+                      "type": "string"
+                    },
                     "public_dns": {
                       "type": "string"
                     },
@@ -705,6 +717,12 @@
               "properties": {
                 "detail": {
                   "properties": {
+                    "private_ipv4": {
+                      "type": "string"
+                    },
+                    "private_ipv6": {
+                      "type": "string"
+                    },
                     "public_dns": {
                       "type": "string"
                     },
@@ -796,6 +814,12 @@
               "properties": {
                 "detail": {
                   "properties": {
+                    "private_ipv4": {
+                      "type": "string"
+                    },
+                    "private_ipv6": {
+                      "type": "string"
+                    },
                     "public_dns": {
                       "type": "string"
                     },
@@ -1334,7 +1358,7 @@
       "name": "GPL-3.0"
     },
     "title": "provisioning-api",
-    "version": "1.7.0"
+    "version": "1.8.0"
   },
   "openapi": "3.0.0",
   "paths": {

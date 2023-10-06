@@ -62,7 +62,7 @@ func (stub *AzureClientStub) CreateVMs(ctx context.Context, vmParams clients.Azu
 			return vmIds, err
 		}
 		vmIds[i].ID = string(instanceID)
-		vmIds[i].PublicIPv4 = fmt.Sprintf("198.51.100.%d", i+1)
+		vmIds[i].IPv4 = fmt.Sprintf("198.51.100.%d", i+1)
 	}
 
 	return vmIds, nil
