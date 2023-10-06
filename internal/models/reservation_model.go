@@ -171,10 +171,10 @@ type AzureReservation struct {
 }
 
 type ReservationInstanceDetail struct {
-	PublicDNS   string `json:"public_dns,omitempty"`
-	PublicIPv4  string `json:"public_ipv4,omitempty"`
-	PrivateIPv4 string `json:"private_ipv4,omitempty"`
-	PrivateIPv6 string `json:"private_ipv6,omitempty"`
+	PublicDNS   string `json:"public_dns"`
+	PublicIPv4  string `json:"public_ipv4"`
+	PrivateIPv4 string `json:"private_ipv4"`
+	PrivateIPv6 string `json:"private_ipv6"`
 }
 
 type ReservationInstance struct {
