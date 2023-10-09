@@ -716,7 +716,7 @@ components:
                 image_id: 08a48fed-de87-40ab-a571-f64e30bd0aa8
                 instances:
                     - detail:
-                        privateipv4: ""
+                        privateipv4: 10.198.0.2
                         privateipv6: ""
                         publicdns: ""
                         publicipv4: 10.0.0.88
