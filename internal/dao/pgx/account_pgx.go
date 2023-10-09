@@ -9,6 +9,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/rs/zerolog"
 )
 
 func init() {
@@ -74,6 +75,15 @@ func (x *accountDao) GetOrCreateByIdentity(ctx context.Context, orgId string, ac
 	err := pgxscan.Get(ctx, db.Pool, result, query, orgId, account)
 	if err != nil {
 		return nil, fmt.Errorf("pgx error: %w", err)
+	}
+
+	// Step 4: requery in case transaction isolation (simultaneous transactions)
+	if result.ID == 0 && result.OrgID == "" {
+		zerolog.Ctx(ctx).Warn().Bool("requery", true).Msgf("Organization id %s requery", orgId)
+		err = pgxscan.Get(ctx, db.Pool, result, query, orgId, account)
+		if err != nil {
+			return nil, fmt.Errorf("pgx requery error: %w", err)
+		}
 	}
 
 	return result, nil

@@ -44,10 +44,9 @@ func AccountMiddleware(next http.Handler) http.Handler {
 			logger.Error().Err(err).Msg("Cache returned error")
 			http.Error(w, err.Error(), 500)
 			return
+		} else {
+			logger.Trace().Int64("account", cachedAccount.ID).Msg("Account cache hit")
 		}
-
-		// account found in cache
-		logger.Trace().Int64("account", cachedAccount.ID).Msg("Account cache hit")
 
 		// set contexts - account id
 		ctx := identity.WithAccountId(r.Context(), cachedAccount.ID)
