@@ -203,8 +203,9 @@ var GCPReservationResponsePayloadDoneExample = payloads.GCPReservationResponse{
 	PowerOff:         false,
 	Instances: []payloads.InstanceResponse{
 		{InstanceID: "3003942005876582747", Detail: models.ReservationInstanceDetail{
-			PublicDNS:  "",
-			PublicIPv4: "10.0.0.88",
+			PublicDNS:   "",
+			PublicIPv4:  "10.0.0.88",
+			PrivateIPv4: "10.198.0.2",
 		}},
 	},
 }
