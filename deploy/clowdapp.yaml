@@ -575,7 +575,7 @@ parameters:
     value: ""
   - description: Application cache type (none, memory or redis)
     name: APP_CACHE_TYPE
-    value: "redis"
+    value: "none"
   - description: Internal queue type (memory/sqs/postgres).
     name: WORKER_QUEUE
     value: "redis"
