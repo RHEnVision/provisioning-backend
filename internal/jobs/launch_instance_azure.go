@@ -190,7 +190,8 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 			ReservationID: args.ReservationID,
 			InstanceID:    instanceDescription.ID,
 			Detail: models.ReservationInstanceDetail{
-				PublicIPv4: instanceDescription.IPv4,
+				PublicIPv4:  instanceDescription.IPv4,
+				PrivateIPv4: instanceDescription.PrivateIPv4,
 			},
 		})
 		if err != nil {

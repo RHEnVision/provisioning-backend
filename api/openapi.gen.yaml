@@ -675,7 +675,7 @@ components:
                 instance_size: Basic_A0
                 instances:
                     - detail:
-                        privateipv4: ""
+                        privateipv4: 172.22.0.1
                         privateipv6: ""
                         publicdns: ""
                         publicipv4: 10.0.0.88

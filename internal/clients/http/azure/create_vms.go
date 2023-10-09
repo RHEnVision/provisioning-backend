@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/google/uuid"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
@@ -37,7 +38,8 @@ func (c *client) CreateVMs(ctx context.Context, vmParams clients.AzureInstancePa
 			return nil, err
 		}
 
-		vmDescriptions[i].IPv4 = *publicIP.Properties.IPAddress
+		vmDescriptions[i].IPv4 = ptr.FromOrEmpty(publicIP.Properties.IPAddress)
+		vmDescriptions[i].PrivateIPv4 = ptr.FromOrEmpty(networkInterface.Properties.IPConfigurations[0].Properties.PrivateIPAddress)
 
 		resumeTokens[i], err = c.BeginCreateVM(ctx, networkInterface, vmParams, vmName)
 		if err != nil {

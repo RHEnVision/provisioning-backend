@@ -157,8 +157,9 @@ var AzureReservationResponsePayloadDoneExample = payloads.AzureReservationRespon
 	Instances: []payloads.InstanceResponse{{
 		InstanceID: "/subscriptions/4b9d213f-712f-4d17-a483-8a10bbe9df3a/resourceGroups/redhat-deployed/providers/Microsoft.Compute/images/composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7",
 		Detail: models.ReservationInstanceDetail{
-			PublicDNS:  "",
-			PublicIPv4: "10.0.0.88",
+			PublicDNS:   "",
+			PublicIPv4:  "10.0.0.88",
+			PrivateIPv4: "172.22.0.1",
 		},
 	}},
 }
