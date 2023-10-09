@@ -77,6 +77,9 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 	if resp == nil {
 		return fmt.Errorf("ready call: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
+	if resp.JSON400 != nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("Get authentication from sources returned 4xx")
+	}
 
 	if resp.StatusCode() < 200 || resp.StatusCode() > 299 {
 		return fmt.Errorf("ready call: %w: %d", clients.ErrUnexpectedBackendResponse, resp.StatusCode())
@@ -115,6 +118,9 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 
 	if resp == nil {
 		return nil, 0, fmt.Errorf("list application types empty response: %w", clients.ErrUnexpectedBackendResponse)
+	}
+	if resp.JSON404 != nil || resp.JSON400 != nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("Get authentication from sources returned 4xx")
 	}
 
 	if resp.JSON200 == nil {
@@ -169,6 +175,9 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 	if resp == nil {
 		return nil, 0, fmt.Errorf("list provisioning sources empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
+	if resp.JSON404 != nil || resp.JSON400 != nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("Get authentication from sources returned 4xx")
+	}
 
 	if resp.JSON200 == nil {
 		return nil, 0, fmt.Errorf("list provisioning sources returned %d: %w", resp.StatusCode(), clients.ErrUnexpectedBackendResponse)
@@ -215,6 +224,9 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 
 	if resp == nil {
 		return nil, fmt.Errorf("get source authentication empty response: %w", clients.ErrUnexpectedBackendResponse)
+	}
+	if resp.JSON404 != nil || resp.JSON400 != nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("Get authentication from sources returned 4xx")
 	}
 	if resp.JSON200 == nil {
 		return nil, fmt.Errorf("get source authentication returned %d: %w", resp.StatusCode(), clients.ErrUnexpectedBackendResponse)
