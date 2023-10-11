@@ -144,7 +144,6 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	launchJob := worker.Job{
 		Type:      jobs.TypeLaunchInstanceAzure,
 		Identity:  identity.Identity(r.Context()),
-		TraceID:   logging.TraceId(r.Context()),
 		EdgeID:    logging.EdgeRequestId(r.Context()),
 		AccountID: identity.AccountId(r.Context()),
 		Args: jobs.LaunchInstanceAzureTaskArgs{

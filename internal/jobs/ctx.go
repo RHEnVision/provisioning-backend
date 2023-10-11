@@ -15,7 +15,6 @@ import (
 func copyContext(ctx context.Context) context.Context {
 	nCtx := context.Background()
 	nCtx = log.Logger.WithContext(nCtx)
-	nCtx = logging.WithTraceId(nCtx, logging.TraceId(ctx))
 	nCtx = logging.WithEdgeRequestId(nCtx, logging.EdgeRequestId(ctx))
 	nCtx = identity.WithAccountId(nCtx, identity.AccountId(ctx))
 	nCtx = logging.WithReservationId(nCtx, logging.ReservationId(ctx))

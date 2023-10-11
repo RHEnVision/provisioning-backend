@@ -2,9 +2,15 @@ package kafka
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"strings"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/segmentio/kafka-go"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 // GenericMessage is a platform independent message.
@@ -97,4 +103,45 @@ func (m GenericMessage) Header(name string) string {
 		}
 	}
 	return ""
+}
+
+func genericMessage(ctx context.Context, m any, key string, topic string) (GenericMessage, error) {
+	payload, err := json.Marshal(m)
+	if err != nil {
+		return GenericMessage{}, fmt.Errorf("unable to marshal message: %w", err)
+	}
+
+	// This will panic when identity was not present in the context (no error handling possible)
+	id := identity.Identity(ctx)
+	// Keep headers written in lowercase to match sources comparison.
+	headers := GenericHeaders(
+		"content-type", "application/json",
+		"x-rh-identity", identity.IdentityHeader(ctx),
+		"x-rh-sources-org-id", id.Identity.OrgID,
+		"x-rh-sources-account-number", id.Identity.AccountNumber,
+		"event_type", "availability_status",
+	)
+
+	if config.Telemetry.Enabled {
+		var traceHeaders propagation.MapCarrier = make(map[string]string)
+		otel.GetTextMapPropagator().Inject(ctx, traceHeaders)
+		for name, value := range traceHeaders {
+			headers = append(headers, GenericHeader{Key: name, Value: value})
+		}
+	}
+
+	return GenericMessage{
+		Topic:   topic,
+		Key:     []byte(key),
+		Value:   payload,
+		Headers: headers,
+	}, nil
+}
+
+func headersMap(headers []GenericHeader) map[string]string {
+	hMap := make(map[string]string, len(headers))
+	for _, genericHeader := range headers {
+		hMap[genericHeader.Key] = genericHeader.Value
+	}
+	return hMap
 }
