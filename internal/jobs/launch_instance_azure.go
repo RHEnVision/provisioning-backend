@@ -64,14 +64,16 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 		return
 	}
 
+	// context and logger
+	ctx, logger = reservationContextLogger(ctx, args.ReservationID)
+	logger.Info().Msg("Started launch instance Azure job")
+
 	if args.ResourceGroupName == "" {
 		logger.Debug().Msg("Resource group has not been set, defaulting to 'redhat-deployed'")
 		args.ResourceGroupName = DefaultAzureResourceGroupName
 	}
 
 	// ensure panic finishes the job
-	logger = ptr.To(logger.With().Int64("reservation_id", args.ReservationID).Logger())
-	ctx = logger.WithContext(ctx)
 	defer func() {
 		if r := recover(); r != nil {
 			panicErr := fmt.Errorf("%w: %s", ErrPanicInJob, r)
@@ -79,7 +81,6 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 		}
 	}()
 
-	logger.Info().Msg("Started launch instance Azure job")
 	ctx, span := otel.Tracer(TraceName).Start(ctx, "LaunchInstanceAzureJob")
 	defer span.End()
 

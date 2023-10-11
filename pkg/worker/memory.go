@@ -64,7 +64,7 @@ func (w *MemoryWorker) processJob(ctx context.Context, job *Job) {
 	}
 
 	if h, ok := w.handlers[job.Type]; ok {
-		ctx = contextLogger(ctx, job)
+		ctx, _ = contextLogger(ctx, job)
 		cCtx, cFunc := context.WithTimeout(ctx, config.Worker.Timeout)
 		defer cFunc()
 		h(cCtx, job)

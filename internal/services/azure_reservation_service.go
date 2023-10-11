@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -142,6 +144,8 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	launchJob := worker.Job{
 		Type:      jobs.TypeLaunchInstanceAzure,
 		Identity:  identity.Identity(r.Context()),
+		TraceID:   logging.TraceId(r.Context()),
+		EdgeID:    logging.EdgeRequestId(r.Context()),
 		AccountID: identity.AccountId(r.Context()),
 		Args: jobs.LaunchInstanceAzureTaskArgs{
 			ReservationID:     reservation.ID,

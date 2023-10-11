@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
+
 	"github.com/RHEnVision/provisioning-backend/internal/preload"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
@@ -140,6 +142,8 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	launchJob := worker.Job{
 		Type:      jobs.TypeLaunchInstanceGcp,
 		AccountID: accountId,
+		TraceID:   logging.TraceId(r.Context()),
+		EdgeID:    logging.EdgeRequestId(r.Context()),
 		Identity:  id,
 		Args: jobs.LaunchInstanceGCPTaskArgs{
 			ReservationID:    reservation.ID,

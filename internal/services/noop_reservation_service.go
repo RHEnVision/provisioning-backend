@@ -3,6 +3,8 @@ package services
 import (
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
+
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
@@ -44,6 +46,8 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 		Type:      jobs.TypeNoop,
 		AccountID: accountId,
 		Identity:  identity,
+		TraceID:   logging.TraceId(r.Context()),
+		EdgeID:    logging.EdgeRequestId(r.Context()),
 		Args: jobs.NoopJobArgs{
 			ReservationID: reservation.ID,
 		},

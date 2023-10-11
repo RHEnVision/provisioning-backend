@@ -13,7 +13,11 @@ type Principal = identity.XRHID
 
 // Identity returns identity header struct or nil when not set.
 func Identity(ctx context.Context) Principal {
-	return identity.Get(ctx)
+	val := ctx.Value(identity.Key)
+	if val == nil {
+		return Principal{}
+	}
+	return val.(Principal)
 }
 
 // IdentityHeader returns identity header (base64-encoded JSON)

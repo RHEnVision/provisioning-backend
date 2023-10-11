@@ -65,7 +65,7 @@ func Initialize(ctx context.Context, schema string) error {
 	poolConfig.MaxConnIdleTime = config.Database.MaxIdleTime
 
 	if config.Telemetry.Enabled {
-		poolConfig.ConnConfig.Tracer = otelpgx.NewTracer()
+		poolConfig.ConnConfig.Tracer = otelpgx.NewTracer(otelpgx.WithIncludeQueryParameters())
 	} else {
 		logLevel, configErr := tracelog.LogLevelFromString(config.Database.LogLevel)
 		if configErr != nil {
@@ -74,16 +74,31 @@ func Initialize(ctx context.Context, schema string) error {
 
 		if logLevel > 0 {
 			zeroLogger := pgxlog.NewLogger(log.Logger,
-				pgxlog.WithContextFunc(func(ctx context.Context, logWith zerolog.Context) zerolog.Context {
+				pgxlog.WithContextFunc(func(ctx context.Context, zx zerolog.Context) zerolog.Context {
+					jobId := logging.JobId(ctx)
+					if jobId != "" {
+						zx = zx.Str("job_id", jobId)
+					}
+					reservationId := logging.ReservationId(ctx)
+					if reservationId != 0 {
+						zx = zx.Int64("reservation_id", reservationId)
+					}
 					traceId := logging.TraceId(ctx)
 					if traceId != "" {
-						logWith = logWith.Str("trace_id", traceId)
+						zx = zx.Str("trace_id", traceId)
+					}
+					requestId := logging.EdgeRequestId(ctx)
+					if requestId != "" {
+						zx = zx.Str("request_id", requestId)
 					}
 					accountId := identity.AccountIdOrNil(ctx)
 					if accountId != 0 {
-						logWith = logWith.Int64("account_id", accountId)
+						zx = zx.Int64("account_id", accountId)
 					}
-					return logWith
+					principal := identity.Identity(ctx)
+					zx = zx.Str("org_id", principal.Identity.OrgID)
+					zx = zx.Str("account_number", principal.Identity.AccountNumber)
+					return zx
 				}))
 			poolConfig.ConnConfig.Tracer = &tracelog.TraceLog{
 				Logger:   zeroLogger,

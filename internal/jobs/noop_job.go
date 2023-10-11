@@ -33,8 +33,9 @@ func HandleNoop(ctx context.Context, job *worker.Job) {
 		return
 	}
 
-	logger := zerolog.Ctx(ctx).With().Int64("reservation_id", args.ReservationID).Logger()
-	ctx = logger.WithContext(ctx)
+	// context and logger
+	ctx, _ = reservationContextLogger(ctx, args.ReservationID)
+
 	nc := notifications.GetNotificationClient(ctx)
 
 	jobErr := DoNoop(ctx, &args)

@@ -14,6 +14,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
@@ -69,20 +70,6 @@ func (w *RedisWorker) RegisterHandler(jtype JobType, handler JobHandler, args an
 	gob.Register(args)
 }
 
-func loggerWithJob(ctx context.Context, job *Job) *zerolog.Logger {
-	if job == nil {
-		logger := zerolog.Ctx(ctx)
-		logger.Warn().Msgf("Invalid job, logging without the job ID")
-		return logger
-	}
-
-	logger := zerolog.Ctx(ctx).With().
-		Str("job_id", job.ID.String()).
-		Str("job_type", string(job.Type)).
-		Interface("job_args", job.Args).Logger()
-	return &logger
-}
-
 func (w *RedisWorker) Enqueue(ctx context.Context, job *Job) error {
 	var err error
 	if job == nil {
@@ -96,7 +83,11 @@ func (w *RedisWorker) Enqueue(ctx context.Context, job *Job) error {
 		}
 	}
 
-	logger := loggerWithJob(ctx, job)
+	logger := ptr.To(zerolog.Ctx(ctx).With().
+		Str("job_id", job.ID.String()).
+		Str("job_type", job.Type.String()).
+		Interface("job_args", job.Args).
+		Logger())
 	logger.Info().Msgf("Enqueuing job type %s via Redis", job.Type)
 
 	var buffer bytes.Buffer
@@ -189,7 +180,11 @@ func (w *RedisWorker) fetchJob(ctx context.Context) {
 	var job Job
 	dec := gob.NewDecoder(strings.NewReader(res[1]))
 	err = dec.Decode(&job)
-	logger := loggerWithJob(ctx, &job)
+	logger := ptr.To(zerolog.Ctx(ctx).With().
+		Str("job_id", job.ID.String()).
+		Str("job_type", job.Type.String()).
+		Interface("job_args", job.Args).
+		Logger())
 	if err != nil {
 		logger.Error().Err(err).Msg("Unable to unmarshal job payload, skipping")
 	}
@@ -198,17 +193,16 @@ func (w *RedisWorker) fetchJob(ctx context.Context) {
 	w.processJob(ctx, &job)
 }
 
-func (w *RedisWorker) processJob(ctx context.Context, job *Job) {
-	defer recoverAndLog(ctx)
+func (w *RedisWorker) processJob(origCtx context.Context, job *Job) {
 	if job == nil {
 		return
 	}
-
 	defer atomic.AddInt64(&w.inFlight, -1)
-	logger := loggerWithJob(ctx, job)
 
-	logger.Info().Msg("Dequeued job from Redis")
-	ctx = contextLogger(ctx, job)
+	ctx, logger := contextLogger(origCtx, job)
+	defer recoverAndLog(ctx)
+	logger.Info().Msgf("Dequeued job %s %s from Redis", job.Type.String(), job.ID)
+
 	if h, ok := w.handlers[job.Type]; ok {
 		cCtx, cFunc := context.WithTimeout(ctx, config.Worker.Timeout)
 		defer func() {
