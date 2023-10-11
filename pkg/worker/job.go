@@ -4,11 +4,15 @@ import (
 	"context"
 	"errors"
 
+	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
-	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func init() {
@@ -34,7 +38,7 @@ type Job struct {
 	Identity identity.Principal
 
 	// For logging purposes
-	TraceID string
+	TraceContext propagation.MapCarrier
 
 	// For logging purposes
 	EdgeID string
@@ -79,30 +83,37 @@ type Stats struct {
 	InFlight int64
 }
 
-func contextLogger(origCtx context.Context, job *Job) (context.Context, *zerolog.Logger) {
+func initJobContext(origCtx context.Context, job *Job) (context.Context, *zerolog.Logger, trace.Span) {
+	// init with invalid span from empty context
+	span := trace.SpanFromContext(context.Background())
+
 	if job == nil {
 		zerolog.Ctx(origCtx).Warn().Err(ErrJobNotFound).Msg("No job, context not changed")
-		return origCtx, nil
+		return origCtx, nil, span
 	}
 
 	ctx := logging.WithJobId(origCtx, job.ID.String())
 	ctx = identity.WithIdentity(ctx, job.Identity)
-	ctx = logging.WithTraceId(ctx, job.TraceID)
 	ctx = logging.WithEdgeRequestId(ctx, job.EdgeID)
 	ctx = identity.WithAccountId(ctx, job.AccountID)
 	ctx = logging.WithJobId(ctx, job.ID.String())
 	ctx = logging.WithJobType(ctx, job.Type.String())
 
-	logger := zerolog.Ctx(ctx)
-	logger = ptr.To(logger.With().
+	logCtx := zerolog.Ctx(ctx).With().
 		Int64("account_id", job.AccountID).
 		Str("org_id", job.Identity.Identity.OrgID).
 		Str("account_number", job.Identity.Identity.AccountNumber).
-		Str("trace_id", job.TraceID).
 		Str("request_id", job.EdgeID).
 		Str("job_id", job.ID.String()).
 		Str("job_type", job.Type.String()).
-		Interface("job_args", job.Args).
-		Logger())
-	return logger.WithContext(ctx), logger
+		Interface("job_args", job.Args)
+
+	if config.Telemetry.Enabled {
+		ctx = otel.GetTextMapPropagator().Extract(ctx, job.TraceContext)
+		ctx, span = otel.Tracer(telemetry.TracePrefix+"worker").Start(ctx, job.Type.String())
+		logCtx = logCtx.Str("trace_id", span.SpanContext().TraceID().String())
+	}
+	logger := logCtx.Logger()
+
+	return logger.WithContext(ctx), &logger, span
 }

@@ -18,6 +18,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
 )
 
 type RedisWorker struct {
@@ -92,6 +94,12 @@ func (w *RedisWorker) Enqueue(ctx context.Context, job *Job) error {
 
 	var buffer bytes.Buffer
 	enc := gob.NewEncoder(&buffer)
+
+	if config.Telemetry.Enabled {
+		job.TraceContext = make(map[string]string)
+		otel.GetTextMapPropagator().Inject(ctx, job.TraceContext)
+	}
+
 	err = enc.Encode(&job)
 	if err != nil {
 		return fmt.Errorf("unable to encode args: %w", err)
@@ -199,7 +207,8 @@ func (w *RedisWorker) processJob(origCtx context.Context, job *Job) {
 	}
 	defer atomic.AddInt64(&w.inFlight, -1)
 
-	ctx, logger := contextLogger(origCtx, job)
+	ctx, logger, span := initJobContext(origCtx, job)
+	defer span.End()
 	defer recoverAndLog(ctx)
 	logger.Info().Msgf("Dequeued job %s %s from Redis", job.Type.String(), job.ID)
 
@@ -216,6 +225,7 @@ func (w *RedisWorker) processJob(origCtx context.Context, job *Job) {
 		})
 	} else {
 		// handler not found
+		span.SetStatus(codes.Error, "worker has not found handler for a job type")
 		zerolog.Ctx(ctx).Warn().Msgf("Redis worker handler not found for job type: %s", job.Type)
 	}
 }

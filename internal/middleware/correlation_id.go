@@ -11,6 +11,12 @@ func CorrelationID(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
+		// Edge request id
+		edgeId := r.Header.Get("X-Rh-Edge-Request-Id")
+		if edgeId != "" {
+			ctx = logging.WithEdgeRequestId(ctx, edgeId)
+		}
+
 		corrId := r.Header.Get("X-Correlation-Id")
 		if corrId != "" {
 			ctx = logging.WithCorrelationId(ctx, corrId)

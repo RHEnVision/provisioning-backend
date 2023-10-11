@@ -46,7 +46,6 @@ func CreateNoopReservation(w http.ResponseWriter, r *http.Request) {
 		Type:      jobs.TypeNoop,
 		AccountID: accountId,
 		Identity:  identity,
-		TraceID:   logging.TraceId(r.Context()),
 		EdgeID:    logging.EdgeRequestId(r.Context()),
 		Args: jobs.NoopJobArgs{
 			ReservationID: reservation.ID,

@@ -13,8 +13,8 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
-	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/random"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
 	"github.com/rs/zerolog"
 	"github.com/segmentio/kafka-go"
@@ -22,6 +22,8 @@ import (
 	"github.com/segmentio/kafka-go/sasl"
 	"github.com/segmentio/kafka-go/sasl/plain"
 	"github.com/segmentio/kafka-go/sasl/scram"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -200,12 +202,13 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time
 		}
 	}()
 
-	err := r.SetOffsetAt(ctx, since)
-	if err != nil {
-		logger.Warn().Err(err).Msg("Unable to set initial offset")
+	offsetErr := r.SetOffsetAt(ctx, since)
+	if offsetErr != nil {
+		logger.Warn().Err(offsetErr).Msg("Unable to set initial offset")
 	}
 
 	for {
+		var span trace.Span
 		msg, err := r.ReadMessage(ctx)
 		if err != nil && errors.Is(err, io.EOF) {
 			logger.Warn().Err(err).Msg("Kafka receiver has been closed")
@@ -220,29 +223,35 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time
 				msg.Key, msg.Topic, msg.Offset, msg.Partition)
 
 			// build new context - identity and trace id
-			newLogger := logger.With().Str("msg_id", random.TraceID().String())
-			newCtx, err := identity.WithIdentityFrom64(ctx, header("X-RH-Identity", msg.Headers))
-			if err != nil {
-				errLogger := newLogger.Logger()
-				errLogger.Warn().Err(err).Msgf("Could not extract identity from context to Kafka message")
-				newCtx = errLogger.WithContext(ctx)
+			logCtx := logger.With().Str("msg_id", random.TraceID().String())
+			newCtx, msgErr := identity.WithIdentityFrom64(ctx, header("X-RH-Identity", msg.Headers))
+			if msgErr != nil {
+				errLogger := logCtx.Logger()
+				errLogger.Warn().Err(msgErr).Msgf("Could not extract identity from context to Kafka message")
 			} else {
 				id := identity.Identity(newCtx)
-
-				traceId := trace.SpanFromContext(ctx).SpanContext().TraceID()
-				if !traceId.IsValid() {
-					traceId = random.TraceID()
-				}
-				newCtx = logging.WithTraceId(newCtx, traceId.String())
-
-				newLogger = newLogger.
-					Str("trace_id", traceId.String()).
+				logCtx = logCtx.
 					Str("account_number", id.Identity.AccountNumber).
 					Str("org_id", id.Identity.OrgID)
-				newCtx = newLogger.Logger().WithContext(newCtx)
 			}
 
-			handler(newCtx, NewMessageFromKafka(&msg))
+			gMsg := NewMessageFromKafka(&msg)
+
+			if config.Telemetry.Enabled {
+				newCtx = otel.GetTextMapPropagator().Extract(newCtx, propagation.MapCarrier(headersMap(gMsg.Headers)))
+				newCtx, span = otel.Tracer(telemetry.TracePrefix+"kafka").Start(newCtx, fmt.Sprintf("Processing message on topic %s", topic))
+
+				logCtx.Str("trace_id", span.SpanContext().TraceID().String())
+			} else {
+				// noopSpan from empty context
+				span = trace.SpanFromContext(context.Background())
+			}
+
+			newCtx = logCtx.Logger().WithContext(newCtx)
+
+			handler(newCtx, gMsg)
+
+			span.End()
 		}
 	}
 }

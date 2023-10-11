@@ -100,7 +100,9 @@ func api() {
 	apiRouter.Use(telemetry.Middleware(apiRouter))
 	apiRouter.Use(m.VersionMiddleware)
 	apiRouter.Use(m.CorrelationID)
-	apiRouter.Use(m.TraceID)
+	if config.Telemetry.Enabled {
+		apiRouter.Use(m.Telemetry)
+	}
 	apiRouter.Use(m.LoggerMiddleware(&log.Logger))
 
 	// Mount paths

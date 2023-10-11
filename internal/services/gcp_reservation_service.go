@@ -142,7 +142,6 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	launchJob := worker.Job{
 		Type:      jobs.TypeLaunchInstanceGcp,
 		AccountID: accountId,
-		TraceID:   logging.TraceId(r.Context()),
 		EdgeID:    logging.EdgeRequestId(r.Context()),
 		Identity:  id,
 		Args: jobs.LaunchInstanceGCPTaskArgs{
