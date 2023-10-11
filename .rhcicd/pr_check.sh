@@ -33,26 +33,8 @@ source $CICD_ROOT/deploy_ephemeral_env.sh
 # ADD the image stubs
 oc project $NAMESPACE
 
-orgID="0369233"
-accountID="3340851"
-
-dbPod=$(oc get pods -o custom-columns=POD:.metadata.name --no-headers | grep 'image-builder-db')
-
-# AWS stub
-imageID="7819a373-052d-4252-92d0-26d8b9a29d45" # created on 2023-10-09
-imageName="hms-pipeline-aws-20231009"
-
-composeRequestAWSJson='{"image_name": "'$imageName'", "distribution": "rhel-92", "customizations": {}, "image_requests": [{"image_type": "aws", "architecture": "x86_64", "upload_request": {"type": "aws", "options": {"share_with_accounts": ["093942615996"]}}}]}'
-oc exec $dbPod -- psql -d image-builder -c "INSERT INTO public.composes (job_id, request, created_at, account_number, org_id, image_name, deleted) VALUES
-('$imageID', '$composeRequestAWSJson', '$(date +"%Y-%m-%d %T")', '$orgID', '$accountID', '$imageName', false);"
-
-# GCP stub
-imageID="e740c9b3-7085-4c1c-a4f0-3e79afd439d6" # created on 2023-10-09
-imageName="hms-pipeline-gcp-20231009"
-
-composeRequestGCPJson='{"image_name": "'$imageName'", "distribution": "rhel-92", "customizations": {}, "image_requests": [{"image_type": "gcp", "architecture": "x86_64", "upload_request": {"type": "gcp", "options": {"share_with_accounts": ["user:oezr@redhat.com"]}}}]}'
-oc exec $dbPod -- psql -d image-builder -c "INSERT INTO public.composes (job_id, request, created_at, account_number, org_id, image_name, deleted) VALUES
-('$imageID', '$composeRequestGCPJson', '$(date +"%Y-%m-%d %T")', '$orgID', '$accountID', '$imageName', false);"
+export AWS_ACCOUNT_ID="093942615996"
+source <(curl -ksSL https://gitlab.cee.redhat.com/satellite-services/hms-cicd/-/raw/main/images_db_stub.sh)
 
 # Run smoke tests using a ClowdJobInvocation and iqe-tests
 source $CICD_ROOT/cji_smoke_test.sh
