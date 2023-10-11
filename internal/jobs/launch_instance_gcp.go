@@ -11,7 +11,6 @@ import (
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/gcp"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/rs/zerolog"
@@ -56,9 +55,11 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 		return
 	}
 
+	// context and logger
+	ctx, logger = reservationContextLogger(ctx, args.ReservationID)
+	logger.Info().Msg("Started launch instance GCP job")
+
 	// ensure panic finishes the job
-	logger = ptr.To(logger.With().Int64("reservation_id", args.ReservationID).Logger())
-	ctx = logger.WithContext(ctx)
 	defer func() {
 		if r := recover(); r != nil {
 			panicErr := fmt.Errorf("%w: %s", ErrPanicInJob, r)

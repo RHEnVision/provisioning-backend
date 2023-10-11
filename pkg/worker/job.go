@@ -5,6 +5,8 @@ import (
 	"errors"
 
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 )
@@ -30,6 +32,12 @@ type Job struct {
 
 	// Associated identity
 	Identity identity.Principal
+
+	// For logging purposes
+	TraceID string
+
+	// For logging purposes
+	EdgeID string
 
 	// Job arguments.
 	Args any
@@ -71,22 +79,28 @@ type Stats struct {
 	InFlight int64
 }
 
-func contextLogger(ctx context.Context, job *Job) context.Context {
+func contextLogger(origCtx context.Context, job *Job) (context.Context, *zerolog.Logger) {
 	if job == nil {
-		zerolog.Ctx(ctx).Error().Err(ErrJobNotFound).Msg("No job, context not changed")
-		return ctx
+		zerolog.Ctx(origCtx).Warn().Err(ErrJobNotFound).Msg("No job, context not changed")
+		return origCtx, nil
 	}
 
-	accountId := job.AccountID
-	id := job.Identity
-	logger := zerolog.Ctx(ctx).With().
-		Str("job_id", job.ID.String()).
-		Int64("account_id", accountId).
-		Str("account_number", id.Identity.AccountNumber).
-		Str("org_id", id.Identity.OrgID).Logger()
-	newContext := logger.WithContext(ctx)
-	newContext = identity.WithIdentity(newContext, id)
-	newContext = identity.WithAccountId(newContext, accountId)
+	ctx := logging.WithJobId(origCtx, job.ID.String())
+	ctx = identity.WithIdentity(ctx, job.Identity)
+	ctx = logging.WithTraceId(ctx, job.TraceID)
+	ctx = logging.WithEdgeRequestId(ctx, job.EdgeID)
+	ctx = identity.WithAccountId(ctx, job.AccountID)
 
-	return newContext
+	logger := zerolog.Ctx(ctx)
+	logger = ptr.To(logger.With().
+		Int64("account_id", job.AccountID).
+		Str("org_id", job.Identity.Identity.OrgID).
+		Str("account_number", job.Identity.Identity.AccountNumber).
+		Str("trace_id", job.TraceID).
+		Str("request_id", job.EdgeID).
+		Str("job_id", job.ID.String()).
+		Str("job_type", job.Type.String()).
+		Interface("job_args", job.Args).
+		Logger())
+	return logger.WithContext(ctx), logger
 }
