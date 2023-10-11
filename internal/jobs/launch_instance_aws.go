@@ -181,6 +181,7 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 
 	// update the AWS key name in reservation details
 	awsReservation.Detail.PubkeyName = ec2Name
+	logger.Debug().Msgf("Updating AWS reservation detail %d", awsReservation.Reservation.ID)
 	err = resDao.UnscopedUpdateAWSDetail(ctx, awsReservation.Reservation.ID, awsReservation.Detail)
 	if err != nil {
 		span.SetStatus(codes.Error, "failed to save AWS pubkey name to DB")

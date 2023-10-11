@@ -53,7 +53,7 @@ func (x *reservationDao) CreateAWS(ctx context.Context, reservation *models.AWSR
 			return fmt.Errorf("pgx error: %w", err)
 		}
 		if tag.RowsAffected() != 1 {
-			return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+			return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 		}
 
 		return nil
@@ -84,7 +84,7 @@ func (x *reservationDao) CreateAzure(ctx context.Context, reservation *models.Az
 			return fmt.Errorf("pgx error: %w", err)
 		}
 		if tag.RowsAffected() != 1 {
-			return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+			return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 		}
 
 		return nil
@@ -115,7 +115,7 @@ func (x *reservationDao) CreateGCP(ctx context.Context, reservation *models.GCPR
 			return fmt.Errorf("pgx error: %w", err)
 		}
 		if tag.RowsAffected() != 1 {
-			return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+			return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 		}
 
 		return nil
@@ -160,7 +160,7 @@ func (x *reservationDao) CreateInstance(ctx context.Context, instance *models.Re
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 
 	return nil
@@ -179,7 +179,7 @@ func (x *reservationDao) UpdateReservationInstance(ctx context.Context, reservat
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 
 	return nil
@@ -300,7 +300,7 @@ func (x *reservationDao) UpdateStatus(ctx context.Context, id int64, status stri
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }
@@ -313,7 +313,7 @@ func (x *reservationDao) UnscopedUpdateAWSDetail(ctx context.Context, id int64, 
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }
@@ -326,7 +326,7 @@ func (x *reservationDao) UpdateReservationIDForAWS(ctx context.Context, id int64
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }
@@ -339,7 +339,7 @@ func (x *reservationDao) UpdateOperationNameForGCP(ctx context.Context, id int64
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }
@@ -352,7 +352,7 @@ func (x *reservationDao) FinishWithSuccess(ctx context.Context, id int64) error 
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }
@@ -365,7 +365,7 @@ func (x *reservationDao) FinishWithError(ctx context.Context, id int64, errorStr
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }
@@ -378,7 +378,7 @@ func (x *reservationDao) Delete(ctx context.Context, id int64) error {
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }

@@ -88,7 +88,7 @@ func (x *pubkeyDao) Update(ctx context.Context, pubkey *models.Pubkey) error {
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }
@@ -132,7 +132,7 @@ func (x *pubkeyDao) Delete(ctx context.Context, id int64) error {
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }
@@ -191,7 +191,7 @@ func (x *pubkeyDao) UnscopedDeleteResource(ctx context.Context, id int64) error 
 		return fmt.Errorf("pgx error: %w", err)
 	}
 	if tag.RowsAffected() != 1 {
-		return fmt.Errorf("expected 1 row: %w", dao.ErrAffectedMismatch)
+		return fmt.Errorf("expected 1 row, got %d: %w", tag.RowsAffected(), dao.ErrAffectedMismatch)
 	}
 	return nil
 }
