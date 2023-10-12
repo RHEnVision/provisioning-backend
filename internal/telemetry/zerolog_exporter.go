@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
@@ -44,6 +45,9 @@ func (e *loggerExporter) ExportSpans(ctx context.Context, spans []trace.ReadOnly
 
 		for _, kv := range span.Attributes() {
 			key := string(kv.Key)
+			if kv.Value.Type() == attribute.STRINGSLICE {
+				t = t.Strs(key, kv.Value.AsStringSlice())
+			}
 			val := kv.Value.AsString()
 
 			if val == "" {
