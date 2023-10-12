@@ -27,7 +27,8 @@ func LoggerMiddleware(rootLogger *zerolog.Logger) func(next http.Handler) http.H
 				Str("remote_ip", r.RemoteAddr).
 				Str("url", r.URL.Path).
 				Str("method", r.Method).
-				Int("bytes_in", bytesIn)
+				Int("bytes_in", bytesIn).
+				Str("proto", r.Proto)
 			if edgeId != "" {
 				lctx = lctx.Str("request_id", edgeId)
 			}
