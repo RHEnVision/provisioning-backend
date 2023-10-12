@@ -285,6 +285,9 @@ objects:
               successThreshold: 1
               timeoutSeconds: 120
             env:
+              # CVE-2023-44487
+              - name: GODEBUG
+                value: http2server=0
               - name: LOGGING_LEVEL
                 value: ${LOGGING_LEVEL}
               - name: REST_ENDPOINTS_TRACE_DATA
