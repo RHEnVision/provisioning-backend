@@ -3,6 +3,8 @@ package telemetry
 import (
 	"context"
 
+	"github.com/RHEnVision/provisioning-backend/internal/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -26,10 +28,36 @@ func (e *loggerExporter) ExportSpans(ctx context.Context, spans []trace.ReadOnly
 		parentId := span.Parent().SpanID()
 		statusCode := span.Status().Code
 		statusMsg := span.Status().Description
+
 		t := e.logger.Trace().
 			Str("trace_id", traceId).
 			Str("span_id", spanId).
 			Dur("duration", duration)
+
+		accountId := identity.AccountIdOrZero(ctx)
+		if accountId != 0 {
+			t = t.Int64("account_id", accountId)
+		}
+
+		if requestId := logging.EdgeRequestId(ctx); requestId != "" {
+			t = t.Str("request_id", requestId)
+		}
+
+		if orgId := identity.Identity(ctx).Identity.OrgID; orgId != "" {
+			t = t.Str("org_id", orgId)
+		}
+
+		if accNum := identity.Identity(ctx).Identity.AccountNumber; accNum != "" {
+			t = t.Str("account_number", accNum)
+		}
+
+		if jobId := logging.JobId(ctx); jobId != "" {
+			t = t.Str("job_id", jobId)
+		}
+
+		if jobType := logging.JobType(ctx); jobType != "" {
+			t = t.Str("job_type", jobType)
+		}
 
 		if parentId.IsValid() {
 			t = t.Str("span_id_parent", parentId.String())

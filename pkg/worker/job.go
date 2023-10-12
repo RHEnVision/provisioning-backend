@@ -90,6 +90,8 @@ func contextLogger(origCtx context.Context, job *Job) (context.Context, *zerolog
 	ctx = logging.WithTraceId(ctx, job.TraceID)
 	ctx = logging.WithEdgeRequestId(ctx, job.EdgeID)
 	ctx = identity.WithAccountId(ctx, job.AccountID)
+	ctx = logging.WithJobId(ctx, job.ID.String())
+	ctx = logging.WithJobType(ctx, job.Type.String())
 
 	logger := zerolog.Ctx(ctx)
 	logger = ptr.To(logger.With().

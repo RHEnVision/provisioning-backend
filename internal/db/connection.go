@@ -79,6 +79,10 @@ func Initialize(ctx context.Context, schema string) error {
 					if jobId != "" {
 						zx = zx.Str("job_id", jobId)
 					}
+					jobType := logging.JobType(ctx)
+					if jobType != "" {
+						zx = zx.Str("job_type", jobType)
+					}
 					reservationId := logging.ReservationId(ctx)
 					if reservationId != 0 {
 						zx = zx.Int64("reservation_id", reservationId)
@@ -91,7 +95,7 @@ func Initialize(ctx context.Context, schema string) error {
 					if requestId != "" {
 						zx = zx.Str("request_id", requestId)
 					}
-					accountId := identity.AccountIdOrNil(ctx)
+					accountId := identity.AccountIdOrZero(ctx)
 					if accountId != 0 {
 						zx = zx.Int64("account_id", accountId)
 					}
