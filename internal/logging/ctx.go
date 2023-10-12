@@ -12,6 +12,7 @@ const (
 	correlationCtxKey   commonKeyId = iota
 	jobIdCtxKey         commonKeyId = iota
 	reservationIdCtxKey commonKeyId = iota
+	jobTypeCtxKey       commonKeyId = iota
 )
 
 // CorrelationId returns UI correlation id or an empty string when not set.
@@ -82,4 +83,18 @@ func ReservationId(ctx context.Context) int64 {
 // WithReservationId returns context copy with trace id value.
 func WithReservationId(ctx context.Context, id int64) context.Context {
 	return context.WithValue(ctx, reservationIdCtxKey, id)
+}
+
+// JobType returns relevant context data or empty string when not set.
+func JobType(ctx context.Context) string {
+	value := ctx.Value(jobTypeCtxKey)
+	if value == nil {
+		return ""
+	}
+	return value.(string)
+}
+
+// WithJobType returns context copy with relevant value.
+func WithJobType(ctx context.Context, id string) context.Context {
+	return context.WithValue(ctx, jobTypeCtxKey, id)
 }

@@ -22,8 +22,8 @@ func AccountId(ctx context.Context) int64 {
 	return value.(int64)
 }
 
-// AccountIdOrNil returns current account model or 0 when not set.
-func AccountIdOrNil(ctx context.Context) int64 {
+// AccountIdOrZero returns current account model or 0 when not set.
+func AccountIdOrZero(ctx context.Context) int64 {
 	value := ctx.Value(accountIdCtxKey)
 	if value == nil {
 		return 0
