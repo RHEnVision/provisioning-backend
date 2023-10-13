@@ -461,8 +461,7 @@ objects:
             from reservations r
             join aws_reservation_details d on r.id = d.reservation_id
             join accounts a on r.account_id = a.id
-            where provider = provider_type_aws()
-            order by r.created_at)
+            where provider = provider_type_aws())
 
             union all
 
@@ -483,8 +482,27 @@ objects:
             from reservations r
             join azure_reservation_details d on r.id = d.reservation_id
             join accounts a on r.account_id = a.id
-            where provider = provider_type_azure()
-            order by r.created_at);
+            where provider = provider_type_azure())
+            
+            union all
+            
+            (select 'gcp'                     as provider,
+            r.id,
+            r.created_at,
+            r.finished_at,
+            r.success,
+            r.status || ' (' || r.step || '/' || r.steps || ')' as status,
+            a.account_number,
+            a.org_id,
+            d.source_id,
+            d.image_id,
+            d.detail -> 'machine_type' as type,
+            d.detail -> 'amount'        as amount,
+            d.detail -> 'launch_template_id' is not null as template
+            from reservations r
+            join gcp_reservation_details d on r.id = d.reservation_id
+            join accounts a on r.account_id = a.id
+            where provider = provider_type_gcp());
 
 
 # possible application ENV variables are in config/api.env.example
