@@ -239,7 +239,7 @@ func (b *kafkaBroker) Consume(ctx context.Context, topic string, since time.Time
 
 			if config.Telemetry.Enabled {
 				newCtx = otel.GetTextMapPropagator().Extract(newCtx, propagation.MapCarrier(headersMap(gMsg.Headers)))
-				newCtx, span = otel.Tracer(telemetry.TracePrefix+"kafka").Start(newCtx, fmt.Sprintf("Processing message on topic %s", topic))
+				newCtx, span = telemetry.StartSpan(newCtx, fmt.Sprintf("Processing message on topic %s", topic))
 
 				logCtx.Str("trace_id", span.SpanContext().TraceID().String())
 			} else {

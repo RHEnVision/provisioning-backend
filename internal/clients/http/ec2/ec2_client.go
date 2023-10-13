@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
@@ -14,7 +15,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
-	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsCfg "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -24,11 +24,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	stsTypes "github.com/aws/aws-sdk-go-v2/service/sts/types"
 	"github.com/rs/zerolog"
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
-
-const TraceName = telemetry.TracePrefix + "internal/clients/http/ec2"
 
 type ec2Client struct {
 	ec2     *ec2.Client
@@ -152,7 +149,7 @@ func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*
 // ImportPubkey imports a key and returns AWS KeyPair name.
 // The AWS name will be set to value of models.Pubkey Name.
 func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag string) (string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ImportPubkey")
+	ctx, span := telemetry.StartSpan(ctx, "ImportPubkey")
 	defer span.End()
 
 	if !c.assumed {
@@ -190,7 +187,7 @@ func (c *ec2Client) ImportPubkey(ctx context.Context, key *models.Pubkey, tag st
 }
 
 func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "fetchPubkeyName")
+	ctx, span := telemetry.StartSpan(ctx, "fetchPubkeyName")
 	defer span.End()
 
 	if !c.assumed {
@@ -217,7 +214,7 @@ func (c *ec2Client) GetPubkeyName(ctx context.Context, fingerprint string) (stri
 }
 
 func (c *ec2Client) DeleteSSHKey(ctx context.Context, handle string) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "DeleteSSHKey")
+	ctx, span := telemetry.StartSpan(ctx, "DeleteSSHKey")
 	defer span.End()
 
 	if !c.assumed {
@@ -289,7 +286,7 @@ func (c *ec2Client) ListAllZones(ctx context.Context, region clients.Region) ([]
 }
 
 func (c *ec2Client) ListInstanceTypes(ctx context.Context) ([]*clients.InstanceType, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListInstanceTypes")
+	ctx, span := telemetry.StartSpan(ctx, "ListInstanceTypes")
 	defer span.End()
 
 	input := &ec2.DescribeInstanceTypesInput{MaxResults: ptr.ToInt32(100)}
@@ -319,7 +316,7 @@ func (c *ec2Client) ListInstanceTypes(ctx context.Context) ([]*clients.InstanceT
 }
 
 func (c *ec2Client) DescribeInstanceDetails(ctx context.Context, InstanceIds []string) ([]*clients.InstanceDescription, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "DescribeInstanceDetails")
+	ctx, span := telemetry.StartSpan(ctx, "DescribeInstanceDetails")
 	defer span.End()
 
 	input := &ec2.DescribeInstancesInput{
@@ -342,7 +339,7 @@ func (c *ec2Client) DescribeInstanceDetails(ctx context.Context, InstanceIds []s
 }
 
 func (c *ec2Client) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListLaunchTemplates")
+	ctx, span := telemetry.StartSpan(ctx, "ListLaunchTemplates")
 	defer span.End()
 
 	limit := page.Limit(ctx).Int32()
@@ -375,7 +372,7 @@ func (c *ec2Client) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchT
 }
 
 func (c *ec2Client) RunInstances(ctx context.Context, params *clients.AWSInstanceParams, amount int32, name string, reservation *models.AWSReservation) ([]*string, *string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "RunInstances")
+	ctx, span := telemetry.StartSpan(ctx, "RunInstances")
 	defer span.End()
 
 	if !c.assumed {
@@ -472,7 +469,7 @@ func (c *ec2Client) parseDescribeInstances(respAWS *ec2.DescribeInstancesOutput)
 }
 
 func (c *ec2Client) GetAccountId(ctx context.Context) (string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetAccountId")
+	ctx, span := telemetry.StartSpan(ctx, "GetAccountId")
 	defer span.End()
 
 	input := &sts.GetCallerIdentityInput{}

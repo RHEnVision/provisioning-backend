@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"go.opentelemetry.io/otel"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"go.opentelemetry.io/otel/codes"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -84,7 +84,7 @@ func HandleLaunchInstanceGCP(ctx context.Context, job *worker.Job) {
 
 // DoLaunchInstanceGCP is a job logic, when error is returned the job status is updated accordingly
 func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "DoLaunchInstanceGCP")
+	ctx, span := telemetry.StartSpan(ctx, "DoLaunchInstanceGCP")
 	defer span.End()
 
 	logger := zerolog.Ctx(ctx)
@@ -163,7 +163,7 @@ func DoLaunchInstanceGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) e
 }
 
 func FetchInstancesDescriptionGCP(ctx context.Context, args *LaunchInstanceGCPTaskArgs) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "FetchInstancesDescriptionGCP")
+	ctx, span := telemetry.StartSpan(ctx, "FetchInstancesDescriptionGCP")
 	defer span.End()
 
 	logger := *zerolog.Ctx(ctx)

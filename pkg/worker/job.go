@@ -109,7 +109,7 @@ func initJobContext(origCtx context.Context, job *Job) (context.Context, *zerolo
 
 	if config.Telemetry.Enabled {
 		ctx = otel.GetTextMapPropagator().Extract(ctx, job.TraceContext)
-		ctx, span = otel.Tracer(telemetry.TracePrefix+"worker").Start(ctx, job.Type.String())
+		ctx, span = telemetry.StartSpan(ctx, job.Type.String())
 		logCtx = logCtx.Str("trace_id", span.SpanContext().TraceID().String())
 	}
 	logger := logCtx.Logger()

@@ -15,11 +15,10 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
+	otrace "go.opentelemetry.io/otel/trace"
 )
 
 const AppName = "provisioning-backend"
-
-const TracePrefix = AppName + "/"
 
 type Telemetry struct {
 	tracerProvider *trace.TracerProvider
@@ -76,4 +75,21 @@ func (t *Telemetry) Close(_ context.Context) {
 		return
 	}
 	_ = t.tracerProvider.Shutdown(context.Background())
+}
+
+// StartSpan wraps starting a tracing span.
+// This makes sure we start spans only when Telemetry is enabled.
+//
+// It also wraps fetching the Tracer, which is a bit confusing,
+// but its name is just for distinguishing different Tracers,
+// we have not identified need for multiple tracers in our code yet.
+// We use empty name, it should be safe according to
+// https://pkg.go.dev/go.opentelemetry.io/otel/trace@v1.16.0#TracerProvider
+func StartSpan(ctx context.Context, spanName string, opts ...otrace.SpanStartOption) (context.Context, otrace.Span) {
+	if config.Telemetry.Enabled {
+		return otel.Tracer("").Start(ctx, spanName, opts...)
+	} else {
+		// return empty invalid span
+		return ctx, otrace.SpanFromContext(context.Background())
+	}
 }

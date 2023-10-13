@@ -11,7 +11,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armsubscriptions"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
-	"go.opentelemetry.io/otel"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 )
 
 type client struct {
@@ -117,7 +117,7 @@ func (c *client) newInterfacesClient(ctx context.Context) (*armnetwork.Interface
 }
 
 func (c *client) Status(ctx context.Context) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "Status")
+	ctx, span := telemetry.StartSpan(ctx, "Status")
 	defer span.End()
 
 	client, err := c.newSubscriptionsClient(ctx)
@@ -132,7 +132,7 @@ func (c *client) Status(ctx context.Context) error {
 }
 
 func (c *client) ListResourceGroups(ctx context.Context) ([]string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListResourceGroups")
+	ctx, span := telemetry.StartSpan(ctx, "ListResourceGroups")
 	defer span.End()
 
 	var list []string
@@ -156,7 +156,7 @@ func (c *client) ListResourceGroups(ctx context.Context) ([]string, error) {
 }
 
 func (c *client) TenantId(ctx context.Context) (clients.AzureTenantId, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "TenantId")
+	ctx, span := telemetry.StartSpan(ctx, "TenantId")
 	defer span.End()
 
 	subClient, err := c.newSubscriptionsClient(ctx)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -15,7 +16,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/rs/zerolog"
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
 
@@ -81,7 +81,7 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 		}
 	}()
 
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "LaunchInstanceAzureJob")
+	ctx, span := telemetry.StartSpan(ctx, "LaunchInstanceAzureJob")
 	defer span.End()
 
 	jobErr := DoEnsureAzureResourceGroup(ctx, &args)
@@ -100,7 +100,7 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 }
 
 func DoEnsureAzureResourceGroup(ctx context.Context, args *LaunchInstanceAzureTaskArgs) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "EnsureAzureResourceGroupStep")
+	ctx, span := telemetry.StartSpan(ctx, "EnsureAzureResourceGroupStep")
 	defer span.End()
 
 	logger := zerolog.Ctx(ctx)
@@ -128,7 +128,7 @@ func DoEnsureAzureResourceGroup(ctx context.Context, args *LaunchInstanceAzureTa
 }
 
 func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArgs) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "LaunchInstanceAzureStep")
+	ctx, span := telemetry.StartSpan(ctx, "LaunchInstanceAzureStep")
 	defer span.End()
 
 	// status updates before and after the code logic

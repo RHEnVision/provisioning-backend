@@ -34,7 +34,7 @@ Keep in mind that logging level must be set to "trace" (-1) as all the tracing d
 
 ## Features
 
-Tracing ID is parsed from the W3C Trace Context header or generated when missing for each incoming request. The Trace ID is generated even if tracing feature is turned off because this field is used for correlation of log messages for each request on the application level.
+Tracing ID is parsed from the W3C Trace Context header or generated when missing for each incoming request.
 
 Spans are created for each Chi route with the route being the name of the span (e.g. `/api/provisioning/v1/ready/{SRV}`).
 
@@ -42,13 +42,19 @@ Spans are created for each HTTP client call being made via `telemetry.HTTPClient
 
 Spans are created for all SQL operations made through the `pgx` SQL driver.
 
-Spans are created for custom instrumentation points. An example:
+Spans are created for custom instrumentation points in code. An example:
 
 ```go
 func Function() {
-    ctx, span := otel.Tracer(TraceName).Start(ctx, "Function")
+    ctx, span := telemetry.StartSpan(ctx, "Span label")
     defer span.End()
     // ...
+	err := someDangerousCode()
+	if err != nil {
+	    span.SetStatus(codes.Error, "description why it is an error")
+		// ...
+	}
+	// ...
 }
 ```
 
