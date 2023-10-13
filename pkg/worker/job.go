@@ -105,8 +105,7 @@ func initJobContext(origCtx context.Context, job *Job) (context.Context, *zerolo
 		Str("account_number", job.Identity.Identity.AccountNumber).
 		Str("request_id", job.EdgeID).
 		Str("job_id", job.ID.String()).
-		Str("job_type", job.Type.String()).
-		Interface("job_args", job.Args)
+		Str("job_type", job.Type.String())
 
 	if config.Telemetry.Enabled {
 		ctx = otel.GetTextMapPropagator().Extract(ctx, job.TraceContext)

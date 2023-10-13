@@ -14,7 +14,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
-	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
@@ -78,19 +77,19 @@ func (w *RedisWorker) Enqueue(ctx context.Context, job *Job) error {
 		return fmt.Errorf("unable to enqueue job: %w", ErrJobNotFound)
 	}
 
+	logger := zerolog.Ctx(ctx).With().
+		Str("job_id", job.ID.String()).
+		Str("job_type", job.Type.String()).
+		Logger()
+	logger.Info().Interface("job_args", job.Args).Msg("Enqueuing job via Redis")
+
 	if job.ID == uuid.Nil {
 		job.ID, err = uuid.NewRandom()
 		if err != nil {
+			logger.Error().Err(err).Msg("Unable to generate a job id")
 			return fmt.Errorf("unable to generate UUID: %w", err)
 		}
 	}
-
-	logger := ptr.To(zerolog.Ctx(ctx).With().
-		Str("job_id", job.ID.String()).
-		Str("job_type", job.Type.String()).
-		Interface("job_args", job.Args).
-		Logger())
-	logger.Info().Msgf("Enqueuing job type %s via Redis", job.Type)
 
 	var buffer bytes.Buffer
 	enc := gob.NewEncoder(&buffer)
@@ -102,20 +101,22 @@ func (w *RedisWorker) Enqueue(ctx context.Context, job *Job) error {
 
 	err = enc.Encode(&job)
 	if err != nil {
+		logger.Error().Err(err).Msg("Unable to encode the job")
 		return fmt.Errorf("unable to encode args: %w", err)
 	}
 
 	cmd := w.client.LPush(ctx, w.queueName, buffer.Bytes())
 	if cmd.Err() != nil {
-		logger.Error().Err(err).Msg("Unable to push job into Redis")
+		logger.Error().Err(cmd.Err()).Msg("Unable to push job into Redis")
 		return fmt.Errorf("unable to push job into Redis: %w", cmd.Err())
 	}
 
 	result, err := cmd.Result()
 	if err != nil {
+		logger.Error().Err(err).Msg("Unable to process redis push result")
 		return fmt.Errorf("unable to process result: %w", err)
 	}
-	logger.Info().Int64("job_result", result).Msg("Pushed job successfully")
+	logger.Info().Int64("redis_push_result", result).Msg("Pushed job successfully")
 	return nil
 }
 
@@ -188,16 +189,19 @@ func (w *RedisWorker) fetchJob(ctx context.Context) {
 	var job Job
 	dec := gob.NewDecoder(strings.NewReader(res[1]))
 	err = dec.Decode(&job)
-	logger := ptr.To(zerolog.Ctx(ctx).With().
-		Str("job_id", job.ID.String()).
-		Str("job_type", job.Type.String()).
-		Interface("job_args", job.Args).
-		Logger())
 	if err != nil {
-		logger.Error().Err(err).Msg("Unable to unmarshal job payload, skipping")
+		zerolog.Ctx(ctx).Error().
+			Err(err).
+			Str("job_id", job.ID.String()).
+			Str("job_type", job.Type.String()).
+			Interface("job_args", job.Args).
+			Msg("Unable to unmarshal job payload, skipping")
+		return
 	}
 
 	atomic.AddInt64(&w.inFlight, 1)
+	defer atomic.AddInt64(&w.inFlight, -1)
+
 	w.processJob(ctx, &job)
 }
 
@@ -205,12 +209,11 @@ func (w *RedisWorker) processJob(origCtx context.Context, job *Job) {
 	if job == nil {
 		return
 	}
-	defer atomic.AddInt64(&w.inFlight, -1)
 
 	ctx, logger, span := initJobContext(origCtx, job)
 	defer span.End()
 	defer recoverAndLog(ctx)
-	logger.Info().Msgf("Dequeued job %s %s from Redis", job.Type.String(), job.ID)
+	logger.Info().Interface("job_args", job.Args).Msgf("Dequeued job from Redis")
 
 	if h, ok := w.handlers[job.Type]; ok {
 		cCtx, cFunc := context.WithTimeout(ctx, config.Worker.Timeout)
