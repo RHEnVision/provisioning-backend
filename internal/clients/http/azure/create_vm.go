@@ -19,7 +19,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
-	"go.opentelemetry.io/otel"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"go.opentelemetry.io/otel/codes"
 )
 
@@ -34,7 +34,7 @@ const (
 )
 
 func (c *client) BeginCreateVM(ctx context.Context, networkInterface *armnetwork.Interface, vmParams clients.AzureInstanceParams, vmName string) (string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "BeginCreateVM")
+	ctx, span := telemetry.StartSpan(ctx, "BeginCreateVM")
 	defer span.End()
 
 	logger := logger(ctx)
@@ -65,7 +65,7 @@ func (c *client) BeginCreateVM(ctx context.Context, networkInterface *armnetwork
 }
 
 func (c *client) WaitForVM(ctx context.Context, resumeToken string) (clients.AzureInstanceID, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "WaitForVM")
+	ctx, span := telemetry.StartSpan(ctx, "WaitForVM")
 	defer span.End()
 
 	logger := logger(ctx)
@@ -97,7 +97,7 @@ func (c *client) WaitForVM(ctx context.Context, resumeToken string) (clients.Azu
 }
 
 func (c *client) ensureSharedNetworking(ctx context.Context, location, resourceGroupName string) (*armnetwork.Subnet, *armnetwork.SecurityGroup, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ensureSharedNetworking")
+	ctx, span := telemetry.StartSpan(ctx, "ensureSharedNetworking")
 	defer span.End()
 
 	logger := logger(ctx)
@@ -130,7 +130,7 @@ func (c *client) ensureSharedNetworking(ctx context.Context, location, resourceG
 }
 
 func (c *client) prepareVMNetworking(ctx context.Context, subnet *armnetwork.Subnet, securityGroup *armnetwork.SecurityGroup, vmParams clients.AzureInstanceParams, vmName string) (*armnetwork.Interface, *armnetwork.PublicIPAddress, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "prepareVMNetworking")
+	ctx, span := telemetry.StartSpan(ctx, "prepareVMNetworking")
 	defer span.End()
 
 	logger := logger(ctx)
@@ -190,7 +190,7 @@ func (c *client) EnsureResourceGroup(ctx context.Context, name string, location 
 }
 
 func (c *client) createVirtualNetwork(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.VirtualNetwork, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "createVirtualNetwork")
+	ctx, span := telemetry.StartSpan(ctx, "createVirtualNetwork")
 	defer span.End()
 
 	vnetClient, err := c.newVirtualNetworksClient(ctx)
@@ -248,7 +248,7 @@ func (c *client) createVirtualNetwork(ctx context.Context, location string, reso
 }
 
 func (c *client) createSubnets(ctx context.Context, resourceGroupName string, vnetName string, name string) (*armnetwork.Subnet, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "createSubnets")
+	ctx, span := telemetry.StartSpan(ctx, "createSubnets")
 	defer span.End()
 
 	subnetClient, err := c.newSubnetsClient(ctx)
@@ -279,7 +279,7 @@ func (c *client) createSubnets(ctx context.Context, resourceGroupName string, vn
 }
 
 func (c *client) createNetworkSecurityGroup(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.SecurityGroup, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "createNetworkSecurityGroup")
+	ctx, span := telemetry.StartSpan(ctx, "createNetworkSecurityGroup")
 	defer span.End()
 
 	nsgClient, err := c.newSecurityGroupsClient(ctx)
@@ -340,7 +340,7 @@ func (c *client) createNetworkSecurityGroup(ctx context.Context, location string
 }
 
 func (c *client) createPublicIP(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.PublicIPAddress, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "createPublicIP")
+	ctx, span := telemetry.StartSpan(ctx, "createPublicIP")
 	defer span.End()
 
 	publicIPAddressClient, err := c.newPublicIPAddressesClient(ctx)
@@ -370,7 +370,7 @@ func (c *client) createPublicIP(ctx context.Context, location string, resourceGr
 }
 
 func (c *client) createNetworkInterface(ctx context.Context, location string, resourceGroupName string, subnet *armnetwork.Subnet, publicIP *armnetwork.PublicIPAddress, nsg *armnetwork.SecurityGroup, name string) (*armnetwork.Interface, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "createNetworkInterface")
+	ctx, span := telemetry.StartSpan(ctx, "createNetworkInterface")
 	defer span.End()
 
 	nicClient, err := c.newInterfacesClient(ctx)

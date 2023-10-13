@@ -7,6 +7,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
 
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
@@ -18,7 +19,6 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/rs/zerolog"
-	"go.opentelemetry.io/otel"
 )
 
 const TraceName = "github.com/EnVision/provisioning/internal/clients/http/rbac"
@@ -53,7 +53,7 @@ func newClient(ctx context.Context) clients.Rbac {
 }
 
 func (c *rbac) Ready(ctx context.Context) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "Ready")
+	ctx, span := telemetry.StartSpan(ctx, "Ready")
 	defer span.End()
 
 	logger := logger(ctx)
@@ -81,7 +81,7 @@ var ErrMetaNotPresent = fmt.Errorf("RBAC did not return metadata: %w", usrerr.Er
 var FetchLimit = ptr.To(500)
 
 func (c *rbac) GetPrincipalAccess(ctx context.Context) (clients.RbacAcl, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetPrincipalAccess")
+	ctx, span := telemetry.StartSpan(ctx, "GetPrincipalAccess")
 	defer span.End()
 
 	logger := zerolog.Ctx(ctx)

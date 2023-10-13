@@ -19,10 +19,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/rs/zerolog"
-	"go.opentelemetry.io/otel"
 )
-
-const TraceName = telemetry.TracePrefix + "internal/clients/http/sources"
 
 type sourcesClient struct {
 	client *ClientWithResponses
@@ -64,7 +61,7 @@ type dataElement struct {
 }
 
 func (c *sourcesClient) Ready(ctx context.Context) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "Ready")
+	ctx, span := telemetry.StartSpan(ctx, "Ready")
 	defer span.End()
 
 	logger := logger(ctx)
@@ -91,7 +88,7 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*clients.Source, int, error) {
 	logger := logger(ctx)
 	params := &ListApplicationTypeSourcesParams{}
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListProvisioningSourcesByProvider")
+	ctx, span := telemetry.StartSpan(ctx, "ListProvisioningSourcesByProvider")
 	defer span.End()
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
@@ -155,7 +152,7 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, int, error) {
 	logger := logger(ctx)
 	params := &ListApplicationTypeSourcesParams{}
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListAllProvisioningSources")
+	ctx, span := telemetry.StartSpan(ctx, "ListAllProvisioningSources")
 	defer span.End()
 
 	appTypeId, err := c.GetProvisioningTypeId(ctx)
@@ -210,7 +207,7 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 
 func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) (*clients.Authentication, error) {
 	logger := logger(ctx)
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetAuthentication")
+	ctx, span := telemetry.StartSpan(ctx, "GetAuthentication")
 	defer span.End()
 
 	// Get all the authentications linked to a specific source

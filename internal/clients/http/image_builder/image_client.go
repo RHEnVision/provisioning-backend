@@ -11,10 +11,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
-	"go.opentelemetry.io/otel"
 )
-
-const TraceName = telemetry.TracePrefix + "internal/clients/http/image_builder"
 
 type ibClient struct {
 	client *ClientWithResponses
@@ -40,7 +37,7 @@ func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
 }
 
 func (c *ibClient) Ready(ctx context.Context) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "Ready")
+	ctx, span := telemetry.StartSpan(ctx, "Ready")
 	defer span.End()
 
 	logger := logger(ctx)
@@ -156,7 +153,7 @@ func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (strin
 }
 
 func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "fetchImageStatus")
+	ctx, span := telemetry.StartSpan(ctx, "fetchImageStatus")
 	defer span.End()
 	logger := logger(ctx)
 	logger.Trace().Msgf("Fetching image status %v", composeID)

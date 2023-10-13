@@ -7,18 +7,16 @@ import (
 	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
-
-	"github.com/RHEnVision/provisioning-backend/internal/logging"
-	"github.com/RHEnVision/provisioning-backend/internal/models"
-	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 
 	compute "cloud.google.com/go/compute/apiv1"
 	"cloud.google.com/go/compute/apiv1/computepb"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
+	"github.com/RHEnVision/provisioning-backend/internal/logging"
+	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
@@ -32,8 +30,6 @@ type gcpClient struct {
 func init() {
 	clients.GetGCPClient = newGCPClient
 }
-
-const TraceName = telemetry.TracePrefix + "internal/clients/http/gcp"
 
 // GCP SDK does not provide a single client, so only configuration can be shared and
 // clients need to be created and closed in each function.
@@ -56,7 +52,7 @@ func (c *gcpClient) Status(ctx context.Context) error {
 }
 
 func (c *gcpClient) ListAllRegions(ctx context.Context) ([]clients.Region, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListAllRegions")
+	ctx, span := telemetry.StartSpan(ctx, "ListAllRegions")
 	defer span.End()
 
 	client, err := compute.NewRegionsRESTClient(ctx, c.options...)
@@ -104,7 +100,7 @@ func (c *gcpClient) NewInstanceTemplatesClient(ctx context.Context) (*compute.In
 }
 
 func (c *gcpClient) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchTemplate, string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListLaunchTemplates")
+	ctx, span := telemetry.StartSpan(ctx, "ListLaunchTemplates")
 	defer span.End()
 	var token string
 	logger := logger(ctx)
@@ -142,7 +138,7 @@ func (c *gcpClient) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchT
 }
 
 func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInstanceParams, amount int64) ([]*string, *string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "InsertInstances")
+	ctx, span := telemetry.StartSpan(ctx, "InsertInstances")
 	defer span.End()
 
 	logger := logger(ctx)
@@ -255,7 +251,7 @@ func (c *gcpClient) InsertInstances(ctx context.Context, params *clients.GCPInst
 }
 
 func (c *gcpClient) ListInstancesIDsByLabel(ctx context.Context, uuid string) ([]*string, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "ListInstancesIDsByLabel")
+	ctx, span := telemetry.StartSpan(ctx, "ListInstancesIDsByLabel")
 	defer span.End()
 
 	logger := logger(ctx)
@@ -295,7 +291,7 @@ func (c *gcpClient) ListInstancesIDsByLabel(ctx context.Context, uuid string) ([
 }
 
 func (c *gcpClient) GetInstanceDescriptionByID(ctx context.Context, id, zone string) (*clients.InstanceDescription, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "GetInstanceDescriptionByID")
+	ctx, span := telemetry.StartSpan(ctx, "GetInstanceDescriptionByID")
 	defer span.End()
 
 	logger := logger(ctx)

@@ -6,13 +6,13 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/google/uuid"
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
 
 func (c *client) CreateVMs(ctx context.Context, vmParams clients.AzureInstanceParams, amount int64, vmNamePrefix string) ([]clients.InstanceDescription, error) {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "CreateVMs")
+	ctx, span := telemetry.StartSpan(ctx, "CreateVMs")
 	defer span.End()
 
 	logger := logger(ctx)

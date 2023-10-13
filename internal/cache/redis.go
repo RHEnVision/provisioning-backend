@@ -20,10 +20,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"go.opentelemetry.io/otel"
 )
-
-const TraceName = telemetry.TracePrefix + "internal/cache"
 
 var (
 	ErrNotFound = errors.New("not found in cache")
@@ -102,7 +99,7 @@ func Find(ctx context.Context, key string, value Cacheable) error {
 	}
 
 	prefix := value.CacheKeyName()
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "Find")
+	ctx, span := telemetry.StartSpan(ctx, "Find")
 	defer span.End()
 
 	cmd := client.Get(ctx, prefix+key)
@@ -146,7 +143,7 @@ func SetExpires(ctx context.Context, key string, value Cacheable, expiration tim
 	}
 
 	prefix := value.CacheKeyName()
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "Set")
+	ctx, span := telemetry.StartSpan(ctx, "Set")
 	defer span.End()
 
 	var buf bytes.Buffer

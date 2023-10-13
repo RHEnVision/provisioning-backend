@@ -9,11 +9,11 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/RHEnVision/provisioning-backend/internal/userdata"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/rs/zerolog"
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 )
 
@@ -92,7 +92,7 @@ func HandleLaunchInstanceAWS(ctx context.Context, job *worker.Job) {
 
 // DoEnsurePubkeyOnAWS is a job logic, when error is returned the job status is updated accordingly
 func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "DoEnsurePubkeyOnAWS")
+	ctx, span := telemetry.StartSpan(ctx, "DoEnsurePubkeyOnAWS")
 	defer span.End()
 
 	logger := zerolog.Ctx(ctx)
@@ -200,7 +200,7 @@ func DoEnsurePubkeyOnAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 }
 
 func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "DoLaunchInstanceAWS")
+	ctx, span := telemetry.StartSpan(ctx, "DoLaunchInstanceAWS")
 	defer span.End()
 
 	logger := zerolog.Ctx(ctx)
@@ -278,7 +278,7 @@ func DoLaunchInstanceAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) e
 }
 
 func FetchInstancesDescriptionAWS(ctx context.Context, args *LaunchInstanceAWSTaskArgs) error {
-	ctx, span := otel.Tracer(TraceName).Start(ctx, "FetchInstancesDescriptionAWS")
+	ctx, span := telemetry.StartSpan(ctx, "FetchInstancesDescriptionAWS")
 	defer span.End()
 
 	logger := zerolog.Ctx(ctx)
