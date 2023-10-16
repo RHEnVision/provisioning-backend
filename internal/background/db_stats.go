@@ -51,16 +51,16 @@ func dbStatsTick(ctx context.Context) error {
 		return fmt.Errorf("stats error: %w", err)
 	}
 
-	success, failure, pending := 0, 0, 0
+	var success, failure, pending int64
 	for _, s := range stats.Usage24h {
 		if s.Result == "success" {
-			success += 1
+			success += s.Count
 		}
 		if s.Result == "failure" {
-			failure += 1
+			failure += s.Count
 		}
 		if s.Result == "pending" {
-			pending += 1
+			pending += s.Count
 		}
 		metrics.SetReservations24hCount(s.Result, s.Provider, s.Count)
 	}
