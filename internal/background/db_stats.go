@@ -51,7 +51,7 @@ func dbStatsTick(ctx context.Context) error {
 		return fmt.Errorf("stats error: %w", err)
 	}
 
-	success, failure := 0, 0
+	success, failure, pending := 0, 0, 0
 	for _, s := range stats.Usage24h {
 		if s.Result == "success" {
 			success += 1
@@ -59,9 +59,12 @@ func dbStatsTick(ctx context.Context) error {
 		if s.Result == "failure" {
 			failure += 1
 		}
+		if s.Result == "pending" {
+			pending += 1
+		}
 		metrics.SetReservations24hCount(s.Result, s.Provider, s.Count)
 	}
-	logger.Debug().Msgf("Reservation statistics for last 24 hours: success=%d, failure=%d", success, failure)
+	logger.Debug().Interface("stats", stats).Msgf("Reservation totals for last 24 hours: success=%d, failure=%d, pending=%d", success, failure, pending)
 
 	for _, s := range stats.Usage28d {
 		metrics.SetReservations28dCount(s.Result, s.Provider, s.Count)
