@@ -16,6 +16,7 @@ var (
 var (
 	ErrCloneNotFound        = usrerr.New(404, "image clone not found", "")
 	ErrImageStatus          = usrerr.New(500, "build of requested image has not finished yet", "image still building")
+	ErrImageArchInvalid     = usrerr.New(400, "the image provided has invalid architecture and can not be launch with provided instance type", "invalid image architecture")
 	ErrUnknownImageType     = usrerr.New(500, "unknown image type", "")
 	ErrUploadStatus         = usrerr.New(500, "cannot get image status", "")
 	ErrImageRequestNotFound = usrerr.New(500, "image compose request not found", "")

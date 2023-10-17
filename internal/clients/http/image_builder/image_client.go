@@ -2,6 +2,7 @@ package image_builder
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -26,7 +27,11 @@ func logger(ctx context.Context) zerolog.Logger {
 }
 
 func newImageBuilderClient(ctx context.Context) (clients.ImageBuilder, error) {
-	c, err := NewClientWithResponses(config.ImageBuilder.URL, func(c *Client) error {
+	return NewImageBuilderClientWithUrl(ctx, config.ImageBuilder.URL)
+}
+
+func NewImageBuilderClientWithUrl(ctx context.Context, url string) (clients.ImageBuilder, error) {
+	c, err := NewClientWithResponses(url, func(c *Client) error {
 		c.Client = http.NewPlatformClient(ctx, config.ImageBuilder.Proxy.URL)
 		return nil
 	})
@@ -58,14 +63,11 @@ func (c *ibClient) Ready(ctx context.Context) error {
 	return nil
 }
 
-func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, error) {
+func (c *ibClient) GetAWSAmi(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (string, error) {
 	logger := logger(ctx)
-	if _, err := uuid.Parse(composeID); err != nil {
-		return "", fmt.Errorf("compose ID '%s' is not valid UUID: %w", composeID, clients.ErrBadRequest)
-	}
-	logger.Trace().Str("compose_id", composeID).Msgf("Getting AMI of compose ID %v", composeID)
+	logger.Trace().Msgf("Getting AMI of compose ID %s", composeUUID.String())
 
-	imageStatus, err := c.fetchImageStatus(ctx, composeID)
+	imageStatus, err := c.fetchImageStatus(ctx, composeUUID, instanceType)
 	if err != nil {
 		return "", err
 	}
@@ -81,17 +83,16 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeID string) (string, err
 		return "", fmt.Errorf("%w: not an AWS status", http.ErrUploadStatus)
 	}
 
-	logger.Info().Str("compose_id", composeID).Str("ami", uploadStatus.Ami).
-		Msgf("Translated compose ID %s to AMI %s", composeID, uploadStatus.Ami)
+	logger.Info().Msgf("Translated compose ID %s to AMI %s", composeUUID, uploadStatus.Ami)
 
 	return uploadStatus.Ami, nil
 }
 
-func (c *ibClient) GetAzureImageID(ctx context.Context, composeID string) (string, error) {
+func (c *ibClient) GetAzureImageID(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (string, error) {
 	logger := logger(ctx)
-	logger.Trace().Msgf("Getting Azure ID of image %v", composeID)
+	logger.Trace().Msgf("Getting Azure ID of image %v", composeUUID.String())
 
-	composeStatus, err := c.getComposeStatus(ctx, composeID)
+	composeStatus, err := c.getComposeStatus(ctx, composeUUID)
 	if err != nil {
 		return "", err
 	}
@@ -112,6 +113,11 @@ func (c *ibClient) GetAzureImageID(ctx context.Context, composeID string) (strin
 		return "", http.ErrImageRequestNotFound
 	}
 
+	imageArch, archErr := clients.MapArchitectures(ctx, string(composeStatus.Request.ImageRequests[0].Architecture))
+	if archErr != nil || imageArch != instanceType.Architecture {
+		return "", http.ErrImageArchInvalid
+	}
+
 	uploadOptions, err := composeStatus.ImageStatus.UploadStatus.Options.AsAzureUploadStatus()
 	if err != nil {
 		return "", fmt.Errorf("%w: not an Azure status", http.ErrUploadStatus)
@@ -124,11 +130,11 @@ func (c *ibClient) GetAzureImageID(ctx context.Context, composeID string) (strin
 	return fmt.Sprintf("/resourceGroups/%s/providers/Microsoft.Compute/images/%s", azureUploadRequest.ResourceGroup, uploadOptions.ImageName), nil
 }
 
-func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (string, error) {
+func (c *ibClient) GetGCPImageName(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (string, error) {
 	logger := logger(ctx)
-	logger.Trace().Str("compose_id", composeID).Msgf("Getting Google image id of compose %s", composeID)
+	logger.Trace().Msgf("Getting Google image id of compose %s", composeUUID)
 
-	imageStatus, err := c.fetchImageStatus(ctx, composeID)
+	imageStatus, err := c.fetchImageStatus(ctx, composeUUID, instanceType)
 	if err != nil {
 		return "", err
 	}
@@ -146,36 +152,33 @@ func (c *ibClient) GetGCPImageName(ctx context.Context, composeID string) (strin
 	}
 
 	result := fmt.Sprintf("projects/%s/global/images/%s", uploadStatus.ProjectId, uploadStatus.ImageName)
-	logger.Info().Str("compose_id", composeID).Str("ami", result).
-		Msgf("Translated compose ID %s to AMI %s", composeID, result)
+	logger.Info().Msgf("Translated compose ID %s to image name %s", composeUUID, result)
 
 	return result, nil
 }
 
-func (c *ibClient) fetchImageStatus(ctx context.Context, composeID string) (*UploadStatus, error) {
+func (c *ibClient) fetchImageStatus(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (*UploadStatus, error) {
 	ctx, span := telemetry.StartSpan(ctx, "fetchImageStatus")
 	defer span.End()
 	logger := logger(ctx)
-	logger.Trace().Msgf("Fetching image status %v", composeID)
+	logger.Trace().Msgf("Fetching image status %v", composeUUID.String())
 
-	composeResp, err := c.checkCompose(ctx, composeID)
+	uploadStatus, err := c.checkCompose(ctx, composeUUID, instanceType)
 	if err != nil {
-		cloneResp, err := c.checkClone(ctx, composeID)
-		if err != nil {
-			return nil, fmt.Errorf("could not find image neither in compose nor in clones: %w", err)
+		if errors.Is(err, clients.ErrUnexpectedBackendResponse) {
+			uploadStatus, err = c.checkClone(ctx, composeUUID)
+			if err != nil {
+				return nil, fmt.Errorf("could not find image neither in compose nor in clones: %w", err)
+			}
+		} else {
+			return nil, fmt.Errorf("image compose is not launchable: %w", err)
 		}
-		return cloneResp, nil
 	}
-	return composeResp, nil
+	return uploadStatus, nil
 }
 
-func (c *ibClient) getComposeStatus(ctx context.Context, composeID string) (*ComposeStatus, error) {
+func (c *ibClient) getComposeStatus(ctx context.Context, composeUUID uuid.UUID) (*ComposeStatus, error) {
 	logger := logger(ctx)
-
-	composeUUID, err := uuid.Parse(composeID)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse UUID: %w", err)
-	}
 
 	resp, err := c.client.GetComposeStatusWithResponse(ctx, composeUUID, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
@@ -194,11 +197,13 @@ func (c *ibClient) getComposeStatus(ctx context.Context, composeID string) (*Com
 	return resp.JSON200, nil
 }
 
-func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadStatus, error) {
+// checkCompose validates whether the image identified by composeUUID is already successfully built.
+// It also checks whether the target instance type architecture matches the image architecture.
+func (c *ibClient) checkCompose(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (*UploadStatus, error) {
 	logger := logger(ctx)
-	logger.Trace().Msgf("Fetching image status %v from composes", composeID)
+	logger.Trace().Msgf("Fetching image status %v from composes", composeUUID)
 
-	composeStatus, err := c.getComposeStatus(ctx, composeID)
+	composeStatus, err := c.getComposeStatus(ctx, composeUUID)
 	if err != nil {
 		return nil, err
 	}
@@ -208,17 +213,19 @@ func (c *ibClient) checkCompose(ctx context.Context, composeID string) (*UploadS
 		return nil, http.ErrImageStatus
 	}
 
+	if len(composeStatus.Request.ImageRequests) == 1 {
+		imageArch, archErr := clients.MapArchitectures(ctx, string(composeStatus.Request.ImageRequests[0].Architecture))
+		if archErr != nil || imageArch != instanceType.Architecture {
+			return nil, http.ErrImageArchInvalid
+		}
+	}
+
 	return composeStatus.ImageStatus.UploadStatus, nil
 }
 
-func (c *ibClient) checkClone(ctx context.Context, composeID string) (*UploadStatus, error) {
+func (c *ibClient) checkClone(ctx context.Context, composeUUID uuid.UUID) (*UploadStatus, error) {
 	logger := logger(ctx)
-	logger.Trace().Msgf("Fetching image status %v from clones", composeID)
-
-	composeUUID, err := uuid.Parse(composeID)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse UUID: %w", err)
-	}
+	logger.Trace().Msgf("Fetching image status %v from clones", composeUUID)
 
 	resp, err := c.client.GetCloneStatusWithResponse(ctx, composeUUID, headers.AddImageBuilderIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
@@ -234,8 +241,8 @@ func (c *ibClient) checkClone(ctx context.Context, composeID string) (*UploadSta
 		return nil, fmt.Errorf("fetch image status call: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
-	if ImageStatusStatus(resp.JSON200.Status) != ImageStatusStatusSuccess {
-		logger.Warn().Msg("Clone status is not ready")
+	if resp.JSON200.Status != UploadStatusStatusSuccess {
+		logger.Warn().Msgf("Clone status (%s) is not ready", resp.JSON200.Status)
 		return nil, http.ErrImageStatus
 	}
 
