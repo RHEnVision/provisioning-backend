@@ -76,7 +76,7 @@ type AWSReservation struct {
 	Reservation
 
 	// Pubkey ID.
-	PubkeyID int64 `db:"pubkey_id" json:"pubkey_id"`
+	PubkeyID *int64 `db:"pubkey_id" json:"pubkey_id,omitempty"`
 
 	// Source ID.
 	SourceID string `db:"source_id" json:"source_id"`
@@ -118,7 +118,7 @@ type GCPReservation struct {
 	Reservation
 
 	// Pubkey ID.
-	PubkeyID int64 `db:"pubkey_id" json:"pubkey_id"`
+	PubkeyID *int64 `db:"pubkey_id" json:"pubkey_id,omitempty"`
 
 	// Source ID.
 	SourceID string `db:"source_id" json:"source_id"`
@@ -158,7 +158,7 @@ type AzureReservation struct {
 	Reservation
 
 	// Pubkey ID.
-	PubkeyID int64 `db:"pubkey_id" json:"pubkey_id"`
+	PubkeyID *int64 `db:"pubkey_id" json:"pubkey_id,omitempty"`
 
 	// Source ID.
 	SourceID string `db:"source_id" json:"source_id"`

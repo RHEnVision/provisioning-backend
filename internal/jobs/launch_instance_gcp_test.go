@@ -38,7 +38,7 @@ func prepareGCPReservation(t *testing.T, ctx context.Context, pk *models.Pubkey)
 		PowerOff:    false,
 	}
 	reservation := &models.GCPReservation{
-		PubkeyID: pk.ID,
+		PubkeyID: &pk.ID,
 		SourceID: "irrelevant",
 		ImageID:  "irrelevant",
 		Detail:   detail,

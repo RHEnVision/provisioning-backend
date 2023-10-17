@@ -38,7 +38,7 @@ func prepareAzureReservation(t *testing.T, ctx context.Context, pk *models.Pubke
 		PowerOff:     false,
 	}
 	reservation := &models.AzureReservation{
-		PubkeyID: pk.ID,
+		PubkeyID: &pk.ID,
 		SourceID: "irrelevant",
 		ImageID:  "irrelevant",
 		Detail:   detail,

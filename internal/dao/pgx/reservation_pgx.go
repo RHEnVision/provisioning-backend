@@ -49,11 +49,15 @@ func (x *reservationDao) CreateAWS(ctx context.Context, reservation *models.AWSR
 			return err
 		}
 
+		if reservation.PubkeyID == nil {
+			return fmt.Errorf("pgx error: %w", dao.ErrPubkeyNotFound)
+		}
+
 		awsQuery := `INSERT INTO aws_reservation_details (reservation_id, pubkey_id, source_id, image_id, detail)
 		VALUES ($1, $2, $3, $4, $5)`
 		tag, err := tx.Exec(ctx, awsQuery,
 			reservation.ID,
-			reservation.PubkeyID,
+			&reservation.PubkeyID,
 			reservation.SourceID,
 			reservation.ImageID,
 			reservation.Detail)
@@ -78,6 +82,10 @@ func (x *reservationDao) CreateAzure(ctx context.Context, reservation *models.Az
 		reservation.Provider = models.ProviderTypeAzure
 		if err := x.createGenericReservation(ctx, tx, &reservation.Reservation); err != nil {
 			return err
+		}
+
+		if reservation.PubkeyID == nil {
+			return fmt.Errorf("pgx error: %w", dao.ErrPubkeyNotFound)
 		}
 
 		azureQuery := `INSERT INTO azure_reservation_details (reservation_id, pubkey_id, source_id, image_id, detail)
@@ -109,6 +117,10 @@ func (x *reservationDao) CreateGCP(ctx context.Context, reservation *models.GCPR
 		reservation.Provider = models.ProviderTypeGCP
 		if err := x.createGenericReservation(ctx, tx, &reservation.Reservation); err != nil {
 			return err
+		}
+
+		if reservation.PubkeyID == nil {
+			return fmt.Errorf("pgx error: %w", dao.ErrPubkeyNotFound)
 		}
 
 		gcpQuery := `INSERT INTO gcp_reservation_details (reservation_id, pubkey_id, source_id, image_id, detail)

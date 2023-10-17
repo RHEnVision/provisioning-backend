@@ -75,7 +75,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		PowerOff:         payload.PowerOff,
 	}
 	reservation := &models.AWSReservation{
-		PubkeyID: payload.PubkeyID,
+		PubkeyID: &payload.PubkeyID,
 		SourceID: payload.SourceID,
 		ImageID:  payload.ImageID,
 		Detail:   detail,
@@ -89,8 +89,12 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.Detail.Name = newName
 
 	// validate pubkey - must be always present because of data integrity (foreign keys)
-	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
-	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
+	if reservation.PubkeyID == nil {
+		renderError(w, r, payloads.NewNotFoundError(r.Context(), "could not create AWS reservation", ErrPubkeyNotFound))
+	}
+
+	logger.Debug().Msgf("Validating existence of pubkey %d for this account", *reservation.PubkeyID)
+	pk, err := pkDao.GetById(r.Context(), *reservation.PubkeyID)
 	if err != nil {
 		message := fmt.Sprintf("get pubkey with id %d", reservation.PubkeyID)
 		renderNotFoundOrDAOError(w, r, err, message)

@@ -12,6 +12,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/identity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -47,7 +48,7 @@ func newAWSReservation() *models.AWSReservation {
 			AccountID: 1,
 			Status:    "Created",
 		},
-		PubkeyID: 1,
+		PubkeyID: ptr.ToInt64(1),
 	}
 }
 
@@ -58,7 +59,7 @@ func newGCPReservation() *models.GCPReservation {
 			AccountID: 1,
 			Status:    "Created",
 		},
-		PubkeyID: 1,
+		PubkeyID: ptr.ToInt64(1),
 	}
 }
 

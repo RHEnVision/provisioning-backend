@@ -55,7 +55,7 @@ type AWSReservationResponse struct {
 	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 
 	// Pubkey ID.
-	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
+	PubkeyID *int64 `json:"pubkey_id,omitempty" yaml:"pubkey_id,omitempty"`
 
 	// Source ID.
 	SourceID string `json:"source_id" yaml:"source_id"`
@@ -91,7 +91,7 @@ type AWSReservationResponse struct {
 type AzureReservationResponse struct {
 	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 
-	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
+	PubkeyID *int64 `json:"pubkey_id,omitempty" yaml:"pubkey_id,omitempty"`
 
 	SourceID string `json:"source_id" yaml:"source_id"`
 
@@ -123,7 +123,7 @@ type GCPReservationResponse struct {
 	ID int64 `json:"reservation_id" yaml:"reservation_id"`
 
 	// Pubkey ID.
-	PubkeyID int64 `json:"pubkey_id" yaml:"pubkey_id"`
+	PubkeyID *int64 `json:"pubkey_id,omitempty" yaml:"pubkey_id,omitempty"`
 
 	// Source ID.
 	SourceID string `json:"source_id" yaml:"source_id"`
