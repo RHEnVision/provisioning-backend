@@ -2,6 +2,7 @@ package telemetry
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -10,7 +11,7 @@ import (
 	"github.com/riandyrn/otelchi"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
@@ -29,21 +30,31 @@ func Middleware(routes chi.Routes) func(next http.Handler) http.Handler {
 	return otelchi.Middleware(AppName, otelchi.WithChiRoutes(routes), otelchi.WithRequestMethodInSpanName(true))
 }
 
-func Initialize(rootLogger *zerolog.Logger) *Telemetry {
+func Initialize(ctx context.Context, rootLogger *zerolog.Logger) *Telemetry {
 	if !config.Telemetry.Enabled {
 		return &Telemetry{}
 	}
 	logger := rootLogger.With().Bool("otel", true).Logger()
 
 	var exporterOption trace.TracerProviderOption
-	if config.Telemetry.Jaeger.Enabled {
-		// production use case: full exporting, batching
-		exporter, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(config.Telemetry.Jaeger.Endpoint)))
+	if config.Telemetry.OTLP.Enabled {
+		logger.Debug().Msg("Jaeger telemetry enabled")
+		endpoint := fmt.Sprintf("%s:%d", config.Telemetry.OTLP.Hostname, config.Telemetry.OTLP.Port)
+		// production use case: full exporting, batching, compression
+		opts := []otlptracehttp.Option{
+			otlptracehttp.WithEndpoint(endpoint),
+			otlptracehttp.WithCompression(otlptracehttp.GzipCompression),
+		}
+		if config.Telemetry.OTLP.Insecure {
+			opts = append(opts, otlptracehttp.WithInsecure())
+		}
+		exporter, err := otlptracehttp.New(ctx, opts...)
 		if err != nil {
 			panic(err)
 		}
 		exporterOption = trace.WithBatcher(exporter)
 	} else if config.Telemetry.Logger.Enabled {
+		logger.Debug().Msg("Logger telemetry enabled")
 		// development use case: logger exporting, synchronous
 		exporter := NewZerologExporter(&logger)
 		exporterOption = trace.WithSyncer(exporter)
@@ -67,6 +78,7 @@ func Initialize(rootLogger *zerolog.Logger) *Telemetry {
 	propagator := propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{})
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagator)
+	otel.SetErrorHandler(&ZerologOpenTelemetryErrorHandler{logger: &logger})
 	return &Telemetry{tracerProvider: tp, propagator: propagator}
 }
 
