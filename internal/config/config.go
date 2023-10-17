@@ -67,11 +67,13 @@ var config struct {
 		MaxField int    `env:"MAX_FIELD" env-default:"0" env-description:"logger maximum field length (dev only)"`
 	} `env-prefix:"LOGGING_"`
 	Telemetry struct {
-		Enabled bool `env:"ENABLED" env-default:"false" env-description:"open telemetry collecting"`
-		Jaeger  struct {
+		Enabled bool `env:"ENABLED" env-default:"false" env-description:"open telemetry collecting via OTLP protocol"`
+		OTLP    struct {
 			Enabled  bool   `env:"ENABLED" env-default:"false" env-description:"open telemetry jaeger exporter"`
-			Endpoint string `env:"ENDPOINT" env-default:"http://localhost:14268/api/traces" env-description:"jaeger endpoint"`
-		} `env-prefix:"JAEGER_"`
+			Hostname string `env:"HOSTNAME" env-default:"localhost" env-description:"OTLP hostname (localhost)"`
+			Port     int    `env:"PORT" env-default:"4318" env-description:"OTLP port (4318)"`
+			Insecure bool   `env:"INSECURE" env-default:"false" env-description:"use HTTP connection instead of HTTPS'"`
+		} `env-prefix:"OLTP_"`
 		Logger struct {
 			Enabled bool `env:"ENABLED" env-default:"false" env-description:"open telemetry logger output (dev only)"`
 		} `env-prefix:"LOGGER_"`

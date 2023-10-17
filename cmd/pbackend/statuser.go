@@ -331,7 +331,7 @@ func statuser() {
 	logging.DumpConfigForDevelopment()
 
 	// initialize telemetry
-	tel := telemetry.Initialize(&log.Logger)
+	tel := telemetry.Initialize(ctx, &log.Logger)
 	defer tel.Close(ctx)
 
 	// initialize platform kafka and notifications

@@ -39,7 +39,7 @@ func worker() {
 	logger.Info().Msg("Worker starting")
 
 	// initialize telemetry
-	tel := telemetry.Initialize(&log.Logger)
+	tel := telemetry.Initialize(ctx, &log.Logger)
 	defer tel.Close(ctx)
 	metrics.RegisterWorkerMetrics()
 

@@ -51,7 +51,7 @@ func api() {
 	}))
 
 	// initialize telemetry
-	tel := telemetry.Initialize(&log.Logger)
+	tel := telemetry.Initialize(ctx, &log.Logger)
 	defer tel.Close(ctx)
 	metrics.RegisterApiMetrics()
 
@@ -97,12 +97,11 @@ func api() {
 	apiRouter := chi.NewRouter()
 
 	apiRouter.Use(m.NewPatternMiddleware(version.PrometheusLabelName))
-	apiRouter.Use(telemetry.Middleware(apiRouter))
+	if config.Telemetry.Enabled {
+		apiRouter.Use(telemetry.Middleware(apiRouter))
+	}
 	apiRouter.Use(m.VersionMiddleware)
 	apiRouter.Use(m.CorrelationID)
-	if config.Telemetry.Enabled {
-		apiRouter.Use(m.Telemetry)
-	}
 	apiRouter.Use(m.LoggerMiddleware(&log.Logger))
 
 	// Mount paths
