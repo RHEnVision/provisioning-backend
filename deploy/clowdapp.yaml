@@ -457,7 +457,7 @@ objects:
             d.detail -> 'instance_type'                  as type,
             d.detail -> 'region'                         as region,
             d.detail -> 'amount'                         as amount,
-            d.detail -> 'launch_template_id' is not null as template
+            d.detail -> 'launch_template_id' as template
             from reservations r
             join aws_reservation_details d on r.id = d.reservation_id
             join accounts a on r.account_id = a.id
@@ -483,9 +483,9 @@ objects:
             join azure_reservation_details d on r.id = d.reservation_id
             join accounts a on r.account_id = a.id
             where provider = provider_type_azure())
-            
+
             union all
-            
+
             (select 'gcp'                     as provider,
             r.id,
             r.created_at,
@@ -498,7 +498,7 @@ objects:
             d.image_id,
             d.detail -> 'machine_type' as type,
             d.detail -> 'amount'        as amount,
-            d.detail -> 'launch_template_id' is not null as template
+            d.detail -> 'launch_template_id' as template
             from reservations r
             join gcp_reservation_details d on r.id = d.reservation_id
             join accounts a on r.account_id = a.id
