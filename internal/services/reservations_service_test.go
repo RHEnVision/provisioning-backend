@@ -43,7 +43,7 @@ func TestGetReservationDetail(t *testing.T) {
 			PowerOff:     true,
 		}
 		reservation := &models.AWSReservation{
-			PubkeyID: pk.ID,
+			PubkeyID: &pk.ID,
 			SourceID: "1",
 			ImageID:  "ami-random",
 			Detail:   detail,

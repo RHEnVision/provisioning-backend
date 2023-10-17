@@ -67,7 +67,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		LaunchTemplateID: payload.LaunchTemplateID,
 	}
 	reservation := &models.GCPReservation{
-		PubkeyID: payload.PubkeyID,
+		PubkeyID: &payload.PubkeyID,
 		ImageID:  payload.ImageID,
 		SourceID: payload.SourceID,
 		Detail:   detail,
@@ -79,10 +79,14 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.Steps = 2
 	reservation.StepTitles = jobs.LaunchInstanceGCPSteps
 
-	logger.Debug().Msgf("Validating existence of pubkey %d for this account", reservation.PubkeyID)
-	pk, err := pkDao.GetById(r.Context(), reservation.PubkeyID)
+	if reservation.PubkeyID == nil {
+		renderError(w, r, payloads.NewNotFoundError(r.Context(), "could not create AWS reservation", ErrPubkeyNotFound))
+	}
+
+	logger.Debug().Msgf("Validating existence of pubkey %d for this account", *reservation.PubkeyID)
+	pk, err := pkDao.GetById(r.Context(), *reservation.PubkeyID)
 	if err != nil {
-		message := fmt.Sprintf("get pubkey with id %d", reservation.PubkeyID)
+		message := fmt.Sprintf("get pubkey with id %d", *reservation.PubkeyID)
 		renderNotFoundOrDAOError(w, r, err, message)
 		return
 	}
@@ -147,7 +151,7 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		Args: jobs.LaunchInstanceGCPTaskArgs{
 			ReservationID:    reservation.ID,
 			Zone:             reservation.Detail.Zone,
-			PubkeyID:         reservation.PubkeyID,
+			PubkeyID:         *reservation.PubkeyID,
 			Detail:           reservation.Detail,
 			ImageName:        name,
 			ProjectID:        authentication,

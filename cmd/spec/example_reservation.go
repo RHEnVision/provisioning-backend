@@ -86,7 +86,7 @@ var AwsReservationRequestPayloadExample = payloads.AWSReservationRequest{
 }
 
 var AwsReservationResponsePayloadPendingExample = payloads.AWSReservationResponse{
-	PubkeyID:         42,
+	PubkeyID:         ptr.ToInt64(42),
 	SourceID:         "654321",
 	Region:           "us-east-1",
 	InstanceType:     "t3.small",
@@ -99,7 +99,7 @@ var AwsReservationResponsePayloadPendingExample = payloads.AWSReservationRespons
 
 var AwsReservationResponsePayloadDoneExample = payloads.AWSReservationResponse{
 	ID:               1305,
-	PubkeyID:         42,
+	PubkeyID:         ptr.ToInt64(42),
 	SourceID:         "654321",
 	Region:           "us-east-1",
 	InstanceType:     "t3.small",
@@ -133,7 +133,7 @@ var AzureReservationRequestPayloadExample = payloads.AzureReservationRequest{
 
 var AzureReservationResponsePayloadPendingExample = payloads.AzureReservationResponse{
 	ID:            1310,
-	PubkeyID:      42,
+	PubkeyID:      ptr.ToInt64(42),
 	SourceID:      "654321",
 	ResourceGroup: "myCustom Azure RG",
 	Location:      "useast",
@@ -147,7 +147,7 @@ var AzureReservationResponsePayloadPendingExample = payloads.AzureReservationRes
 
 var AzureReservationResponsePayloadDoneExample = payloads.AzureReservationResponse{
 	ID:            1310,
-	PubkeyID:      42,
+	PubkeyID:      ptr.ToInt64(42),
 	SourceID:      "654321",
 	ResourceGroup: "myCustom Azure RG",
 	Location:      "useast",
@@ -179,7 +179,7 @@ var GCPReservationRequestPayloadExample = payloads.GCPReservationRequest{
 
 var GCPReservationResponsePayloadPendingExample = payloads.GCPReservationResponse{
 	ID:               1305,
-	PubkeyID:         42,
+	PubkeyID:         ptr.ToInt64(42),
 	SourceID:         "654321",
 	Zone:             "us-east-4",
 	MachineType:      "e2-micro",
@@ -193,7 +193,7 @@ var GCPReservationResponsePayloadPendingExample = payloads.GCPReservationRespons
 
 var GCPReservationResponsePayloadDoneExample = payloads.GCPReservationResponse{
 	ID:               1305,
-	PubkeyID:         42,
+	PubkeyID:         ptr.ToInt64(42),
 	SourceID:         "654321",
 	Zone:             "us-east-4",
 	MachineType:      "e2-micro",

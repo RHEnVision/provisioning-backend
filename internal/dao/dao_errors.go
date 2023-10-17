@@ -38,4 +38,7 @@ var (
 
 	// ErrReservationRateExceeded is returned when SQL constraint does not allow to insert more reservations
 	ErrReservationRateExceeded = usrerr.New(429, "rate limit exceeded", "too many reservations, wait and retry")
+
+	// ErrPubkeyNotFound is returned when a nil pointer to a pubkey is used for reservation detail
+	ErrPubkeyNotFound = usrerr.New(404, "pubkey not found", "no pubkey found, it may have been already deleted")
 )

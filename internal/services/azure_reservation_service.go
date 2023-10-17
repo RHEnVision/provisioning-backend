@@ -125,7 +125,7 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 		Name:          name,
 	}
 	reservation := &models.AzureReservation{
-		PubkeyID: payload.PubkeyID,
+		PubkeyID: &payload.PubkeyID,
 		SourceID: payload.SourceID,
 		ImageID:  payload.ImageID,
 		Detail:   detail,
