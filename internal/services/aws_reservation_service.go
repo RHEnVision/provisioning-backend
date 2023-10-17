@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
+	"github.com/google/uuid"
+	"golang.org/x/exp/slices"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	_ "github.com/RHEnVision/provisioning-backend/internal/clients/http/image_builder"
@@ -52,19 +54,16 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate architecture match (hardcoded since image builder currently only supports x86_64). This can be only done
-	// when launch template is not set.
-	if payload.LaunchTemplateID == "" {
-		supportedArch := "x86_64"
-		it := preload.EC2InstanceType.FindInstanceType(clients.InstanceTypeName(payload.InstanceType))
-		if it == nil {
-			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown type: %s", payload.InstanceType), ErrUnknownInstanceTypeName))
-			return
-		}
-		if it.Architecture.String() != supportedArch {
-			renderError(w, r, payloads.NewWrongArchitectureUserError(r.Context(), ErrArchitectureMismatch))
-			return
-		}
+	// Validate architecture match.
+	supportedArches := []clients.ArchitectureType{clients.ArchitectureTypeX86_64, clients.ArchitectureTypeArm64}
+	it := preload.EC2InstanceType.FindInstanceType(clients.InstanceTypeName(payload.InstanceType))
+	if it == nil {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), fmt.Sprintf("unknown type: %s", payload.InstanceType), ErrUnknownInstanceTypeName))
+		return
+	}
+	if !slices.Contains(supportedArches, it.Architecture) {
+		renderError(w, r, payloads.NewWrongArchitectureUserError(r.Context(), ErrArchitectureMismatch))
+		return
 	}
 
 	detail := &models.AWSDetail{
@@ -126,6 +125,18 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		// Direct AMI or no image were provided (launch template), no need to call image builder
 		ami = reservation.ImageID
 	} else {
+		composeUUID, parseErr := uuid.Parse(reservation.ImageID)
+		if parseErr != nil {
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Image ID is not valid, UUID format expected", parseErr))
+			return
+		}
+
+		instanceType := preload.EC2InstanceType.FindInstanceType(clients.InstanceTypeName(reservation.Detail.InstanceType))
+		if instanceType == nil {
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Instance type is not a valid AWS EC2 instance type", nil))
+			return
+		}
+
 		// Not prefixed with "ami-" therefore this must be a valid UUID
 		// Get Image builder client
 		IBClient, ibErr := clients.GetImageBuilderClient(r.Context())
@@ -136,7 +147,7 @@ func CreateAWSReservation(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Get AMI
-		ami, ibErr = IBClient.GetAWSAmi(r.Context(), reservation.ImageID)
+		ami, ibErr = IBClient.GetAWSAmi(r.Context(), composeUUID, *instanceType)
 		if ibErr != nil {
 			renderError(w, r, payloads.NewClientError(r.Context(), ibErr))
 			return

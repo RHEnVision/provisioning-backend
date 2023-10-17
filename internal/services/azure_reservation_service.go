@@ -81,9 +81,16 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 
 	var azureImageName string
 	// Azure image IDs are "free form", if it's a UUID we treat it like a compose ID
-	if _, pErr := uuid.Parse(payload.ImageID); pErr == nil {
+	if composeUUID, pErr := uuid.Parse(payload.ImageID); pErr == nil {
 		// Composer-built image
-		azureImageName, err = ibClient.GetAzureImageID(r.Context(), payload.ImageID)
+
+		instanceType := preload.AzureInstanceType.FindInstanceType(clients.InstanceTypeName(payload.InstanceSize))
+		if instanceType == nil {
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Instance size is not a valid Azure instance size", nil))
+			return
+		}
+
+		azureImageName, err = ibClient.GetAzureImageID(r.Context(), composeUUID, *instanceType)
 		if err != nil {
 			renderError(w, r, payloads.NewClientError(r.Context(), err))
 			return

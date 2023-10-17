@@ -121,9 +121,16 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 
 	// Validate image
 	var name string
-	if _, pErr := uuid.Parse(payload.ImageID); pErr == nil {
+	if composeUUID, pErr := uuid.Parse(payload.ImageID); pErr == nil {
 		// Composer-built image
-		name, ibErr = ibc.GetGCPImageName(r.Context(), reservation.ImageID)
+
+		instanceType := preload.GCPInstanceType.FindInstanceType(clients.InstanceTypeName(payload.MachineType))
+		if instanceType == nil {
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Machine type is not a valid GCP machine type", nil))
+			return
+		}
+
+		name, ibErr = ibc.GetGCPImageName(r.Context(), composeUUID, *instanceType)
 		if ibErr != nil {
 			renderError(w, r, payloads.NewClientError(r.Context(), ibErr))
 			return

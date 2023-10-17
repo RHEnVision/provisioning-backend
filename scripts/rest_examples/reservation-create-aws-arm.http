@@ -1,0 +1,15 @@
+// @no-log
+POST http://{{hostname}}:{{port}}/{{prefix}}/reservations/aws HTTP/1.1
+Content-Type: application/json
+X-Rh-Identity: {{identity}}
+
+{
+  "name": "amz-linux-us-east-1",
+  "source_id": "{{source_id_aws}}",
+  "image_id": "c1257188-3462-48ca-b8c0-bbd061e99ab2",
+  "amount": 1,
+  "launch_template_id": "{{launch_template_id}}",
+  "instance_type": "t4g.nano",
+  "pubkey_id": {{pubkey_id}},
+  "poweroff": true
+}
