@@ -457,7 +457,7 @@ objects:
             d.detail -> 'instance_type'                  as type,
             d.detail -> 'region'                         as region,
             d.detail -> 'amount'                         as amount,
-            d.detail -> 'launch_template_id' as template
+            d.detail -> 'launch_template_id'             as template
             from reservations r
             join aws_reservation_details d on r.id = d.reservation_id
             join accounts a on r.account_id = a.id
@@ -478,7 +478,7 @@ objects:
             d.detail -> 'instance_size' as type,
             d.detail -> 'location'      as region,
             d.detail -> 'amount'        as amount,
-            false                       as template
+            ''                          as template
             from reservations r
             join azure_reservation_details d on r.id = d.reservation_id
             join accounts a on r.account_id = a.id
