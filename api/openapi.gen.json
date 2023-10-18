@@ -66,7 +66,7 @@
           "amount": 1,
           "image_id": "composer-api-081fc867-838f-44a5-af03-8b8def808431",
           "instance_size": "Basic_A0",
-          "location": "useast_1",
+          "location": "useast",
           "name": "my-instance",
           "poweroff": false,
           "pubkey_id": 42,
@@ -680,6 +680,7 @@
             "type": "string"
           },
           "location": {
+            "description": "Location (also known as region) to deploy the VM into, be aware it needs to be the same as the image location. Defaults to the Resource Group location, or 'eastus' when also creating the resource group.",
             "type": "string"
           },
           "name": {
@@ -693,7 +694,7 @@
             "type": "integer"
           },
           "resource_group": {
-            "description": "Azure resource group name to deploy the VM resources into. Optional, defaults to 'redhat-deployed'.",
+            "description": "Azure resource group name to deploy the VM resources into. Optional, defaults to images resource group and when not found to 'redhat-deployed'.",
             "type": "string"
           },
           "source_id": {
@@ -1363,7 +1364,7 @@
       "name": "GPL-3.0"
     },
     "title": "provisioning-api",
-    "version": "1.8.0"
+    "version": "1.9.0"
   },
   "openapi": "3.0.0",
   "paths": {

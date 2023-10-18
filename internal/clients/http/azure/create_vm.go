@@ -33,6 +33,10 @@ const (
 	vmPollFrequency       = 10 * time.Second
 )
 
+func newAzureResourceGroup(group armresources.ResourceGroup) clients.AzureResourceGroup {
+	return clients.AzureResourceGroup{ID: *group.ID, Name: *group.Name, Location: *group.Location}
+}
+
 func (c *client) BeginCreateVM(ctx context.Context, networkInterface *armnetwork.Interface, vmParams clients.AzureInstanceParams, vmName string) (string, error) {
 	ctx, span := telemetry.StartSpan(ctx, "BeginCreateVM")
 	defer span.End()
@@ -154,16 +158,16 @@ func (c *client) prepareVMNetworking(ctx context.Context, subnet *armnetwork.Sub
 	return networkInterface, publicIP, nil
 }
 
-func (c *client) EnsureResourceGroup(ctx context.Context, name string, location string) (*string, error) {
+func (c *client) EnsureResourceGroup(ctx context.Context, name string, location string) (clients.AzureResourceGroup, error) {
 	resourceGroupClient, err := c.newResourceGroupsClient(ctx)
 	if err != nil {
-		return nil, err
+		return clients.AzureResourceGroup{}, err
 	}
 
 	logger := logger(ctx)
 	getResp, err := resourceGroupClient.Get(ctx, name, nil)
 	if err == nil {
-		return getResp.ResourceGroup.ID, nil
+		return newAzureResourceGroup(getResp.ResourceGroup), nil
 	}
 	if err != nil {
 		var azErr *azcore.ResponseError
@@ -171,7 +175,7 @@ func (c *client) EnsureResourceGroup(ctx context.Context, name string, location 
 			logger.Debug().Msgf("resource group %s not found, creating", name)
 			// 404 is expected, continue
 		} else {
-			return nil, fmt.Errorf("failed to fetch resource group: %w", err)
+			return clients.AzureResourceGroup{}, fmt.Errorf("failed to fetch resource group: %w", err)
 		}
 	}
 
@@ -183,10 +187,10 @@ func (c *client) EnsureResourceGroup(ctx context.Context, name string, location 
 
 	resp, err := resourceGroupClient.CreateOrUpdate(ctx, name, parameters, nil)
 	if err != nil {
-		return nil, fmt.Errorf("cannot create resource group: %w", err)
+		return clients.AzureResourceGroup{}, fmt.Errorf("cannot create resource group: %w", err)
 	}
 
-	return resp.ResourceGroup.ID, nil
+	return newAzureResourceGroup(resp.ResourceGroup), nil
 }
 
 func (c *client) createVirtualNetwork(ctx context.Context, location string, resourceGroupName string, name string) (*armnetwork.VirtualNetwork, error) {

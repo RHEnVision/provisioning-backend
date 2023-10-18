@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -31,7 +32,7 @@ type LaunchInstanceAzureTaskArgs struct {
 	// Associated reservation
 	ReservationID int64
 
-	// Location to provision the instances into
+	// Location to provision the instances into when blank, uses the Resource Group location
 	Location string
 
 	// Associated public key
@@ -71,6 +72,15 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 	if args.ResourceGroupName == "" {
 		logger.Debug().Msg("Resource group has not been set, defaulting to 'redhat-deployed'")
 		args.ResourceGroupName = DefaultAzureResourceGroupName
+	}
+	if args.Location != "" {
+		// Match for availability zone suffix and removes it.
+		// For backwards compatibility, we accept both forms and adjust here,
+		// but we want to accept only region without the zone info in the future.
+		res, e := regexp.MatchString(`_[1-6]\z`, args.Location)
+		if e == nil && res {
+			args.Location = args.Location[0 : len(args.Location)-2]
+		}
 	}
 
 	// ensure panic finishes the job
@@ -116,13 +126,18 @@ func DoEnsureAzureResourceGroup(ctx context.Context, args *LaunchInstanceAzureTa
 		return fmt.Errorf("cannot create new Azure client: %w", err)
 	}
 
-	resourceGroupID, err := azureClient.EnsureResourceGroup(ctx, args.ResourceGroupName, location)
+	resourceGroup, err := azureClient.EnsureResourceGroup(ctx, args.ResourceGroupName, location)
 	if err != nil {
 		span.SetStatus(codes.Error, "cannot create resource group")
 		logger.Error().Err(err).Msg("Cannot create resource group")
 		return fmt.Errorf("failed to ensure resource group: %w", err)
 	}
-	logger.Trace().Msgf("Using resource group id=%s", *resourceGroupID)
+	logger.Trace().Msgf("Using resource group id=%s", resourceGroup)
+
+	if args.Location == "" {
+		logger.Debug().Str("azure_location", resourceGroup.Location).Msg("Using location from Resource Group")
+		args.Location = resourceGroup.Location
+	}
 
 	return nil
 }
@@ -168,7 +183,7 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 	}
 
 	vmParams := clients.AzureInstanceParams{
-		Location:          location,
+		Location:          args.Location,
 		ResourceGroupName: args.ResourceGroupName,
 		ImageID:           args.AzureImageID,
 		Pubkey:            pubkey,

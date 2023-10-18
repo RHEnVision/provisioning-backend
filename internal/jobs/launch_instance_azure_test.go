@@ -51,32 +51,63 @@ func prepareAzureReservation(t *testing.T, ctx context.Context, pk *models.Pubke
 }
 
 func TestDoEnsureAzureResourceGroup(t *testing.T) {
-	ctx := prepareAzureContext(t)
+	t.Run("verify it calls the Azure client with correct params", func(t *testing.T) {
+		ctx := prepareAzureContext(t)
 
-	pk := factories.NewPubkeyRSA()
-	err := daoStubs.AddPubkey(ctx, pk)
-	require.NoError(t, err, "failed to add stubbed key")
+		pk := factories.NewPubkeyRSA()
+		err := daoStubs.AddPubkey(ctx, pk)
+		require.NoError(t, err, "failed to add stubbed key")
 
-	res := prepareAzureReservation(t, ctx, pk)
+		res := prepareAzureReservation(t, ctx, pk)
 
-	rDao := dao.GetReservationDao(ctx)
-	err = rDao.CreateAzure(ctx, res)
-	require.NoError(t, err, "failed to add stubbed reservation")
+		rDao := dao.GetReservationDao(ctx)
+		err = rDao.CreateAzure(ctx, res)
+		require.NoError(t, err, "failed to add stubbed reservation")
 
-	args := &jobs.LaunchInstanceAzureTaskArgs{
-		AzureImageID:      "/subscriptions/subUUID/rgName/images/uuid2",
-		Location:          "useast",
-		PubkeyID:          pk.ID,
-		ReservationID:     res.ID,
-		SourceID:          "2",
-		Subscription:      clients.NewAuthentication("subUUID", models.ProviderTypeAzure),
-		ResourceGroupName: "testGroup",
-	}
+		args := &jobs.LaunchInstanceAzureTaskArgs{
+			AzureImageID:      "/subscriptions/subUUID/rgName/images/uuid2",
+			Location:          "useast",
+			PubkeyID:          pk.ID,
+			ReservationID:     res.ID,
+			SourceID:          "2",
+			Subscription:      clients.NewAuthentication("subUUID", models.ProviderTypeAzure),
+			ResourceGroupName: "testGroup",
+		}
 
-	err = jobs.DoEnsureAzureResourceGroup(ctx, args)
-	require.NoError(t, err, "the ensure resource group failed to run")
+		err = jobs.DoEnsureAzureResourceGroup(ctx, args)
+		require.NoError(t, err, "the ensure resource group failed to run")
 
-	assert.True(t, clientStubs.DidCreateAzureResourceGroup(ctx, "testGroup"))
+		assert.True(t, clientStubs.DidCreateAzureResourceGroup(ctx, "testGroup"))
+	})
+
+	t.Run("it fetches the Resource Group location", func(t *testing.T) {
+		ctx := prepareAzureContext(t)
+
+		pk := factories.NewPubkeyRSA()
+		err := daoStubs.AddPubkey(ctx, pk)
+		require.NoError(t, err, "failed to add stubbed key")
+
+		res := prepareAzureReservation(t, ctx, pk)
+
+		rDao := dao.GetReservationDao(ctx)
+		err = rDao.CreateAzure(ctx, res)
+		require.NoError(t, err, "failed to add stubbed reservation")
+
+		args := &jobs.LaunchInstanceAzureTaskArgs{
+			AzureImageID:      "/subscriptions/subUUID/rgName/images/uuid2",
+			Location:          "",
+			PubkeyID:          pk.ID,
+			ReservationID:     res.ID,
+			SourceID:          "2",
+			Subscription:      clients.NewAuthentication("subUUID", models.ProviderTypeAzure),
+			ResourceGroupName: "existing",
+		}
+
+		err = jobs.DoEnsureAzureResourceGroup(ctx, args)
+		require.NoError(t, err, "the ensure resource group failed to run")
+
+		assert.Equal(t, "westeurope", args.Location)
+	})
 }
 
 func TestDoLaunchInstanceAzure(t *testing.T) {

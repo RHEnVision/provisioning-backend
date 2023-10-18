@@ -198,10 +198,12 @@ type AzureReservationRequest struct {
 	ImageID string `json:"image_id" yaml:"image_id"`
 
 	// ResourceGroup to use to deploy the resources into
-	ResourceGroup string `json:"resource_group" yaml:"resource_group" description:"Azure resource group name to deploy the VM resources into. Optional, defaults to 'redhat-deployed'."`
+	ResourceGroup string `json:"resource_group" yaml:"resource_group" description:"Azure resource group name to deploy the VM resources into. Optional, defaults to images resource group and when not found to 'redhat-deployed'."`
 
-	// Azure Location to deploy into.
-	Location string `json:"location" yaml:"location"`
+	// Azure Location also known as region to deploy the VM into.
+	// Be aware it needs to be the same as the image location.
+	// Defaults to the Resource group location or 'eastus' if new resource group is also created in this request.
+	Location string `json:"location" yaml:"location" description:"Location (also known as region) to deploy the VM into, be aware it needs to be the same as the image location. Defaults to the Resource Group location, or 'eastus' when also creating the resource group."`
 
 	// Azure Instance type.
 	InstanceSize string `json:"instance_size" yaml:"instance_size"`

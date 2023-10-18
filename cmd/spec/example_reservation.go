@@ -122,7 +122,7 @@ var AwsReservationResponsePayloadDoneExample = payloads.AWSReservationResponse{
 var AzureReservationRequestPayloadExample = payloads.AzureReservationRequest{
 	PubkeyID:      42,
 	SourceID:      "654321",
-	Location:      "useast_1",
+	Location:      "useast",
 	ResourceGroup: "redhat-hcc",
 	InstanceSize:  "Basic_A0",
 	Amount:        1,

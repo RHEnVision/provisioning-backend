@@ -34,13 +34,16 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	pkDao := dao.GetPubkeyDao(r.Context())
 	rDao := dao.GetReservationDao(r.Context())
 
-	// Check for preloaded region
-	if payload.Location == "" {
-		payload.Location = "eastus_1"
-	}
-	if !preload.AzureInstanceType.ValidateRegion(payload.Location) {
-		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported location", ErrUnsupportedRegion))
-		return
+	// validate region
+	// it needs to be in region format, but also
+	if payload.Location != "" && !preload.AzureInstanceType.ValidateRegion(payload.Location+"_1") {
+		// Location format is accepted now for backwards compatibility, but we should deprecate it
+		if preload.AzureInstanceType.ValidateRegion(payload.Location) {
+			logger.Warn().Msgf("Azure region passed with location suffix (%s), this is deprecated behaviour format", payload.Location)
+		} else {
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Unsupported location", ErrUnsupportedRegion))
+			return
+		}
 	}
 
 	// Validate pubkey
@@ -80,31 +83,34 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var azureImageName string
+	resourceGroupName := payload.ResourceGroup
 	// Azure image IDs are "free form", if it's a UUID we treat it like a compose ID
 	if composeUUID, pErr := uuid.Parse(payload.ImageID); pErr == nil {
 		// Composer-built image
-
 		instanceType := preload.AzureInstanceType.FindInstanceType(clients.InstanceTypeName(payload.InstanceSize))
 		if instanceType == nil {
 			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Instance size is not a valid Azure instance size", nil))
 			return
 		}
 
-		azureImageName, err = ibClient.GetAzureImageID(r.Context(), composeUUID, *instanceType)
+		var imageResourceGroupName string
+		imageResourceGroupName, azureImageName, err = ibClient.GetAzureImageInfo(r.Context(), composeUUID, *instanceType)
 		if err != nil {
 			renderError(w, r, payloads.NewClientError(r.Context(), err))
 			return
 		}
-		azureImageName = fmt.Sprintf("/subscriptions/%s%s", authentication.Payload, azureImageName)
+		if resourceGroupName == "" {
+			resourceGroupName = imageResourceGroupName
+		}
+		azureImageName = fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/images/%s", authentication.Payload, imageResourceGroupName, azureImageName)
 	} else {
 		// Format Image ID for image names passed manually in here.
 		// Assumes the image is in the resource group we want to deploy into.
 		if strings.HasPrefix(payload.ImageID, "composer-api") {
-			rg := payload.ResourceGroup
-			if rg == "" {
-				rg = jobs.DefaultAzureResourceGroupName
+			if resourceGroupName == "" {
+				resourceGroupName = jobs.DefaultAzureResourceGroupName
 			}
-			azureImageName = fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/images/%s", authentication.Payload, rg, payload.ImageID)
+			azureImageName = fmt.Sprintf("/subscriptions/%s/resourceGroups/%s/providers/Microsoft.Compute/images/%s", authentication.Payload, resourceGroupName, payload.ImageID)
 		} else {
 			// Anything else is treated like a direct Azure image ID (e.g. from https://imagedirectory.cloud)
 			azureImageName = payload.ImageID
@@ -125,7 +131,7 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 	name := config.Application.InstancePrefix + payload.Name
 	detail := &models.AzureDetail{
 		Location:      payload.Location,
-		ResourceGroup: payload.ResourceGroup,
+		ResourceGroup: resourceGroupName,
 		InstanceSize:  payload.InstanceSize,
 		Amount:        payload.Amount,
 		PowerOff:      payload.PowerOff,
@@ -154,9 +160,9 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 		EdgeID:    logging.EdgeRequestId(r.Context()),
 		AccountID: identity.AccountId(r.Context()),
 		Args: jobs.LaunchInstanceAzureTaskArgs{
+			Location:          reservation.Detail.Location,
 			ReservationID:     reservation.ID,
 			ResourceGroupName: reservation.Detail.ResourceGroup,
-			Location:          reservation.Detail.Location,
 			PubkeyID:          pk.ID,
 			SourceID:          reservation.SourceID,
 			AzureImageID:      azureImageName,

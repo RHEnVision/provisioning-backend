@@ -88,46 +88,46 @@ func (c *ibClient) GetAWSAmi(ctx context.Context, composeUUID uuid.UUID, instanc
 	return uploadStatus.Ami, nil
 }
 
-func (c *ibClient) GetAzureImageID(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (string, error) {
+func (c *ibClient) GetAzureImageInfo(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (string, string, error) {
 	logger := logger(ctx)
 	logger.Trace().Msgf("Getting Azure ID of image %v", composeUUID.String())
 
 	composeStatus, err := c.getComposeStatus(ctx, composeUUID)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	if composeStatus == nil {
 		logger.Warn().Msg("Compose status is not ready")
-		return "", fmt.Errorf("getting azure id: %w", http.ErrImageStatus)
+		return "", "", fmt.Errorf("getting azure id: %w", http.ErrImageStatus)
 	}
 
 	logger.Trace().Msgf("Verifying Azure type")
 	if composeStatus.ImageStatus.UploadStatus == nil {
-		return "", fmt.Errorf("%w: upload status is nil", http.ErrUploadStatus)
+		return "", "", fmt.Errorf("%w: upload status is nil", http.ErrUploadStatus)
 	}
 	if composeStatus.ImageStatus.UploadStatus.Type != UploadTypesAzure {
-		return "", fmt.Errorf("%w: expected image type Azure, got %s", http.ErrUnknownImageType, composeStatus.ImageStatus.UploadStatus.Type)
+		return "", "", fmt.Errorf("%w: expected image type Azure, got %s", http.ErrUnknownImageType, composeStatus.ImageStatus.UploadStatus.Type)
 	}
 	if len(composeStatus.Request.ImageRequests) < 1 {
 		logger.Error().Msg(http.ErrImageRequestNotFound.Error())
-		return "", http.ErrImageRequestNotFound
+		return "", "", http.ErrImageRequestNotFound
 	}
 
 	imageArch, archErr := clients.MapArchitectures(ctx, string(composeStatus.Request.ImageRequests[0].Architecture))
 	if archErr != nil || imageArch != instanceType.Architecture {
-		return "", http.ErrImageArchInvalid
+		return "", "", http.ErrImageArchInvalid
 	}
 
 	uploadOptions, err := composeStatus.ImageStatus.UploadStatus.Options.AsAzureUploadStatus()
 	if err != nil {
-		return "", fmt.Errorf("%w: not an Azure status", http.ErrUploadStatus)
+		return "", "", fmt.Errorf("%w: not an Azure status", http.ErrUploadStatus)
 	}
 
 	azureUploadRequest, err := composeStatus.Request.ImageRequests[0].UploadRequest.Options.AsAzureUploadRequestOptions()
 	if err != nil {
-		return "", fmt.Errorf("failed to decode Azure upload request from IB: %w", err)
+		return "", "", fmt.Errorf("failed to decode Azure upload request from IB: %w", err)
 	}
-	return fmt.Sprintf("/resourceGroups/%s/providers/Microsoft.Compute/images/%s", azureUploadRequest.ResourceGroup, uploadOptions.ImageName), nil
+	return azureUploadRequest.ResourceGroup, uploadOptions.ImageName, nil
 }
 
 func (c *ibClient) GetGCPImageName(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (string, error) {
