@@ -147,6 +147,8 @@ components:
                 reservation_id:
                     type: integer
                     format: int64
+                resource_group:
+                    type: string
                 source_id:
                     type: string
         v1.GCPReservationRequest:
@@ -685,6 +687,7 @@ components:
                 poweroff: false
                 pubkey_id: 42
                 reservation_id: 1310
+                resource_group: myCustom Azure RG
                 source_id: "654321"
         v1.AzureReservationResponsePayloadPendingExample:
             value:
@@ -697,6 +700,7 @@ components:
                 poweroff: false
                 pubkey_id: 42
                 reservation_id: 1310
+                resource_group: myCustom Azure RG
                 source_id: "654321"
         v1.GCPReservationRequestPayloadExample:
             value:

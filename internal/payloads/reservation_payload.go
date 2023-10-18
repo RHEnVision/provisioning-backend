@@ -95,6 +95,8 @@ type AzureReservationResponse struct {
 
 	SourceID string `json:"source_id" yaml:"source_id"`
 
+	ResourceGroup string `json:"resource_group" yaml:"resource_group"`
+
 	// Azure Location.
 	Location string `json:"location" yaml:"location"`
 
@@ -320,16 +322,17 @@ func NewAzureReservationResponse(reservation *models.AzureReservation, instances
 	}
 
 	response := AzureReservationResponse{
-		PubkeyID:     reservation.PubkeyID,
-		ImageID:      reservation.ImageID,
-		SourceID:     reservation.SourceID,
-		Location:     reservation.Detail.Location,
-		Amount:       reservation.Detail.Amount,
-		InstanceSize: reservation.Detail.InstanceSize,
-		ID:           reservation.ID,
-		Name:         reservation.Detail.Name,
-		PowerOff:     reservation.Detail.PowerOff,
-		Instances:    instanceIds,
+		PubkeyID:      reservation.PubkeyID,
+		ImageID:       reservation.ImageID,
+		SourceID:      reservation.SourceID,
+		ResourceGroup: reservation.Detail.ResourceGroup,
+		Location:      reservation.Detail.Location,
+		Amount:        reservation.Detail.Amount,
+		InstanceSize:  reservation.Detail.InstanceSize,
+		ID:            reservation.ID,
+		Name:          reservation.Detail.Name,
+		PowerOff:      reservation.Detail.PowerOff,
+		Instances:     instanceIds,
 	}
 	return &response
 }
