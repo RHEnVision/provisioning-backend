@@ -33,7 +33,7 @@ source $CICD_ROOT/deploy_ephemeral_env.sh
 # ADD the image stubs
 oc project $NAMESPACE
 
-export AWS_ACCOUNT_ID="093942615996"
+export AWS_ACCOUNT_ID="988542195534"
 source <(curl -ksSL https://gitlab.cee.redhat.com/satellite-services/hms-cicd/-/raw/main/images_db_stub.sh)
 
 # Run smoke tests using a ClowdJobInvocation and iqe-tests
