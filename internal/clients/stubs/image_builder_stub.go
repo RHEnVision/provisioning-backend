@@ -38,8 +38,8 @@ func (mock *ImageBuilderClientStub) GetAWSAmi(ctx context.Context, composeUUID u
 	return "ami-0c830793775595d4b-test", nil
 }
 
-func (mock *ImageBuilderClientStub) GetAzureImageID(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (string, error) {
-	return "/resourceGroups/redhat-deployed/providers/Microsoft.Compute/images/composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7", nil
+func (mock *ImageBuilderClientStub) GetAzureImageInfo(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (string, string, error) {
+	return "myTestGroup", "composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7", nil
 }
 
 func (mock *ImageBuilderClientStub) GetGCPImageName(ctx context.Context, composeUUID uuid.UUID, instanceType clients.InstanceType) (string, error) {

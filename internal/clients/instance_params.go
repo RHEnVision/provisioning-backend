@@ -56,7 +56,7 @@ type AWSInstanceParams struct {
 
 // AzureInstanceParams define parameters for a single instance launch on Azure.
 type AzureInstanceParams struct {
-	// Location - to deploy into
+	// Location - to deploy into, defaults to Resource Group location
 	Location string
 
 	// ResourceGroupName to launch the instance in

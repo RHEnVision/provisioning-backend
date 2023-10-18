@@ -92,8 +92,12 @@ func (stub *AzureClientStub) WaitForVM(ctx context.Context, resumeToken string) 
 	return "", ErrNotStartedVM
 }
 
-func (stub *AzureClientStub) EnsureResourceGroup(ctx context.Context, name string, location string) (*string, error) {
+func (stub *AzureClientStub) EnsureResourceGroup(ctx context.Context, name string, location string) (clients.AzureResourceGroup, error) {
 	id := strconv.Itoa(len(stub.createdRgs) + 1)
+
+	if name == "existing" {
+		return clients.AzureResourceGroup{ID: "/subscriptions/123/resourceGroups/mockedID", Name: "existing", Location: "westeurope"}, nil
+	}
 
 	rg := armresources.ResourceGroup{
 		ID:       &id,
@@ -101,7 +105,7 @@ func (stub *AzureClientStub) EnsureResourceGroup(ctx context.Context, name strin
 		Location: &location,
 	}
 	stub.createdRgs = append(stub.createdRgs, &rg)
-	return &id, nil
+	return clients.AzureResourceGroup{ID: id, Name: name, Location: location}, nil
 }
 
 func (stub *AzureClientStub) TenantId(ctx context.Context) (clients.AzureTenantId, error) {

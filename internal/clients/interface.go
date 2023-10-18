@@ -7,6 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
+type AzureResourceGroup struct {
+	ID       string
+	Name     string
+	Location string
+}
+
 // GetSourcesClient returns Sources interface implementation. There are currently
 // two implementations available: HTTP and stub
 var GetSourcesClient func(ctx context.Context) (Sources, error)
@@ -39,11 +45,9 @@ type ImageBuilder interface {
 	// It also verifies the image is built successfully and for the right architecture.
 	GetAWSAmi(ctx context.Context, composeUUID uuid.UUID, instanceType InstanceType) (string, error)
 
-	// GetAzureImageID returns partial image id, that is missing the subscription prefix
-	// Full name is /subscriptions/<subscription-id>/resourceGroups/<Group>/providers/Microsoft.Compute/images/<ImageName>
-	// GetAzureImageID returns /resourceGroups/<Group>/providers/Microsoft.Compute/images/<ImageName>
+	// GetAzureImageInfo returns Resource Group name and image name from the image builder info.
 	// It also verifies the image is built successfully and for the right architecture.
-	GetAzureImageID(ctx context.Context, composeUUID uuid.UUID, instanceType InstanceType) (string, error)
+	GetAzureImageInfo(ctx context.Context, composeUUID uuid.UUID, instanceType InstanceType) (string, string, error)
 
 	// GetGCPImageName returns GCP image name
 	// It also verifies the image is built successfully and for the right architecture.
@@ -117,7 +121,7 @@ type Azure interface {
 	TenantId(ctx context.Context) (AzureTenantId, error)
 
 	// EnsureResourceGroup makes sure that group with give name exists in a location
-	EnsureResourceGroup(ctx context.Context, name string, location string) (*string, error)
+	EnsureResourceGroup(ctx context.Context, name string, location string) (AzureResourceGroup, error)
 
 	// CreateVMs creates multiple Azure virtual machines
 	// Returns array of instance IDs and error if something went wrong
