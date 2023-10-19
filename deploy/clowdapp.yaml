@@ -478,7 +478,7 @@ objects:
             d.detail -> 'instance_size' as type,
             d.detail -> 'location'      as region,
             d.detail -> 'amount'        as amount,
-            ''                          as template
+            null                        as template
             from reservations r
             join azure_reservation_details d on r.id = d.reservation_id
             join accounts a on r.account_id = a.id
@@ -497,6 +497,7 @@ objects:
             d.source_id,
             d.image_id,
             d.detail -> 'machine_type' as type,
+            d.detail -> 'zone'        as region,
             d.detail -> 'amount'        as amount,
             d.detail -> 'launch_template_id' as template
             from reservations r
