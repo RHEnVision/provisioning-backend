@@ -1,8 +1,21 @@
 <!-- insertion marker -->
-<a name="Unreleased"></a>
-## Unreleased ([compare](https://github.com/RHEnVision/provisioning-backend/compare/1.8.0...HEAD)) (2023-10-05)
+<a name="1.9.0"></a>
 
-<!-- insertion marker -->
+## [1.9.0](https://github.com/RHEnVision/provisioning-backend/compare/1.8.0...1.9.0) (2023-10-19)
+
+### Features
+
+- **[HMS-2440](https://issues.redhat.com/browse/HMS-2440):** private IPv4 address for GCP ([7b4e49d](https://github.com/RHEnVision/provisioning-backend/commit/7b4e49dcb14df48e64268a90146144b5d6d92e99))
+- **[HMS-2439](https://issues.redhat.com/browse/HMS-2439):** Add private IP address in Azure details ([e5c5713](https://github.com/RHEnVision/provisioning-backend/commit/e5c571379e3b5613a4895135165ccf15d5e73197))
+- **[HMS-2438](https://issues.redhat.com/browse/HMS-2438):** AWS private IPv4/IPv6 ([49fe2a6](https://github.com/RHEnVision/provisioning-backend/commit/49fe2a6102a9d77403d5d67c9dd9adf303964451))
+
+### Bug Fixes
+
+- disable HTTP/2 for CVE-2023-44487 ([5b14d6c](https://github.com/RHEnVision/provisioning-backend/commit/5b14d6c0e861bac0212f45e52ac2ebf398e837cb)), related to [HMS-2765](https://issues.redhat.com/browse/HMS-2765)
+- **[HMS-2785](https://issues.redhat.com/browse/HMS-2785):** pass otel spans properly ([0f3abc7](https://github.com/RHEnVision/provisioning-backend/commit/0f3abc7328ebda3314d7496544b019a36a061152))
+- **[HMS-2757](https://issues.redhat.com/browse/HMS-2757):** use transactions for reservations ([6e6de60](https://github.com/RHEnVision/provisioning-backend/commit/6e6de602f6088378f8d45d70352628e0b9673b98))
+- **[HMS-2757](https://issues.redhat.com/browse/HMS-2757):** improve unexpected rows error ([e86523a](https://github.com/RHEnVision/provisioning-backend/commit/e86523adaee04def44a3e10363c43e861d50e3cd))
+
 <a name="1.8.0"></a>
 
 ## [1.8.0](https://github.com/RHEnVision/provisioning-backend/compare/1.7.0...1.8.0) (2023-10-04)
