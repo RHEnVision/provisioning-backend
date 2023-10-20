@@ -97,6 +97,9 @@ objects:
           terminationMessagePolicy: File
         - name: iqe-sel-${IMAGE_TAG}-${UID}
           image: ${IQE_SEL_IMAGE}
+          env:
+            - name: _JAVA_OPTIONS
+              value: ${SELENIUM_JAVA_OPTS}
           resources:
             limits:
               cpu: 500m
@@ -147,3 +150,5 @@ parameters:
   value: "1"
 - name: NAME_STUB
   value: 'e2e-tests'
+- name: SELENIUM_JAVA_OPTS
+  value: ''
