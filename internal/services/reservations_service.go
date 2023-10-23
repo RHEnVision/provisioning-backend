@@ -21,6 +21,7 @@ var (
 	ErrUnknownInstanceTypeName    = errors.New("unknown instance type")
 	ErrArchitectureMismatch       = errors.New("instance type and image architecture mismatch")
 	ErrBothTypeAndTemplateMissing = errors.New("instance type or launch template not set")
+	ErrMachineTypeMissing         = errors.New("machine type missing")
 	ErrUnsupportedRegion          = errors.New("unknown region/location/zone")
 	ErrInvalidNamePattern         = errors.New("name pattern is not RFC-1035 compatible")
 	ErrPubkeyNotFound             = errors.New("no pubkey found")

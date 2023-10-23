@@ -8,7 +8,7 @@ X-Rh-Identity: {{identity}}
   "source_id": "{{source_id_aws}}",
   "image_id": "ami-05fa00d4c63e32376",
   "amount": 1,
-  "launch_template_id": "{{launch_template_id}}",
+  "launch_template_id_aws": "{{launch_template_id_aws}}",
   "instance_type": "t2.nano",
   "pubkey_id": {{pubkey_id}},
   "poweroff": true

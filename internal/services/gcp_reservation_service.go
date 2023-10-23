@@ -44,6 +44,12 @@ func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check machine type for "This organization policy prevents creating instances with exotic machine types. Contact the IT Public Cloud team at help.redhat.com for an exception"
+	if payload.MachineType == "" {
+		renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "Machine type must be present even when a template is in use", ErrBothTypeAndTemplateMissing))
+		return
+	}
+
 	namePattern := "inst-####"
 	// Verify name pattern is lower cased and add #####
 	if payload.NamePattern != "" {
