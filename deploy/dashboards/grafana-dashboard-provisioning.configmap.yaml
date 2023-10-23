@@ -341,7 +341,7 @@ data:
                    "refId" : "A"
                 }
              ],
-             "title" : "Reservation success rate per hyperscaler (24h)",
+             "title" : "Reservation success rate per hyperscaler (28d)",
              "type" : "stat"
           },
           {
