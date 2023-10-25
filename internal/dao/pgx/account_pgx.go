@@ -3,12 +3,14 @@ package pgx
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/db"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 )
 
@@ -73,17 +75,17 @@ func (x *accountDao) GetOrCreateByIdentity(ctx context.Context, orgId string, ac
 		LIMIT 1;`
 
 	err := pgxscan.Get(ctx, db.Pool, result, query, orgId, account)
-	if err != nil {
-		return nil, fmt.Errorf("pgx error: %w", err)
-	}
-
-	// Step 4: requery in case transaction isolation (simultaneous transactions)
-	if result.ID == 0 && result.OrgID == "" {
-		zerolog.Ctx(ctx).Warn().Bool("requery", true).Msgf("Organization id %s requery", orgId)
+	if errors.Is(err, pgx.ErrNoRows) {
+		// Step 4: requery in case transaction isolation. This will happen in case of simultaneous transactions when
+		// the other transaction inserts the record after transaction is opened, therefore the conflict will trigger
+		// and no account will be actually retrieved from the database. The driver returns no rows error in this case.
+		zerolog.Ctx(ctx).Warn().Bool("requery", true).Msgf("Organization id %s account requery", orgId)
 		err = pgxscan.Get(ctx, db.Pool, result, query, orgId, account)
 		if err != nil {
 			return nil, fmt.Errorf("pgx requery error: %w", err)
 		}
+	} else if err != nil {
+		return nil, fmt.Errorf("pgx error: %w", err)
 	}
 
 	return result, nil
