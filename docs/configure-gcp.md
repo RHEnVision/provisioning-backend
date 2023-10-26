@@ -139,3 +139,38 @@ In real life, the Tenant project id will be stored in a secret place, which is a
 This microservice also provides a guide on how to set up the Tenant account.
 This app then fetches the project id and performs operations in this project.
 If the setup is not correct as the above steps, this service fails, but does not provide corrective measures.
+
+## Configure networking in Tenant project
+
+In a new GCP project, there is no default networking.
+For GCP deployment to work properly, one must create default network with ssh inbound allowed.
+
+To do so, run following commands, with your `PROJECT_ID`:
+
+```
+gcloud compute networks create default \
+  --project=PROJECT_ID \
+  --subnet-mode=auto \
+  --mtu=1460 \
+  --bgp-routing-mode=regional
+
+gcloud compute firewall-rules create default-allow-icmp \
+  --project=PROJECT_ID \
+  --network=projects/PROJECT_ID/global/networks/default \
+  --description=Allows\ ICMP\ connections\ from\ any\ source\ to\ any\ instance\ on\ the\ network. \
+  --direction=INGRESS \
+  --priority=65534 \
+  --source-ranges=0.0.0.0/0 \
+  --action=ALLOW \
+  --rules=icmp
+
+gcloud compute firewall-rules create default-allow-ssh \
+  --project=PROJECT_ID \
+  --network=projects/PROJECT_ID/global/networks/default \
+  --description=Allows\ TCP\ connections\ from\ any\ source\ to\ any\ instance\ on\ the\ network\ using\ port\ 22. \
+  --direction=INGRESS \
+  --priority=65534 \
+  --source-ranges=0.0.0.0/0 \
+  --action=ALLOW \
+  --rules=tcp:22
+```
