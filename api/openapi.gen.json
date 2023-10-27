@@ -1397,7 +1397,7 @@
           }
         },
         "tags": [
-          "AvailabilityStatus"
+          "Source"
         ]
       }
     },
@@ -2156,6 +2156,14 @@
     {
       "description": "A pubkey represents the SSH public portion of a key pair with a name and body. Public key types and fingerprints are detected during their creation process. Two types are supported: RSA and ssh-ed25519. Fingerprints are calculated in two ways: using the standard SHA method and the legacy MD5 method, which is available under the fingerprint_legacy field. Each public key has a unique name and body and helps in verifying the uniqueness of the keys. Using this API, you can perform the following operations.\n",
       "name": "Pubkey"
+    },
+    {
+      "description": "A reservation represents a request for launching one or more instances from a single image. This reservation triggers a background job, that will Launch set amount of instances with the same configuration. The configuration decides target provider, instance size and ssh pubkey to use for the default user.\n",
+      "name": "Reservation"
+    },
+    {
+      "description": "A Source represents a connection with public cloud account. These endpoints serve as convenient way to read information about available Sources to deploy instances into. The source of through is different application called Sources.\n",
+      "name": "Source"
     }
   ]
 }

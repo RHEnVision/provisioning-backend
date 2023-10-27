@@ -15,6 +15,16 @@ tags:
       Fingerprints are calculated in two ways: using the standard SHA method and the legacy MD5 method, which is available under the fingerprint_legacy field.
       Each public key has a unique name and body and helps in verifying the uniqueness of the keys.
       Using this API, you can perform the following operations.
+  - name: Reservation
+    description: >
+      A reservation represents a request for launching one or more instances from a single image.
+      This reservation triggers a background job, that will Launch set amount of instances with the same configuration.
+      The configuration decides target provider, instance size and ssh pubkey to use for the default user.
+  - name: Source
+    description: >
+      A Source represents a connection with public cloud account.
+      These endpoints serve as convenient way to read information about available Sources to deploy instances into.
+      The source of through is different application called Sources.
 paths:
   /pubkeys/{ID}:
     get:
@@ -546,7 +556,7 @@ paths:
     post:
       operationId: availabilityStatus
       tags:
-        - AvailabilityStatus
+        - Source
       description: >
         Schedules a background operation of Sources availability check. These checks are
         are performed in separate process at it's own pace. Results are sent via Kafka
