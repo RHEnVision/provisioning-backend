@@ -36,37 +36,37 @@ objects:
                     mountPath: /opt/app-root/src/cloudwash/settings.yaml
                     subPath: settings.yaml
                 env:
-                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_CLIENT_ID
+                  - name: CLEANUP_PROVIDERS__AZURE__AUTH__CLIENT_ID
                     valueFrom:
                       secretKeyRef:
                         key: azure_client_id
                         name: provisioning-azure-auth-secret
                         optional: true
-                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_SECRET_ID
+                  - name: CLEANUP_PROVIDERS__AZURE__AUTH__SECRET_ID
                     valueFrom:
                       secretKeyRef:
                         key: azure_client_secret
                         name: provisioning-azure-auth-secret
                         optional: true
-                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_TENANT_ID
+                  - name: CLEANUP_PROVIDERS__AZURE__AUTH__TENANT_ID
                     valueFrom:
                       secretKeyRef:
                         key: azure_tenant_id
                         name: provisioning-azure-auth-secret
                         optional: true
-                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_SUBSCRIPTION_ID
+                  - name: CLEANUP_PROVIDERS__AZURE__AUTH__SUBSCRIPTION_ID
                     valueFrom:
                       secretKeyRef:
                         key: subscription_id
                         name: provisioning-azure-auth-secret
                         optional: true
-                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_RESOURCE_GROUPS
+                  - name: CLEANUP_PROVIDERS__AZURE__AUTH__RESOURCE_GROUPS
                     valueFrom:
                       secretKeyRef:
                         key: resource_group
                         name: provisioning-azure-auth-secret
                         optional: true
-                  - name: CLEANUP_PROVIDERS_AZURE_AUTH_REGIONS
+                  - name: CLEANUP_PROVIDERS__AZURE__AUTH__REGIONS
                     valueFrom:
                       secretKeyRef:
                         key: location
