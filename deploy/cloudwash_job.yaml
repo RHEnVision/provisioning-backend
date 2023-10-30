@@ -28,7 +28,7 @@ objects:
                 command:
                   - swach
                 args:
-                  - "-d" # remove this after merging everything
+                  - "-d"
                   - "azure"
                   - "--all"
                 volumeMounts:
@@ -41,37 +41,31 @@ objects:
                       secretKeyRef:
                         key: azure_client_id
                         name: provisioning-azure-auth-secret
-                        optional: true
                   - name: CLEANUP_PROVIDERS__AZURE__AUTH__SECRET_ID
                     valueFrom:
                       secretKeyRef:
                         key: azure_client_secret
                         name: provisioning-azure-auth-secret
-                        optional: true
                   - name: CLEANUP_PROVIDERS__AZURE__AUTH__TENANT_ID
                     valueFrom:
                       secretKeyRef:
                         key: azure_tenant_id
                         name: provisioning-azure-auth-secret
-                        optional: true
                   - name: CLEANUP_PROVIDERS__AZURE__AUTH__SUBSCRIPTION_ID
                     valueFrom:
                       secretKeyRef:
                         key: subscription_id
                         name: provisioning-azure-auth-secret
-                        optional: true
                   - name: CLEANUP_PROVIDERS__AZURE__AUTH__RESOURCE_GROUPS
                     valueFrom:
                       secretKeyRef:
                         key: resource_group
                         name: provisioning-azure-auth-secret
-                        optional: true
                   - name: CLEANUP_PROVIDERS__AZURE__AUTH__REGIONS
                     valueFrom:
                       secretKeyRef:
                         key: location
                         name: provisioning-azure-auth-secret
-                        optional: true
             volumes:
               - name: config-volume
                 configMap:
