@@ -167,6 +167,7 @@ func CreateAzureReservation(w http.ResponseWriter, r *http.Request) {
 			SourceID:          reservation.SourceID,
 			AzureImageID:      azureImageName,
 			Subscription:      authentication,
+			Name:              name,
 		},
 	}
 

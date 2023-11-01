@@ -684,6 +684,7 @@
             "type": "string"
           },
           "name": {
+            "description": "Name of the instance, to keep names unique, it will be suffixed with UUID. Optional, defaults to 'redhat-vm''",
             "type": "string"
           },
           "poweroff": {
