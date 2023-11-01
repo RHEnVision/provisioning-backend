@@ -23,7 +23,7 @@ import (
 const (
 	DefaultAzureResourceGroupName = "redhat-deployed"
 	location                      = "eastus"
-	vmNamePrefix                  = "redhat-vm"
+	DefaultVMName                 = "redhat-vm"
 )
 
 var LaunchInstanceAzureSteps = []string{"Prepare resource group", "Launch instance(s)"}
@@ -49,6 +49,9 @@ type LaunchInstanceAzureTaskArgs struct {
 
 	// The Subscription fetched from Sources which is linked to a specific source
 	Subscription *clients.Authentication
+
+	// The Name is used as prefix for a final name, for uniqueness we add uuid suffix to each instance name
+	Name string
 }
 
 func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
@@ -81,6 +84,9 @@ func HandleLaunchInstanceAzure(ctx context.Context, job *worker.Job) {
 		if e == nil && res {
 			args.Location = args.Location[0 : len(args.Location)-2]
 		}
+	}
+	if args.Name == "" {
+		args.Name = DefaultVMName
 	}
 
 	// ensure panic finishes the job
@@ -195,7 +201,7 @@ func DoLaunchInstanceAzure(ctx context.Context, args *LaunchInstanceAzureTaskArg
 		},
 	}
 
-	instanceDescriptions, err := azureClient.CreateVMs(ctx, vmParams, reservation.Detail.Amount, vmNamePrefix)
+	instanceDescriptions, err := azureClient.CreateVMs(ctx, vmParams, reservation.Detail.Amount, args.Name)
 	if err != nil {
 		span.SetStatus(codes.Error, "failed to create instances")
 		return fmt.Errorf("cannot create Azure instance: %w", err)

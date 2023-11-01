@@ -98,6 +98,7 @@ components:
                     description: Location (also known as region) to deploy the VM into, be aware it needs to be the same as the image location. Defaults to the Resource Group location, or 'eastus' when also creating the resource group.
                 name:
                     type: string
+                    description: Name of the instance, to keep names unique, it will be suffixed with UUID. Optional, defaults to 'redhat-vm''
                 poweroff:
                     type: boolean
                 pubkey_id:

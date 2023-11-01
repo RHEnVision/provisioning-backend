@@ -97,8 +97,9 @@ type AzureReservationResponse struct {
 
 	ResourceGroup string `json:"resource_group" yaml:"resource_group"`
 
-	// Azure Location.
-	Location string `json:"location" yaml:"location"`
+	// Azure Location. Included only if it was explicitly passed by User.
+	// If it was induced from Resource Group, it will be empty and thus not included in response.
+	Location string `json:"location,omitempty" yaml:"location,omitempty"`
 
 	// Azure Instance size.
 	InstanceSize string `json:"instance_size" yaml:"instance_size"`
@@ -211,8 +212,8 @@ type AzureReservationRequest struct {
 	// Amount of instances to provision of size: InstanceSize.
 	Amount int64 `json:"amount" yaml:"amount"`
 
-	// Name of the instance(s).
-	Name string `json:"name" yaml:"name"`
+	// Name of the instance(s). Defaults to redhat-vm.
+	Name string `json:"name" yaml:"name" description:"Name of the instance, to keep names unique, it will be suffixed with UUID. Optional, defaults to 'redhat-vm''"`
 
 	// Immediately power off the system after initialization.
 	PowerOff bool `json:"poweroff" yaml:"poweroff"`
