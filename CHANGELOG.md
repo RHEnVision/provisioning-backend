@@ -1,4 +1,19 @@
 <!-- insertion marker -->
+<a name="1.10.0"></a>
+
+## [1.10.0](https://github.com/RHEnVision/provisioning-backend/compare/1.9.0...1.10.0) (2023-11-02)
+
+### Features
+
+- Support naming Azure instances ([3b65d64](https://github.com/RHEnVision/provisioning-backend/commit/3b65d6453af5ea378a1f2c91a726c4446b06eee8)), related to [HMS-2004](https://issues.redhat.com/browse/HMS-2004), [HMS-2923](https://issues.redhat.com/browse/HMS-2923)
+- **[HMS-2255](https://issues.redhat.com/browse/HMS-2255):** launch to location of the resource group by default ([f26e2b5](https://github.com/RHEnVision/provisioning-backend/commit/f26e2b5aca8e8e4bab83c9e9a1e852d094638990))
+- enable arm64images ([94038e9](https://github.com/RHEnVision/provisioning-backend/commit/94038e939872e58dccbe64094067738064ea38c6)), related to [HMS-2818](https://issues.redhat.com/browse/HMS-2818)
+
+### Bug Fixes
+
+- **[HMS-2830](https://issues.redhat.com/browse/HMS-2830):** Add resource group to Azure response ([8a733b2](https://github.com/RHEnVision/provisioning-backend/commit/8a733b2ef3a73cce43961326111da0a408c137d0))
+- **[HMS-2757](https://issues.redhat.com/browse/HMS-2757):** Do not cascade on pubkey delete ([f9724b4](https://github.com/RHEnVision/provisioning-backend/commit/f9724b4fa59111f99fabb463369f134b31504682))
+
 <a name="1.9.0"></a>
 
 ## [1.9.0](https://github.com/RHEnVision/provisioning-backend/compare/1.8.0...1.9.0) (2023-10-19)
