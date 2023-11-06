@@ -10,7 +10,7 @@ OR
 
         type(HMS-XXX): brief summary up to 70 characters
 
-Type must be one of the following:
+Type must be one of the following:-
 
 * **build**: Changes that affect the build system
 * **ci**: Changes to our CI configuration files and scripts
