@@ -10,7 +10,7 @@ There are two accounts used in the provisioning flow:
 
 * **Service account** which is configured using GOOGLE_APPLICATION_CREDENTIALS environment variable which holds a credentials JSON file.
     This is an account of the service provider (e.g. Red Hat for cloud.redhat.com).
-    It needs a Role with a set of permissions that enable the application to perform operations. 
+    It needs a Role with a set of permissions that enable the application to perform operations.
     These are list machine types, import pubkey, create new instance, start and stop.
 
 * **Tenant account** is the account into which the service account switches via GCP's IAM permissions to API operation.
@@ -23,7 +23,7 @@ For development and testing purposes, you can use the same account for both.
 
 This is the account that this application needs the credentials and will use to connect to GCP services.
 
-Create two projects from two different google accounts, one served as the service account's project and one as the tenant's project. 
+Create two projects from two different google accounts, one served as the service account's project and one as the tenant's project.
 
 #### Service account Configuration
 
@@ -91,12 +91,12 @@ This is a setup in the account in which the service shall deploy the actual inst
 #### Authenticating as the service account
 
 1. In the Google Cloud console, go to the Service accounts page.
-2. Select the service account project 
+2. Select the service account project
 3. On the Service accounts page, click the e-mail address of the service account that you want to create a key for.
 4. Click the Keys tab.
 5. Click the Add key drop-down menu, then select Create new key.
 6. Select JSON as the Key type and click Create.
-Clicking Create downloads a service account key file. 
+Clicking Create downloads a service account key file.
 
 
 The downloaded key has the following format, where PRIVATE_KEY is the private portion of the public/private key pair:
@@ -119,13 +119,13 @@ The downloaded key has the following format, where PRIVATE_KEY is the private po
   ```shell
    cat creds.json | base64
   ```
-8. Paste the service account project id under GCP_PROJECT_ID 
+8. Paste the service account project id under GCP_PROJECT_ID
 9. Paste the base64 json in api.env under GCP_JSON variable (notice there are no new lines)
 
 10. Paste the Tenant's project id under PROJECT_ID variable in sources.local.conf
 
-11. Create an image in Image Builder for GCP https://console.stage.redhat.com/api/image-builder/v1. 
-Share that image with the **service account** you have created (Copy the service account's email from the IAM console and paste it in Image builder wizard). 
+11. Create an image in Image Builder for GCP https://console.stage.redhat.com/api/image-builder/v1.
+Share that image with the **service account** you have created (Copy the service account's email from the IAM console and paste it in Image builder wizard).
 
 ## About the Shared Image
 The steps above are for creating a service account for local development environment.

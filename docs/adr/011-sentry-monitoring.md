@@ -26,7 +26,7 @@ It should be a simple place where we can always start with error resolving.
 
 ## Current Architecture
 
-* We need to figure out manually from Grafana chart or Kibana logs if something went wrong 
+* We need to figure out manually from Grafana chart or Kibana logs if something went wrong
 
 
 ## Proposed Architecture

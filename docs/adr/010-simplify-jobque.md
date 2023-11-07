@@ -41,15 +41,15 @@ Simplify interface to:
 
 ```go
 type Job struct {
-	// Random UUID for logging and tracing. It is set by Enqueue function. 
+	// Random UUID for logging and tracing. It is set by Enqueue function.
 	ID uuid.UUID
-	
+
     // Associated account.
     AccountID int64
 
     // Associated identity
     Identity identity.Principal
-	
+
 	// Job type or "queue".
 	Type JobType
 

@@ -22,7 +22,7 @@ The terminology is different for each hyperscaler, however, the data model uses 
 
 The `InstanceType` type contains common fields like the number of vCPUs and cores, total amount of memory, ephemeral storage, and supported flag. It also has an architecture, therefore, a single instance type cannot have multiple architectures. In this model, every instance type with a different architecture has a different instance type name. This applies to all major hyperscalers except Azure where Intel 64bit and 32bit are shared. However, 32bit is no longer supported by RHEL and therefore this is not an issue.
 
-The only supported architectures at the moment are: x86_64 and arm64. All other instance types are ignored. InstanceType also contains optional details, currently for Azure the VM generation. 
+The only supported architectures at the moment are: x86_64 and arm64. All other instance types are ignored. InstanceType also contains optional details, currently for Azure the VM generation.
 
 Functions in the `preload` package can be used to find particular `InstanceType` by name.
 
@@ -50,7 +50,7 @@ GCP_JSON=xxxxxxx
 GCP_PROJECT_ID=myproject-12345
 ```
 
-Important: AWS requires special attention: global endpoint session setting must be set for an account. 
+Important: AWS requires special attention: global endpoint session setting must be set for an account.
 
 1. Sign in as a root user or a user with permissions to perform IAM administration tasks. To change the compatibility of session tokens, you must have a policy that allows the iam:SetSecurityTokenServicePreferences action.
 2. Open the IAM console. In the navigation pane, choose Account settings.

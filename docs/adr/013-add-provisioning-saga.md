@@ -8,7 +8,7 @@ Proposed
 
 ## Problem Statement
 
-This ADR exists because there is a need of making the build and launch workflow more user-friendly. 
+This ADR exists because there is a need of making the build and launch workflow more user-friendly.
 This ADR will include four propositions regarding how should we implement this feature and what should we take into consideration.
 
 ## Goals
@@ -49,12 +49,12 @@ Important information to remember:
    * The customer fills in the data needed in order to launch an image.
    * The wizard closes, the polling continues, and when it is done a job is enqueued with the image id.
    * The status of the job is presented on Image Builder main page. (like the status is being presented in the wizard now)
-  
+
 2. Combining Image Builder wizard with the provisioning wizard and adding a step in the Provisioning wizard creating the image:
    * The customer fills in the data needed in order to launch an image.
    * There is an additional step before all the others in the Provisioning wizard showing the status of the image build.
    * After the image has been created the Provisioning workflow continues(creating a reservation, uploading pubkeys when needed and launching the image)
-  
+
 3. Combining Image Builder wizard with the provisioning wizard using polling and showing the status of the instance on Inventory main page:
    * Add a polling mechanism in provisioning backend questioning Image Builder if the image is ready.
    * The customer fills in the data needed in order to launch an image.

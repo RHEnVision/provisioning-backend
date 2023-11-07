@@ -7,7 +7,7 @@
 		  "name":"/insights/platform/app-studio",
 		  "display_name":"App Studio",
 		  "dependent_applications":[
-			 
+
 		  ],
 		  "supported_source_types":[
 			 "bitbucket",
@@ -41,7 +41,7 @@
 		  "name":"/insights/platform/cloud-meter",
 		  "display_name":"RHEL management",
 		  "dependent_applications":[
-			 
+
 		  ],
 		  "supported_source_types":[
 			 "amazon",
@@ -64,7 +64,7 @@
 		  "name":"/insights/platform/cost-management",
 		  "display_name":"Cost Management",
 		  "dependent_applications":[
-			 
+
 		  ],
 		  "supported_source_types":[
 			 "amazon",
@@ -102,7 +102,7 @@
 		  "name":"/insights/platform/fifi",
 		  "display_name":"Remediations",
 		  "dependent_applications":[
-			 
+
 		  ],
 		  "supported_source_types":[
 			 "satellite"
@@ -120,7 +120,7 @@
 		  "name":"/insights/platform/provisioning",
 		  "display_name":"Provisioning",
 		  "dependent_applications":[
-			 
+
 		  ],
 		  "supported_source_types":[
 			 "amazon",
@@ -150,4 +150,3 @@
 	   "last":"/api/sources/v3.1/application_types?limit=100&offset=100"
 	}
  }
- 

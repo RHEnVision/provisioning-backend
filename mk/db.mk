@@ -14,4 +14,3 @@ purgedb: ## Delete database (dangerous!)
 MIGRATION_NAME?=unnamed
 generate-migration: ## Generate new migration file, use MIGRATION_NAME=name
 	$(TERN) new -m internal/db/migrations $(MIGRATION_NAME)
-
