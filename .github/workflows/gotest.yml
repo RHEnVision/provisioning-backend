@@ -13,7 +13,7 @@ env:
 
 jobs:
   commit:
-    name: "💬 Commit message"
+    name: "💬 Commit checks"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,11 +29,6 @@ jobs:
       - run: |
           make check-commits
         working-directory: code
-
-  precommit:
-    name: "📚 Commit checks"
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
       - uses: pre-commit/action@v3.0.0
