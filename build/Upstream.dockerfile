@@ -5,7 +5,7 @@
 #  https://github.com/quay/claircore/actions/workflows/golang-image.yml
 #  https://github.com/quay/claircore/blob/main/.github/workflows/golang-image.yml
 
-FROM quay.io/projectquay/golang:1.19 as build
+FROM quay.io/projectquay/golang:latest as build
 USER 0
 RUN mkdir /build
 WORKDIR /build

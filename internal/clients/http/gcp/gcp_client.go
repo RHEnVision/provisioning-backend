@@ -78,7 +78,7 @@ func (c *gcpClient) ListAllRegions(ctx context.Context) ([]clients.Region, error
 			span.SetStatus(codes.Error, err.Error())
 			return nil, fmt.Errorf("iterator error: %w", err)
 		}
-		regions = append(regions, clients.Region(*region.Name))
+		regions = append(regions, clients.Region(region.GetName()))
 	}
 	return regions, nil
 }
@@ -130,7 +130,7 @@ func (c *gcpClient) ListLaunchTemplates(ctx context.Context) ([]*clients.LaunchT
 
 	templatesList := make([]*clients.LaunchTemplate, 0, len(lst))
 	for _, template := range lst {
-		id := strconv.FormatUint(*template.Id, 10)
+		id := strconv.FormatUint(template.GetId(), 10)
 		templatesList = append(templatesList, &clients.LaunchTemplate{ID: id, Name: template.GetName()})
 	}
 
@@ -280,7 +280,7 @@ func (c *gcpClient) ListInstancesIDsByLabel(ctx context.Context, uuid string) ([
 			span.SetStatus(codes.Error, err.Error())
 			return nil, fmt.Errorf("cannot fetch instance ids: %w", err)
 		} else {
-			instances := pair.Value.Instances
+			instances := pair.Value.GetInstances()
 			for _, insta := range instances {
 				idAsString := strconv.FormatUint(insta.GetId(), 10)
 				ids = append(ids, &idAsString)
@@ -311,10 +311,10 @@ func (c *gcpClient) GetInstanceDescriptionByID(ctx context.Context, id, zone str
 	}
 	instanceId := strconv.FormatUint(instance.GetId(), 10)
 	instanceDesc := clients.InstanceDescription{ID: instanceId}
-	for _, n := range instance.NetworkInterfaces {
-		instanceDesc.PrivateIPv4 = ptr.FromOrEmpty(n.NetworkIP)
-		if len(n.AccessConfigs) > 0 && n.AccessConfigs[0] != nil {
-			instanceDesc.IPv4 = *n.AccessConfigs[0].NatIP
+	for _, n := range instance.GetNetworkInterfaces() {
+		instanceDesc.PrivateIPv4 = n.GetNetworkIP()
+		if len(n.GetAccessConfigs()) > 0 {
+			instanceDesc.IPv4 = n.GetAccessConfigs()[0].GetNatIP()
 			break
 		}
 	}

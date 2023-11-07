@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
@@ -71,7 +73,7 @@ func TestAccountMiddleware(t *testing.T) {
 
 		req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/v1/pubkeys", nil)
 		if err != nil {
-			assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+			require.NoError(t, err, fmt.Sprintf("Error creating a new request: %v", err))
 		}
 
 		rr := httptest.NewRecorder()
@@ -89,7 +91,7 @@ func TestAccountMiddleware(t *testing.T) {
 		ctx = stubs.WithAccountDaoNull(ctx)
 
 		req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/v1/pubkeys", nil)
-		assert.Nil(t, err, fmt.Sprintf("Error creating a new request: %v", err))
+		require.NoError(t, err, fmt.Sprintf("Error creating a new request: %v", err))
 
 		rr := httptest.NewRecorder()
 

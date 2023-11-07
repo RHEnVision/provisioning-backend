@@ -71,7 +71,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 		stubCount := stubs.AzureReservationStubCount(ctx)
 		assert.Equal(t, 1, stubCount, "Reservation has not been Created through DAO")
 
-		assert.Equal(t, 1, len(stub.EnqueuedJobs(ctx)), "Expected exactly one job to be planned")
+		require.Len(t, stub.EnqueuedJobs(ctx), 1, "Expected exactly one job to be planned")
 		assert.IsType(t, jobs.LaunchInstanceAzureTaskArgs{}, stub.EnqueuedJobs(ctx)[0].Args, "Unexpected type of arguments for the planned job")
 		jobArgs := stub.EnqueuedJobs(ctx)[0].Args.(jobs.LaunchInstanceAzureTaskArgs)
 		assert.Equal(t, "testGroup", jobArgs.ResourceGroupName)
@@ -109,7 +109,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 		stubCount := stubs.AzureReservationStubCount(ctx)
 		assert.Equal(t, 1, stubCount, "Reservation has not been Created through DAO")
 
-		assert.Equal(t, 1, len(stub.EnqueuedJobs(ctx)), "Expected exactly one job to be planned")
+		require.Len(t, stub.EnqueuedJobs(ctx), 1, "Expected exactly one job to be planned")
 		assert.IsType(t, jobs.LaunchInstanceAzureTaskArgs{}, stub.EnqueuedJobs(ctx)[0].Args, "Unexpected type of arguments for the planned job")
 		jobArgs := stub.EnqueuedJobs(ctx)[0].Args.(jobs.LaunchInstanceAzureTaskArgs)
 		assert.Equal(t, "testGroup", jobArgs.ResourceGroupName)
@@ -175,7 +175,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 		stubCount := stubs.AzureReservationStubCount(ctx)
 		assert.Equal(t, 1, stubCount, "Reservation has not been Created through DAO")
 
-		assert.Equal(t, 1, len(stub.EnqueuedJobs(ctx)), "Expected exactly one job to be planned")
+		assert.Len(t, stub.EnqueuedJobs(ctx), 1, "Expected exactly one job to be planned")
 		assert.IsType(t, jobs.LaunchInstanceAzureTaskArgs{}, stub.EnqueuedJobs(ctx)[0].Args, "Unexpected type of arguments for the planned job")
 		jobArgs := stub.EnqueuedJobs(ctx)[0].Args.(jobs.LaunchInstanceAzureTaskArgs)
 		// from Image

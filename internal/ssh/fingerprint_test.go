@@ -25,7 +25,7 @@ func TestFingerprintPEMGeneration(t *testing.T) {
 	for _, td := range tests {
 		t.Run(td.name, func(t *testing.T) {
 			fp, err := ssh.GenerateAWSFingerprint([]byte(td.pubkey.Body))
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, td.fingerprint, string(fp),
 				"%s fingerprint %s does not match %s", td.name, string(fp), td.fingerprint)
 		})

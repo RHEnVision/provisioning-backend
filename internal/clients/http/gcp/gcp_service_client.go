@@ -84,8 +84,8 @@ func (c *gcpServiceClient) ListAllRegionsAndZones(ctx context.Context) ([]client
 		if err != nil {
 			return nil, nil, fmt.Errorf("iterator error: %w", err)
 		}
-		regions = append(regions, clients.Region(*region.Name))
-		for _, zone := range region.Zones {
+		regions = append(regions, clients.Region(region.GetName()))
+		for _, zone := range region.GetZones() {
 			zoneAsArr := strings.Split(zone, "/")
 			zones = append(zones, clients.Zone(zoneAsArr[len(zoneAsArr)-1]))
 		}
@@ -127,16 +127,16 @@ func (c *gcpServiceClient) ListMachineTypes(ctx context.Context, zone string) ([
 			return nil, fmt.Errorf("iterator error: %w", err)
 		}
 		arch := clients.ArchitectureTypeX86_64
-		if getMachineFamily(*machineType.Name) == "t2a" {
+		if getMachineFamily(machineType.GetName()) == "t2a" {
 			arch = clients.ArchitectureTypeArm64
 		}
 		machineTypes = append(machineTypes, &clients.InstanceType{
-			Name:               clients.InstanceTypeName(*machineType.Name),
-			VCPUs:              *machineType.GuestCpus,
+			Name:               clients.InstanceTypeName(machineType.GetName()),
+			VCPUs:              machineType.GetGuestCpus(),
 			Cores:              0,
 			Architecture:       arch,
-			MemoryMiB:          mbToMib(float32(*machineType.MemoryMb)),
-			EphemeralStorageGB: getTotalStorage(machineType.ScratchDisks),
+			MemoryMiB:          mbToMib(float32(machineType.GetMemoryMb())),
+			EphemeralStorageGB: getTotalStorage(machineType.GetScratchDisks()),
 		})
 	}
 	return machineTypes, nil
@@ -155,7 +155,7 @@ func getMachineFamily(machineType string) string {
 func getTotalStorage(disks []*computepb.ScratchDisks) int64 {
 	var sum int64 = 0
 	for _, disk := range disks {
-		sum += int64(*disk.DiskGb)
+		sum += int64(disk.GetDiskGb())
 	}
 	return sum
 }

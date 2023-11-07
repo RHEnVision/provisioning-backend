@@ -68,7 +68,7 @@ func Test_GetAWSAmi(t *testing.T) {
 
 		_, amiErr := client.GetAWSAmi(ctx, composeUUID, *instanceType)
 
-		assert.ErrorIs(t, amiErr, httpClients.ErrImageArchInvalid, "Expected an architecture mismatch")
+		require.ErrorIs(t, amiErr, httpClients.ErrImageArchInvalid, "Expected an architecture mismatch")
 	})
 
 	t.Run("resolves AMI correctly for matching image and instance architecture", func(t *testing.T) {
@@ -85,7 +85,7 @@ func Test_GetAWSAmi(t *testing.T) {
 		require.NoError(t, err, "failed to initialize sources client with test server")
 
 		ami, amiErr := client.GetAWSAmi(ctx, composeUUID, *instanceType)
-		assert.NoError(t, amiErr, "expected to resolve AMI correctly")
+		require.NoError(t, amiErr, "expected to resolve AMI correctly")
 		assert.Equal(t, "ami-1234-test", ami)
 	})
 }

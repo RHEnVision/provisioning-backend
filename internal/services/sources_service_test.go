@@ -40,7 +40,7 @@ func TestListSourcesHandler(t *testing.T) {
 		err = json.NewDecoder(rr.Body).Decode(&result)
 		require.NoError(t, err, "failed to decode response body")
 
-		assert.Equal(t, 2, len(result.Data), "expected two result in response json")
+		assert.Len(t, result.Data, 2, "expected two result in response json")
 	})
 
 	t.Run("with provider", func(t *testing.T) {
@@ -61,7 +61,7 @@ func TestListSourcesHandler(t *testing.T) {
 		err = json.NewDecoder(rr.Body).Decode(&result)
 		require.NoError(t, err, "failed to decode response body")
 
-		assert.Equal(t, 2, len(result.Data), "expected two result in response json")
+		assert.Len(t, result.Data, 2, "expected two result in response json")
 	})
 
 	t.Run("with invalid provider", func(t *testing.T) {
@@ -108,6 +108,6 @@ func TestGetAzureSourceDetails(t *testing.T) {
 		require.NoError(t, err, "failed to decode response body")
 
 		assert.Equal(t, models.ProviderTypeAzure.String(), result.Provider, "Provider was expected to be Azure")
-		assert.Equal(t, 3, len(result.AzureInfo.ResourceGroups), "expected three resource groups in response json")
+		assert.Len(t, result.AzureInfo.ResourceGroups, 3, "expected three resource groups in response json")
 	})
 }

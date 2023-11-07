@@ -30,7 +30,7 @@ func TestGenerateDefaults(t *testing.T) {
 	require.NoError(t, err)
 	expected := `#cloud-config`
 
-	assert.NoError(t, validateYAML(userData))
+	require.NoError(t, validateYAML(userData))
 	assert.Equal(t, expected, strings.Trim(trimRe.ReplaceAllString(string(userData), "\n"), "\n"))
 }
 
@@ -58,7 +58,7 @@ write_files:
 runcmd:
 - [ "/bin/sh", "-xc", "/etc/insights-client/tags-generate.sh" ]`
 
-	assert.NoError(t, validateYAML(userData))
+	require.NoError(t, validateYAML(userData))
 	assert.Equal(t, expected, strings.Trim(trimRe.ReplaceAllString(string(userData), "\n"), "\n"))
 }
 
@@ -85,7 +85,7 @@ write_files:
 runcmd:
 - [ "/bin/sh", "-xc", "/etc/insights-client/tags-generate.sh" ]`
 
-	assert.NoError(t, validateYAML(userData))
+	require.NoError(t, validateYAML(userData))
 	assert.Equal(t, expected, strings.Trim(trimRe.ReplaceAllString(string(userData), "\n"), "\n"))
 }
 
@@ -119,7 +119,7 @@ power_state:
   message: "User data scheduled power off"
   timeout: 60`
 
-	assert.NoError(t, validateYAML(userData))
+	require.NoError(t, validateYAML(userData))
 	assert.Equal(t, expected, strings.Trim(trimRe.ReplaceAllString(string(userData), "\n"), "\n"))
 }
 
@@ -138,6 +138,6 @@ power_state:
   message: "Blah"
   timeout: 60`
 
-	assert.NoError(t, validateYAML(userData))
+	require.NoError(t, validateYAML(userData))
 	assert.Equal(t, expected, strings.Trim(trimRe.ReplaceAllString(string(userData), "\n"), "\n"))
 }

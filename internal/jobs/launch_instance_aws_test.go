@@ -111,7 +111,7 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 			pkDao := dao.GetPubkeyDao(ctx)
 			pkrList, err := pkDao.UnscopedListResourcesByPubkeyId(ctx, pk.ID)
 			require.NoError(t, err)
-			assert.Equal(t, 1, len(pkrList))
+			assert.Len(t, pkrList, 1)
 		})
 	}
 
@@ -149,6 +149,6 @@ func TestHandleEnsurePubkeyOnAWS(t *testing.T) {
 		pkDao := dao.GetPubkeyDao(ctx)
 		pkrList, err := pkDao.UnscopedListResourcesByPubkeyId(ctx, pk.ID)
 		require.NoError(t, err)
-		assert.Equal(t, 1, len(pkrList))
+		assert.Len(t, pkrList, 1)
 	})
 }

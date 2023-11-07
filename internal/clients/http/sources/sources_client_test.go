@@ -59,7 +59,7 @@ func TestSourcesClient_GetAuthentication(t *testing.T) {
 		require.NoError(t, err, "failed to initialize sources client with test server")
 
 		authentication, clientErr := client.GetAuthentication(ctx, "256144")
-		assert.NoError(t, clientErr, "Authentication should succeed with Azure auth for Provisioning")
+		require.NoError(t, clientErr, "Authentication should succeed with Azure auth for Provisioning")
 
 		assert.Equal(t, "1a2b3c4d-5e6f-7a8b-9c8d-7e8f9a8b7c6d", authentication.Payload)
 	})
@@ -83,7 +83,7 @@ func TestSourcesClient_GetAuthentication(t *testing.T) {
 		require.NoError(t, err, "failed to initialize sources client with test server")
 
 		authentication, clientErr := client.GetAuthentication(ctx, testSourceId)
-		assert.NoError(t, clientErr, "Authentication should succeed with Provisioning as one of many apps")
+		require.NoError(t, clientErr, "Authentication should succeed with Provisioning as one of many apps")
 
 		assert.Equal(t, "arn:aws:iam::123456789999:role/redhat-provisioning-role-2f6d01c", authentication.Payload)
 	})
@@ -113,7 +113,7 @@ func TestSourcesClient_ListAllProvisioningSources(t *testing.T) {
 	require.NoError(t, err, "failed to initialize sources client with test server")
 
 	sources, total, clientErr := client.ListAllProvisioningSources(ctx)
-	assert.NoError(t, clientErr, "Could not list all provisioning sources")
+	require.NoError(t, clientErr, "Could not list all provisioning sources")
 	assert.Equal(t, 2, total)
 	assert.Equal(t, "1", sources[0].SourceTypeID)
 	assert.Equal(t, "2", sources[1].SourceTypeID)
@@ -121,7 +121,7 @@ func TestSourcesClient_ListAllProvisioningSources(t *testing.T) {
 
 func TestSourcesClient_BuildQuery(t *testing.T) {
 	parsedURL, err := url.Parse("")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	req := &http.Request{
 		URL: parsedURL,
@@ -130,14 +130,14 @@ func TestSourcesClient_BuildQuery(t *testing.T) {
 	t.Run("Build Query with even number of keys and values", func(t *testing.T) {
 		fn := sources.BuildQuery("filter[source_type][name]", "amazon")
 		err := fn(context.Background(), req)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "filter%5Bsource_type%5D%5Bname%5D=amazon", req.URL.RawQuery)
 	})
 
 	t.Run("Build Query with even and multiple number of keys and values", func(t *testing.T) {
 		fn := sources.BuildQuery("filter[resource_type]", "Application", "filter[authtype][starts_with]", "provisioning")
 		err := fn(context.Background(), req)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "filter%5Bresource_type%5D=Application&filter%5Bauthtype%5D%5Bstarts_with%5D=provisioning", req.URL.RawQuery)
 	})
 

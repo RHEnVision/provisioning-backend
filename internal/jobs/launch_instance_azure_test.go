@@ -139,6 +139,6 @@ func TestDoLaunchInstanceAzure(t *testing.T) {
 	assert.Equal(t, 2, clientStubs.CountStubAzureVMs(ctx))
 	resultInstances, err := rDao.ListInstances(ctx, res.ID)
 	require.NoError(t, err, "failed to fetch created instances")
-	assert.Equal(t, 2, len(resultInstances))
+	assert.Len(t, resultInstances, 2)
 	assert.NotEmpty(t, resultInstances[0].Detail.PublicIPv4)
 }
