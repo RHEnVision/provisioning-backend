@@ -8,8 +8,8 @@ on:
   pull_request:
 
 env:
-  # this must match the version in mk/0_initial.mk
-  GO_SVR: 1.19.6
+  # this must match the version in go.mod
+  GO_SVR: 1.20.10
 
 jobs:
   commit:
@@ -82,7 +82,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.53.3
+          version: v1.55.2
 
   testing:
     name: "🏅 Unit tests"

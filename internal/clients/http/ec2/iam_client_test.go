@@ -165,46 +165,46 @@ func TestListMissingPermissions(t *testing.T) {
 
 	t.Run("list missing permissions", func(t *testing.T) {
 		missingStatements := listMissingPermissions(missingLastPermission, expected)
-		assert.Equal(t, 1, len(missingStatements))
+		assert.Len(t, missingStatements, 1)
 		assert.Equal(t, missingStatements[0], expected.Action[len(expected.Action)-1])
 
 		shouldBeEmpty := listMissingPermissions(expected.Action, expected)
-		assert.Equal(t, 0, len(shouldBeEmpty))
+		assert.Empty(t, shouldBeEmpty)
 
 		shouldBeEmpty = listMissingPermissions(duplicityPermissions, expected)
-		assert.Equal(t, 0, len(shouldBeEmpty))
+		assert.Empty(t, shouldBeEmpty)
 	})
 
 	t.Run("get permission from statement", func(t *testing.T) {
 		action := getPermissionsFromStatement(ctx, actionString)
-		assert.Equal(t, 1, len(action))
+		assert.Len(t, action, 1)
 		assert.Equal(t, actionString["Action"], action[0])
 
 		actions := getPermissionsFromStatement(ctx, actionArray)
-		assert.Equal(t, 2, len(actions))
+		assert.Len(t, actions, 2)
 		assert.Equal(t, "ec2:StartInstances", actions[0])
 		assert.Equal(t, "ec2:StopInstances", actions[1])
 
 		noAction := getPermissionsFromStatement(ctx, noActionArray)
-		assert.Equal(t, 0, len(noAction))
+		assert.Empty(t, noAction)
 	})
 
 	t.Run("get permission from allowed", func(t *testing.T) {
 		permissions := getPermissionsFromAllowed(ctx, statementDeny)
-		assert.Equal(t, 0, len(permissions))
+		assert.Empty(t, permissions)
 	})
 
 	t.Run("get statement from json", func(t *testing.T) {
 		statementArrayPolicies, err := getStatementFromJson(ctx, jsonDataArray)
 		require.NoError(t, err)
-		assert.Equal(t, 5, len(statementArrayPolicies))
+		assert.Len(t, statementArrayPolicies, 5)
 
 		statementPolicies, err := getStatementFromJson(ctx, jsonData)
 		require.NoError(t, err)
-		assert.Equal(t, 3, len(statementPolicies))
+		assert.Len(t, statementPolicies, 3)
 
 		statementDeny, err := getStatementFromJson(ctx, jsonDataDeny)
 		require.NoError(t, err)
-		assert.Equal(t, 0, len(statementDeny))
+		assert.Empty(t, statementDeny)
 	})
 }

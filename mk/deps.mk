@@ -20,8 +20,7 @@ list-deps: ## List dependencies and their versions
 update-deps: ## Update Go modules to latest versions
 	$(GO) get -u ./...
 	@# Pinned versions:
-	$(GO) get github.com/getkin/kin-openapi@v0.118.0
-	$(GO) get github.com/deepmap/oapi-codegen@v1.13.4
+	#$(GO) get github.com/deepmap/oapi-codegen@v1.13.4
 	$(GO) mod tidy
 
 # aliases

@@ -7,6 +7,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/factories"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFingerprintGeneration(t *testing.T) {
@@ -24,7 +25,7 @@ func TestFingerprintGeneration(t *testing.T) {
 	for _, td := range tests {
 		t.Run(td.name, func(t *testing.T) {
 			err := models.Transform(context.Background(), td.pubkey)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, td.fingerprint, td.pubkey.Fingerprint,
 				"%s fingerprint %s does not match %s", td.name, td.pubkey.Fingerprint, td.fingerprint)
 		})
@@ -46,7 +47,7 @@ func TestFingerprintLegacyGeneration(t *testing.T) {
 	for _, td := range tests {
 		t.Run(td.name, func(t *testing.T) {
 			err := models.Transform(context.Background(), td.pubkey)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, td.fingerprint, td.pubkey.FingerprintLegacy,
 				"%s fingerprint %s does not match %s", td.name, td.pubkey.FingerprintLegacy, td.fingerprint)
 		})

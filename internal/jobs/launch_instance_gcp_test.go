@@ -82,7 +82,7 @@ func TestDoLaunchInstanceGCP(t *testing.T) {
 
 		resultInstances, err := rDao.ListInstances(ctx, res.ID)
 		require.NoError(t, err, "failed to fetch created instances")
-		assert.Equal(t, 2, len(resultInstances))
+		assert.Len(t, resultInstances, 2)
 		assert.NotEmpty(t, resultInstances[0].Detail.PublicIPv4)
 		assert.Equal(t, "10.0.0.10", resultInstances[0].Detail.PublicIPv4)
 		assert.Equal(t, "10.0.0.11", resultInstances[1].Detail.PublicIPv4)

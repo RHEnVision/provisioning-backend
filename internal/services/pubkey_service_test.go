@@ -49,7 +49,7 @@ func TestListPubkeysHandler(t *testing.T) {
 	err = json.NewDecoder(rr.Body).Decode(&result)
 	require.NoError(t, err, "failed to decode response body")
 
-	assert.Equal(t, 2, len(result.Data), "expected two pubkeys in response json")
+	assert.Len(t, result.Data, 2, "expected two pubkeys in response json")
 }
 
 func TestCreatePubkeyHandler(t *testing.T) {

@@ -32,5 +32,5 @@ func TestRandomizeTagLength(t *testing.T) {
 func TestRandomizeTagNonEmpty(t *testing.T) {
 	pk := models.PubkeyResource{Tag: "something"}
 	pk.RandomizeTag()
-	assert.Equal(t, pk.Tag, "something", "tag must be not overwritten")
+	assert.Equal(t, "something", pk.Tag, "tag must be not overwritten")
 }

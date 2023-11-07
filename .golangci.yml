@@ -22,6 +22,7 @@ linters:
     - depguard # too verbose
     - tagalign # cleanenv is unreadable
     - exhaustive
+    - zerologlint # https://github.com/ykadowak/zerologlint/issues/7
 linters-settings:
   govet:
     check-shadowing: true
