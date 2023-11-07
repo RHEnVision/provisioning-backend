@@ -8,7 +8,7 @@ In this article, we will describe how to create necessary IAM setup and configur
 
 There are two accounts used in the provisioning flow:
 
-* **Service account** which is configured in the application (key/secret), this is an account of the service provider (e.g. Red Hat for cloud.redhat.com). 
+* **Service account** which is configured in the application (key/secret), this is an account of the service provider (e.g. Red Hat for cloud.redhat.com).
     It must not be root AWS account, the recommended practice is to create a dedicated user only with the minimum set of permissions.
 * **Tenant account** is the account into which the service account switches via AssumeRole API operation.
     It needs an AWS IAM Role with set of permissions to perform operations this application is supposed to perform.
@@ -158,5 +158,3 @@ The service can be configured to send all its logs via AWS CloudWatch API. This 
 * Click on Next and Review.
 * Confirm by clicking on Create user.
 * On the next page, make sure to copy Access key and secret key and paste them both into the application configuration (e.g. `config/api.env` or K8s configuration).
-
-

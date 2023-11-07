@@ -115,7 +115,7 @@ Because Image Builder is more complex for installation, we do not recommend inst
 
 ### Notifications on Stage
 
-When you just want to verify a notification kafka's messages, you can use `send-notification.http` to send a message directly to stage env, please notice that a cookie session is required, [click here](https://internal.console.stage.redhat.com/api/turnpike/session/) to generate one. 
+When you just want to verify a notification kafka's messages, you can use `send-notification.http` to send a message directly to stage env, please notice that a cookie session is required, [click here](https://internal.console.stage.redhat.com/api/turnpike/session/) to generate one.
 
 ## Writing Go code
 

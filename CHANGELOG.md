@@ -605,4 +605,3 @@
 <a name="0.1.0"></a>
 
 ## [0.1.0](https://github.com/RHEnVision/provisioning-backend/compare/9d638e99279166b7f27e14feb9468e9b7c98a390...0.1.0) (2022-06-15)
-

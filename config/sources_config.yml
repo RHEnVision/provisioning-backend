@@ -13,4 +13,3 @@ output-options:
   exclude-schemas:
     - BulkCreateResponse # generator issue: redeclaration
     - ID
-

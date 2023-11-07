@@ -49,4 +49,3 @@ _Why does this ADR exist? What decision are you trying to reach, what problem ar
 ## Dependencies
 
 * _Does this proposal depend on other things also being in place? List them._
-
