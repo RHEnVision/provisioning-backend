@@ -9,4 +9,3 @@ generate-spec: ## Generate OpenAPI spec
 validate-spec: ## Compare OpenAPI spec with git
 	$(GO) run ./cmd/spec $(shell head -n1 ./cmd/spec/VERSION)
 	git diff --exit-code api/openapi.gen.json
-

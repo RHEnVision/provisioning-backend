@@ -28,7 +28,7 @@ objects:
                 command:
                   - swach
                 args:
-                  - "-d" # remove this after merging everything
+                  - "-d"
                   - "azure"
                   - "--all"
                 volumeMounts:
@@ -71,7 +71,6 @@ objects:
                       secretKeyRef:
                         key: location
                         name: provisioning-azure-auth-secret
-                        optional: true
             volumes:
               - name: config-volume
                 configMap:

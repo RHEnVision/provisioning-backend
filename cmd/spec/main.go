@@ -234,6 +234,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	tmp := make([]byte, len(bufferJSON), len(bufferJSON)+1)
+	copy(tmp, bufferJSON)
+	tmp = append(tmp, '\n')
+	bufferJSON = tmp
 
 	err = os.WriteFile("./api/openapi.gen.json", bufferJSON, 0o644) // #nosec G306
 	if err != nil {

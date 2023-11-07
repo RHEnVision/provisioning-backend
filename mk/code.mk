@@ -36,4 +36,3 @@ check-fmt: format imports
 
 .PHONY: check ## Alias to perform commit message and migration checking
 check: check-commits check-migrations
-

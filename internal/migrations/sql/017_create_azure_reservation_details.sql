@@ -11,4 +11,3 @@ CREATE TABLE azure_reservation_details
   FOREIGN KEY (reservation_id, provider_fk) REFERENCES reservations(id, provider) ON DELETE CASCADE,
   CHECK (provider_fk = provider_type_azure())
 );
-

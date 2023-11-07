@@ -374,7 +374,7 @@ objects:
                 memory: ${MEMORY_REQUESTS}
       database:
         name: provisioning
-        version: 13
+        version: 15
       kafkaTopics:
         - topicName: platform.provisioning.internal.availability-check
           partitions: 1

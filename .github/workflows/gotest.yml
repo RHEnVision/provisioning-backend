@@ -13,7 +13,7 @@ env:
 
 jobs:
   commit:
-    name: "💾 Commit message"
+    name: "💬 Commit checks"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,9 +29,12 @@ jobs:
       - run: |
           make check-commits
         working-directory: code
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v3.0.0
 
   build:
-    name: "🛠️ Go Build"
+    name: "🛠 Go Build"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -44,7 +47,7 @@ jobs:
           make check-system-go build GO=go
 
   lint:
-    name: "🎯 Code format & OpenAPI lint"
+    name: "🏢 Code format & OpenAPI lint"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -67,7 +70,7 @@ jobs:
           make check-system-go check-fmt validate GO=go
 
   golint:
-    name: "🎯 Go linter"
+    name: "🏫 Go linter"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -82,7 +85,7 @@ jobs:
           version: v1.53.3
 
   testing:
-    name: "📎 Unit tests"
+    name: "🏅 Unit tests"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -96,11 +99,11 @@ jobs:
           make check-system-go test GO=go
 
   test-dao:
-    name: "🗄 Integration tests"
+    name: "🏆 Integration tests"
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres
+        image: postgres:15
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: foobar

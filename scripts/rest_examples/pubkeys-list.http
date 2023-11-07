@@ -2,4 +2,3 @@
 GET http://{{hostname}}:{{port}}/{{prefix}}/pubkeys?limit=&offset= HTTP/1.1
 Content-Type: application/json
 X-Rh-Identity: {{identity}}
-

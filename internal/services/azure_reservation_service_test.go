@@ -12,6 +12,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao/stubs"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
+	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 	"github.com/RHEnVision/provisioning-backend/internal/queue/stub"
 	"github.com/RHEnVision/provisioning-backend/internal/services"
 	"github.com/RHEnVision/provisioning-backend/internal/testing/factories"
@@ -40,6 +41,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 
 		var err error
 		values := map[string]interface{}{
+			"name":           "azureVM",
 			"source_id":      source.ID,
 			"image_id":       "92ea98f8-7697-472e-80b1-7454fa0e7fa7",
 			"resource_group": "testGroup",
@@ -60,6 +62,11 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
+		response := payloads.AzureReservationResponse{}
+		err = json.Unmarshal(rr.Body.Bytes(), &response)
+		require.NoError(t, err, "failed to parse the response body")
+
+		assert.Equal(t, "azureVM", response.Name)
 
 		stubCount := stubs.AzureReservationStubCount(ctx)
 		assert.Equal(t, 1, stubCount, "Reservation has not been Created through DAO")
@@ -68,6 +75,7 @@ func TestCreateAzureReservationHandler(t *testing.T) {
 		assert.IsType(t, jobs.LaunchInstanceAzureTaskArgs{}, stub.EnqueuedJobs(ctx)[0].Args, "Unexpected type of arguments for the planned job")
 		jobArgs := stub.EnqueuedJobs(ctx)[0].Args.(jobs.LaunchInstanceAzureTaskArgs)
 		assert.Equal(t, "testGroup", jobArgs.ResourceGroupName)
+		assert.Equal(t, "azureVM", jobArgs.Name)
 		assert.Equal(t, "/subscriptions/4b9d213f-712f-4d17-a483-8a10bbe9df3a/resourceGroups/myTestGroup/providers/Microsoft.Compute/images/composer-api-92ea98f8-7697-472e-80b1-7454fa0e7fa7", jobArgs.AzureImageID, "Expected translated image to real name - one from IB client stub")
 	})
 

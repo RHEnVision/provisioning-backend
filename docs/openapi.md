@@ -34,7 +34,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/v1.MySchema' 
+                  $ref: '#/components/schemas/v1.MySchema'
               examples:
                   example1:
                       $ref: '#/components/examples/v1.MySchemaExample1'

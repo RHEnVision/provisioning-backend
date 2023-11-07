@@ -35,7 +35,7 @@ Two use cases need to be considered:
 Adding the Metadata Structure:
 When querying one of the list endpoints, a metadata structure will appear in the response. It holds the total number of records for the first option and links for the next and previous pages based on the current limit provided.
 
-Frontend: 
+Frontend:
 To handle pagination on the frontend, we will utilize React Query along with the wizard context / useState to manage the offset and Limit. We will leverage React Query's built-in pagination mechanism. [Learn more about React Query pagination](https://tanstack.com/query/v4/docs/react/guides/paginated-queries).
 
 ## Challenges
