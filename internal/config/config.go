@@ -49,17 +49,17 @@ var config struct {
 		CleanupInterval time.Duration `env:"CLEANUP_INTERVAL" env-default:"1h" env-description:"how often to cleanup the reservation"`
 	} `env-prefix:"RESERVATION_"`
 	Database struct {
-		Host        string        `env:"HOST" env-default:"localhost" env-description:"main database hostname"`
-		Port        uint16        `env:"PORT" env-default:"5432" env-description:"main database port"`
-		Name        string        `env:"NAME" env-default:"provisioning" env-description:"main database name"`
-		User        string        `env:"USER" env-default:"postgres" env-description:"main database username"`
-		Password    string        `env:"PASSWORD" env-default:"" env-description:"main database password"`
-		SeedScript  string        `env:"SEED_SCRIPT" env-default:"" env-description:"database seed script (dev only)"`
-		MinConn     int32         `env:"MIN_CONN" env-default:"2" env-description:"connection pool minimum size"`
-		MaxConn     int32         `env:"MAX_CONN" env-default:"50" env-description:"connection pool maximum size"`
-		MaxIdleTime time.Duration `env:"MAX_IDLE_TIME" env-default:"15m" env-description:"connection pool idle time (time interval syntax)"`
-		MaxLifetime time.Duration `env:"MAX_LIFETIME" env-default:"2h" env-description:"connection pool total lifetime (time interval syntax)"`
-		LogLevel    string        `env:"LOG_LEVEL" env-default:"info" env-description:"logging level of database logs"`
+		Host         string        `env:"HOST" env-default:"localhost" env-description:"main database hostname"`
+		Port         uint16        `env:"PORT" env-default:"5432" env-description:"main database port"`
+		Name         string        `env:"NAME" env-default:"provisioning" env-description:"main database name"`
+		User         string        `env:"USER" env-default:"postgres" env-description:"main database username"`
+		Password     string        `env:"PASSWORD" env-default:"" env-description:"main database password"`
+		SeedScript   string        `env:"SEED_SCRIPT" env-default:"" env-description:"database seed script (dev only)"`
+		MinConn      int32         `env:"MIN_CONN" env-default:"2" env-description:"connection pool minimum size"`
+		MaxConn      int32         `env:"MAX_CONN" env-default:"50" env-description:"connection pool maximum size"`
+		MaxIdleTime  time.Duration `env:"MAX_IDLE_TIME" env-default:"15m" env-description:"connection pool idle time (time interval syntax)"`
+		MaxLifetime  time.Duration `env:"MAX_LIFETIME" env-default:"2h" env-description:"connection pool total lifetime (time interval syntax)"`
+		LoggingLevel string        `env:"LOGGING_LEVEL" env-default:"info" env-description:"logging level of database logs"`
 	} `env-prefix:"DATABASE_"`
 	Logging struct {
 		Level    string `env:"LEVEL" env-default:"info" env-description:"logger level (trace, debug, info, warn, error, fatal, panic)"`

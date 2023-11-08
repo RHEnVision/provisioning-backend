@@ -67,7 +67,7 @@ func Initialize(ctx context.Context, schema string) error {
 	if config.Telemetry.Enabled {
 		poolConfig.ConnConfig.Tracer = otelpgx.NewTracer(otelpgx.WithIncludeQueryParameters())
 	} else {
-		logLevel, configErr := tracelog.LogLevelFromString(config.Database.LogLevel)
+		logLevel, configErr := tracelog.LogLevelFromString(config.Database.LoggingLevel)
 		if configErr != nil {
 			return fmt.Errorf("cannot parse db log level configuration: %w", configErr)
 		}
