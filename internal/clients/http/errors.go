@@ -1,6 +1,8 @@
 package http
 
 import (
+	"errors"
+
 	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
 )
 
@@ -29,4 +31,9 @@ var (
 	ErrServiceAccountUnsupportedOp = usrerr.New(500, "unsupported operation on service account", "")
 	ErrARNParsing                  = usrerr.New(500, "ARN parsing error", "")
 	ErrNoReservation               = usrerr.New(404, "no reservation was found in AWS response", "")
+)
+
+// Azure
+var (
+	ErrRoleAssignmentNotFound = errors.New("Azure role assignment of Contributor to the service was not found in given subscription")
 )

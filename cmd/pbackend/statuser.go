@@ -136,8 +136,23 @@ func checkSourceAvailabilityAzure(cancelCtx context.Context) {
 				ResourceID:     s.SourceApplicationID,
 				ResourceType:   "Application",
 			}
-			sr.UserError = "Could not log into Azure account"
-			sr.Status = kafka.StatusAvailable
+			azureClient, err := clients.GetAzureClient(ctx, &s.Authentication)
+			if err != nil {
+				sr.Status = kafka.StatusUnavailable
+				sr.Err = err
+				sr.UserError = "We could not log into this Azure account"
+				logger.Warn().Err(err).Msg("Failed to create Azure client")
+			} else {
+				_, verifyErr := azureClient.TenantId(ctx)
+				if verifyErr != nil {
+					sr.Status = kafka.StatusUnavailable
+					sr.Err = err
+					sr.UserError = "Red Hat HCC provisioning service account can not connect to your subscription"
+					logger.Info().Err(err).Str("source_id", sr.ResourceID).Msg("Failed to fetch subscription's tenant from Azure")
+				} else {
+					sr.Status = kafka.StatusAvailable
+				}
+			}
 			chSend <- sr
 			metrics.IncTotalSentAvailabilityCheckReqs(models.ProviderTypeAzure.String(), sr.Status.String(), nil)
 
