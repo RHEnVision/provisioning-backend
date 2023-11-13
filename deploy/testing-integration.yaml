@@ -100,6 +100,8 @@ objects:
           env:
             - name: _JAVA_OPTIONS
               value: ${SELENIUM_JAVA_OPTS}
+            - name: VNC_GEOMETRY
+              value: ${VNC_GEOMETRY}
           resources:
             limits:
               cpu: 500m
@@ -152,3 +154,5 @@ parameters:
   value: 'e2e-tests'
 - name: SELENIUM_JAVA_OPTS
   value: ''
+- name: VNC_GEOMETRY
+  value: '1920x1080'
