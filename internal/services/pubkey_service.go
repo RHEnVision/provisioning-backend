@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-playground/mold/v4"
+	"github.com/go-playground/validator/v10"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
@@ -33,9 +36,14 @@ func CreatePubkey(w http.ResponseWriter, r *http.Request) {
 
 	pk := payload.NewModel()
 	err := pkDao.Create(r.Context(), pk)
+	var validationError *validator.ValidationErrors
+	var transformValueError *mold.ErrInvalidTransformValue
+	var transformationError *mold.ErrInvalidTransformation
 	if err != nil {
 		if db.IsPostgresError(err, db.UniqueConstraintErrorCode) != nil {
 			renderError(w, r, payloads.PubkeyDuplicateError(r.Context(), "pubkey with such name or fingerprint already exists for this account", err))
+		} else if errors.As(err, &validationError) || errors.As(err, &transformValueError) || errors.As(err, &transformationError) {
+			renderError(w, r, payloads.NewInvalidRequestError(r.Context(), "validation error", err))
 		} else {
 			renderError(w, r, payloads.NewDAOError(r.Context(), "create pubkey", err))
 		}

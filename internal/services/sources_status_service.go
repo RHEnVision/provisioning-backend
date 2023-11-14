@@ -4,6 +4,8 @@ import (
 	"errors"
 	stdhttp "net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/payloads/validation"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -18,6 +20,9 @@ var ErrUnknownProviderFromSources = errors.New("unknown provider returned from s
 // is no longer valid.
 func SourcesStatus(w stdhttp.ResponseWriter, r *stdhttp.Request) {
 	sourceId := chi.URLParam(r, "ID")
+	if err := validation.DigitsOnly(sourceId); err != nil {
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "id parameter invalid", err))
+	}
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {

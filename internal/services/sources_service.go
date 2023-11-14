@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/payloads/validation"
+
 	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -81,6 +83,9 @@ func ListProvisioningSourcesByProvider(w http.ResponseWriter, r *http.Request, a
 
 func GetSourceUploadInfo(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "ID")
+	if err := validation.DigitsOnly(sourceId); err != nil {
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "id parameter invalid", err))
+	}
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
