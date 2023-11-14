@@ -92,6 +92,10 @@ func processMessage(msgCtx context.Context, message *kafka.GenericMessage) {
 			logger.Warn().Err(err).Msg("Not found error from sources")
 			return
 		}
+		if errors.Is(err, clients.ErrBadRequest) {
+			logger.Warn().Err(err).Msg("Bad request error from sources")
+			return
+		}
 		logger.Warn().Err(err).Msg("Could not get authentication")
 		return
 	}

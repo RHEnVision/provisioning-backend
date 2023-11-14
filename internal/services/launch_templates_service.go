@@ -3,6 +3,8 @@ package services
 import (
 	"net/http"
 
+	"github.com/RHEnVision/provisioning-backend/internal/payloads/validation"
+
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/page"
@@ -14,6 +16,9 @@ import (
 //nolint:exhaustive
 func ListLaunchTemplates(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "ID")
+	if err := validation.DigitsOnly(sourceId); err != nil {
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "id parameter invalid", err))
+	}
 
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
@@ -41,6 +46,10 @@ func ListLaunchTemplates(w http.ResponseWriter, r *http.Request) {
 
 func ListLaunchTemplateAWS(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "ID")
+	if err := validation.DigitsOnly(sourceId); err != nil {
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "id parameter invalid", err))
+	}
+
 	region := r.URL.Query().Get("region")
 	if region == "" {
 		renderError(w, r, payloads.NewMissingRequestParameterError(r.Context(), "region parameter is missing"))
@@ -80,6 +89,10 @@ func ListLaunchTemplateAWS(w http.ResponseWriter, r *http.Request) {
 
 func ListLaunchTemplateGCP(w http.ResponseWriter, r *http.Request) {
 	sourceId := chi.URLParam(r, "ID")
+	if err := validation.DigitsOnly(sourceId); err != nil {
+		renderError(w, r, payloads.NewURLParsingError(r.Context(), "id parameter invalid", err))
+	}
+
 	sourcesClient, err := clients.GetSourcesClient(r.Context())
 	if err != nil {
 		renderError(w, r, payloads.NewClientError(r.Context(), err))

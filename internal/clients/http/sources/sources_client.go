@@ -114,18 +114,27 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 	}
 
 	if resp == nil {
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: empty response: %w", clients.ErrUnexpectedBackendResponse)
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned no response")
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
-	if resp.JSON404 != nil || resp.JSON400 != nil {
-		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("Get authentication from sources returned 4xx")
+
+	if resp.JSON404 != nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned 4xx")
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: %w", clients.ErrNotFound)
+	}
+	if resp.JSON400 != nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned 4xx")
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: %w", clients.ErrBadRequest)
 	}
 
 	if resp.JSON200 == nil {
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", clients.ErrUnexpectedBackendResponse)
+		logger.Warn().RawJSON("response", resp.Body).Msg("list application type sources returned non-200 response")
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.JSON200.Data == nil {
-		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrNoResponseData)
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned no data")
+		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: %w", clients.ErrNoResponseData)
 	}
 
 	result := make([]*clients.Source, 0, len(*resp.JSON200.Data))
@@ -166,21 +175,30 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 
 	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, params, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
+		logger.Warn().Err(err).Msg("Failed to get ApplicationTypes from sources")
 		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", err)
 	}
 	if resp == nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned no response")
 		return nil, 0, fmt.Errorf("list provisioning sources call: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
-	if resp.JSON404 != nil || resp.JSON400 != nil {
-		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("Get authentication from sources returned 4xx")
+
+	if resp.JSON404 != nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned 4xx")
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrNotFound)
+	}
+	if resp.JSON400 != nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned 4xx")
+		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrBadRequest)
 	}
 
 	if resp.JSON200 == nil {
+		logger.Warn().RawJSON("response", resp.Body).Msg("list application type sources returned non-200 response")
 		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrUnexpectedBackendResponse)
 	}
 
 	if resp.JSON200.Data == nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned no data")
 		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrNoResponseData)
 	}
 
@@ -222,9 +240,15 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 	if resp == nil {
 		return nil, fmt.Errorf("get source authentication call: empty response: %w", clients.ErrUnexpectedBackendResponse)
 	}
-	if resp.JSON404 != nil || resp.JSON400 != nil {
+	if resp.JSON404 != nil {
 		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("Get authentication from sources returned 4xx")
+		return nil, fmt.Errorf("get source authentication call: %w", clients.ErrNotFound)
 	}
+	if resp.JSON400 != nil {
+		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("Get authentication from sources returned 4xx")
+		return nil, fmt.Errorf("get source authentication call: %w", clients.ErrBadRequest)
+	}
+
 	if resp.JSON200 == nil {
 		logger.Warn().Str("source_id", sourceId).RawJSON("response", resp.Body).Msg("Sources returned non-200 response")
 		return nil, fmt.Errorf("get source authentication returned %d: %w", resp.StatusCode(), clients.ErrUnexpectedBackendResponse)
