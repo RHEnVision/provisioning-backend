@@ -83,7 +83,7 @@ func NewKafkaBroker(ctx context.Context) (Broker, error) {
 	var saslMechanism sasl.Mechanism
 
 	logger := zerolog.Ctx(ctx)
-	logger.Info().Msgf("Setting up Kafka transport: %v Verify:%t CA:%t Auth:%s Proto:%sSASLMech:%s",
+	logger.Info().Msgf("Setting up Kafka transport: %v Verify:%t CA:%t Auth:%s Proto:%s SASLMech:%s",
 		config.Kafka.Brokers,
 		!config.Kafka.TlsSkipVerify,
 		config.Kafka.CACert != "",
