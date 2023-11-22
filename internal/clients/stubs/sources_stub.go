@@ -105,12 +105,14 @@ func (mock *SourcesClientStub) ListAllProvisioningSources(ctx context.Context) (
 			Name:         "source1",
 			SourceTypeID: "1",
 			Uid:          "5eebe172-7baa-4280-823f-19e597d091e9",
+			Provider:     models.ProviderTypeAWS,
 		},
 		{
 			ID:           "2",
 			Name:         "source2",
 			SourceTypeID: "2",
 			Uid:          "31b5338b-685d-4056-ba39-d00b4d7f19cc",
+			Provider:     models.ProviderTypeAWS,
 		},
 	}
 	return TestSourceData, 2, nil
@@ -123,12 +125,14 @@ func (mock *SourcesClientStub) ListProvisioningSourcesByProvider(ctx context.Con
 			Name:         "source1",
 			SourceTypeID: "1",
 			Uid:          "5eebe172-7baa-4280-823f-19e597d091e9",
+			Provider:     models.ProviderTypeAWS,
 		},
 		{
 			ID:           "2",
 			Name:         "source2",
 			SourceTypeID: "1",
 			Uid:          "31b5338b-685d-4056-ba39-d00b4d7f19cc",
+			Provider:     models.ProviderTypeAWS,
 		},
 	}
 	return TestSourceData, 2, nil

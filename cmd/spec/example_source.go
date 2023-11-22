@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
+	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/page"
 	"github.com/RHEnVision/provisioning-backend/internal/payloads"
 )
@@ -9,13 +10,15 @@ import (
 var SourceListResponse = payloads.SourceListResponse{
 	Data: []*payloads.SourceResponse{
 		{
-			ID:     "654321",
-			Name:   "My AWS account",
-			Status: "available",
+			ID:       "654321",
+			Name:     "My AWS account",
+			Provider: models.ProviderTypeAWS.String(),
+			Status:   "available",
 		}, {
-			ID:     "543621",
-			Name:   "My other AWS account",
-			Status: "available",
+			ID:       "543621",
+			Name:     "My other AWS account",
+			Provider: models.ProviderTypeAWS.String(),
+			Status:   "available",
 		},
 	},
 	Metadata: page.Metadata{

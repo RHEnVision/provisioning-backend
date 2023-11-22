@@ -398,6 +398,7 @@
             {
               "id": "654321",
               "name": "My AWS account",
+              "provider": "aws",
               "source_type_id": "",
               "status": "available",
               "uid": ""
@@ -405,6 +406,7 @@
             {
               "id": "543621",
               "name": "My other AWS account",
+              "provider": "aws",
               "source_type_id": "",
               "status": "available",
               "uid": ""
@@ -1191,7 +1193,12 @@
                 "name": {
                   "type": "string"
                 },
+                "provider": {
+                  "description": "One of ('azure', 'aws', 'gcp')",
+                  "type": "string"
+                },
                 "source_type_id": {
+                  "deprecated": true,
                   "type": "string"
                 },
                 "status": {
@@ -1307,7 +1314,12 @@
           "name": {
             "type": "string"
           },
+          "provider": {
+            "description": "One of ('azure', 'aws', 'gcp')",
+            "type": "string"
+          },
           "source_type_id": {
+            "deprecated": true,
             "type": "string"
           },
           "status": {
@@ -1365,7 +1377,7 @@
       "name": "GPL-3.0"
     },
     "title": "provisioning-api",
-    "version": "1.10.0"
+    "version": "1.11.0"
   },
   "openapi": "3.0.0",
   "paths": {
