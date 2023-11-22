@@ -9,7 +9,6 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
@@ -31,10 +30,6 @@ var (
 
 	// the client
 	client *redis.Client
-
-	// application id "constant" memory-only cache
-	appTypeId      *string
-	appTypeIdMutex sync.Mutex
 )
 
 // Forever is used for items that should be cached "forever". Expiration of 30 days
@@ -65,26 +60,6 @@ func Initialize() {
 	} else {
 		log.Logger.Info().Bool("cache", true).Msg("No application cache in use")
 	}
-}
-
-// FindAppTypeId returns "application id" special identifier, or returns ErrNotFound.
-func FindAppTypeId(_ context.Context) (string, error) {
-	appTypeIdMutex.Lock()
-	defer appTypeIdMutex.Unlock()
-
-	if appTypeId == nil {
-		return "", ErrNotFound
-	}
-	return *appTypeId, nil
-}
-
-// SetAppTypeId sets "application id" special identifier.
-func SetAppTypeId(_ context.Context, value string) error {
-	appTypeIdMutex.Lock()
-	defer appTypeIdMutex.Unlock()
-
-	appTypeId = &value
-	return nil
 }
 
 // Find returns an item from cache. ErrNotFound is returned on cache miss or when
