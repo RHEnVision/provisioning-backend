@@ -1,6 +1,8 @@
 package clients
 
-import "github.com/RHEnVision/provisioning-backend/internal/models"
+import (
+	"github.com/RHEnVision/provisioning-backend/internal/models"
+)
 
 // Source defines model for Source. Maps 1:1 to Source Database.
 type Source struct {

@@ -94,10 +94,6 @@ func (stub *SourcesClientStub) GetAuthentication(ctx context.Context, sourceId s
 	return auth, nil
 }
 
-func (mock *SourcesClientStub) GetProvisioningTypeId(ctx context.Context) (string, error) {
-	return "11", nil
-}
-
 func (mock *SourcesClientStub) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, int, error) {
 	TestSourceData := []*clients.Source{
 		{

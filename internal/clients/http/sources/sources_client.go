@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/RHEnVision/provisioning-backend/internal/cache"
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
 	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -91,10 +90,10 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 	ctx, span := telemetry.StartSpan(ctx, "ListProvisioningSourcesByProvider")
 	defer span.End()
 
-	appTypeId, err := c.GetProvisioningTypeId(ctx)
+	sourcesConstants, err := c.GetSourcesConstants(ctx)
 	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to get provisioning type id")
-		return nil, 0, fmt.Errorf("failed to get provisioning app type: %w", err)
+		logger.Warn().Err(err).Msg("Failed to fetch sources constants")
+		return nil, 0, fmt.Errorf("failed to fetch sources constants: %w", err)
 	}
 
 	sourcesProviderName := provider.SourcesProviderName()
@@ -106,7 +105,7 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 	offset := page.Offset(ctx).String()
 	limit := page.Limit(ctx).String()
 
-	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, params, headers.AddSourcesIdentityHeader,
+	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, sourcesConstants.AppTypeId, params, headers.AddSourcesIdentityHeader,
 		headers.AddEdgeRequestIdHeader, BuildQuery("filter[source_type][name]", sourcesProviderName, "offset", offset, "limit", limit))
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
@@ -137,11 +136,6 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: %w", clients.ErrNoResponseData)
 	}
 
-	sourcesTypes, err := c.GetSourceTypes(ctx)
-	if err != nil {
-		return nil, 0, err
-	}
-
 	result := make([]*clients.Source, 0, len(*resp.JSON200.Data))
 
 	for _, src := range *resp.JSON200.Data {
@@ -150,7 +144,7 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 			Name:         ptr.From(src.Name),
 			SourceTypeID: ptr.From(src.SourceTypeId),
 			Uid:          ptr.From(src.Uid),
-			Provider:     models.ProviderTypeFromSourcesName(sourcesTypes[*src.SourceTypeId]),
+			Provider:     models.ProviderTypeFromSourcesName(sourcesConstants.SourceTypes[*src.SourceTypeId]),
 			Status:       string(*src.AvailabilityStatus),
 		}
 		result = append(result, &newSrc)
@@ -170,16 +164,16 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 	ctx, span := telemetry.StartSpan(ctx, "ListAllProvisioningSources")
 	defer span.End()
 
-	appTypeId, err := c.GetProvisioningTypeId(ctx)
+	sourcesConstants, err := c.GetSourcesConstants(ctx)
 	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to get provisioning type id")
-		return nil, 0, fmt.Errorf("failed to get provisioning app type: %w", err)
+		logger.Warn().Err(err).Msg("Failed to fetch sources constants")
+		return nil, 0, fmt.Errorf("failed to fetch sources constants: %w", err)
 	}
 
 	params.Offset = page.Offset(ctx).IntPtr()
 	params.Limit = page.Limit(ctx).IntPtr()
 
-	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, appTypeId, params, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
+	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, sourcesConstants.AppTypeId, params, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
 		logger.Warn().Err(err).Msg("Failed to get ApplicationTypes from sources")
 		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", err)
@@ -208,11 +202,6 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrNoResponseData)
 	}
 
-	sourcesTypes, err := c.GetSourceTypes(ctx)
-	if err != nil {
-		return nil, 0, err
-	}
-
 	result := make([]*clients.Source, len(*resp.JSON200.Data))
 
 	for i, src := range *resp.JSON200.Data {
@@ -221,7 +210,7 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 			Name:         ptr.From(src.Name),
 			SourceTypeID: ptr.From(src.SourceTypeId),
 			Uid:          ptr.From(src.Uid),
-			Provider:     models.ProviderTypeFromSourcesName(sourcesTypes[*src.SourceTypeId]),
+			Provider:     models.ProviderTypeFromSourcesName(sourcesConstants.SourceTypes[*src.SourceTypeId]),
 			Status:       string(*src.AvailabilityStatus),
 		}
 		result[i] = &newSrc
@@ -292,56 +281,24 @@ func (c *sourcesClient) GetAuthentication(ctx context.Context, sourceId string) 
 	return authentication, nil
 }
 
-func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, error) {
-	appTypeId, err := cache.FindAppTypeId(ctx)
-	if errors.Is(err, cache.ErrNotFound) {
-		appTypeId, err = c.loadAppId(ctx)
-		if err != nil {
-			return "", err
+func (c *sourcesClient) GetSourcesConstants(ctx context.Context) (sourcesConstantsType, error) {
+	result, err := getCachedConstants(ctx)
+	if errors.Is(err, ErrCacheMiss) {
+		var fetchErr error
+		result.AppTypeId, fetchErr = c.loadAppId(ctx)
+		if fetchErr != nil {
+			return result, fetchErr
 		}
-		err = cache.SetAppTypeId(ctx, appTypeId)
-		if err != nil {
-			return "", fmt.Errorf("unable to store app type id to cache: %w", err)
+		result.SourceTypes, fetchErr = c.loadSourceTypes(ctx)
+		if fetchErr != nil {
+			return result, fetchErr
 		}
+		setCachedConstants(ctx, result)
 	} else if err != nil {
-		return "", fmt.Errorf("unable to get app type id from cache: %w", err)
+		return result, fmt.Errorf("source constants cache get error: %w", err)
 	}
 
-	return appTypeId, nil
-}
-
-func (c *sourcesClient) GetSourceTypes(ctx context.Context) (map[ID]string, error) {
-	sourceTypes, err := c.loadSourceTypes(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return sourceTypes, nil
-}
-
-func (c *sourcesClient) loadSourceTypes(ctx context.Context) (map[ID]string, error) {
-	logger := logger(ctx)
-	logger.Trace().Msg("Fetching the Source types from Sources")
-
-	resp, err := c.client.ListSourceTypesWithResponse(ctx, &ListSourceTypesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
-	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to fetch SourceTypes from sources")
-		return nil, fmt.Errorf("failed to fetch SourceTypes: %w", err)
-	}
-
-	if resp.JSON400 != nil {
-		logger.Warn().Bytes("response", resp.Body).Int("status", resp.StatusCode()).Msg("Listing source types returned 400")
-		return nil, fmt.Errorf("source types list was not found: %w", clients.ErrNotFound)
-	}
-	if resp.JSON200 == nil {
-		logger.Warn().RawJSON("response", resp.Body).Msg("Sources returned non-200 response")
-		return nil, fmt.Errorf("get source authentication returned %d: %w", resp.StatusCode(), clients.ErrUnexpectedBackendResponse)
-	}
-
-	sourcesTypes := make(map[ID]string)
-	for _, t := range *resp.JSON200.Data {
-		sourcesTypes[*t.Id] = *t.Name
-	}
-	return sourcesTypes, nil
+	return result, nil
 }
 
 func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
@@ -379,6 +336,32 @@ func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
 		}
 	}
 	return "", http.ErrApplicationTypeNotFound
+}
+
+func (c *sourcesClient) loadSourceTypes(ctx context.Context) (map[string]string, error) {
+	logger := logger(ctx)
+	logger.Trace().Msg("Fetching the Source types from Sources")
+
+	resp, err := c.client.ListSourceTypesWithResponse(ctx, &ListSourceTypesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
+	if err != nil {
+		logger.Warn().Err(err).Msg("Failed to fetch SourceTypes from sources")
+		return nil, fmt.Errorf("failed to fetch SourceTypes: %w", err)
+	}
+
+	if resp.JSON400 != nil {
+		logger.Warn().Bytes("response", resp.Body).Int("status", resp.StatusCode()).Msg("Listing source types returned 400")
+		return nil, fmt.Errorf("source types list was not found: %w", clients.ErrNotFound)
+	}
+	if resp.JSON200 == nil {
+		logger.Warn().RawJSON("response", resp.Body).Msg("Sources returned non-200 response")
+		return nil, fmt.Errorf("get source authentication returned %d: %w", resp.StatusCode(), clients.ErrUnexpectedBackendResponse)
+	}
+
+	sourcesTypes := make(map[string]string)
+	for _, t := range *resp.JSON200.Data {
+		sourcesTypes[*t.Id] = *t.Name
+	}
+	return sourcesTypes, nil
 }
 
 func BuildQuery(keysAndValues ...string) func(ctx context.Context, req *stdhttp.Request) error {
