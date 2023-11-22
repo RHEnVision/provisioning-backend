@@ -98,6 +98,13 @@ func TestSourcesClient_ListAllProvisioningSources(t *testing.T) {
 		require.NoError(t, err, "failed to write http body for stubbed server")
 	})
 
+	mux.HandleFunc(fmt.Sprintf("/source_types"), func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, err := io.WriteString(w, sourceTypes)
+		require.NoError(t, err, "failed to write http body for stubbed server")
+	})
+
 	mux.HandleFunc(fmt.Sprintf("/application_types/%s/sources", "5"), func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)

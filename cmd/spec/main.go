@@ -115,6 +115,9 @@ var enableNullableAndDescriptionOpts = openapi3gen.SchemaCustomizer(
 		if tag.Get("nullable") == "true" {
 			schema.Nullable = true
 		}
+		if tag.Get("deprecated") == "true" {
+			schema.Deprecated = true
+		}
 		if desc, ok := tag.Lookup("description"); ok && desc != "-" {
 			schema.Description = desc
 		}

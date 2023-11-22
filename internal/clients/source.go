@@ -1,5 +1,7 @@
 package clients
 
+import "github.com/RHEnVision/provisioning-backend/internal/models"
+
 // Source defines model for Source. Maps 1:1 to Source Database.
 type Source struct {
 	// ID of the resource
@@ -13,6 +15,9 @@ type Source struct {
 
 	// UUID of the inventory source installation
 	Uid string
+
+	// Provider name as string
+	Provider models.ProviderType
 
 	// Status of the source
 	Status string

@@ -12,9 +12,10 @@ import (
 type SourceResponse struct {
 	ID           string `json:"id" yaml:"id"`
 	Name         string `json:"name,omitempty" yaml:"name"`
-	SourceTypeID string `json:"source_type_id" yaml:"source_type_id"`
 	Uid          string `json:"uid" yaml:"uid"`
+	Provider     string `json:"provider" yaml:"provider" description:"One of ('azure', 'aws', 'gcp')"`
 	Status       string `json:"status" yaml:"status"`
+	SourceTypeID string `json:"source_type_id" yaml:"source_type_id" deprecated:"true"`
 }
 
 type SourceListResponse struct {
@@ -38,6 +39,7 @@ func NewListSourcesResponse(sourceList []*clients.Source, meta *page.Metadata) r
 			Name:         source.Name,
 			SourceTypeID: source.SourceTypeID,
 			Uid:          source.Uid,
+			Provider:     source.Provider.String(),
 			Status:       source.Status,
 		}
 	}

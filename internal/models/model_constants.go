@@ -36,6 +36,19 @@ func ProviderTypeFromString(str string) ProviderType {
 	}
 }
 
+func ProviderTypeFromSourcesName(str string) ProviderType {
+	switch strings.ToLower(str) {
+	case "amazon":
+		return ProviderTypeAWS
+	case "azure":
+		return ProviderTypeAzure
+	case "google":
+		return ProviderTypeGCP
+	default:
+		return ProviderTypeUnknown
+	}
+}
+
 func (pt ProviderType) SourcesProviderName() string {
 	switch pt {
 	case ProviderTypeAWS:

@@ -128,6 +128,11 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrNoResponseData)
 	}
 
+	sourcesTypes, err := c.GetSourceTypes(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+
 	result := make([]*clients.Source, 0, len(*resp.JSON200.Data))
 
 	for _, src := range *resp.JSON200.Data {
@@ -136,6 +141,7 @@ func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, p
 			Name:         ptr.From(src.Name),
 			SourceTypeID: ptr.From(src.SourceTypeId),
 			Uid:          ptr.From(src.Uid),
+			Provider:     models.ProviderTypeFromSourcesName(sourcesTypes[*src.SourceTypeId]),
 			Status:       string(*src.AvailabilityStatus),
 		}
 		result = append(result, &newSrc)
@@ -184,6 +190,11 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 		return nil, 0, fmt.Errorf("list provisioning sources call: %w", clients.ErrNoResponseData)
 	}
 
+	sourcesTypes, err := c.GetSourceTypes(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+
 	result := make([]*clients.Source, len(*resp.JSON200.Data))
 
 	for i, src := range *resp.JSON200.Data {
@@ -192,6 +203,7 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 			Name:         ptr.From(src.Name),
 			SourceTypeID: ptr.From(src.SourceTypeId),
 			Uid:          ptr.From(src.Uid),
+			Provider:     models.ProviderTypeFromSourcesName(sourcesTypes[*src.SourceTypeId]),
 			Status:       string(*src.AvailabilityStatus),
 		}
 		result[i] = &newSrc
@@ -272,6 +284,40 @@ func (c *sourcesClient) GetProvisioningTypeId(ctx context.Context) (string, erro
 	}
 
 	return appTypeId, nil
+}
+
+func (c *sourcesClient) GetSourceTypes(ctx context.Context) (map[ID]string, error) {
+	sourceTypes, err := c.loadSourceTypes(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return sourceTypes, nil
+}
+
+func (c *sourcesClient) loadSourceTypes(ctx context.Context) (map[ID]string, error) {
+	logger := logger(ctx)
+	logger.Trace().Msg("Fetching the Source types from Sources")
+
+	resp, err := c.client.ListSourceTypesWithResponse(ctx, &ListSourceTypesParams{}, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
+	if err != nil {
+		logger.Warn().Err(err).Msg("Failed to fetch SourceTypes from sources")
+		return nil, fmt.Errorf("failed to fetch SourceTypes: %w", err)
+	}
+
+	if resp.JSON400 != nil {
+		logger.Warn().Bytes("response", resp.Body).Int("status", resp.StatusCode()).Msg("Listing source types returned 400")
+		return nil, fmt.Errorf("source types list was not found: %w", clients.ErrNotFound)
+	}
+	if resp.JSON200 == nil {
+		logger.Warn().RawJSON("response", resp.Body).Msg("Sources returned non-200 response")
+		return nil, fmt.Errorf("get source authentication returned %d: %w", resp.StatusCode(), clients.ErrUnexpectedBackendResponse)
+	}
+
+	sourcesTypes := make(map[ID]string)
+	for _, t := range *resp.JSON200.Data {
+		sourcesTypes[*t.Id] = *t.Name
+	}
+	return sourcesTypes, nil
 }
 
 func (c *sourcesClient) loadAppId(ctx context.Context) (string, error) {
