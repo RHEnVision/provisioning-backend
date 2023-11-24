@@ -53,31 +53,63 @@ func TestListPubkeysHandler(t *testing.T) {
 }
 
 func TestCreatePubkeyHandler(t *testing.T) {
-	var err error
-	var json_data []byte
-	ctx := stubs.WithAccountDaoOne(context.Background())
-	ctx = identity.WithTenant(t, ctx)
-	ctx = stubs.WithPubkeyDao(ctx)
+	t.Run("with invalid data it fails with 400 status", func(t *testing.T) {
+		var err error
+		var json_data []byte
+		ctx := stubs.WithAccountDaoOne(context.Background())
+		ctx = identity.WithTenant(t, ctx)
+		ctx = stubs.WithPubkeyDao(ctx)
 
-	values := map[string]interface{}{
-		"account_id": 1,
-		"name":       "very cool key",
-		"body":       factories.NewPubkeyED25519().Body,
-	}
+		values := map[string]interface{}{
+			"account_id": 1,
+			"name":       "very cool key",
+			"body":       "malformed pubkey body",
+		}
 
-	if json_data, err = json.Marshal(values); err != nil {
-		t.Fatal("unable to marshal values to json")
-	}
-	req, err := http.NewRequestWithContext(ctx, "POST", "/api/provisioning/pubkeys", bytes.NewBuffer(json_data))
-	require.NoError(t, err, "failed to create request")
-	req.Header.Add("Content-Type", "application/json")
+		if json_data, err = json.Marshal(values); err != nil {
+			t.Fatal("unable to marshal values to json")
+		}
+		req, err := http.NewRequestWithContext(ctx, "POST", "/api/provisioning/pubkeys", bytes.NewBuffer(json_data))
+		require.NoError(t, err, "failed to create request")
+		req.Header.Add("Content-Type", "application/json")
 
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(services.CreatePubkey)
-	handler.ServeHTTP(rr, req)
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(services.CreatePubkey)
+		handler.ServeHTTP(rr, req)
 
-	require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
+		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
 
-	stubCount := stubs.PubkeyStubCount(ctx)
-	assert.Equal(t, 1, stubCount, "Pubkey has not been Created through DAO")
+		stubCount := stubs.PubkeyStubCount(ctx)
+		assert.Equal(t, 0, stubCount, "Pubkey has been Created even tho it got invalid input")
+	})
+
+	t.Run("creates pubkey with valid data", func(t *testing.T) {
+		var err error
+		var json_data []byte
+		ctx := stubs.WithAccountDaoOne(context.Background())
+		ctx = identity.WithTenant(t, ctx)
+		ctx = stubs.WithPubkeyDao(ctx)
+
+		values := map[string]interface{}{
+			"account_id": 1,
+			"name":       "very cool key",
+			"body":       factories.NewPubkeyED25519().Body,
+		}
+
+		if json_data, err = json.Marshal(values); err != nil {
+			t.Fatal("unable to marshal values to json")
+		}
+		req, err := http.NewRequestWithContext(ctx, "POST", "/api/provisioning/pubkeys", bytes.NewBuffer(json_data))
+		require.NoError(t, err, "failed to create request")
+		req.Header.Add("Content-Type", "application/json")
+
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(services.CreatePubkey)
+		handler.ServeHTTP(rr, req)
+
+		require.Equal(t, http.StatusOK, rr.Code, "Handler returned wrong status code")
+
+		stubCount := stubs.PubkeyStubCount(ctx)
+		assert.Equal(t, 1, stubCount, "Pubkey has not been Created through DAO")
+	})
 }

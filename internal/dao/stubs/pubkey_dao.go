@@ -2,6 +2,7 @@ package stubs
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
@@ -26,6 +27,22 @@ func getPubkeyDao(ctx context.Context) dao.PubkeyDao {
 	return getPubkeyDaoStub(ctx)
 }
 
+func (stub *pubkeyDaoStub) validate(ctx context.Context, pubkey *models.Pubkey) error {
+	if pubkey.SkipValidation {
+		return nil
+	}
+
+	if vError := models.Validate(ctx, pubkey); vError != nil {
+		return fmt.Errorf("validate: %w", vError)
+	}
+
+	if tError := models.Transform(ctx, pubkey); tError != nil {
+		return fmt.Errorf("transform: %w", tError)
+	}
+
+	return nil
+}
+
 func (stub *pubkeyDaoStub) Create(ctx context.Context, pubkey *models.Pubkey) error {
 	if pubkey.AccountID == 0 {
 		pubkey.AccountID = ctxAccountId(ctx)
@@ -33,11 +50,8 @@ func (stub *pubkeyDaoStub) Create(ctx context.Context, pubkey *models.Pubkey) er
 	if pubkey.AccountID != ctxAccountId(ctx) {
 		return dao.ErrWrongAccount
 	}
-	if err := models.Validate(ctx, pubkey); err != nil {
-		return dao.ErrValidation
-	}
-	if err := models.Transform(ctx, pubkey); err != nil {
-		return dao.ErrTransformation
+	if vError := stub.validate(ctx, pubkey); vError != nil {
+		return fmt.Errorf("pubkey validation: %w", vError)
 	}
 
 	pubkey.ID = stub.lastId + 1
@@ -52,6 +66,9 @@ func (stub *pubkeyDaoStub) Update(ctx context.Context, pubkey *models.Pubkey) er
 	}
 	if pubkey.AccountID != ctxAccountId(ctx) {
 		return dao.ErrWrongAccount
+	}
+	if vError := stub.validate(ctx, pubkey); vError != nil {
+		return fmt.Errorf("pubkey validation: %w", vError)
 	}
 
 	for idx, p := range stub.store {
