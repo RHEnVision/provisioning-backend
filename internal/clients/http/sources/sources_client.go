@@ -85,84 +85,30 @@ func (c *sourcesClient) Ready(ctx context.Context) error {
 }
 
 func (c *sourcesClient) ListProvisioningSourcesByProvider(ctx context.Context, provider models.ProviderType) ([]*clients.Source, int, error) {
-	logger := logger(ctx)
-	params := &ListApplicationTypeSourcesParams{}
 	ctx, span := telemetry.StartSpan(ctx, "ListProvisioningSourcesByProvider")
 	defer span.End()
 
-	sourcesConstants, err := c.GetSourcesConstants(ctx)
-	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to fetch sources constants")
-		return nil, 0, fmt.Errorf("failed to fetch sources constants: %w", err)
-	}
-
 	sourcesProviderName := provider.SourcesProviderName()
-	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to get provider name according to sources service")
-		return nil, 0, fmt.Errorf("failed to get provider name according to sources service: %w", err)
-	}
-
 	offset := page.Offset(ctx).String()
 	limit := page.Limit(ctx).String()
 
-	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, sourcesConstants.AppTypeId, params, headers.AddSourcesIdentityHeader,
-		headers.AddEdgeRequestIdHeader, BuildQuery("filter[source_type][name]", sourcesProviderName, "offset", offset, "limit", limit))
-	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", err)
-	}
-
-	if resp == nil {
-		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned no response")
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: empty response: %w", clients.ErrUnexpectedBackendResponse)
-	}
-
-	if resp.JSON404 != nil {
-		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned 4xx")
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: %w", clients.ErrNotFound)
-	}
-	if resp.JSON400 != nil {
-		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned 4xx")
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: %w", clients.ErrBadRequest)
-	}
-
-	if resp.JSON200 == nil {
-		logger.Warn().RawJSON("response", resp.Body).Msg("list application type sources returned non-200 response")
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: %w", clients.ErrUnexpectedBackendResponse)
-	}
-
-	if resp.JSON200.Data == nil {
-		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned no data")
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes from sources: %w", clients.ErrNoResponseData)
-	}
-
-	result := make([]*clients.Source, 0, len(*resp.JSON200.Data))
-
-	for _, src := range *resp.JSON200.Data {
-		newSrc := clients.Source{
-			ID:           ptr.From(src.Id),
-			Name:         ptr.From(src.Name),
-			SourceTypeID: ptr.From(src.SourceTypeId),
-			Uid:          ptr.From(src.Uid),
-			Provider:     models.ProviderTypeFromSourcesName(sourcesConstants.SourceTypes[*src.SourceTypeId]),
-			Status:       string(*src.AvailabilityStatus),
-		}
-		result = append(result, &newSrc)
-	}
-
-	total := 0
-	if resp.JSON200.Meta != nil {
-		total = *resp.JSON200.Meta.Count
-	}
-
-	return result, total, nil
+	return c.listAllProvisioningSourcesByQuery(ctx, ListApplicationTypeSourcesParams{}, BuildQuery("filter[source_type][name]", sourcesProviderName, "offset", offset, "limit", limit))
 }
 
 func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clients.Source, int, error) {
-	logger := logger(ctx)
-	params := &ListApplicationTypeSourcesParams{}
 	ctx, span := telemetry.StartSpan(ctx, "ListAllProvisioningSources")
 	defer span.End()
+
+	params := ListApplicationTypeSourcesParams{
+		Offset: page.Offset(ctx).IntPtr(),
+		Limit:  page.Limit(ctx).IntPtr(),
+	}
+
+	return c.listAllProvisioningSourcesByQuery(ctx, params, func(ctx context.Context, req *stdhttp.Request) error { return nil })
+}
+
+func (c *sourcesClient) listAllProvisioningSourcesByQuery(ctx context.Context, params ListApplicationTypeSourcesParams, queryEditorFn RequestEditorFn) ([]*clients.Source, int, error) {
+	logger := logger(ctx)
 
 	sourcesConstants, err := c.GetSourcesConstants(ctx)
 	if err != nil {
@@ -170,13 +116,10 @@ func (c *sourcesClient) ListAllProvisioningSources(ctx context.Context) ([]*clie
 		return nil, 0, fmt.Errorf("failed to fetch sources constants: %w", err)
 	}
 
-	params.Offset = page.Offset(ctx).IntPtr()
-	params.Limit = page.Limit(ctx).IntPtr()
-
-	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, sourcesConstants.AppTypeId, params, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
+	resp, err := c.client.ListApplicationTypeSourcesWithResponse(ctx, sourcesConstants.AppTypeId, &params, queryEditorFn, headers.AddSourcesIdentityHeader, headers.AddEdgeRequestIdHeader)
 	if err != nil {
-		logger.Warn().Err(err).Msg("Failed to get ApplicationTypes from sources")
-		return nil, 0, fmt.Errorf("failed to get ApplicationTypes: %w", err)
+		logger.Warn().Err(err).Msg("Failed to fetch ApplicationTypes from sources")
+		return nil, 0, fmt.Errorf("failed to fetch ApplicationTypes: %w", err)
 	}
 	if resp == nil {
 		logger.Warn().Bytes("body", resp.Body).Int("status", resp.StatusCode()).Msg("list application type sources returned no response")
