@@ -2,7 +2,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-  name: provisioning-cleanup-resources
+  name: provisioning-cleanup-cloud-resources
 objects:
 - apiVersion: batch/v1
   kind: CronJob
@@ -22,7 +22,7 @@ objects:
               - name: quay-cloudservices-pull
             restartPolicy: Never
             containers:
-              - name: provisioning-cleanup
+              - name: provisioning-azure-cleanup
                 image: quay.io/redhatqe/cloudwash
                 imagePullPolicy: Always
                 command:
@@ -37,7 +37,7 @@ objects:
                     mountPath: /opt/app-root/src/cloudwash/settings.yaml
                     subPath: settings.yaml
                 env:
-                  - name: CLEANUP_AZURE__AUTH__CLIENT_ID
+                  - name: CLEANUP_AZURE__AUTH__CLIENT_ID # Azure creds
                     valueFrom:
                       secretKeyRef:
                         key: azure_client_id
@@ -57,6 +57,31 @@ objects:
                       secretKeyRef:
                         key: subscription_id
                         name: provisioning-azure-auth-secret
+
+              - name: provisioning-aws-cleanup
+                image: quay.io/redhatqe/cloudwash
+                imagePullPolicy: Always
+                command:
+                  - swach
+                args:
+                  - "-d"
+                  - "aws"
+                  - "--vm"
+                volumeMounts:
+                  - name: config-volume
+                    mountPath: /opt/app-root/src/cloudwash/settings.yaml
+                    subPath: settings.yaml
+                env:
+                  - name: CLEANUP_AWS__AUTH__ACCESS_KEY # AWS creds
+                    valueFrom:
+                      secretKeyRef:
+                        key: access_key_id
+                        name: provisioning-aws-auth-secret
+                  - name: CLEANUP_AWS__AUTH__SECRET_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        key: secret_access_key
+                        name: provisioning-aws-auth-secret
             volumes:
               - name: config-volume
                 configMap:
