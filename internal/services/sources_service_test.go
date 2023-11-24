@@ -111,3 +111,53 @@ func TestGetAzureSourceDetails(t *testing.T) {
 		assert.Len(t, result.AzureInfo.ResourceGroups, 3, "expected three resource groups in response json")
 	})
 }
+
+func TestSourceUploadInfoFails(t *testing.T) {
+	t.Run("fails on AWS upload info for invalid id", func(t *testing.T) {
+		ctx := stubs.WithAccountDaoOne(context.Background())
+		ctx = identity.WithTenant(t, ctx)
+		ctx = clientStub.WithSourcesClient(ctx)
+		ctx = clientStub.WithEC2Client(ctx)
+
+		req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("/api/provisioning/sources/abcdef/upload_info"), nil)
+		require.NoError(t, err, "failed to create request")
+
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(GetSourceUploadInfo)
+		handler.ServeHTTP(rr, req)
+
+		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+	})
+
+	t.Run("fails on Azure upload info for invalid id", func(t *testing.T) {
+		ctx := stubs.WithAccountDaoOne(context.Background())
+		ctx = identity.WithTenant(t, ctx)
+		ctx = clientStub.WithSourcesClient(ctx)
+		ctx = clientStub.WithAzureClient(ctx)
+
+		req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("/api/provisioning/sources/{434FA35}/upload_info"), nil)
+		require.NoError(t, err, "failed to create request")
+
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(GetSourceUploadInfo)
+		handler.ServeHTTP(rr, req)
+
+		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+	})
+
+	t.Run("fails on GCP upload info for invalid id", func(t *testing.T) {
+		ctx := stubs.WithAccountDaoOne(context.Background())
+		ctx = identity.WithTenant(t, ctx)
+		ctx = clientStub.WithSourcesClient(ctx)
+		ctx = clientStub.WithGCPCCustomerClient(ctx)
+
+		req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("/api/provisioning/sources/{21234}/upload_info"), nil)
+		require.NoError(t, err, "failed to create request")
+
+		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(GetSourceUploadInfo)
+		handler.ServeHTTP(rr, req)
+
+		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+	})
+}

@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/RHEnVision/provisioning-backend/internal/clients"
+
 	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
 
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
@@ -135,6 +137,12 @@ func findUserResponse(ctx context.Context, logMsg string, err error) *ResponseEr
 }
 
 func NewClientError(ctx context.Context, err error) *ResponseError {
+	if errors.Is(err, clients.ErrNotFound) {
+		return NewNotFoundError(ctx, "unable to get authentication for sources", err)
+	}
+	if errors.Is(err, clients.ErrBadRequest) {
+		return NewResponseError(ctx, http.StatusBadRequest, "unable to get authentication from sources", err)
+	}
 	if response := findUserResponse(ctx, "Client error", err); response != nil {
 		return response
 	}

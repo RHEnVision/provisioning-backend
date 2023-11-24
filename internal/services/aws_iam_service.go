@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/payloads/validation"
@@ -38,18 +37,6 @@ func ValidatePermissions(w http.ResponseWriter, r *http.Request) {
 	// Fetch arn from Sources
 	authentication, err := sourcesClient.GetAuthentication(r.Context(), sourceId)
 	if err != nil {
-		if err != nil {
-			if errors.Is(err, clients.ErrNotFound) {
-				renderError(w, r, payloads.NewNotFoundError(r.Context(), "unable to get authentication for sources", err))
-				return
-			}
-			if errors.Is(err, clients.ErrBadRequest) {
-				renderError(w, r, payloads.NewResponseError(r.Context(), http.StatusBadRequest, "unable to get authentication from sources", err))
-				return
-			}
-			renderError(w, r, payloads.NewClientError(r.Context(), err))
-			return
-		}
 		renderError(w, r, payloads.NewClientError(r.Context(), err))
 		return
 	}
