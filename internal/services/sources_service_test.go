@@ -112,52 +112,80 @@ func TestGetAzureSourceDetails(t *testing.T) {
 	})
 }
 
-func TestSourceUploadInfoFails(t *testing.T) {
-	t.Run("fails on AWS upload info for invalid id", func(t *testing.T) {
-		ctx := stubs.WithAccountDaoOne(context.Background())
-		ctx = identity.WithTenant(t, ctx)
-		ctx = clientStub.WithSourcesClient(ctx)
-		ctx = clientStub.WithEC2Client(ctx)
+func TestGetSourceUploadInfo(t *testing.T) {
+	t.Run("validates source ID", func(t *testing.T) {
+		t.Run("fails on AWS upload info for invalid id", func(t *testing.T) {
+			ctx := stubs.WithAccountDaoOne(context.Background())
+			ctx = identity.WithTenant(t, ctx)
+			ctx = clientStub.WithSourcesClient(ctx)
+			ctx = clientStub.WithEC2Client(ctx)
 
-		req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("/api/provisioning/sources/abcdef/upload_info"), nil)
-		require.NoError(t, err, "failed to create request")
+			req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources/abcdef/upload_info", nil)
+			require.NoError(t, err, "failed to create request")
 
-		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(GetSourceUploadInfo)
-		handler.ServeHTTP(rr, req)
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(GetSourceUploadInfo)
+			handler.ServeHTTP(rr, req)
 
-		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+			require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+		})
+
+		t.Run("fails on Azure upload info for invalid id", func(t *testing.T) {
+			ctx := stubs.WithAccountDaoOne(context.Background())
+			ctx = identity.WithTenant(t, ctx)
+			ctx = clientStub.WithSourcesClient(ctx)
+			ctx = clientStub.WithAzureClient(ctx)
+
+			req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources/{434FA35}/upload_info", nil)
+			require.NoError(t, err, "failed to create request")
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(GetSourceUploadInfo)
+			handler.ServeHTTP(rr, req)
+
+			require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+		})
+
+		t.Run("fails on GCP upload info for invalid id", func(t *testing.T) {
+			ctx := stubs.WithAccountDaoOne(context.Background())
+			ctx = identity.WithTenant(t, ctx)
+			ctx = clientStub.WithSourcesClient(ctx)
+			ctx = clientStub.WithGCPCCustomerClient(ctx)
+
+			req, err := http.NewRequestWithContext(ctx, "GET", "/api/provisioning/sources/{21234}/upload_info", nil)
+			require.NoError(t, err, "failed to create request")
+
+			rr := httptest.NewRecorder()
+			handler := http.HandlerFunc(GetSourceUploadInfo)
+			handler.ServeHTTP(rr, req)
+
+			require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+		})
 	})
 
-	t.Run("fails on Azure upload info for invalid id", func(t *testing.T) {
-		ctx := stubs.WithAccountDaoOne(context.Background())
-		ctx = identity.WithTenant(t, ctx)
-		ctx = clientStub.WithSourcesClient(ctx)
-		ctx = clientStub.WithAzureClient(ctx)
-
-		req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("/api/provisioning/sources/{434FA35}/upload_info"), nil)
-		require.NoError(t, err, "failed to create request")
-
-		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(GetSourceUploadInfo)
-		handler.ServeHTTP(rr, req)
-
-		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
-	})
-
-	t.Run("fails on GCP upload info for invalid id", func(t *testing.T) {
+	t.Run("fails with 403 on AWS invalid permissions or role", func(t *testing.T) {
 		ctx := stubs.WithAccountDaoOne(context.Background())
 		ctx = identity.WithTenant(t, ctx)
 		ctx = clientStub.WithSourcesClient(ctx)
 		ctx = clientStub.WithGCPCCustomerClient(ctx)
+		source, err := clientStub.AddAuth(ctx, &clients.Authentication{ProviderType: models.ProviderTypeAWS, Payload: "arn:aws:iam::0000:role/test-invalid"})
+		require.NoError(t, err, "failed to add source")
 
-		req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("/api/provisioning/sources/{21234}/upload_info"), nil)
+		rctx := chi.NewRouteContext()
+		ctx = context.WithValue(ctx, chi.RouteCtxKey, rctx)
+		rctx.URLParams.Add("ID", source.ID)
+		req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("/api/provisioning/sources/%s/upload_info", source.ID), nil)
 		require.NoError(t, err, "failed to create request")
 
 		rr := httptest.NewRecorder()
 		handler := http.HandlerFunc(GetSourceUploadInfo)
 		handler.ServeHTTP(rr, req)
 
-		require.Equal(t, http.StatusBadRequest, rr.Code, "Handler returned wrong status code")
+		var response payloads.ResponseError
+		err = json.NewDecoder(rr.Body).Decode(&response)
+		require.NoError(t, err, "failed to decode response body")
+
+		require.Equal(t, http.StatusForbidden, rr.Code, "Handler returned wrong status code")
+		require.Equal(t, "AWS assume role failed: unable to get AWS upload info", response.Message, "Response message is incorrect")
 	})
 }

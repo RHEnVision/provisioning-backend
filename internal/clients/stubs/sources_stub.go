@@ -39,7 +39,27 @@ func AddSource(ctx context.Context, provider models.ProviderType) (*clients.Sour
 	if err != nil {
 		return nil, err
 	}
-	return stub.addSource(ctx, provider)
+	switch provider {
+	case models.ProviderTypeAWS:
+		return stub.addAuth(ctx, clients.NewAuthentication("arn:aws:iam::230214684733:role/Test", provider))
+	case models.ProviderTypeAzure:
+		return stub.addAuth(ctx, clients.NewAuthentication("4b9d213f-712f-4d17-a483-8a10bbe9df3a", provider))
+	case models.ProviderTypeGCP:
+		return stub.addAuth(ctx, clients.NewAuthentication("test@org.com", provider))
+	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
+		// not implemented
+		return nil, ErrNotImplemented
+	}
+
+	return nil, ErrNotImplemented
+}
+
+func AddAuth(ctx context.Context, authentication *clients.Authentication) (*clients.Source, error) {
+	stub, err := getSourcesClientStub(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return stub.addAuth(ctx, authentication)
 }
 
 func getSourcesClient(ctx context.Context) (clients.Sources, error) {
@@ -54,24 +74,13 @@ func getSourcesClientStub(ctx context.Context) (si *SourcesClientStub, err error
 	return si, err
 }
 
-func (stub *SourcesClientStub) addSource(ctx context.Context, provider models.ProviderType) (*clients.Source, error) {
+func (stub *SourcesClientStub) addAuth(ctx context.Context, authentication *clients.Authentication) (*clients.Source, error) {
 	id := strconv.Itoa(len(stub.sources) + 2) // starts at 2 as 1 is reserved - TODO migrate users of the implicit id = 1
 	source := &clients.Source{
 		ID:   id,
 		Name: "source-" + id,
 	}
-	switch provider {
-	case models.ProviderTypeAWS:
-		stub.auths[id] = clients.NewAuthentication("arn:aws:iam::230214684733:role/Test", provider)
-	case models.ProviderTypeAzure:
-		stub.auths[id] = clients.NewAuthentication("4b9d213f-712f-4d17-a483-8a10bbe9df3a", provider)
-	case models.ProviderTypeGCP:
-		stub.auths[id] = clients.NewAuthentication("test@org.com", provider)
-	case models.ProviderTypeUnknown, models.ProviderTypeNoop:
-		// not implemented
-		return nil, ErrNotImplemented
-	}
-
+	stub.auths[id] = authentication
 	stub.sources = append(stub.sources, source)
 	return source, nil
 }
