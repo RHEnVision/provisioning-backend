@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-
 	"github.com/RHEnVision/provisioning-backend/internal/usrerr"
+	"github.com/aws/smithy-go"
 
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
@@ -194,6 +194,11 @@ func NewStatusError(ctx context.Context, message string, err error) *ResponseErr
 }
 
 func NewAWSError(ctx context.Context, message string, err error) *ResponseError {
+	var awsAPIErr *smithy.GenericAPIError
+	if errors.As(err, &awsAPIErr) && awsAPIErr.Code == "AccessDenied" {
+		message = fmt.Sprintf("AWS assume role failed: %s", message)
+		return NewResponseError(ctx, http.StatusForbidden, message, err)
+	}
 	message = fmt.Sprintf("AWS API error: %s", message)
 	return NewResponseError(ctx, http.StatusInternalServerError, message, err)
 }

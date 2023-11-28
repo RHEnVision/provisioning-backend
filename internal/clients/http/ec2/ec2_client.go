@@ -140,7 +140,7 @@ func getStsAssumedCredentials(ctx context.Context, arn string, region string) (*
 	})
 	if err != nil {
 		logger.Warn().Err(err).Msg("Cannot assume role")
-		return nil, fmt.Errorf("cannot assume role %w", err)
+		return nil, fmt.Errorf("cannot assume role: %w", err)
 	}
 
 	return output.Credentials, nil

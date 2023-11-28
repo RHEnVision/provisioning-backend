@@ -3,12 +3,15 @@ package stubs
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/clients"
-	"github.com/RHEnVision/provisioning-backend/internal/clients/http"
+	httpClients "github.com/RHEnVision/provisioning-backend/internal/clients/http"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/aws/smithy-go"
+	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
 type ec2CtxKeyType int
@@ -42,7 +45,27 @@ func newEC2ServiceClientStubWithRegion(ctx context.Context, region string) (clie
 	return nil, nil
 }
 
-func newEC2CustomerClientStubWithRegion(ctx context.Context, _ *clients.Authentication, _ string) (si clients.EC2, err error) {
+func newEC2CustomerClientStubWithRegion(ctx context.Context, auth *clients.Authentication, _ string) (clients.EC2, error) {
+	// For special case - testing invalid ARN errors
+	if auth.Payload == "arn:aws:iam::0000:role/test-invalid" {
+		err := &smithy.OperationError{
+			ServiceID:     "STS",
+			OperationName: "AssumeRole",
+			Err: &smithyhttp.ResponseError{
+				Response: &smithyhttp.Response{
+					Response: &http.Response{
+						StatusCode: 403,
+					},
+				},
+				Err: &smithy.GenericAPIError{
+					Code:    "AccessDenied",
+					Fault:   smithy.FaultServer,
+					Message: fmt.Sprintf("User: %s is not authorized to perform: sts:AssumeRole on resource: %s", "<serviceAccount>", auth.Payload),
+				},
+			},
+		}
+		return nil, fmt.Errorf("cannot assume role: %w", err)
+	}
 	return getEC2StubFromContext(ctx)
 }
 
@@ -85,7 +108,7 @@ func (mock *EC2ClientStub) GetPubkeyName(ctx context.Context, fingerprint string
 			return *key.KeyName, nil
 		}
 	}
-	return "", http.ErrPubkeyNotFound
+	return "", httpClients.ErrPubkeyNotFound
 }
 
 func (mock *EC2ClientStub) DeleteSSHKey(ctx context.Context, handle string) error {
