@@ -1,4 +1,27 @@
 <!-- insertion marker -->
+<a name="1.12.0"></a>
+
+## [1.12.0](https://github.com/lzap/provisioning-backend/compare/1.11.0...1.12.0) (2023-12-08)
+
+### Features
+
+- **[HMS-1674](https://issues.redhat.com/browse/HMS-1674):** Verify Azure source availability ([110af0c](https://github.com/lzap/provisioning-backend/commit/110af0c0a0630ac5d057e90a72d89c5cb8f9691a))
+
+### Bug Fixes
+
+- **[HMS-1847](https://issues.redhat.com/browse/HMS-1847):** removing location and resource group ([c6442c2](https://github.com/lzap/provisioning-backend/commit/c6442c2e0c462142e3b19cfbdc4fa024aae83b80))
+- **[HMS-3185](https://issues.redhat.com/browse/HMS-3185):** fail with 403 on failed assume role ([f63be27](https://github.com/lzap/provisioning-backend/commit/f63be27c1c6df046b30d19b328b0426b920ea471))
+- **[HMS-2933](https://issues.redhat.com/browse/HMS-2933):** Unify GetAuthentication handling ([6456cf8](https://github.com/lzap/provisioning-backend/commit/6456cf8aa452d7ecf4ea5906b0f66f85b782fd2a))
+- **[HMS-2933](https://issues.redhat.com/browse/HMS-2933):** Fix validator DAO error ([93a2354](https://github.com/lzap/provisioning-backend/commit/93a2354a8e635c6f316faefe92444ae300e98100))
+- **[HMS-1829](https://issues.redhat.com/browse/HMS-1829):** translate source_type to provider ([6dbc754](https://github.com/lzap/provisioning-backend/commit/6dbc75442e686e0a331b8312dc6018fdbf399134))
+- **[HMS-3000](https://issues.redhat.com/browse/HMS-3000):** update log statement for kafka ([ada8a82](https://github.com/lzap/provisioning-backend/commit/ada8a8277307df2db3a45168416e87475fbbcb91))
+- **[HMS-2933](https://issues.redhat.com/browse/HMS-2933):** Improve some HTTP error codes ([a3c3201](https://github.com/lzap/provisioning-backend/commit/a3c3201c9d7fcafcacc46764ac7e858f09c88731))
+
+### Code Refactoring
+
+- extract common funcionality of listing sources ([24e42fe](https://github.com/lzap/provisioning-backend/commit/24e42feb054d9c2645d8e99c701c0c98e192c5ee))
+- Add cache for sources constants ([0404c6c](https://github.com/lzap/provisioning-backend/commit/0404c6c0e37a4bfb598180fb25a48acd1474bf77)), related to [HMS-1829](https://issues.redhat.com/browse/HMS-1829)
+
 <a name="1.11.0"></a>
 
 ## [1.11.0](https://github.com/lzap/provisioning-backend/compare/1.10.0...1.11.0) (2023-11-13)
