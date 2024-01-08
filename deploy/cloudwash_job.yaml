@@ -28,9 +28,10 @@ objects:
                 command:
                   - swach
                 args:
-                  - "-d"
                   - "azure"
-                  - "--all"
+                  - "--nics"
+                  - "--vms"
+                  - "--discs"
                 volumeMounts:
                   - name: config-volume
                     mountPath: /opt/app-root/src/cloudwash/settings.yaml
