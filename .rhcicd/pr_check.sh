@@ -18,7 +18,7 @@ IQE_CJI_TIMEOUT="30m"  # This is the time to wait for smoke test to complete or 
 # Install bonfire repo/initialize
 # https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd/bootstrap.sh
 # This script automates the install / config of bonfire
-CICD_URL=https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd
+CICD_URL=https://raw.githubusercontent.com/RedHatInsights/cicd-tools/main
 curl -s $CICD_URL/bootstrap.sh > .cicd_bootstrap.sh && source .cicd_bootstrap.sh
 
 # This script is used to build the image that is used in the PR Check
