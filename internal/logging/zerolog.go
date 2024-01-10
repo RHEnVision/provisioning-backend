@@ -129,7 +129,7 @@ func InitializeLogger() (zerolog.Logger, func()) {
 			fn()
 		}
 	}
-	logger := decorate(zerolog.New(io.MultiWriter(writers...)))
+	logger := decorate(zerolog.New(zerolog.MultiLevelWriter(writers...)))
 	log.Logger = logger
 	zerolog.DefaultContextLogger = &logger
 	return logger, closeFn

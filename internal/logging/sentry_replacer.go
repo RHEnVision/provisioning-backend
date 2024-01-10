@@ -1,12 +1,10 @@
 package logging
 
 import (
-	"bytes"
-	"fmt"
-	"io"
 	"regexp"
 	"strings"
-	"sync"
+
+	"github.com/getsentry/sentry-go"
 )
 
 var filters = []string{
@@ -26,70 +24,20 @@ var filters = []string{
 	`\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d+\+\d\d:\d\d`,
 }
 
-var replacement = []byte{'?'}
+var replacement = "?"
 
 type SentryReplacer struct {
-	buf    []byte
-	w      io.Writer
-	re     *regexp.Regexp
-	mu     sync.Mutex
-	closed bool
+	re *regexp.Regexp
 }
 
-func NewSentryReplacer(w io.Writer) *SentryReplacer {
+func NewSentryReplacer() *SentryReplacer {
 	sr := SentryReplacer{
-		w:  w,
 		re: regexp.MustCompile("(" + strings.Join(filters, "|") + ")"),
 	}
 	return &sr
 }
 
-func (sr *SentryReplacer) Write(p []byte) (n int, err error) {
-	sr.mu.Lock()
-	defer sr.mu.Unlock()
-
-	if sr.closed {
-		return 0, io.EOF
-	}
-
-	// Append p to our own buffer, see if there's anything we need to censor.
-	sr.buf = append(sr.buf, p...)
-
-	// If we've appended at least a line, censor it and write it out.
-	for {
-		if len(sr.buf) == 0 {
-			// Buffer flushed out completely.
-			return len(p), nil
-		}
-
-		idx := bytes.IndexRune(sr.buf, '\n')
-		if idx < 0 {
-			// No line yet, just lie to the caller and tell them we wrote p.
-			return len(p), nil
-		}
-
-		var line []byte
-		line, sr.buf = sr.buf[:idx+1], sr.buf[idx+1:]
-		line = sr.re.ReplaceAll(line, replacement)
-
-		_, err := sr.w.Write(line)
-		if err != nil {
-			// This is not strictly the error related to the incoming `p`, but the best we can do.
-			return 0, fmt.Errorf("cannot filter: %w", err)
-		}
-	}
-}
-
-func (sr *SentryReplacer) Close() error {
-	sr.mu.Lock()
-	defer sr.mu.Unlock()
-
-	replaced := sr.re.ReplaceAll(sr.buf, replacement)
-	_, err := sr.w.Write(replaced)
-	if err != nil {
-		return fmt.Errorf("cannot close filter: %w", err)
-	}
-
-	sr.closed = true
-	return nil
+func (sr *SentryReplacer) Replace(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
+	event.Message = sr.re.ReplaceAllString(event.Message, replacement)
+	return event
 }
