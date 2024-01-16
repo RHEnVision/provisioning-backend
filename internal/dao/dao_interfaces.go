@@ -120,7 +120,7 @@ type ReservationDao interface {
 
 var GetStatDao func(ctx context.Context) StatDao
 
-// StatDao represents an account (tenant)
+// StatDao represents stats about the application run
 type StatDao interface {
 	Get(ctx context.Context, delayMin int) (*models.Statistics, error)
 }
