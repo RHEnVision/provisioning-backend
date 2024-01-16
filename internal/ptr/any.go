@@ -19,6 +19,7 @@ func From[T any](ref *T) (value T) {
 	return
 }
 
+// FromOrEmpty returns the value or empty value in case the value is nil.
 func FromOrEmpty[T any](ref *T) (value T) {
 	if ref != nil {
 		value = *ref
