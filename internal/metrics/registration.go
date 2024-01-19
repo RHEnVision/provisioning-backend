@@ -26,6 +26,7 @@ func RegisterApiMetrics() {
 	prometheus.MustRegister(
 		RbacAclFetchDuration,
 		CacheHits,
+		AvailabilityBatchSendDuration,
 	)
 }
 

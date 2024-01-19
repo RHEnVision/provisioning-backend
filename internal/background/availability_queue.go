@@ -3,17 +3,19 @@ package background
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/RHEnVision/provisioning-backend/internal/kafka"
+	"github.com/RHEnVision/provisioning-backend/internal/metrics"
 	"github.com/RHEnVision/provisioning-backend/internal/telemetry"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/otel/codes"
 )
 
-// buffered channel for incoming requests
-// the length is twice the batch size to have room for additional messages when first batch is processed.
-var kafkaAvailabilityRequest = make(chan *kafka.GenericMessage, 2*availabilityStatusBatchSize)
+// buffered channel for incoming requests: the length is bigger than the batch size to have room
+// for additional messages when first batch is processed.
+var kafkaAvailabilityRequest = make(chan *kafka.GenericMessage, 5*availabilityStatusBatchSize)
 
 // EnqueueAvailabilityStatusRequest prepares a status request check to be sent in the next
 // batch to the platform kafka. Messages can be delayed up to several seconds until sent.
@@ -33,19 +35,36 @@ func EnqueueAvailabilityStatusRequest(ctx context.Context, asm *kafka.Availabili
 	return nil
 }
 
+var sendWG sync.WaitGroup
+
 // send a message to the background worker for availability check
-func send(ctx context.Context, messages ...*kafka.GenericMessage) {
-	err := kafka.Send(ctx, messages...)
-	if err != nil {
-		zerolog.Ctx(ctx).Warn().Err(err).Msg("Unable to send availability check messages")
-	}
+func send(ctx context.Context, method string, messages ...*kafka.GenericMessage) {
+	// copy buffer into temporary variable
+	sendBuffer := make([]*kafka.GenericMessage, len(messages))
+	copy(sendBuffer, messages)
+
+	// send on the background
+	sendWG.Add(1)
+	go func() {
+		defer sendWG.Done()
+		metrics.ObserveAvailabilitySendDuration(func() {
+			logger := zerolog.Ctx(ctx)
+			logger.Trace().Int("messages", len(sendBuffer)).
+				Msgf("Sending %d availability request messages (%s)", len(sendBuffer), method)
+
+			err := kafka.Send(ctx, sendBuffer...)
+			if err != nil {
+				zerolog.Ctx(ctx).Warn().Err(err).Msg("Unable to send availability check messages")
+			}
+		})
+	}()
 }
 
 // main sending loop: takes messages enqueued via EnqueueAvailabilityStatusRequest and sends them to the kafka
 func sendAvailabilityRequestMessages(ctx context.Context, batchSize int, tickDuration time.Duration) {
-	logger := zerolog.Ctx(ctx)
 	ticker := time.NewTicker(tickDuration)
 	messageBuffer := make([]*kafka.GenericMessage, 0, batchSize)
+	defer sendWG.Wait()
 
 	for {
 		select {
@@ -54,16 +73,14 @@ func sendAvailabilityRequestMessages(ctx context.Context, batchSize int, tickDur
 			length := len(messageBuffer)
 
 			if length >= batchSize {
-				logger.Trace().Int("messages", length).Msgf("Sending %d availability request messages (full buffer)", length)
-				send(ctx, messageBuffer...)
+				send(ctx, "full buffer", messageBuffer...)
 				messageBuffer = messageBuffer[:0]
 			}
 		case <-ticker.C:
 			length := len(messageBuffer)
 
 			if length > 0 {
-				logger.Trace().Int("messages", length).Msgf("Sending %d availability request messages (tick)", length)
-				send(ctx, messageBuffer...)
+				send(ctx, "tick", messageBuffer...)
 				messageBuffer = messageBuffer[:0]
 			}
 		case <-ctx.Done():
@@ -71,8 +88,7 @@ func sendAvailabilityRequestMessages(ctx context.Context, batchSize int, tickDur
 			length := len(messageBuffer)
 
 			if length > 0 {
-				logger.Trace().Int("messages", length).Msgf("Sending %d availability request messages (cancel)", length)
-				send(ctx, messageBuffer...)
+				send(ctx, "cancel", messageBuffer...)
 			}
 
 			return

@@ -90,6 +90,15 @@ var DbStatsDuration = prometheus.NewHistogram(
 	},
 )
 
+var AvailabilityBatchSendDuration = prometheus.NewHistogram(
+	prometheus.HistogramOpts{
+		Name:        "availability_batch_send_duration",
+		Help:        "availability kafka batch send duration (in ms)",
+		ConstLabels: prometheus.Labels{"service": version.PrometheusLabelName, "component": "api"},
+		Buckets:     []float64{5, 10, 25, 50, 100, 250, 500, 2000},
+	},
+)
+
 var Reservations24hCount = prometheus.NewGaugeVec(
 	prometheus.GaugeOpts{
 		Name:        "provisioning_reservations_24h_count",
@@ -162,6 +171,15 @@ func ObserveDbStatsDuration(observedFunc func()) {
 	start := time.Now()
 	defer func() {
 		DbStatsDuration.Observe(time.Since(start).Seconds())
+	}()
+
+	observedFunc()
+}
+
+func ObserveAvailabilitySendDuration(observedFunc func()) {
+	start := time.Now()
+	defer func() {
+		AvailabilityBatchSendDuration.Observe(time.Since(start).Seconds())
 	}()
 
 	observedFunc()
