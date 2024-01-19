@@ -12,7 +12,7 @@ import (
 
 // Maximum batch size for each batch send, also an incoming buffered channel size to prevent
 // incoming requests to overload the sender.
-const availabilityStatusBatchSize = 16
+const availabilityStatusBatchSize = 32
 
 // InitializeApi starts background goroutines for REST API processes.
 // Use context cancellation to stop them.
@@ -21,7 +21,7 @@ func InitializeApi(ctx context.Context) {
 	ctx = logger.WithContext(ctx)
 
 	// start availability request batch sender
-	go sendAvailabilityRequestMessages(ctx, availabilityStatusBatchSize, 5*time.Second)
+	go sendAvailabilityRequestMessages(ctx, availabilityStatusBatchSize, 2*time.Second)
 }
 
 // InitializeWorker starts background goroutines for worker processes.
