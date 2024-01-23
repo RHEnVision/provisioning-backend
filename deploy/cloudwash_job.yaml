@@ -66,7 +66,7 @@ objects:
                 args:
                   - "-d"
                   - "aws"
-                  - "--vm"
+                  - "--vms"
                 volumeMounts:
                   - name: config-volume
                     mountPath: /opt/app-root/src/cloudwash/settings.yaml
