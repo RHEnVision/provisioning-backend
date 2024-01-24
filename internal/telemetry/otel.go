@@ -30,6 +30,7 @@ func Middleware(routes chi.Routes) func(next http.Handler) http.Handler {
 	return otelchi.Middleware(AppName, otelchi.WithChiRoutes(routes), otelchi.WithRequestMethodInSpanName(true))
 }
 
+// Initialize set up OpenTelemetry related structures to provide easy wrappers in code
 func Initialize(ctx context.Context, rootLogger *zerolog.Logger) *Telemetry {
 	if !config.Telemetry.Enabled {
 		return &Telemetry{}
