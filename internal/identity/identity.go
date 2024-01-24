@@ -6,18 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/redhatinsights/platform-go-middlewares/identity"
+	"github.com/redhatinsights/platform-go-middlewares/v2/identity"
 )
 
 type Principal = identity.XRHID
 
 // Identity returns identity header struct or nil when not set.
 func Identity(ctx context.Context) Principal {
-	val := ctx.Value(identity.Key)
-	if val == nil {
-		return Principal{}
-	}
-	return val.(Principal)
+	return identity.GetIdentity(ctx)
 }
 
 // IdentityHeader returns identity header (base64-encoded JSON)
@@ -27,7 +23,7 @@ func IdentityHeader(ctx context.Context) string {
 
 // WithIdentity returns context copy with identity.
 func WithIdentity(ctx context.Context, id Principal) context.Context {
-	return context.WithValue(ctx, identity.Key, id)
+	return identity.WithIdentity(ctx, id)
 }
 
 // WithIdentityFrom64 returns context copy with identity parsed from base64-encoded JSON string.
@@ -43,5 +39,5 @@ func WithIdentityFrom64(ctx context.Context, id string) (context.Context, error)
 		return nil, fmt.Errorf("could not unmarshal json %w", err)
 	}
 
-	return context.WithValue(ctx, identity.Key, jsonData), nil
+	return WithIdentity(ctx, jsonData), nil
 }

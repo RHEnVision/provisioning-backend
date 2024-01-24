@@ -11,13 +11,13 @@ const (
 	accountIdCtxKey cxtKeyId = iota
 )
 
-var MissingAccountInContextError = errors.New("operation requires account_id in context")
+var ErrMissingAccountInContext = errors.New("operation requires account_id in context")
 
 // AccountId returns current account model or panics when not set
 func AccountId(ctx context.Context) int64 {
 	value := ctx.Value(accountIdCtxKey)
 	if value == nil {
-		panic(MissingAccountInContextError)
+		panic(ErrMissingAccountInContext)
 	}
 	return value.(int64)
 }
