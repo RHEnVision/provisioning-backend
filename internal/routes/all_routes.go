@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -11,6 +12,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	redoc "github.com/go-openapi/runtime/middleware"
+	"github.com/redhatinsights/platform-go-middlewares/v2/identity"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -42,6 +45,11 @@ func MountRoot(r *chi.Mux) {
 	})
 }
 
+func IdentityErrorLogFunc(ctx context.Context, rawId, msg string) {
+	logger := zerolog.Ctx(ctx)
+	logger.Error().Str("identity", rawId).Msgf("identity enforcement error: %s", msg)
+}
+
 func MountAPI(r *chi.Mux) {
 	r.Route("/openapi.json", func(r chi.Router) {
 		r.Use(middleware.ETagMiddleware(api.ETagValue))
@@ -56,7 +64,7 @@ func MountAPI(r *chi.Mux) {
 	r.Group(func(r chi.Router) {
 		r.Use(render.SetContentType(render.ContentTypeJSON))
 
-		r.Use(middleware.EnforceIdentity)
+		r.Use(identity.EnforceIdentityWithLogger(IdentityErrorLogFunc))
 		r.Use(middleware.AccountMiddleware)
 
 		// OpenAPI documented and supported routes

@@ -7,7 +7,7 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/logging"
-	"github.com/redhatinsights/platform-go-middlewares/identity"
+	"github.com/redhatinsights/platform-go-middlewares/v2/identity"
 	"github.com/rs/zerolog"
 )
 
@@ -21,6 +21,8 @@ func addIdentityHeader(ctx context.Context, req *http.Request, username, passwor
 		zerolog.Ctx(ctx).Warn().Msgf("Username/password authentication: %s", username)
 		req.Header.Add("Authorization", "Basic "+basicAuth(username, password))
 	} else {
+		logger := zerolog.Ctx(ctx)
+		logger.Trace().Str("identity", identity.GetIdentityHeader(ctx)).Msg("HTTP client identity set")
 		req.Header.Set("X-RH-Identity", identity.GetIdentityHeader(ctx))
 	}
 	return nil

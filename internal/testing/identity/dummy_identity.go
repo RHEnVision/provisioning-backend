@@ -10,7 +10,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/dao"
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
-	rhidentity "github.com/redhatinsights/platform-go-middlewares/identity"
+	rhidentity "github.com/redhatinsights/platform-go-middlewares/v2/identity"
 )
 
 const (
@@ -28,11 +28,11 @@ func AddIdentityHeader(t *testing.T, req *http.Request) *http.Request {
 }
 
 func WithIdentity(t *testing.T, ctx context.Context) context.Context {
-	return context.WithValue(ctx, rhidentity.Key, xRhId)
+	return rhidentity.WithIdentity(ctx, xRhId)
 }
 
 func WithCustomIdentity(t *testing.T, ctx context.Context, orgId string, accountNumber *string) context.Context {
-	return context.WithValue(ctx, rhidentity.Key, newIdentity(orgId, accountNumber))
+	return rhidentity.WithIdentity(ctx, newIdentity(orgId, accountNumber))
 }
 
 func WithTenant(t *testing.T, ctx context.Context) context.Context {
