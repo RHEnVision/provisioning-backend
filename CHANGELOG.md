@@ -1,4 +1,21 @@
 <!-- insertion marker -->
+<a name="1.13.0"></a>
+
+## [1.13.0](https://github.com/lzap/provisioning-backend/compare/1.12.0...1.13.0) (2024-01-25)
+
+### Features
+
+- **[HMS-3415](https://issues.redhat.com/browse/HMS-3415):** async avl check kafka send ([ff12847](https://github.com/lzap/provisioning-backend/commit/ff12847a828a859af3355d5c9c1afb8fced7b756))
+
+### Bug Fixes
+
+- Double the availability request channel ([0b78dfd](https://github.com/lzap/provisioning-backend/commit/0b78dfdd1174b7a8f43b894b4897aff39d72ad75)), related to [HMS-3415](https://issues.redhat.com/browse/HMS-3415)
+- **[HMS-3369](https://issues.redhat.com/browse/HMS-3369):** Implement replacing as beforeSend hook ([13a09d0](https://github.com/lzap/provisioning-backend/commit/13a09d07b800706b7c5f40dac3144f28ac3c2295))
+
+### Code Refactoring
+
+- upgrade to identity v2 ([fd4cc66](https://github.com/lzap/provisioning-backend/commit/fd4cc664313cbcff51b61b6a0deb3980c006c561))
+
 <a name="1.12.0"></a>
 
 ## [1.12.0](https://github.com/lzap/provisioning-backend/compare/1.11.0...1.12.0) (2023-12-08)
