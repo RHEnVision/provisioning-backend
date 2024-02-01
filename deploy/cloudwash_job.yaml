@@ -3,6 +3,7 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   name: provisioning-cleanup-cloud-resources
+   # Job template to run the cloudwash cmd with args and env variables
 objects:
 - apiVersion: batch/v1
   kind: CronJob
@@ -57,6 +58,16 @@ objects:
                       secretKeyRef:
                         key: subscription_id
                         name: provisioning-azure-auth-secret
+                  - name: CLEANUP_AZURE__AUTH__RESOURCE_GROUPS
+                    valueFrom:
+                      secretKeyRef:
+                        key: resource_group
+                        name: provisioning-azure-auth-secret
+                  - name: CLEANUP_AZURE__AUTH__REGIONS
+                    valueFrom:
+                      secretKeyRef:
+                        key: location
+                        name: provisioning-azure-auth-secret
 
               - name: provisioning-aws-cleanup
                 image: quay.io/redhatqe/cloudwash
@@ -81,6 +92,11 @@ objects:
                     valueFrom:
                       secretKeyRef:
                         key: secret_access_key
+                        name: provisioning-aws-auth-secret
+                  - name: CLEANUP_AWS__AUTH__REGION
+                    valueFrom:
+                      secretKeyRef:
+                        key: region
                         name: provisioning-aws-auth-secret
             volumes:
               - name: config-volume
