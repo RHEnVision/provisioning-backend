@@ -9,7 +9,7 @@ IMAGE="quay.io/cloudservices/provisioning-backend"  # image location on quay
 DOCKERFILE="build/Dockerfile"
 
 IQE_PLUGINS="provisioning"  # name of the IQE plugin for this app.
-IQE_MARKER_EXPRESSION="api and smoke"  # This is the value passed to pytest -m
+IQE_MARKER_EXPRESSION="api and smoke"  # This is the value passed to pytest -m for markers
 IQE_FILTER_EXPRESSION=""  # This is the value passed to pytest -k
 IQE_CJI_TIMEOUT="30m"  # This is the time to wait for smoke test to complete or fail
 
