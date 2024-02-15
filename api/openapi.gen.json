@@ -1377,7 +1377,7 @@
       "name": "GPL-3.0"
     },
     "title": "provisioning-api",
-    "version": "1.11.0"
+    "version": "1.13.0"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -2167,7 +2167,7 @@
   ],
   "tags": [
     {
-      "description": "A pubkey represents the SSH public portion of a key pair with a name and body. Public key types and fingerprints are detected during their creation process. Two types are supported: RSA and ssh-ed25519. Fingerprints are calculated in two ways: using the standard SHA method and the legacy MD5 method, which is available under the fingerprint_legacy field. Each public key has a unique name and body and helps in verifying the uniqueness of the keys. Using this API, you can perform the following operations.\n",
+      "description": "A pubkey represents the SSH public portion of a key pair with a name and body. Public key types and fingerprints are detected during their creation process. Two types are supported: rsa and ed25519. Fingerprints are calculated in two ways: using the standard SHA method and the legacy MD5 method, which is available under the fingerprint_legacy field. Each public key has a unique name and body and helps in verifying the uniqueness of the keys. Using this API, you can perform the following operations.\n",
       "name": "Pubkey"
     },
     {
