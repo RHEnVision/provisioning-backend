@@ -131,7 +131,7 @@ parameters:
 - name: ENV_FOR_DYNACONF
   value: stage_proxy
 - name: USE_BETA
-  value: "true"
+  value: "false"
 - name: IQE_PLUGINS
   value: hms_integration
 - name: IQE_MARKER_EXPRESSION
