@@ -38,8 +38,8 @@ github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYr
 github.com/Masterminds/sprig/v3 v3.2.3 h1:eL2fZNezLomi0uOLqjQoN6BfsDD+fyLtgbJMAj9n6YA=
 github.com/Masterminds/sprig/v3 v3.2.3/go.mod h1:rXcFaZ2zZbLRJv/xSysmlgIM1u11eBaRMhvYXJNkGuM=
 github.com/RaveNoX/go-jsoncommentstrip v1.0.0/go.mod h1:78ihd09MekBnJnxpICcwzCMzGrKSKYe4AqU6PDYYpjk=
-github.com/Unleash/unleash-client-go/v3 v3.9.2 h1:/Jl61G/kOx+1+MqPuMnC/JvJxdsf52ZDdJvCmXoA2ck=
-github.com/Unleash/unleash-client-go/v3 v3.9.2/go.mod h1:jAf7F2WWpfJbfn1n8bZ74p7hkAhijrqH4TpWoT7kWLc=
+github.com/Unleash/unleash-client-go/v4 v4.1.0 h1:+9ZMa4sb176nlPfZyWYlWHeY8bA3odhGdZa2V063nZA=
+github.com/Unleash/unleash-client-go/v4 v4.1.0/go.mod h1:jzGQjqMwJm2y+vaVLzq3IzZPvh5SRWco0MNIw2KK03I=
 github.com/ajg/form v1.5.1 h1:t9c7v8JUKu/XxOGBU0yjNpaMloxGEJhUkqFRq0ibGeU=
 github.com/ajg/form v1.5.1/go.mod h1:uL1WgH+h2mgNtvBq0339dVnzXdBETtL2LeUXaIv25UY=
 github.com/apapsch/go-jsonmerge/v2 v2.0.0 h1:axGnT1gRIfimI7gJifB699GoE/oq+F2MU7Dml6nw9rQ=

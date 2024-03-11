@@ -10,7 +10,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/identity"
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 	"github.com/RHEnVision/provisioning-backend/internal/version"
-	ucontext "github.com/Unleash/unleash-client-go/v3/context"
+	ucontext "github.com/Unleash/unleash-client-go/v4/context"
 	"github.com/rs/zerolog/log"
 )
 

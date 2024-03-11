@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/version"
-	"github.com/Unleash/unleash-client-go/v3"
+	"github.com/Unleash/unleash-client-go/v4"
 	"github.com/rs/zerolog"
 )
 
