@@ -271,7 +271,7 @@ func Initialize(configFiles ...string) {
 		url := fmt.Sprintf("%s://%s:%d/api", cfg.FeatureFlags.Scheme, cfg.FeatureFlags.Hostname, cfg.FeatureFlags.Port)
 		config.Unleash.URL = url
 		if cfg.FeatureFlags.ClientAccessToken != nil {
-			config.Unleash.Token = fmt.Sprintf("Bearer %s", *cfg.FeatureFlags.ClientAccessToken)
+			config.Unleash.Token = *cfg.FeatureFlags.ClientAccessToken
 		}
 
 		// kafka
