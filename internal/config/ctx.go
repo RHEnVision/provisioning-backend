@@ -3,7 +3,7 @@ package config
 import (
 	"context"
 
-	ucontext "github.com/Unleash/unleash-client-go/v3/context"
+	ucontext "github.com/Unleash/unleash-client-go/v4/context"
 )
 
 type contextKeyId int
