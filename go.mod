@@ -14,7 +14,7 @@ require (
 	github.com/IBM/pgxpoolprometheus v1.1.1
 	github.com/Unleash/unleash-client-go/v4 v4.1.0
 	github.com/archdx/zerolog-sentry v1.8.2
-	github.com/aws/aws-sdk-go-v2 v1.25.3
+	github.com/aws/aws-sdk-go-v2 v1.26.0
 	github.com/aws/aws-sdk-go-v2/config v1.27.7
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.7
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.34.3
