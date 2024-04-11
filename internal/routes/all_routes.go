@@ -47,7 +47,7 @@ func MountRoot(r *chi.Mux) {
 
 func IdentityErrorLogFunc(ctx context.Context, rawId, msg string) {
 	logger := zerolog.Ctx(ctx)
-	logger.Error().Str("identity", rawId).Msgf("identity enforcement error: %s", msg)
+	logger.Warn().Str("identity", rawId).Msgf("identity enforcement error: %s", msg)
 }
 
 func MountAPI(r *chi.Mux) {
