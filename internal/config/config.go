@@ -121,22 +121,25 @@ var config struct {
 	} `env-prefix:"PROMETHEUS_"`
 	RestEndpoints struct {
 		RBAC struct {
-			URL      string `env:"URL" env-default:"" env-description:"RBAC URL"`
-			Username string `env:"USERNAME" env-default:"" env-description:"RBAC credentials (dev only)"`
-			Password string `env:"PASSWORD" env-default:"" env-description:"RBAC credentials (dev only)"`
-			Proxy    proxy  `env-prefix:"PROXY_" env-description:"RBAC HTTP proxy (dev only)"`
+			URL          string `env:"URL" env-default:"" env-description:"RBAC URL"`
+			Issuer       string `env:"ISSUER" env-default:"https://sso.stage.redhat.com/auth/realms/redhat-external" env-description:"sources issuer"`
+			ClientID     string `env:"CLIENT_ID" env-default:"" env-description:"RBAC credentials (dev only)"`
+			ClientSecret string `env:"CLIENT_SECRET" env-default:"" env-description:"RBAC credentials (dev only)"`
+			Proxy        proxy  `env-prefix:"PROXY_" env-description:"RBAC HTTP proxy (dev only)"`
 		} `env-prefix:"RBAC_"`
 		ImageBuilder struct {
-			URL      string `env:"URL" env-default:"" env-description:"image builder URL"`
-			Username string `env:"USERNAME" env-default:"" env-description:"image builder credentials (dev only)"`
-			Password string `env:"PASSWORD" env-default:"" env-description:"image builder credentials (dev only)"`
-			Proxy    proxy  `env-prefix:"PROXY_" env-description:"image builder HTTP proxy (dev only)"`
+			URL          string `env:"URL" env-default:"" env-description:"image builder URL"`
+			Issuer       string `env:"ISSUER" env-default:"https://sso.stage.redhat.com/auth/realms/redhat-external" env-description:"sources issuer"`
+			ClientID     string `env:"CLIENT_ID" env-default:"" env-description:"image builder credentials (dev only)"`
+			ClientSecret string `env:"CLIENT_SECRET" env-default:"" env-description:"image builder credentials (dev only)"`
+			Proxy        proxy  `env-prefix:"PROXY_" env-description:"image builder HTTP proxy (dev only)"`
 		} `env-prefix:"IMAGE_BUILDER_"`
 		Sources struct {
-			URL      string `env:"URL" env-default:"" env-description:"sources URL"`
-			Username string `env:"USERNAME" env-default:"" env-description:"sources credentials (dev only)"`
-			Password string `env:"PASSWORD" env-default:"" env-description:"sources credentials (dev only)"`
-			Proxy    proxy  `env-prefix:"PROXY_" env-description:"sources HTTP proxy (dev only)"`
+			URL          string `env:"URL" env-default:"" env-description:"sources URL"`
+			Issuer       string `env:"ISSUER" env-default:"https://sso.stage.redhat.com/auth/realms/redhat-external" env-description:"sources issuer"`
+			ClientID     string `env:"CLIENT_ID" env-default:"" env-description:"sources credentials (dev only)"`
+			ClientSecret string `env:"CLIENT_SECRET" env-default:"" env-description:"sources credentials (dev only)"`
+			Proxy        proxy  `env-prefix:"PROXY_" env-description:"sources HTTP proxy (dev only)"`
 		} `env-prefix:"SOURCES_"`
 		TraceData bool `env:"TRACE_DATA" env-default:"true" env-description:"open telemetry HTTP context pass and trace"`
 	} `env-prefix:"REST_ENDPOINTS_"`

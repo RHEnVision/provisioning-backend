@@ -2,7 +2,6 @@ package headers
 
 import (
 	"context"
-	"encoding/base64"
 	"net/http"
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
@@ -11,15 +10,15 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func basicAuth(username, password string) string {
-	auth := username + ":" + password
-	return base64.StdEncoding.EncodeToString([]byte(auth))
-}
-
-func addIdentityHeader(ctx context.Context, req *http.Request, username, password string) error {
-	if username != "" && password != "" {
-		zerolog.Ctx(ctx).Warn().Msgf("Username/password authentication: %s", username)
-		req.Header.Add("Authorization", "Basic "+basicAuth(username, password))
+func addIdentityHeader(ctx context.Context, req *http.Request, issuerUrl, clientID, clientSecret string) error {
+	if clientID != "" && clientSecret != "" {
+		zerolog.Ctx(ctx).Warn().Msgf("Using service account authentication: %s", clientID)
+		token, err := getToken(ctx, issuerUrl, clientID, clientSecret)
+		if err != nil {
+			zerolog.Ctx(ctx).Error().Err(err).Msg("Fetching access token failed")
+			return err
+		}
+		req.Header.Add("Authorization", "Bearer "+token)
 	} else {
 		logger := zerolog.Ctx(ctx)
 		logger.Trace().Str("identity", identity.GetIdentityHeader(ctx)).Msg("HTTP client identity set")
@@ -37,19 +36,22 @@ func AddEdgeRequestIdHeader(ctx context.Context, req *http.Request) error {
 }
 
 func AddSourcesIdentityHeader(ctx context.Context, req *http.Request) error {
-	username := config.Sources.Username
-	password := config.Sources.Password
-	return addIdentityHeader(ctx, req, username, password)
+	issuerUrl := config.Sources.Issuer
+	clientID := config.Sources.ClientID
+	clientSecret := config.Sources.ClientSecret
+	return addIdentityHeader(ctx, req, issuerUrl, clientID, clientSecret)
 }
 
 func AddImageBuilderIdentityHeader(ctx context.Context, req *http.Request) error {
-	username := config.ImageBuilder.Username
-	password := config.ImageBuilder.Password
-	return addIdentityHeader(ctx, req, username, password)
+	issuerUrl := config.ImageBuilder.Issuer
+	clientID := config.ImageBuilder.ClientID
+	clientSecret := config.ImageBuilder.ClientSecret
+	return addIdentityHeader(ctx, req, issuerUrl, clientID, clientSecret)
 }
 
 func AddRbacIdentityHeader(ctx context.Context, req *http.Request) error {
-	username := config.RBAC.Username
-	password := config.RBAC.Password
-	return addIdentityHeader(ctx, req, username, password)
+	issuerUrl := config.RBAC.Issuer
+	clientID := config.RBAC.ClientID
+	clientSecret := config.RBAC.ClientSecret
+	return addIdentityHeader(ctx, req, issuerUrl, clientID, clientSecret)
 }

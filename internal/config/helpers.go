@@ -119,8 +119,9 @@ func DumpConfig(logger zerolog.Logger) {
 	configCopy.AWS.Key = replacement
 	configCopy.AWS.Secret = replacement
 	configCopy.AWS.Session = replacement
-	configCopy.RestEndpoints.Sources.Password = replacement
-	configCopy.RestEndpoints.ImageBuilder.Password = replacement
+	configCopy.RestEndpoints.RBAC.ClientSecret = replacement
+	configCopy.RestEndpoints.Sources.ClientSecret = replacement
+	configCopy.RestEndpoints.ImageBuilder.ClientSecret = replacement
 	configCopy.Azure.ClientID = replacement
 	configCopy.Azure.ClientSecret = replacement
 	configCopy.GCP.JSON = replacement
