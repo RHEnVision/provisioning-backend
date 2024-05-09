@@ -9,7 +9,7 @@ on:
 
 env:
   # this must match the version in go.mod
-  GO_SVR: 1.20.10
+  GO_SVR: 1.21.9
 
 jobs:
   commit:

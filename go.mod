@@ -1,7 +1,7 @@
 module github.com/RHEnVision/provisioning-backend
 
 // Also change: mk/tools.mk .github/workflows build/Dockerfile
-go 1.20
+go 1.21
 
 require (
 	cloud.google.com/go/compute v1.25.0
