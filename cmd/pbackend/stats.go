@@ -23,7 +23,14 @@ import (
 
 func stats() {
 	ctx := context.Background()
-	config.Initialize("config/api.env", "config/stats.env")
+	cfgs := []string {
+		"config/api.env",
+		"config/stats.env",
+	}
+	if len(os.Args) == 3 {
+		cfgs = append(cfgs, os.Args[2])
+	}
+	config.Initialize(cfgs...)
 
 	// initialize cloudwatch using the AWS clients
 	logger, closeFunc := logging.InitializeLogger()

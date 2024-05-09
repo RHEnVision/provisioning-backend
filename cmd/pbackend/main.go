@@ -52,7 +52,7 @@ func main() {
 }
 
 func usage() {
-	fmt.Println("Usage: pbackend [migrate|api|worker|statuser|stats|update|version]")
+	fmt.Println("Usage: pbackend [migrate|api|worker|statuser|stats|update|version] [alternate_env_file]")
 	os.Exit(1)
 }
 

@@ -342,7 +342,14 @@ func sendResults(cancelCtx context.Context, batchSize int, tickDuration time.Dur
 
 func statuser() {
 	ctx := context.Background()
-	config.Initialize("config/api.env", "config/statuser.env")
+	cfgs := []string {
+		"config/api.env",
+		"config/statuser.env",
+	}
+	if len(os.Args) == 3 {
+		cfgs = append(cfgs, os.Args[2])
+	}
+	config.Initialize(cfgs...)
 
 	// initialize cloudwatch using the AWS clients
 	logger, closeFunc := logging.InitializeLogger()

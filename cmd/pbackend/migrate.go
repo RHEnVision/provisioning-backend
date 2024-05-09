@@ -13,7 +13,14 @@ import (
 
 func migrate() {
 	ctx := context.Background()
-	config.Initialize("config/api.env", "config/migrate.env")
+	cfgs := []string {
+		"config/api.env",
+		"config/migrate.env",
+	}
+	if len(os.Args) == 3 {
+		cfgs = append(cfgs, os.Args[2])
+	}
+	config.Initialize(cfgs...)
 
 	// initialize stdout logging and AWS clients first (cloudwatch is not available in init containers)
 	logging.InitializeStdout()

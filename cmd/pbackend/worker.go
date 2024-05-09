@@ -26,7 +26,14 @@ import (
 
 func worker() {
 	ctx := context.Background()
-	config.Initialize("config/api.env", "config/worker.env")
+	cfgs := []string {
+		"config/api.env",
+		"config/worker.env",
+	}
+	if len(os.Args) == 3 {
+		cfgs = append(cfgs, os.Args[2])
+	}
+	config.Initialize(cfgs...)
 
 	// initialize stdout logging and AWS clients first
 	logging.InitializeStdout()
