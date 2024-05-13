@@ -152,6 +152,7 @@ func (s *APISchemaGen) addExample(name string, value interface{}) {
 func (s *APISchemaGen) addQueryParameter(name string, value Parameter) {
 	checkTags(reflect.TypeOf(value))
 
+	t := openapi3.Types([]string{value.Type})
 	param := &openapi3.Parameter{
 		Name:        value.Name,
 		In:          value.In,
@@ -160,7 +161,7 @@ func (s *APISchemaGen) addQueryParameter(name string, value Parameter) {
 		Schema: &openapi3.SchemaRef{
 			Value: &openapi3.Schema{
 				Default: value.Default,
-				Type:    value.Type,
+				Type:    &t,
 			},
 		},
 	}
