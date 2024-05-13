@@ -15,7 +15,7 @@ internal/clients/http/image_builder/client.gen.go: config/ib_config.yaml config/
 	$(OAPICODEGEN) -config ./config/ib_config.yaml ./config/ib_api.yaml
 
 internal/clients/http/rbac/client.gen.go: config/rbac_config.yml config/rbac_api.json
-	oapi-codegen -config ./config/rbac_config.yml ./config/rbac_api.json
+	$(OAPICODEGEN) -config ./config/rbac_config.yml ./config/rbac_api.json
 
 .PHONY: validate-clients
 validate-clients: generate-clients ## Compare generated client code with git
