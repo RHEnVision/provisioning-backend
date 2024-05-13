@@ -10,10 +10,6 @@ import (
 	"github.com/georgysavva/scany/v2/pgxscan"
 )
 
-func init() {
-	dao.GetStatDao = getStatDao
-}
-
 type statDao struct{}
 
 func getStatDao(ctx context.Context) dao.StatDao {

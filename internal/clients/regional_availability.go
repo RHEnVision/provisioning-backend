@@ -40,7 +40,7 @@ func NewRegionalInstanceTypes() *RegionalTypeAvailability {
 	}
 }
 
-var ErrUnknownRegionZoneCombination error = errors.New("unknown region and zone combination")
+var ErrUnknownRegionZoneCombination = errors.New("unknown region and zone combination")
 
 func key(region, zone string) string {
 	if zone == "" {

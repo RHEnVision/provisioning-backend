@@ -16,10 +16,6 @@ type reservationDaoStub struct {
 	instances  map[int64][]*models.ReservationInstance
 }
 
-func init() {
-	dao.GetReservationDao = getReservationDao
-}
-
 func AWSReservationStubCount(ctx context.Context) int {
 	resDao := getReservationDaoStub(ctx)
 	return len(resDao.storeAWS)

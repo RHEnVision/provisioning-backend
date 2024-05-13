@@ -11,10 +11,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func init() {
-	dao.GetServiceDao = getServiceDao
-}
-
 type serviceDao struct{}
 
 func getServiceDao(_ context.Context) dao.ServiceDao {

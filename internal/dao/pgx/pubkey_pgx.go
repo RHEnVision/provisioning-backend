@@ -11,10 +11,6 @@ import (
 	"github.com/georgysavva/scany/v2/pgxscan"
 )
 
-func init() {
-	dao.GetPubkeyDao = getPubkeyDao
-}
-
 type pubkeyDao struct{}
 
 func getPubkeyDao(ctx context.Context) dao.PubkeyDao {

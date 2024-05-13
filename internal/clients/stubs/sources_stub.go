@@ -23,12 +23,6 @@ type SourcesClientStub struct {
 	auths   map[string]*clients.Authentication
 }
 
-func init() {
-	// We are currently using SourcesClientStub
-	clients.GetSourcesClient = getSourcesClient
-}
-
-// SourcesClient
 func WithSourcesClient(parent context.Context) context.Context {
 	ctx := context.WithValue(parent, sourcesCtxKey, &SourcesClientStub{auths: make(map[string]*clients.Authentication)})
 	return ctx

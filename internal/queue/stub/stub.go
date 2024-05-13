@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 )
 
@@ -25,10 +24,6 @@ type hollowEnqueuer struct{}
 
 type stubEnqueuer struct {
 	enqueued []*worker.Job
-}
-
-func init() {
-	queue.GetEnqueuer = getEnqueuer
 }
 
 // WithEnqueuer returns new context with Job enqueue struct that keeps the jobs

@@ -26,8 +26,8 @@ import (
 func CreateGCPReservation(w http.ResponseWriter, r *http.Request) {
 	logger := zerolog.Ctx(r.Context())
 
-	var accountId int64 = identity.AccountId(r.Context())
-	var id identity.Principal = identity.Identity(r.Context())
+	accountId := identity.AccountId(r.Context())
+	id := identity.Identity(r.Context())
 
 	payload := &payloads.GCPReservationRequest{}
 	if err := render.Bind(r, payload); err != nil {

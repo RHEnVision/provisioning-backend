@@ -16,10 +16,6 @@ type serviceClient struct {
 	credential *azidentity.ClientSecretCredential
 }
 
-func init() {
-	clients.GetServiceAzureClient = newServiceClient
-}
-
 func newServiceClient(ctx context.Context) (clients.ServiceAzure, error) {
 	opts := azidentity.ClientSecretCredentialOptions{}
 	identityClient, err := azidentity.NewClientSecretCredential(config.Azure.TenantID, config.Azure.ClientID, config.Azure.ClientSecret, &opts)

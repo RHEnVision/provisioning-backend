@@ -14,10 +14,6 @@ type pubkeyDaoStub struct {
 	resourceStore []*models.PubkeyResource
 }
 
-func init() {
-	dao.GetPubkeyDao = getPubkeyDao
-}
-
 func PubkeyStubCount(ctx context.Context) int {
 	pkdao := getPubkeyDaoStub(ctx)
 	return len(pkdao.store)

@@ -13,10 +13,6 @@ var imageBuilderCtxKey imageBuilderCtxKeyType = "image-builder-interface"
 
 type ImageBuilderClientStub struct{}
 
-func init() {
-	clients.GetImageBuilderClient = getImageBuilderClientStub
-}
-
 func WithImageBuilderClient(parent context.Context) context.Context {
 	ctx := context.WithValue(parent, imageBuilderCtxKey, &ImageBuilderClientStub{})
 	return ctx

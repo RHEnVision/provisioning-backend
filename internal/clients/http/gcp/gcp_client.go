@@ -27,10 +27,6 @@ type gcpClient struct {
 	options []option.ClientOption
 }
 
-func init() {
-	clients.GetGCPClient = newGCPClient
-}
-
 // GCP SDK does not provide a single client, so only configuration can be shared and
 // clients need to be created and closed in each function.
 // The difference between the customer and service authentication is which Project ID was given: the service or the customer

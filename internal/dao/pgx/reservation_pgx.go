@@ -16,10 +16,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func init() {
-	dao.GetReservationDao = getReservationDao
-}
-
 type reservationDao struct{}
 
 func getReservationDao(ctx context.Context) dao.ReservationDao {

@@ -24,10 +24,6 @@ type sourcesClient struct {
 	client *ClientWithResponses
 }
 
-func init() {
-	clients.GetSourcesClient = newSourcesClient
-}
-
 func logger(ctx context.Context) zerolog.Logger {
 	return zerolog.Ctx(ctx).With().Str("client", "sources").Logger()
 }

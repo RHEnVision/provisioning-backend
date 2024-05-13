@@ -14,10 +14,6 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func init() {
-	dao.GetAccountDao = getAccountDao
-}
-
 type accountDao struct{}
 
 func getAccountDao(ctx context.Context) dao.AccountDao {

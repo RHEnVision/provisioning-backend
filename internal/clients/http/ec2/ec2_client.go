@@ -34,11 +34,6 @@ type ec2Client struct {
 	assumed bool
 }
 
-func init() {
-	clients.GetEC2Client = newAssumedEC2ClientWithRegion
-	clients.GetServiceEC2Client = newEC2ClientWithRegion
-}
-
 func logger(ctx context.Context) *zerolog.Logger {
 	logger := zerolog.Ctx(ctx).With().Str("client", "ec2").Logger()
 	return &logger

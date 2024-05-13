@@ -12,10 +12,10 @@ import (
 )
 
 // An InstanceTypeExpiration represents the default expiration time for instance types
-const InstanceTypeExpiration time.Duration = 4 * time.Hour
+const InstanceTypeExpiration = 4 * time.Hour
 
 // An OpenAPIExpiration represents the default expiration time for the OpenAPI JSON
-const OpenAPIExpiration time.Duration = 30 * time.Minute
+const OpenAPIExpiration = 30 * time.Minute
 
 // An InvalidETagErr is returned to prevent empty tag generation
 var InvalidETagErr = errors.New("empty etag provided")

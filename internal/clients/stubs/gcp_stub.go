@@ -25,11 +25,6 @@ type (
 	GCPServiceClientStub struct{}
 )
 
-func init() {
-	clients.GetGCPClient = newGCPCustomerClientStub
-	clients.GetServiceGCPClient = getServiceGCPClientStub
-}
-
 func newGCPCustomerClientStub(ctx context.Context, auth *clients.Authentication) (clients.GCP, error) {
 	return getCustomerGCPClientStub(ctx, auth)
 }

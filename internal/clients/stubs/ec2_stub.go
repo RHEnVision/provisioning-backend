@@ -22,11 +22,6 @@ type EC2ClientStub struct {
 	Imported []*types.KeyPairInfo
 }
 
-func init() {
-	clients.GetEC2Client = newEC2CustomerClientStubWithRegion
-	clients.GetServiceEC2Client = newEC2ServiceClientStubWithRegion
-}
-
 func WithEC2Client(parent context.Context) context.Context {
 	ctx := context.WithValue(parent, ec2CtxKey, &EC2ClientStub{})
 	return ctx
