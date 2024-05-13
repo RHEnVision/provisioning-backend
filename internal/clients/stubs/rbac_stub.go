@@ -8,10 +8,6 @@ import (
 
 type rbacClient struct{}
 
-func init() {
-	clients.GetRbacClient = getRbacClient
-}
-
 func getRbacClient(ctx context.Context) clients.Rbac {
 	return rbacClient{}
 }

@@ -10,10 +10,6 @@ type ctxKeyType int
 
 const azureCtxKey ctxKeyType = iota
 
-func init() {
-	clients.GetAzureClient = getAzureClient
-}
-
 func WithAzureClient(parent context.Context) context.Context {
 	ctx := context.WithValue(parent, azureCtxKey, &AzureClientStub{})
 	return ctx

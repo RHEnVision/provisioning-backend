@@ -36,10 +36,6 @@ func buildAccountDaoWithNullValue() *accountDaoStub {
 	}
 }
 
-func init() {
-	dao.GetAccountDao = getAccountDao
-}
-
 func getAccountDao(ctx context.Context) dao.AccountDao {
 	return getAccountDaoStub(ctx)
 }

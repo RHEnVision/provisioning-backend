@@ -17,7 +17,9 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/models"
 )
 
-var GetAccountDao func(ctx context.Context) AccountDao
+var GetAccountDao = func(ctx context.Context) AccountDao {
+	panic("dao not initialized")
+}
 
 // AccountDao represents an account (tenant)
 type AccountDao interface {
@@ -29,7 +31,9 @@ type AccountDao interface {
 	List(ctx context.Context, limit, offset int64) ([]*models.Account, error)
 }
 
-var GetPubkeyDao func(ctx context.Context) PubkeyDao
+var GetPubkeyDao = func(ctx context.Context) PubkeyDao {
+	panic("dao not initialized")
+}
 
 // PubkeyDao represents Pubkeys (public part of ssh key pair) and corresponding Resources (uploaded pubkeys
 // to specific cloud providers in specific regions).
@@ -47,7 +51,9 @@ type PubkeyDao interface {
 	UnscopedDeleteResource(ctx context.Context, id int64) error
 }
 
-var GetReservationDao func(ctx context.Context) ReservationDao
+var GetReservationDao = func(ctx context.Context) ReservationDao {
+	panic("dao not initialized")
+}
 
 // ReservationDao represents a reservation, an abstraction of one or more background jobs with
 // associated detail information different for different cloud providers (like number of vCPUs,
@@ -118,7 +124,9 @@ type ReservationDao interface {
 	Cleanup(ctx context.Context) error
 }
 
-var GetStatDao func(ctx context.Context) StatDao
+var GetStatDao = func(ctx context.Context) StatDao {
+	panic("dao not initialized")
+}
 
 // StatDao represents stats about the application run
 type StatDao interface {

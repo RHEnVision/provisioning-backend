@@ -9,7 +9,7 @@ import (
 	"github.com/RHEnVision/provisioning-backend/internal/ptr"
 )
 
-var ReservationTime time.Time = MustParseTime("2013-05-13T19:20:25Z")
+var ReservationTime = MustParseTime("2013-05-13T19:20:25Z")
 
 func MustParseTime(t string) time.Time {
 	result, err := time.Parse(time.RFC3339, t)

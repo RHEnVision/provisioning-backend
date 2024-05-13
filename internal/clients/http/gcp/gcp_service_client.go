@@ -19,10 +19,6 @@ type gcpServiceClient struct {
 	options []option.ClientOption
 }
 
-func init() {
-	clients.GetServiceGCPClient = newServiceGCPClient
-}
-
 func newServiceGCPClient(ctx context.Context) (clients.ServiceGCP, error) {
 	options := []option.ClientOption{
 		option.WithCredentialsJSON([]byte(config.GCP.JSON)),
@@ -161,6 +157,6 @@ func getTotalStorage(disks []*computepb.ScratchDisks) int64 {
 }
 
 func mbToMib(mb float32) int64 {
-	var mib float32 = mb * 0.9536
+	mib := mb * 0.9536
 	return int64(mib)
 }

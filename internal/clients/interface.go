@@ -15,7 +15,9 @@ type AzureResourceGroup struct {
 
 // GetSourcesClient returns Sources interface implementation. There are currently
 // two implementations available: HTTP and stub
-var GetSourcesClient func(ctx context.Context) (Sources, error)
+var GetSourcesClient = func(ctx context.Context) (Sources, error) {
+	panic("client func not initialized")
+}
 
 // Sources interface provides access to the Sources backend service API
 type Sources interface {
@@ -34,7 +36,9 @@ type Sources interface {
 
 // GetImageBuilderClient returns ImageBuilder interface implementation. There are currently
 // two implementations available: HTTP and stub
-var GetImageBuilderClient func(ctx context.Context) (ImageBuilder, error)
+var GetImageBuilderClient = func(ctx context.Context) (ImageBuilder, error) {
+	panic("client func not initialized")
+}
 
 // ImageBuilder interface provides access to the Image Builder backend service API
 type ImageBuilder interface {
@@ -62,10 +66,14 @@ type ClientStatuser interface {
 }
 
 // GetEC2Client returns an EC2 facade interface with assumed role.
-var GetEC2Client func(ctx context.Context, auth *Authentication, region string) (EC2, error)
+var GetEC2Client = func(ctx context.Context, auth *Authentication, region string) (EC2, error) {
+	panic("client func not initialized")
+}
 
 // GetServiceEC2Client returns an EC2 client for the service account.
-var GetServiceEC2Client func(ctx context.Context, region string) (EC2, error)
+var GetServiceEC2Client = func(ctx context.Context, region string) (EC2, error) {
+	panic("client func not initialized")
+}
 
 type EC2 interface {
 	ClientStatuser
@@ -106,10 +114,14 @@ type EC2 interface {
 }
 
 // GetAzureClient returns an Azure client with customer's subscription ID.
-var GetAzureClient func(ctx context.Context, auth *Authentication) (Azure, error)
+var GetAzureClient = func(ctx context.Context, auth *Authentication) (Azure, error) {
+	panic("client func not initialized")
+}
 
 // GetServiceAzureClient returns an Azure client for the service account itself.
-var GetServiceAzureClient func(ctx context.Context) (ServiceAzure, error)
+var GetServiceAzureClient = func(ctx context.Context) (ServiceAzure, error) {
+	panic("client func not initialized")
+}
 
 type Azure interface {
 	ClientStatuser
@@ -132,7 +144,9 @@ type ServiceAzure interface {
 }
 
 // GetGCPClient returns a GCP facade interface.
-var GetGCPClient func(ctx context.Context, auth *Authentication) (GCP, error)
+var GetGCPClient = func(ctx context.Context, auth *Authentication) (GCP, error) {
+	panic("client func not initialized")
+}
 
 // GetServiceGCPClient returns a GCP client for the service account.
 var GetServiceGCPClient func(ctx context.Context) (ServiceGCP, error)

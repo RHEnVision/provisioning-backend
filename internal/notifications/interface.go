@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-var GetNotificationClient func(ctx context.Context) NotificationClient = getNoopNotificationClient
+var GetNotificationClient = getNoopNotificationClient
 
 type NotificationClient interface {
 	SuccessfulLaunch(ctx context.Context, reservationId int64)

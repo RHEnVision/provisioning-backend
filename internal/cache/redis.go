@@ -34,7 +34,7 @@ var (
 
 // Forever is used for items that should be cached "forever". Expiration of 30 days
 // is used to allow cleanup of unused items.
-const Forever time.Duration = 24 * time.Hour * 30
+const Forever = 24 * time.Hour * 30
 
 type Cacheable interface {
 	CacheKeyName() string

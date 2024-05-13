@@ -18,10 +18,6 @@ type ibClient struct {
 	client *ClientWithResponses
 }
 
-func init() {
-	clients.GetImageBuilderClient = newImageBuilderClient
-}
-
 func logger(ctx context.Context) zerolog.Logger {
 	return zerolog.Ctx(ctx).With().Str("client", "ib").Logger()
 }

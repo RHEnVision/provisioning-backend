@@ -6,7 +6,6 @@ import (
 
 	"github.com/RHEnVision/provisioning-backend/internal/config"
 	"github.com/RHEnVision/provisioning-backend/internal/jobs"
-	"github.com/RHEnVision/provisioning-backend/internal/queue"
 	"github.com/RHEnVision/provisioning-backend/pkg/worker"
 	"github.com/rs/zerolog"
 )
@@ -18,10 +17,6 @@ var (
 
 func getEnqueuer(_ context.Context) worker.JobEnqueuer {
 	return enqueuer
-}
-
-func init() {
-	queue.GetEnqueuer = getEnqueuer
 }
 
 func RegisterJobs(logger *zerolog.Logger) {
