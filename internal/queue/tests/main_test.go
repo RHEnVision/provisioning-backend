@@ -1,5 +1,4 @@
 //go:build integration
-// +build integration
 
 // To override application configuration for integration tests, create config/test.env file.
 package tests
