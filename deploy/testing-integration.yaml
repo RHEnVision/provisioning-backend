@@ -127,13 +127,13 @@ parameters:
   value: quay.io/cloudservices/iqe-tests
 - name: IQE_IMAGE_TAG
   description: "container image tag for iqe plugin"
-  value: 'hms-integration'
+  value: 'insights-experiences'
 - name: ENV_FOR_DYNACONF
   value: stage_proxy
 - name: USE_BETA
   value: "false"
 - name: IQE_PLUGINS
-  value: hms_integration
+  value: insights_experiences
 - name: IQE_MARKER_EXPRESSION
   value: 'provisioning'
 - name: IQE_FILTER_EXPRESSION
