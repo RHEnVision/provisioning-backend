@@ -105,11 +105,11 @@ objects:
                 value: ${WORKER_QUEUE}
             resources:
               limits:
-                cpu: ${{CPU_LIMIT}}
-                memory: ${MEMORY_LIMIT}
+                cpu: ${{CPU_LIMIT_ALL}}
+                memory: ${MEMORY_LIMIT_ALL}
               requests:
-                cpu: ${CPU_REQUESTS}
-                memory: ${MEMORY_REQUESTS}
+                cpu: ${CPU_REQUEST_ALL}
+                memory: ${MEMORY_REQUEST_ALL}
         - name: statuser
           replicas: ${{STATUSER_REPLICAS}}
           metadata:
@@ -192,11 +192,11 @@ objects:
                 value: ${APP_CACHE_TYPE}
             resources:
               limits:
-                cpu: ${{CPU_LIMIT}}
-                memory: ${MEMORY_LIMIT}
+                cpu: ${{CPU_LIMIT_ALL}}
+                memory: ${MEMORY_LIMIT_ALL}
               requests:
-                cpu: ${CPU_REQUESTS}
-                memory: ${MEMORY_REQUESTS}
+                cpu: ${CPU_REQUEST_ALL}
+                memory: ${MEMORY_REQUEST_ALL}
         - name: stats
           replicas: ${{STATS_REPLICAS}}
           metadata:
@@ -241,11 +241,11 @@ objects:
                 value: ${APP_CACHE_TYPE}
             resources:
               limits:
-                cpu: ${{CPU_LIMIT}}
-                memory: ${MEMORY_LIMIT}
+                cpu: ${{CPU_LIMIT_ALL}}
+                memory: ${MEMORY_LIMIT_ALL}
               requests:
-                cpu: ${CPU_REQUESTS}
-                memory: ${MEMORY_REQUESTS}
+                cpu: ${CPU_REQUEST_ALL}
+                memory: ${MEMORY_REQUEST_ALL}
         - name: api
           replicas: ${{API_REPLICAS}}
           webServices:
@@ -367,11 +367,11 @@ objects:
                 value: ${WORKER_QUEUE}
             resources:
               limits:
-                cpu: ${{CPU_LIMIT}}
-                memory: ${MEMORY_LIMIT}
+                cpu: ${{CPU_LIMIT_ALL}}
+                memory: ${MEMORY_LIMIT_ALL}
               requests:
-                cpu: ${CPU_REQUESTS}
-                memory: ${MEMORY_REQUESTS}
+                cpu: ${CPU_REQUEST_ALL}
+                memory: ${MEMORY_REQUEST_ALL}
       database:
         name: provisioning
         version: 15
@@ -509,17 +509,17 @@ parameters:
     name: ENV_NAME
     required: true
   - description: CPU request for each pod (placement)
-    name: CPU_REQUESTS
-    value: 100m
+    name: CPU_REQUEST_ALL
+    value: 250m
   - description: Memory request for each pod (placement)
-    name: MEMORY_REQUESTS
-    value: 100Mi
+    name: MEMORY_REQUEST_ALL
+    value: 256Mi
   - description: CPU limit for each pod (throttling)
-    name: CPU_LIMIT
+    name: CPU_LIMIT_ALL
     value: 500m
   - description: Memory limit for each pod (pod restart)
-    name: MEMORY_LIMIT
-    value: 600Mi
+    name: MEMORY_LIMIT_ALL
+    value: 512Mi
   - description: Amount of replicas for pod serving the API
     name: API_REPLICAS
     value: "3"
