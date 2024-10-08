@@ -537,7 +537,7 @@ parameters:
     required: true
   - description: Image name
     name: IMAGE
-    value: quay.io/cloudservices/provisioning-backend
+    value: quay.io/redhat-services-prod/insights-management-tenant/insights-provisioning/provisioning-backend
   - description: Logging level (trace, debug, info, warn, error, fatal, panic)
     name: LOGGING_LEVEL
     value: "debug"
