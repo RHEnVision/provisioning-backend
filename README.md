@@ -1,6 +1,6 @@
 # provisioning-backend
 
-Provisioning backend service for cloud.redhat.com.
+Provisioning backend service for cloud.redhat.com
 
 * [Go Reference](https://pkg.go.dev/github.com/RHEnVision/provisioning-backend)
 * [OpenAPI Specification](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/RHEnVision/provisioning-backend/main/api/openapi.gen.json)
