@@ -14,7 +14,7 @@ Provisioning backend service for cloud.redhat.com.
 
 ## Building
 
-Particular version of Go and tools are required for successful build. The `install-go` make target will use already installed version of go to perform `go download` commend to install Go into `$HOME/sdk`.
+Particular version of Go and tools are required for successful build. The `install-go` make target will use already installed version of go to perform `go download` commend to install Go into `$HOME/sdk`
 
 ```
 make install-go
