@@ -22,7 +22,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/iam v1.39.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.14
 	github.com/aws/smithy-go v1.22.2
-	github.com/coreos/go-oidc v2.2.1+incompatible
+	github.com/coreos/go-oidc v2.3.0+incompatible
 	github.com/exaring/otelpgx v0.7.0
 	github.com/georgysavva/scany/v2 v2.1.3
 	github.com/getkin/kin-openapi v0.128.0
@@ -159,6 +159,6 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241209162323-e6fa225c2576 // indirect
 	google.golang.org/grpc v1.67.3 // indirect
 	google.golang.org/protobuf v1.35.2 // indirect
-	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
+	gopkg.in/go-jose/go-jose.v2 v2.6.3 // indirect
 	olympos.io/encoding/edn v0.0.0-20201019073823-d3554ca0b0a3 // indirect
 )
