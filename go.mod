@@ -1,7 +1,9 @@
 module github.com/RHEnVision/provisioning-backend
 
 // Also change: mk/tools.mk .github/workflows build/Dockerfile
-go 1.21
+go 1.22.5
+
+toolchain go1.22.9
 
 require (
 	cloud.google.com/go/compute v1.31.1
@@ -25,7 +27,7 @@ require (
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/exaring/otelpgx v0.7.0
 	github.com/georgysavva/scany/v2 v2.1.3
-	github.com/getkin/kin-openapi v0.128.0
+	github.com/getkin/kin-openapi v0.129.0
 	github.com/getsentry/sentry-go v0.31.1
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-chi/render v1.0.3
@@ -109,7 +111,6 @@ require (
 	github.com/googleapis/gax-go/v2 v2.14.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.21.0 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
-	github.com/invopop/yaml v0.3.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
@@ -127,6 +128,8 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/oasdiff/yaml v0.0.0-20241210131133-6b86fb107d80 // indirect
+	github.com/oasdiff/yaml3 v0.0.0-20241210130736-a94c01f36349 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/oleiade/lane/v2 v2.0.0 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
