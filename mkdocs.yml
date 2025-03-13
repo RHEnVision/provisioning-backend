@@ -2,6 +2,5 @@ docs_dir: docs/
 site_name: Provisioning (Launch) Documentation
 plugins:
   - techdocs-core
-  - macros  # Add the macros plugin
   - plantuml:
       puml_url: https://www.plantuml.com/plantuml/
