@@ -2,7 +2,7 @@
 
 Commit to build
 
-```puml
+```plantuml
 @startuml
 
 !theme plain
@@ -48,15 +48,8 @@ deactivate konflux
 
 Deploy to stage
 
-```puml
+```plantuml
 @startuml
-<style>
-root {
-    HyperLinkColor LightSkyBlue
-}
-</style>
-
-
 box "Quay.io"
 participant "redhat-services-prod" as quaySProd
 end box

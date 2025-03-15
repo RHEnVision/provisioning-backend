@@ -1,6 +1,10 @@
 docs_dir: docs/
 site_name: Provisioning (Launch) Documentation
-plugins:
-  - techdocs-core
-  - plantuml:
-      puml_url: https://www.plantuml.com/plantuml/
+
+markdown_extensions: 
+  - plantuml_markdown:
+      kroki_server: http://kroki:8000/
+      insecure: true
+      format: svg
+  - toc:
+      permalink: "#"

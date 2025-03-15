@@ -110,3 +110,17 @@ Common examples:
 
 All code logic has unit test coverage.
 We test all logic in isolation
+
+## Documentation
+
+To test your documentation changes and see the charts you'll need a [Kroki!](https://kroki.io/) server locally.
+The easiest way to do so is to do following:
+
+```bash
+sudo echo "127.0.0.1 kroki" >> /etc/hosts
+
+podman run -p8000:8000 yuzutech/kroki
+```
+
+We need to change the mkdocs port, because kroki is running on port 8000.
+In another terminal run `mkdocs serve -a localhost:8080`.
