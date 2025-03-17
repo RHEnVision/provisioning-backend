@@ -1,7 +1,7 @@
 docs_dir: docs/
 site_name: Provisioning (Launch) Documentation
 
-markdown_extensions: 
+markdown_extensions:
   - plantuml_markdown:
       kroki_server: http://kroki:8000/
       insecure: true
