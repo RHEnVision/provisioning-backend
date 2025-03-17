@@ -12,7 +12,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.2.0
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armsubscriptions v1.3.0
 	github.com/IBM/pgxpoolprometheus v1.1.1
-	github.com/Unleash/unleash-client-go/v4 v4.2.0
+	github.com/Unleash/unleash-client-go/v4 v4.3.0
 	github.com/archdx/zerolog-sentry v1.8.5
 	github.com/aws/aws-sdk-go-v2 v1.36.3
 	github.com/aws/aws-sdk-go-v2/config v1.29.8
