@@ -24,7 +24,7 @@ require (
 	github.com/aws/smithy-go v1.22.3
 	github.com/coreos/go-oidc v2.3.0+incompatible
 	github.com/exaring/otelpgx v0.7.0
-	github.com/georgysavva/scany/v2 v2.1.3
+	github.com/georgysavva/scany/v2 v2.1.4
 	github.com/getkin/kin-openapi v0.128.0
 	github.com/getsentry/sentry-go v0.31.1
 	github.com/go-chi/chi/v5 v5.2.1
