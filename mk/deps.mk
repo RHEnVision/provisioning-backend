@@ -18,9 +18,8 @@ list-deps: ## List dependencies and their versions
 
 .PHONY: update-deps
 update-deps: ## Update Go modules to latest versions
-	$(GO) get -u ./...
-	@# Pinned versions:
-	#$(GO) get github.com/deepmap/oapi-codegen@v1.13.4
+	$(GO) install github.com/lzap/gobump@latest
+	$(GO) run github.com/lzap/gobump@latest
 	$(GO) mod tidy
 
 # aliases
