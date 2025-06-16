@@ -287,7 +287,7 @@ spec:
       - name: image-url
         value: $(tasks.build-container.results.IMAGE_URL)
       - name: fail-unsigned
-        value: true
+        value: "true"
       runAfter:
       - build-container
       taskRef:
@@ -328,52 +328,52 @@ spec:
         workspace: workspace
     - name: sast-shell-check
       params:
-        - name: image-digest
-          value: $(tasks.build-image-index.results.IMAGE_DIGEST)
-        - name: image-url
-          value: $(tasks.build-image-index.results.IMAGE_URL)
+      - name: image-digest
+        value: $(tasks.build-image-index.results.IMAGE_DIGEST)
+      - name: image-url
+        value: $(tasks.build-image-index.results.IMAGE_URL)
       runAfter:
-        - build-image-index
+      - build-image-index
       taskRef:
         params:
-          - name: name
-            value: sast-shell-check
-          - name: bundle
-            value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:1c1ca37f7191f2f7804b3b0b68054c047edd3938fc7a846f51977859c667e031
-          - name: kind
-            value: task
+        - name: name
+          value: sast-shell-check
+        - name: bundle
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:1c1ca37f7191f2f7804b3b0b68054c047edd3938fc7a846f51977859c667e031
+        - name: kind
+          value: task
         resolver: bundles
       when:
-        - input: $(params.skip-checks)
-          operator: in
-          values:
-            - "false"
+      - input: $(params.skip-checks)
+        operator: in
+        values:
+        - "false"
       workspaces:
-        - name: workspace
-          workspace: workspace
+      - name: workspace
+        workspace: workspace
     - name: sast-unicode-check
       params:
-        - name: image-url
-          value: $(tasks.build-image-index.results.IMAGE_URL)
+      - name: image-url
+        value: $(tasks.build-image-index.results.IMAGE_URL)
       runAfter:
-        - build-image-index
+      - build-image-index
       taskRef:
         params:
-          - name: name
-            value: sast-unicode-check
-          - name: bundle
-            value: quay.io/konflux-ci/tekton-catalog/task-sast-unicode-check:0.2@sha256:4d5bf6549e42184e462ab7ccfba0153954c65214aa82f319a3215e94e068cded
-          - name: kind
-            value: task
+        - name: name
+          value: sast-unicode-check
+        - name: bundle
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-unicode-check:0.2@sha256:4d5bf6549e42184e462ab7ccfba0153954c65214aa82f319a3215e94e068cded
+        - name: kind
+          value: task
         resolver: bundles
       when:
-        - input: $(params.skip-checks)
-          operator: in
-          values:
-            - "false"
+      - input: $(params.skip-checks)
+        operator: in
+        values:
+        - "false"
       workspaces:
-        - name: workspace
-          workspace: workspace
+      - name: workspace
+        workspace: workspace
     - name: deprecated-base-image-check
       params:
       - name: IMAGE_URL
@@ -532,7 +532,8 @@ spec:
       optional: true
     - name: netrc
       optional: true
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-provisioning-backend
   workspaces:
   - name: workspace
     volumeClaimTemplate:
