@@ -42,7 +42,7 @@ require (
 	github.com/prometheus/client_golang v1.22.0
 	github.com/redhatinsights/app-common-go v1.6.8
 	github.com/redhatinsights/platform-go-middlewares/v2 v2.0.0-beta.2
-	github.com/redis/go-redis/v9 v9.10.0
+	github.com/redis/go-redis/v9 v9.11.0
 	github.com/riandyrn/otelchi v0.9.0
 	github.com/rs/zerolog v1.34.0
 	github.com/segmentio/kafka-go v0.4.48
