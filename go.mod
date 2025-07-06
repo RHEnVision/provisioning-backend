@@ -31,7 +31,7 @@ require (
 	github.com/go-chi/render v1.0.3
 	github.com/go-openapi/runtime v0.28.0
 	github.com/go-playground/mold/v4 v4.5.1
-	github.com/go-playground/validator/v10 v10.26.0
+	github.com/go-playground/validator/v10 v10.27.0
 	github.com/google/uuid v1.6.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jackc/pgx-zerolog v0.0.0-20230315001418-f978528409eb
