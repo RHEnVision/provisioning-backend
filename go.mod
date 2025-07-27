@@ -1,7 +1,9 @@
 module github.com/RHEnVision/provisioning-backend
 
 // Also change: mk/tools.mk .github/workflows build/Dockerfile
-go 1.22
+go 1.23.0
+
+toolchain go1.24.4
 
 require (
 	cloud.google.com/go/compute v1.31.1
@@ -11,7 +13,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork v1.1.0
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.2.0
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armsubscriptions v1.3.0
-	github.com/IBM/pgxpoolprometheus v1.1.1
+	github.com/IBM/pgxpoolprometheus v1.1.2
 	github.com/Unleash/unleash-client-go/v4 v4.5.0
 	github.com/archdx/zerolog-sentry v1.8.5
 	github.com/aws/aws-sdk-go-v2 v1.36.4
@@ -35,7 +37,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/jackc/pgx-zerolog v0.0.0-20230315001418-f978528409eb
-	github.com/jackc/pgx/v5 v5.7.2
+	github.com/jackc/pgx/v5 v5.7.4
 	github.com/jackc/tern/v2 v2.3.2
 	github.com/lzap/cloudwatchwriter2 v1.4.2
 	github.com/oapi-codegen/runtime v1.1.1
@@ -53,7 +55,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.29.0
 	go.opentelemetry.io/otel/trace v1.29.0
 	go.uber.org/automaxprocs v1.6.0
-	golang.org/x/crypto v0.33.0
+	golang.org/x/crypto v0.37.0
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
 	google.golang.org/api v0.214.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -134,7 +136,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pquerna/cachecontrol v0.2.0 // indirect
-	github.com/prometheus/client_model v0.6.1 // indirect
+	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.62.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
@@ -150,14 +152,14 @@ require (
 	go.opentelemetry.io/proto/otlp v1.3.1 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/oauth2 v0.24.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/text v0.22.0 // indirect
+	golang.org/x/sync v0.13.0 // indirect
+	golang.org/x/sys v0.32.0 // indirect
+	golang.org/x/text v0.24.0 // indirect
 	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241209162323-e6fa225c2576 // indirect
 	google.golang.org/grpc v1.67.3 // indirect
-	google.golang.org/protobuf v1.36.5 // indirect
+	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/go-jose/go-jose.v2 v2.6.3 // indirect
 	olympos.io/encoding/edn v0.0.0-20201019073823-d3554ca0b0a3 // indirect
 )
