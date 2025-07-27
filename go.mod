@@ -1,7 +1,9 @@
 module github.com/RHEnVision/provisioning-backend
 
 // Also change: mk/tools.mk .github/workflows build/Dockerfile
-go 1.22
+go 1.23
+
+toolchain go1.24.4
 
 require (
 	cloud.google.com/go/compute v1.31.1
@@ -41,7 +43,7 @@ require (
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/prometheus/client_golang v1.22.0
 	github.com/redhatinsights/app-common-go v1.6.8
-	github.com/redhatinsights/platform-go-middlewares/v2 v2.0.0-beta.2
+	github.com/redhatinsights/platform-go-middlewares/v2 v2.0.0
 	github.com/redis/go-redis/v9 v9.10.0
 	github.com/riandyrn/otelchi v0.9.0
 	github.com/rs/zerolog v1.34.0
