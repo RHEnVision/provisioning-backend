@@ -86,9 +86,9 @@ func MountAPI(r *chi.Mux) {
 		})
 
 		r.Route("/pubkeys", func(r chi.Router) {
-			r.With(middleware.EnforcePermissions("pubkey", "write")).Post("/", s.CreatePubkey)
+			r.With(middleware.BlockWriteOperationsMiddleware).With(middleware.EnforcePermissions("pubkey", "write")).Post("/", s.CreatePubkey)
 			r.With(middleware.EnforcePermissions("pubkey", "read")).With(middleware.Pagination).Get("/", s.ListPubkeys)
-			r.Post("/", s.CreatePubkey)
+			r.With(middleware.BlockWriteOperationsMiddleware).Post("/", s.CreatePubkey)
 			r.Route("/{ID}", func(r chi.Router) {
 				r.With(middleware.EnforcePermissions("pubkey", "read")).Get("/", s.GetPubkey)
 				r.With(middleware.EnforcePermissions("pubkey", "write")).Delete("/", s.DeletePubkey)
@@ -102,7 +102,7 @@ func MountAPI(r *chi.Mux) {
 			r.Route("/{TYPE}", func(r chi.Router) {
 				// additional permission checks are in the service functions
 				r.With(middleware.EnforcePermissions("reservation", "read")).Get("/{ID}", s.GetReservationDetail)
-				r.With(middleware.EnforcePermissions("reservation", "write")).Post("/", s.CreateReservation)
+				r.With(middleware.BlockWriteOperationsMiddleware).With(middleware.EnforcePermissions("reservation", "write")).Post("/", s.CreateReservation)
 			})
 			// Generic reservation detail request (no details provided)
 			r.With(middleware.EnforcePermissions("reservation", "read")).Get("/{ID}", s.GetReservationDetail)
@@ -111,7 +111,7 @@ func MountAPI(r *chi.Mux) {
 		// Endpoint used by sources background checker (no permissions needed)
 		r.Route("/availability_status", func(r chi.Router) {
 			r.Route("/sources", func(r chi.Router) {
-				r.Post("/", s.AvailabilityStatus)
+				r.With(middleware.BlockWriteOperationsMiddleware).Post("/", s.AvailabilityStatus)
 			})
 		})
 
