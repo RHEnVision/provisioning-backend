@@ -1,3 +1,5 @@
+**NOTE** As of August 31, the Launch (provisioning) service is no longer supported. You can use individual clouds in order to Launch an image.
+
 # provisioning-backend
 
 Provisioning backend service for cloud.redhat.com
