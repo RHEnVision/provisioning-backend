@@ -22,7 +22,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/iam v1.42.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.21
 	github.com/aws/smithy-go v1.22.3
-	github.com/coreos/go-oidc v2.3.0+incompatible
+	github.com/coreos/go-oidc v2.4.0+incompatible
 	github.com/exaring/otelpgx v0.7.0
 	github.com/georgysavva/scany/v2 v2.1.4
 	github.com/getkin/kin-openapi v0.128.0
