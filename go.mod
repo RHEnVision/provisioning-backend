@@ -40,7 +40,7 @@ require (
 	github.com/lzap/cloudwatchwriter2 v1.4.2
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/prometheus/client_golang v1.22.0
-	github.com/redhatinsights/app-common-go v1.6.8
+	github.com/redhatinsights/app-common-go v1.6.9
 	github.com/redhatinsights/platform-go-middlewares/v2 v2.0.0-beta.2
 	github.com/redis/go-redis/v9 v9.10.0
 	github.com/riandyrn/otelchi v0.9.0
