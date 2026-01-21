@@ -67,3 +67,12 @@ deactivate stage
 
 @enduml
 ```
+
+* DT:
+  * [defining what image to fetch](https://gitlab.cee.redhat.com/service/app-interface/-/blob/master/data/services/insights/provisioning/deploy.yml#L127)
+  * [fetching the image to deploy](https://github.com/app-sre/qontract-reconcile/blob/c21e19e6e403aa8413883cf776c4e6f017c6abe0/reconcile/utils/saasherder/saasherder.py)
+* D1:
+  * [reconciliation for deployment](https://github.com/app-sre/qontract-reconcile/blob/master/reconcile/openshift_saas_deploy.py#L253)
+  * [Triggering deployment in app-interface documentation](https://gitlab.cee.redhat.com/service/app-interface/-/blob/735987b127d047304eba28d675a3994ff3af3acf/docs/app-sre/continuous-delivery-in-app-interface.md#triggering-pipelineruns-in-tekton)
+  * [pipeline triggered in tekton](https://console-openshift-console.apps.rosa.appsrep09ue1.03r5.p3.openshiftapps.com/k8s/ns/provisioning-pipelines/tekton.dev~v1~Pipeline/o-saas-deploy-provisioning/Runs?name=provisioning-App-SRE-stage)
+  
